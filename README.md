@@ -9,15 +9,10 @@ $ gulp watch
 # mac
 
 ```
-$ vim ~/.bashrc
+$ mv .env.sample .env
+$ vim .env
 ```
-
-```
-export TWITTERKEY="your twitter token"
-export TWITERSECRET="your twitter secret"
-export SESSIONSECRET="random chars for security"
-```
-see also http://qiita.com/tomomomo1217/items/77c9b64266daf6315abe
+http://qiita.com/ogawatti/items/e1e612b793a3d51978cc
 
 # Heroku
 
@@ -26,3 +21,4 @@ $ heroku config:set TWITTERKEY=****
 $ heroku config:set TWITTERSECRET=****
 $ heroku config:set SESSIONSECRET=****
 ```
+see also http://qiita.com/tomomomo1217/items/77c9b64266daf6315abe

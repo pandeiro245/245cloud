@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'net/http'
 require 'uri'
+require 'dotenv'
 require 'omniauth-twitter'
 
 configure do
@@ -10,6 +11,7 @@ configure do
 end
 
 get '/aaa' do
+  Dotenv.load
   raise ENV.inspect
 end
 
