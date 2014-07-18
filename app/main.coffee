@@ -12,7 +12,7 @@ init = () ->
   $body.attr(style: 'text-align:center;')
 
   $body.html('')
-  for id in ['header', 'contents', 'footer']
+  for id in ['header', 'contents', 'logs', 'footer']
     $item = $('<div></div>')
     $item.attr('id', id)
     $body.append($item)
@@ -20,9 +20,33 @@ init = () ->
   ruffnote(13475, 'header')
   ruffnote(13477, 'footer')
 
+  $("#logs").append("<hr />")
+  ParseParse.all("Twitter", (res) ->
+    twitters = {}
+    for twitter in res
+      twitters[twitter.attributes.twitter_id] = twitter.attributes
+    ParseParse.where("Workload", null, (workloads) ->
+      for workload in workloads
+        w = workload.attributes
+        t = new Date(workload.createdAt)
+        hour = Util.zero(t.getHours())
+        min = Util.zero(t.getMinutes())
+        $("#logs").append("""
+          #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div style=\"display:inline; border: 1px solid #000; padding:20px; text-align:center; vertical-align:middle;\">no image</div>'}
+          <img src=\"#{twitters[w.twitter_id].twitter_image}\" />@#{hour}:#{min}<br />
+          #{w.title} <br />
+          <a href=\"##{w.sc_id}\" class='fixed_start btn btn-default'>この曲で集中する</a>
+          <hr />
+        """)
+      $('.fixed_start').click(() ->
+        start()
+      )
+    )
+  )
+
   if localStorage['twitter_id']
     $start = $('<input>').attr('type', 'submit')
-    $start.attr('id', 'start').attr('value', '24分間集中する！！').attr('type', 'submit')
+    $start.attr('id', 'start').attr('value', '曲お任せで24分間集中する！！').attr('type', 'submit')
   else
     $start = $('<a></a>').html('Twitterログイン')
     $start.attr('href', '/auth/twitter')
@@ -34,6 +58,7 @@ init = () ->
 
 start = () ->
   console.log 'start'
+  $("#logs").hide()
   $start = $('<div></div>').attr('id', 'playing')
   $('#contents').html($start)
   if localStorage['sc_id'] == location.hash.replace(/#/, '') || location.hash.length < 1

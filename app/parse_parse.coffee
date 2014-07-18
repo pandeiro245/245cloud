@@ -1,6 +1,16 @@
 class @ParseParse
   @find: (model_name, id, callback) ->
 
+  @where: (model_name, cond, callback) ->
+    Model = Parse.Object.extend(model_name)
+    query = new Parse.Query(Model)
+    query.equalTo("is_done", true)
+    query.descending("createdAt")
+    query.find({
+      success: (data) ->
+        callback(data)
+    })
+
   @all: (model_name, callback) ->
     Model = Parse.Object.extend(model_name)
     query = new Parse.Query(Model)

@@ -4,6 +4,19 @@
 
     ParseParse.find = function(model_name, id, callback) {};
 
+    ParseParse.where = function(model_name, cond, callback) {
+      var Model, query;
+      Model = Parse.Object.extend(model_name);
+      query = new Parse.Query(Model);
+      query.equalTo("is_done", true);
+      query.descending("createdAt");
+      return query.find({
+        success: function(data) {
+          return callback(data);
+        }
+      });
+    };
+
     ParseParse.all = function(model_name, callback) {
       var Model, query;
       Model = Parse.Object.extend(model_name);
