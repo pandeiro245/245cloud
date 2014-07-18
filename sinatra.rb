@@ -4,15 +4,12 @@ require 'uri'
 require 'dotenv'
 require 'omniauth-twitter'
 
+Dotenv.load
+
 configure do
   set :sessions, true
   set :inline_templates, true
   set :session_secret, ENV['SESSIONSECRET']
-end
-
-get '/aaa' do
-  Dotenv.load
-  raise ENV.inspect
 end
 
 get '/' do
@@ -27,7 +24,6 @@ get '/proxy' do
 end
 
 use OmniAuth::Builder do
-  # http://qiita.com/tomomomo1217/items/77c9b64266daf6315abe
   provider :twitter, ENV['TWITTERKEY'], ENV['TWITTERSECRET']
 end
 
