@@ -124,7 +124,7 @@ play = () ->
 
     if localStorage['is_dev']
       Util.countDown(3000, complete)
-      #Util.countDown(25*60*1000, complete)
+      #Util.countDown(24*60*1000, complete)
     else
       #Util.countDown(track.duration, complete)
       Util.countDown(24*60*1000, complete)
@@ -187,7 +187,7 @@ complete = () ->
   $('#track').keypress((e) ->
     if e.which == 13 #enter
       q = $('#track').val()
-      url = "http://api.soundcloud.com/tracks.json?client_id=#{localStorage['client_id']}&q=#{q}&duration[from]=#{19*60*1000}&duration[to]=#{25*60*1000}"
+      url = "http://api.soundcloud.com/tracks.json?client_id=#{localStorage['client_id']}&q=#{q}&duration[from]=#{19*60*1000}&duration[to]=#{24*60*1000}"
       $.get(url, (tracks) ->
         if tracks[0]
           for track in tracks

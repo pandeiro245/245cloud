@@ -195,7 +195,7 @@
       var q, url;
       if (e.which === 13) {
         q = $('#track').val();
-        url = "http://api.soundcloud.com/tracks.json?client_id=" + localStorage['client_id'] + "&q=" + q + "&duration[from]=" + (19 * 60 * 1000) + "&duration[to]=" + (25 * 60 * 1000);
+        url = "http://api.soundcloud.com/tracks.json?client_id=" + localStorage['client_id'] + "&q=" + q + "&duration[from]=" + (19 * 60 * 1000) + "&duration[to]=" + (24 * 60 * 1000);
         return $.get(url, function(tracks) {
           var artwork, track, _i, _len, _results;
           if (tracks[0]) {
