@@ -18,7 +18,7 @@
       style: 'text-align:center;'
     });
     $body.html('');
-    _ref = ['header', 'contents', 'footer'];
+    _ref = ['header', 'contents', 'logs', 'footer'];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       id = _ref[_i];
       $item = $('<div></div>');
@@ -27,9 +27,31 @@
     }
     ruffnote(13475, 'header');
     ruffnote(13477, 'footer');
+    $("#logs").append("<hr />");
+    ParseParse.all("Twitter", function(res) {
+      var twitter, twitters, _j, _len1;
+      twitters = {};
+      for (_j = 0, _len1 = res.length; _j < _len1; _j++) {
+        twitter = res[_j];
+        twitters[twitter.attributes.twitter_id] = twitter.attributes;
+      }
+      return ParseParse.where("Workload", null, function(workloads) {
+        var hour, min, t, w, workload, _k, _len2, _results;
+        _results = [];
+        for (_k = 0, _len2 = workloads.length; _k < _len2; _k++) {
+          workload = workloads[_k];
+          w = workload.attributes;
+          t = new Date(workload.createdAt);
+          hour = Util.zero(t.getHours());
+          min = Util.zero(t.getMinutes());
+          _results.push($("#logs").append("\n" + (w.artwork_url ? '<img src=\"' + w.artwork_url + '\" />' : '<div style=\"display:inline; border: 1px solid #000; padding:20px; text-align:center; vertical-align:middle;\">no image</div>') + "\n<img src=\"" + twitters[w.twitter_id].twitter_image + "\" />@" + hour + ":" + min + "<br />\n" + w.title + " <br />\n<a href=\"#" + w.sc_id + "\" class='btn btn-default'>この曲で集中する</a>\n<hr />"));
+        }
+        return _results;
+      });
+    });
     if (localStorage['twitter_id']) {
       $start = $('<input>').attr('type', 'submit');
-      $start.attr('id', 'start').attr('value', '24分間集中する！！').attr('type', 'submit');
+      $start.attr('id', 'start').attr('value', '曲お任せで24分間集中する！！').attr('type', 'submit');
     } else {
       $start = $('<a></a>').html('Twitterログイン');
       $start.attr('href', '/auth/twitter');
