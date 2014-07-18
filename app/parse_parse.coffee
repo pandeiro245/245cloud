@@ -4,11 +4,21 @@ class @ParseParse
   @where: (model_name, cond, callback) ->
     Model = Parse.Object.extend(model_name)
     query = new Parse.Query(Model)
-    query.equalTo("is_done", true)
+    for c in cond
+      if c[2]
+        if c[2] == 'lessThan'
+          query.lessThan(c[0], c[1])
+        else if c[2] == 'greaterThan'
+          query.greaterThan(c[0], c[1])
+      else
+        query.equalTo(c[0], c[1])
+
     query.descending("createdAt")
     query.find({
       success: (data) ->
         callback(data)
+      error: (error) ->
+        console.log error
     })
 
   @all: (model_name, callback) ->

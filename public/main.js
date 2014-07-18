@@ -18,7 +18,7 @@
       style: 'text-align:center;'
     });
     $body.html('');
-    _ref = ['header', 'contents', 'logs', 'footer'];
+    _ref = ['header', 'contents', 'doing', 'logs', 'footer'];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       id = _ref[_i];
       $item = $('<div></div>');
@@ -27,7 +27,35 @@
     }
     ruffnote(13475, 'header');
     ruffnote(13477, 'footer');
+    $("#doing").append("<h2>NOW DOING</h2>");
+    ParseParse.all("Twitter", function(res) {
+      var cond, t, twitter, twitters, _j, _len1;
+      twitters = {};
+      for (_j = 0, _len1 = res.length; _j < _len1; _j++) {
+        twitter = res[_j];
+        twitters[twitter.attributes.twitter_id] = twitter.attributes;
+      }
+      t = new Date((new Date()).getTime() - 24 * 60 * 1000);
+      cond = [["is_done", null], ['host', '245cloud.com'], ["createdAt", t, 'greaterThan']];
+      return ParseParse.where("Workload", cond, function(workloads) {
+        var diff, hour, min, now, w, workload, _k, _len2;
+        for (_k = 0, _len2 = workloads.length; _k < _len2; _k++) {
+          workload = workloads[_k];
+          w = workload.attributes;
+          t = new Date(workload.createdAt);
+          hour = Util.zero(t.getHours());
+          min = Util.zero(t.getMinutes());
+          now = new Date();
+          diff = 24 * 60 * 1000 + t.getTime() - now.getTime();
+          $("#doing").append("" + (w.artwork_url ? '<img src=\"' + w.artwork_url + '\" />' : '<div style=\"display:inline; border: 1px solid #000; padding:20px; text-align:center; vertical-align:middle;\">no image</div>') + "\n<img src=\"" + twitters[w.twitter_id].twitter_image + "\" />@" + hour + "時" + min + "分（あと" + (Util.time(diff)) + "）<br />\n" + w.title + " <br />\n<a href=\"#" + w.sc_id + "\" class='fixed_start btn btn-default'>この曲で集中する</a>\n<hr />");
+        }
+        return $('.fixed_start').click(function() {
+          return start();
+        });
+      });
+    });
     $("#logs").append("<hr />");
+    $("#logs").append("<h2>DONE</h2>");
     ParseParse.all("Twitter", function(res) {
       var twitter, twitters, _j, _len1;
       twitters = {};
@@ -35,7 +63,7 @@
         twitter = res[_j];
         twitters[twitter.attributes.twitter_id] = twitter.attributes;
       }
-      return ParseParse.where("Workload", null, function(workloads) {
+      return ParseParse.where("Workload", [["is_done", true], ['host', '245cloud.com']], function(workloads) {
         var hour, min, t, w, workload, _k, _len2;
         for (_k = 0, _len2 = workloads.length; _k < _len2; _k++) {
           workload = workloads[_k];
@@ -107,7 +135,7 @@
       if (localStorage['is_dev']) {
         Util.countDown(3000, complete);
       } else {
-        Util.countDown(25 * 60 * 1000, complete);
+        Util.countDown(24 * 60 * 1000, complete);
       }
       ap = localStorage['is_dev'] ? 'false' : 'true';
       return $("#playing").html("<iframe width=\"100%\" height=\"400\" scrolling=\"no\" frameborder=\"no\" src=\"https://w.soundcloud.com/player/?visual=true&url=http%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F" + localStorage['sc_id'] + "&show_artwork=true&client_id=" + localStorage['client_id'] + "&auto_play=" + ap + "\"></iframe>");

@@ -12,7 +12,7 @@ init = () ->
   $body.attr(style: 'text-align:center;')
 
   $body.html('')
-  for id in ['header', 'contents', 'logs', 'footer']
+  for id in ['header', 'contents', 'doing', 'logs', 'footer']
     $item = $('<div></div>')
     $item.attr('id', id)
     $body.append($item)
@@ -20,12 +20,46 @@ init = () ->
   ruffnote(13475, 'header')
   ruffnote(13477, 'footer')
 
-  $("#logs").append("<hr />")
+  $("#doing").append("<h2>NOW DOING</h2>")
+
   ParseParse.all("Twitter", (res) ->
     twitters = {}
     for twitter in res
       twitters[twitter.attributes.twitter_id] = twitter.attributes
-    ParseParse.where("Workload", null, (workloads) ->
+    t = new Date((new Date()).getTime() - 24*60*1000)
+    cond = [
+      ["is_done", null],
+      ['host', '245cloud.com'],
+      ["createdAt", t, 'greaterThan']
+    ]
+    ParseParse.where("Workload", cond, (workloads) ->
+      for workload in workloads
+        w = workload.attributes
+        t = new Date(workload.createdAt)
+        hour = Util.zero(t.getHours())
+        min = Util.zero(t.getMinutes())
+        now = new Date()
+        diff = 24*60*1000 + t.getTime() - now.getTime()
+        $("#doing").append("""
+          #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div style=\"display:inline; border: 1px solid #000; padding:20px; text-align:center; vertical-align:middle;\">no image</div>'}
+          <img src=\"#{twitters[w.twitter_id].twitter_image}\" />@#{hour}時#{min}分（あと#{Util.time(diff)}）<br />
+          #{w.title} <br />
+          <a href=\"##{w.sc_id}\" class='fixed_start btn btn-default'>この曲で集中する</a>
+          <hr />
+        """)
+      $('.fixed_start').click(() ->
+        start()
+      )
+    )
+  )
+
+  $("#logs").append("<hr />")
+  $("#logs").append("<h2>DONE</h2>")
+  ParseParse.all("Twitter", (res) ->
+    twitters = {}
+    for twitter in res
+      twitters[twitter.attributes.twitter_id] = twitter.attributes
+    ParseParse.where("Workload", [["is_done", true], ['host', '245cloud.com']], (workloads) ->
       for workload in workloads
         w = workload.attributes
         t = new Date(workload.createdAt)
@@ -93,7 +127,7 @@ play = () ->
       #Util.countDown(25*60*1000, complete)
     else
       #Util.countDown(track.duration, complete)
-      Util.countDown(25*60*1000, complete)
+      Util.countDown(24*60*1000, complete)
 
     ap = if localStorage['is_dev'] then 'false' else 'true'
     $("#playing").html("""
