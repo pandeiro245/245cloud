@@ -36,17 +36,18 @@
         twitters[twitter.attributes.twitter_id] = twitter.attributes;
       }
       return ParseParse.where("Workload", null, function(workloads) {
-        var hour, min, t, w, workload, _k, _len2, _results;
-        _results = [];
+        var hour, min, t, w, workload, _k, _len2;
         for (_k = 0, _len2 = workloads.length; _k < _len2; _k++) {
           workload = workloads[_k];
           w = workload.attributes;
           t = new Date(workload.createdAt);
           hour = Util.zero(t.getHours());
           min = Util.zero(t.getMinutes());
-          _results.push($("#logs").append("\n" + (w.artwork_url ? '<img src=\"' + w.artwork_url + '\" />' : '<div style=\"display:inline; border: 1px solid #000; padding:20px; text-align:center; vertical-align:middle;\">no image</div>') + "\n<img src=\"" + twitters[w.twitter_id].twitter_image + "\" />@" + hour + ":" + min + "<br />\n" + w.title + " <br />\n<a href=\"#" + w.sc_id + "\" class='btn btn-default'>この曲で集中する</a>\n<hr />"));
+          $("#logs").append("" + (w.artwork_url ? '<img src=\"' + w.artwork_url + '\" />' : '<div style=\"display:inline; border: 1px solid #000; padding:20px; text-align:center; vertical-align:middle;\">no image</div>') + "\n<img src=\"" + twitters[w.twitter_id].twitter_image + "\" />@" + hour + ":" + min + "<br />\n" + w.title + " <br />\n<a href=\"#" + w.sc_id + "\" class='fixed_start btn btn-default'>この曲で集中する</a>\n<hr />");
         }
-        return _results;
+        return $('.fixed_start').click(function() {
+          return start();
+        });
       });
     });
     if (localStorage['twitter_id']) {
@@ -66,6 +67,7 @@
   start = function() {
     var $start;
     console.log('start');
+    $("#logs").hide();
     $start = $('<div></div>').attr('id', 'playing');
     $('#contents').html($start);
     if (localStorage['sc_id'] === location.hash.replace(/#/, '') || location.hash.length < 1) {

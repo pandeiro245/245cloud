@@ -32,13 +32,15 @@ init = () ->
         hour = Util.zero(t.getHours())
         min = Util.zero(t.getMinutes())
         $("#logs").append("""
-
           #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div style=\"display:inline; border: 1px solid #000; padding:20px; text-align:center; vertical-align:middle;\">no image</div>'}
           <img src=\"#{twitters[w.twitter_id].twitter_image}\" />@#{hour}:#{min}<br />
           #{w.title} <br />
-          <a href=\"##{w.sc_id}\" class='btn btn-default'>この曲で集中する</a>
+          <a href=\"##{w.sc_id}\" class='fixed_start btn btn-default'>この曲で集中する</a>
           <hr />
         """)
+      $('.fixed_start').click(() ->
+        start()
+      )
     )
   )
 
@@ -56,6 +58,7 @@ init = () ->
 
 start = () ->
   console.log 'start'
+  $("#logs").hide()
   $start = $('<div></div>').attr('id', 'playing')
   $('#contents').html($start)
   if localStorage['sc_id'] == location.hash.replace(/#/, '') || location.hash.length < 1
