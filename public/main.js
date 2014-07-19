@@ -81,7 +81,7 @@
           $("#logs").append("" + (w.artwork_url ? '<img src=\"' + w.artwork_url + '\" />' : '<div style=\"display:inline; border: 1px solid #000; padding:20px; text-align:center; vertical-align:middle;\">no image</div>') + "\n<img src=\"" + twitters[w.twitter_id].twitter_image + "\" />@" + hour + ":" + min + "<br />\n" + w.title + " <br />\n<a href=\"#" + w.sc_id + "\" class='fixed_start btn btn-default'>この曲で集中する</a>\n<hr />");
         }
         return $('.fixed_start').click(function() {
-          return start();
+          return start($(this).attr('href').replace(/^#/, ''));
         });
       });
     });
@@ -99,15 +99,22 @@
     });
   };
 
-  start = function() {
+  start = function(sc_id) {
     var $start;
+    if (sc_id == null) {
+      sc_id = null;
+    }
     console.log('start');
     $("#logs").hide();
     $start = $('<div></div>').attr('id', 'playing');
     $('#contents').html($start);
+    if (sc_id) {
+      play(sc_id);
+      return;
+    }
     if (localStorage['sc_id'] === location.hash.replace(/#/, '') || location.hash.length < 1) {
       return ParseParse.all("Music", function(musics) {
-        var n, sc_id;
+        var n;
         n = Math.floor(Math.random() * musics.length);
         sc_id = musics[n].attributes.sc_id;
         location.hash = sc_id;
@@ -118,9 +125,12 @@
     }
   };
 
-  play = function() {
+  play = function(sc_id) {
+    if (sc_id == null) {
+      sc_id = null;
+    }
     console.log('play');
-    localStorage['sc_id'] = location.hash.replace(/#/, '');
+    localStorage['sc_id'] = sc_id ? sc_id : location.hash.replace(/#/, '');
     return Soundcloud.fetch(localStorage['sc_id'], localStorage['client_id'], function(track) {
       var ap, key, params, _i, _j, _len, _len1, _ref, _ref1;
       params = {};

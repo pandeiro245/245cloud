@@ -77,7 +77,7 @@ init = () ->
           <hr />
         """)
       $('.fixed_start').click(() ->
-        start()
+        start($(this).attr('href').replace(/^#/,''))
       )
     )
   )
@@ -94,11 +94,14 @@ init = () ->
     start()
   )
 
-start = () ->
+start = (sc_id=null) ->
   console.log 'start'
   $("#logs").hide()
   $start = $('<div></div>').attr('id', 'playing')
   $('#contents').html($start)
+  if sc_id
+    play(sc_id)
+    return
   if localStorage['sc_id'] == location.hash.replace(/#/, '') || location.hash.length < 1
     ParseParse.all("Music", (musics) ->
       n = Math.floor(Math.random() * musics.length)
@@ -109,9 +112,9 @@ start = () ->
   else
     play()
 
-play = () ->
+play = (sc_id=null) ->
   console.log 'play'
-  localStorage['sc_id'] = location.hash.replace(/#/, '')
+  localStorage['sc_id'] = if sc_id then sc_id else location.hash.replace(/#/, '')
 
   Soundcloud.fetch(localStorage['sc_id'], localStorage['client_id'], (track) ->
     params = {}
@@ -127,7 +130,7 @@ play = () ->
     localStorage['artwork_url'] = track.artwork_url
 
     if localStorage['is_dev']
-      Util.countDown(3000, complete)
+      Util.countDown(5*000, complete)
       #Util.countDown(24*60*1000, complete)
     else
       #Util.countDown(track.duration, complete)
