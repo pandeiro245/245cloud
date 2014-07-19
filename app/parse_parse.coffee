@@ -17,9 +17,9 @@ class @ParseParse
     query.find({
       success: (data) ->
         if instance
-          callback(data)
-        else
           callback(instance, data)
+        else
+          callback(data)
       error: (error) ->
         console.log error
     })

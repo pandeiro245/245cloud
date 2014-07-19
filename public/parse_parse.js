@@ -27,9 +27,9 @@
       return query.find({
         success: function(data) {
           if (instance) {
-            return callback(data);
-          } else {
             return callback(instance, data);
+          } else {
+            return callback(data);
           }
         },
         error: function(error) {
