@@ -71,13 +71,21 @@
         twitters[twitter.attributes.twitter_id] = twitter.attributes;
       }
       return ParseParse.where("Workload", [["is_done", true], ['host', '245cloud.com']], function(workloads) {
-        var hour, min, t, w, workload, _k, _len2;
+        var date, day, hour, i, min, month, t, w, workload, _k, _len2;
+        date = "";
         for (_k = 0, _len2 = workloads.length; _k < _len2; _k++) {
           workload = workloads[_k];
           w = workload.attributes;
           t = new Date(workload.createdAt);
+          month = t.getMonth();
+          day = t.getDate();
           hour = Util.zero(t.getHours());
           min = Util.zero(t.getMinutes());
+          i = "" + month + "月" + day + "日";
+          if (date !== i) {
+            $("#logs").append("<h2>" + i + "</h2>");
+          }
+          date = i;
           $("#logs").append("" + (w.artwork_url ? '<img src=\"' + w.artwork_url + '\" />' : '<div style=\"display:inline; border: 1px solid #000; padding:20px; text-align:center; vertical-align:middle;\">no image</div>') + "\n<img src=\"" + twitters[w.twitter_id].twitter_image + "\" />@" + hour + ":" + min + "<br />\n" + w.title + " <br />\n<a href=\"#" + w.sc_id + "\" class='fixed_start btn btn-default'>この曲で集中する</a>\n<hr />");
         }
         return $('.fixed_start').click(function() {
@@ -150,7 +158,7 @@
       });
       localStorage['artwork_url'] = track.artwork_url;
       if (localStorage['is_dev']) {
-        Util.countDown(3000, complete);
+        Util.countDown(5 * 1000, complete);
       } else {
         Util.countDown(24 * 60 * 1000, complete);
       }

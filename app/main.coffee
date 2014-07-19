@@ -64,11 +64,18 @@ init = () ->
     for twitter in res
       twitters[twitter.attributes.twitter_id] = twitter.attributes
     ParseParse.where("Workload", [["is_done", true], ['host', '245cloud.com']], (workloads) ->
+      date = ""
       for workload in workloads
         w = workload.attributes
         t = new Date(workload.createdAt)
-        hour = Util.zero(t.getHours())
-        min = Util.zero(t.getMinutes())
+        month = t.getMonth()
+        day   = t.getDate()
+        hour  = Util.zero(t.getHours())
+        min   = Util.zero(t.getMinutes())
+        i = "#{month}月#{day}日"
+        if date != i
+          $("#logs").append("<h2>#{i}</h2>")
+        date = i
         $("#logs").append("""
           #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div style=\"display:inline; border: 1px solid #000; padding:20px; text-align:center; vertical-align:middle;\">no image</div>'}
           <img src=\"#{twitters[w.twitter_id].twitter_image}\" />@#{hour}:#{min}<br />
@@ -130,7 +137,7 @@ play = (sc_id=null) ->
     localStorage['artwork_url'] = track.artwork_url
 
     if localStorage['is_dev']
-      Util.countDown(5*000, complete)
+      Util.countDown(5*1000, complete)
       #Util.countDown(24*60*1000, complete)
     else
       #Util.countDown(track.duration, complete)
