@@ -108,7 +108,10 @@ init = () ->
           <hr />
         """)
       $('.fixed_start').click(() ->
-        start($(this).attr('href').replace(/^#/,''))
+        if localStorage['twitter_id']
+          start($(this).attr('href').replace(/^#/,''))
+        else
+          alert 'Twitterログインをお願いします！'
       )
     )
   )

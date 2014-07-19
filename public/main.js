@@ -102,7 +102,11 @@
           $("#logs").append("" + (w.artwork_url ? '<img src=\"' + w.artwork_url + '\" />' : '<div style=\"display:inline; border: 1px solid #000; padding:20px; text-align:center; vertical-align:middle;\">no image</div>') + "\n<img src=\"" + twitters[w.twitter_id].twitter_image + "\" />\n<span id=\"workload_" + workload.id + "\">" + w.number + "</span>回目@" + hour + ":" + min + "<br />\n" + w.title + " <br />\n<a href=\"#" + w.sc_id + "\" class='fixed_start btn btn-default'>この曲で集中する</a>\n<hr />");
         }
         return $('.fixed_start').click(function() {
-          return start($(this).attr('href').replace(/^#/, ''));
+          if (localStorage['twitter_id']) {
+            return start($(this).attr('href').replace(/^#/, ''));
+          } else {
+            return alert('Twitterログインをお願いします！');
+          }
         });
       });
     });
