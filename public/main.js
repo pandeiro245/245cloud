@@ -8,8 +8,13 @@
   init = function() {
     var $body, $item, $start, app_id, id, key, _i, _len, _ref;
     console.log('init');
-    app_id = "8QzCMkUbx7TyEApZjDRlhpLQ2OUj0sQWTnkEExod";
-    key = "gzlnFfIOoLFQzQ08bU4mxkhAHcSqEok3rox0PBOM";
+    if (location.href.match(/^http:\/\/245cloud.com/)) {
+      app_id = "8QzCMkUbx7TyEApZjDRlhpLQ2OUj0sQWTnkEExod";
+      key = "gzlnFfIOoLFQzQ08bU4mxkhAHcSqEok3rox0PBOM";
+    } else {
+      app_id = "FbrNkMgFmJ5QXas2RyRvpg82MakbIA1Bz7C8XXX5";
+      key = "yYO5mVgOdcCSiGMyog7vDp2PzTHqukuFGYnZU9wU";
+    }
     Parse.initialize(app_id, key);
     localStorage['client_id'] = '2b9312964a1619d99082a76ad2d6d8c6';
     addAccesslog();
