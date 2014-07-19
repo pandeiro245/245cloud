@@ -12,7 +12,7 @@ $ gulp watch
 $ mv .env.sample .env
 $ vim .env
 ```
-http://qiita.com/ogawatti/items/e1e612b793a3d51978cc
+see also http://qiita.com/ogawatti/items/e1e612b793a3d51978cc
 
 # Heroku
 

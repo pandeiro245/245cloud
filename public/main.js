@@ -93,9 +93,6 @@
             first = new Date(first);
             cond = [["is_done", true], ['host', '245cloud.com'], ['twitter_id', w.twitter_id], ["createdAt", workload.createdAt, 'lessThan'], ["createdAt", first, 'greaterThan']];
             ParseParse.where("Workload", cond, function(workload, data) {
-              console.log(data);
-              console.log(workload.id);
-              workload.set('number', data.length + 1);
               return workload.save();
             }, workload);
           }

@@ -93,9 +93,6 @@ init = () ->
             ["createdAt", first, 'greaterThan']
           ]
           ParseParse.where("Workload", cond, (workload, data) ->
-            console.log data
-            console.log workload.id # ここが上書きされてしまう問題
-            workload.set('number', data.length + 1)
             workload.save()
           , workload)
 
