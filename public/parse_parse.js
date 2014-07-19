@@ -4,8 +4,11 @@
 
     ParseParse.find = function(model_name, id, callback) {};
 
-    ParseParse.where = function(model_name, cond, callback) {
+    ParseParse.where = function(model_name, cond, callback, instance) {
       var Model, c, query, _i, _len;
+      if (instance == null) {
+        instance = null;
+      }
       Model = Parse.Object.extend(model_name);
       query = new Parse.Query(Model);
       for (_i = 0, _len = cond.length; _i < _len; _i++) {
@@ -23,7 +26,11 @@
       query.descending("createdAt");
       return query.find({
         success: function(data) {
-          return callback(data);
+          if (instance) {
+            return callback(data);
+          } else {
+            return callback(instance, data);
+          }
         },
         error: function(error) {
           return console.log(error);

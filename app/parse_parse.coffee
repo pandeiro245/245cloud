@@ -1,7 +1,7 @@
 class @ParseParse
   @find: (model_name, id, callback) ->
 
-  @where: (model_name, cond, callback) ->
+  @where: (model_name, cond, callback, instance=null) ->
     Model = Parse.Object.extend(model_name)
     query = new Parse.Query(Model)
     for c in cond
@@ -16,7 +16,10 @@ class @ParseParse
     query.descending("createdAt")
     query.find({
       success: (data) ->
-        callback(data)
+        if instance
+          callback(data)
+        else
+          callback(instance, data)
       error: (error) ->
         console.log error
     })
@@ -30,7 +33,6 @@ class @ParseParse
     })
 
   @find_or_create: (model_name, key_params, params, callback) ->
-
 
   @create: (model_name, params, callback=null) ->
     Model = Parse.Object.extend(model_name)

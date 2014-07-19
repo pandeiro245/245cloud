@@ -63,12 +63,16 @@ init = () ->
     twitters = {}
     for twitter in res
       twitters[twitter.attributes.twitter_id] = twitter.attributes
-    ParseParse.where("Workload", [["is_done", true], ['host', '245cloud.com']], (workloads) ->
+    cond = [
+      ["is_done", true]
+      ['host', '245cloud.com']
+    ]
+    ParseParse.where("Workload", cond, (workloads) ->
       date = ""
       for workload in workloads
         w = workload.attributes
         t = new Date(workload.createdAt)
-        month = t.getMonth()
+        month = t.getMonth() + 1
         day   = t.getDate()
         hour  = Util.zero(t.getHours())
         min   = Util.zero(t.getMinutes())
@@ -76,9 +80,29 @@ init = () ->
         if date != i
           $("#logs").append("<h2>#{i}</h2>")
         date = i
+
+        unless w.number
+          first = new Date(workload.createdAt)
+          first = first.getTime() - first.getHours()*60*60*1000 - first.getMinutes()*60*1000 - first.getSeconds() * 1000
+          first = new Date(first)
+          cond = [
+            ["is_done", true]
+            ['host', '245cloud.com']
+            ['twitter_id', w.twitter_id]
+            ["createdAt", workload.createdAt, 'lessThan']
+            ["createdAt", first, 'greaterThan']
+          ]
+          ParseParse.where("Workload", cond, (workload, data) ->
+            console.log data
+            console.log workload.id # ここが上書きされてしまう問題
+            workload.set('number', data.length + 1)
+            workload.save()
+          , workload)
+
         $("#logs").append("""
           #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div style=\"display:inline; border: 1px solid #000; padding:20px; text-align:center; vertical-align:middle;\">no image</div>'}
-          <img src=\"#{twitters[w.twitter_id].twitter_image}\" />@#{hour}:#{min}<br />
+          <img src=\"#{twitters[w.twitter_id].twitter_image}\" />
+          <span id=\"workload_#{workload.id}\">#{w.number}</span>回目@#{hour}:#{min}<br />
           #{w.title} <br />
           <a href=\"##{w.sc_id}\" class='fixed_start btn btn-default'>この曲で集中する</a>
           <hr />

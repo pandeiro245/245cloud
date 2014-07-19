@@ -64,20 +64,21 @@
     $("#logs").append("<hr />");
     $("#logs").append("<h2>DONE</h2>");
     ParseParse.all("Twitter", function(res) {
-      var twitter, twitters, _j, _len1;
+      var cond, twitter, twitters, _j, _len1;
       twitters = {};
       for (_j = 0, _len1 = res.length; _j < _len1; _j++) {
         twitter = res[_j];
         twitters[twitter.attributes.twitter_id] = twitter.attributes;
       }
-      return ParseParse.where("Workload", [["is_done", true], ['host', '245cloud.com']], function(workloads) {
-        var date, day, hour, i, min, month, t, w, workload, _k, _len2;
+      cond = [["is_done", true], ['host', '245cloud.com']];
+      return ParseParse.where("Workload", cond, function(workloads) {
+        var date, day, first, hour, i, min, month, t, w, workload, _k, _len2;
         date = "";
         for (_k = 0, _len2 = workloads.length; _k < _len2; _k++) {
           workload = workloads[_k];
           w = workload.attributes;
           t = new Date(workload.createdAt);
-          month = t.getMonth();
+          month = t.getMonth() + 1;
           day = t.getDate();
           hour = Util.zero(t.getHours());
           min = Util.zero(t.getMinutes());
@@ -86,7 +87,19 @@
             $("#logs").append("<h2>" + i + "</h2>");
           }
           date = i;
-          $("#logs").append("" + (w.artwork_url ? '<img src=\"' + w.artwork_url + '\" />' : '<div style=\"display:inline; border: 1px solid #000; padding:20px; text-align:center; vertical-align:middle;\">no image</div>') + "\n<img src=\"" + twitters[w.twitter_id].twitter_image + "\" />@" + hour + ":" + min + "<br />\n" + w.title + " <br />\n<a href=\"#" + w.sc_id + "\" class='fixed_start btn btn-default'>この曲で集中する</a>\n<hr />");
+          if (!w.number) {
+            first = new Date(workload.createdAt);
+            first = first.getTime() - first.getHours() * 60 * 60 * 1000 - first.getMinutes() * 60 * 1000 - first.getSeconds() * 1000;
+            first = new Date(first);
+            cond = [["is_done", true], ['host', '245cloud.com'], ['twitter_id', w.twitter_id], ["createdAt", workload.createdAt, 'lessThan'], ["createdAt", first, 'greaterThan']];
+            ParseParse.where("Workload", cond, function(workload, data) {
+              console.log(data);
+              console.log(workload.id);
+              workload.set('number', data.length + 1);
+              return workload.save();
+            }, workload);
+          }
+          $("#logs").append("" + (w.artwork_url ? '<img src=\"' + w.artwork_url + '\" />' : '<div style=\"display:inline; border: 1px solid #000; padding:20px; text-align:center; vertical-align:middle;\">no image</div>') + "\n<img src=\"" + twitters[w.twitter_id].twitter_image + "\" />\n<span id=\"workload_" + workload.id + "\">" + w.number + "</span>回目@" + hour + ":" + min + "<br />\n" + w.title + " <br />\n<a href=\"#" + w.sc_id + "\" class='fixed_start btn btn-default'>この曲で集中する</a>\n<hr />");
         }
         return $('.fixed_start').click(function() {
           return start($(this).attr('href').replace(/^#/, ''));
