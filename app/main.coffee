@@ -24,8 +24,6 @@ init = () ->
   ruffnote(13475, 'header')
   ruffnote(13477, 'footer')
 
-  $("#doing").append("<h2>NOW DOING</h2>")
-
   ParseParse.all("Twitter", (res) ->
     twitters = {}
     for twitter in res
@@ -37,6 +35,8 @@ init = () ->
       ["createdAt", t, 'greaterThan']
     ]
     ParseParse.where("Workload", cond, (workloads) ->
+      if workloads.length > 0
+        $("#doing").append("<h2>NOW DOING</h2>")
       for workload in workloads
         w = workload.attributes
         t = new Date(workload.createdAt)

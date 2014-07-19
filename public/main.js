@@ -32,7 +32,6 @@
     }
     ruffnote(13475, 'header');
     ruffnote(13477, 'footer');
-    $("#doing").append("<h2>NOW DOING</h2>");
     ParseParse.all("Twitter", function(res) {
       var cond, t, twitter, twitters, _j, _len1;
       twitters = {};
@@ -44,6 +43,9 @@
       cond = [["is_done", null], ['host', '245cloud.com'], ["createdAt", t, 'greaterThan']];
       return ParseParse.where("Workload", cond, function(workloads) {
         var diff, hour, min, now, w, workload, _k, _len2;
+        if (workloads.length > 0) {
+          $("#doing").append("<h2>NOW DOING</h2>");
+        }
         for (_k = 0, _len2 = workloads.length; _k < _len2; _k++) {
           workload = workloads[_k];
           w = workload.attributes;
