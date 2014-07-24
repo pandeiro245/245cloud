@@ -1,13 +1,8 @@
 (function() {
-  var addAccesslog, complete, init, play, ruffnote, start;
+  var complete, initStart, initTwLogin, play, ruffnote, showDoing, showLogs, start;
 
   $(function() {
-    return init();
-  });
-
-  init = function() {
-    var $body, $item, $start, app_id, id, key, _i, _len, _ref;
-    console.log('init');
+    var app_id, key;
     if (location.href.match(/^http:\/\/245cloud.com/)) {
       app_id = "8QzCMkUbx7TyEApZjDRlhpLQ2OUj0sQWTnkEExod";
       key = "gzlnFfIOoLFQzQ08bU4mxkhAHcSqEok3rox0PBOM";
@@ -17,65 +12,51 @@
     }
     Parse.initialize(app_id, key);
     localStorage['client_id'] = '2b9312964a1619d99082a76ad2d6d8c6';
-    addAccesslog();
-    $body = $('body');
-    $body.attr({
-      style: 'text-align:center;'
-    });
-    $body.html('');
-    _ref = ['header', 'contents', 'doing', 'logs', 'footer'];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      id = _ref[_i];
-      $item = $('<div></div>');
-      $item.attr('id', id);
-      $body.append($item);
-    }
+    ParseParse.addAccesslog();
+    Util.scaffolds(['header', 'contents', 'doing', 'logs', 'footer']);
     ruffnote(13475, 'header');
     ruffnote(13477, 'footer');
-    ParseParse.all("Twitter", function(res) {
-      var cond, t, twitter, twitters, _j, _len1;
-      twitters = {};
-      for (_j = 0, _len1 = res.length; _j < _len1; _j++) {
-        twitter = res[_j];
-        twitters[twitter.attributes.twitter_id] = twitter.attributes;
-      }
-      t = new Date((new Date()).getTime() - 24 * 60 * 1000);
-      cond = [["is_done", null], ['host', '245cloud.com'], ["createdAt", t, 'greaterThan']];
-      return ParseParse.where("Workload", cond, function(workloads) {
-        var diff, hour, min, now, w, workload, _k, _len2;
-        if (workloads.length > 0) {
-          $("#doing").append("<h2>NOW DOING</h2>");
-        }
-        for (_k = 0, _len2 = workloads.length; _k < _len2; _k++) {
-          workload = workloads[_k];
-          w = workload.attributes;
-          t = new Date(workload.createdAt);
-          hour = Util.zero(t.getHours());
-          min = Util.zero(t.getMinutes());
-          now = new Date();
-          diff = 24 * 60 * 1000 + t.getTime() - now.getTime();
-          $("#doing").append("" + (w.artwork_url ? '<img src=\"' + w.artwork_url + '\" />' : '<div style=\"display:inline; border: 1px solid #000; padding:20px; text-align:center; vertical-align:middle;\">no image</div>') + "\n<img src=\"" + twitters[w.twitter_id].twitter_image + "\" />@" + hour + "時" + min + "分（あと" + (Util.time(diff)) + "）<br />\n" + w.title + " <br />\n<a href=\"#" + w.sc_id + "\" class='fixed_start btn btn-default'>この曲で集中する</a>\n<hr />");
-        }
-        return $('.fixed_start').click(function() {
-          return start();
-        });
+    showDoing();
+    showLogs();
+    return initStart();
+  });
+
+  initStart = function() {
+    var $start;
+    if (localStorage['twitter_id']) {
+      $start = $('<input>').attr('type', 'submit');
+      $start.attr('id', 'start').attr('value', '曲お任せで24分間集中する！！').attr('type', 'submit');
+      $start.attr('class', 'btn btn-default');
+      $('#contents').html($start);
+      return $('#start').click(function() {
+        return start();
       });
-    });
+    } else {
+      $start = $('<a></a>').html('Twitterログイン');
+      $start.attr('href', '/auth/twitter');
+      $start.attr('class', 'btn btn-default');
+      return $('#contents').html($start);
+    }
+  };
+
+  initTwLogin = function() {};
+
+  showLogs = function() {
     $("#logs").append("<hr />");
     $("#logs").append("<h2>DONE</h2>");
-    ParseParse.all("Twitter", function(res) {
-      var cond, twitter, twitters, _j, _len1;
+    return ParseParse.all("Twitter", function(res) {
+      var cond, twitter, twitters, _i, _len;
       twitters = {};
-      for (_j = 0, _len1 = res.length; _j < _len1; _j++) {
-        twitter = res[_j];
+      for (_i = 0, _len = res.length; _i < _len; _i++) {
+        twitter = res[_i];
         twitters[twitter.attributes.twitter_id] = twitter.attributes;
       }
       cond = [["is_done", true], ['host', '245cloud.com']];
       return ParseParse.where("Workload", cond, function(workloads) {
-        var date, day, first, hour, i, min, month, t, w, workload, _k, _len2;
+        var date, day, first, hour, i, min, month, t, w, workload, _j, _len1;
         date = "";
-        for (_k = 0, _len2 = workloads.length; _k < _len2; _k++) {
-          workload = workloads[_k];
+        for (_j = 0, _len1 = workloads.length; _j < _len1; _j++) {
+          workload = workloads[_j];
           w = workload.attributes;
           t = new Date(workload.createdAt);
           month = t.getMonth() + 1;
@@ -107,17 +88,27 @@
         });
       });
     });
-    if (localStorage['twitter_id']) {
-      $start = $('<input>').attr('type', 'submit');
-      $start.attr('id', 'start').attr('value', '曲お任せで24分間集中する！！').attr('type', 'submit');
-    } else {
-      $start = $('<a></a>').html('Twitterログイン');
-      $start.attr('href', '/auth/twitter');
-    }
-    $start.attr('class', 'btn btn-default');
-    $('#contents').html($start);
-    return $('#start').click(function() {
-      return start();
+  };
+
+  showDoing = function() {
+    return ParseParse.where("Workload", cond, function(workloads) {
+      var diff, hour, min, now, t, w, workload, _i, _len;
+      if (workloads.length > 0) {
+        $("#doing").append("<h2>NOW DOING</h2>");
+      }
+      for (_i = 0, _len = workloads.length; _i < _len; _i++) {
+        workload = workloads[_i];
+        w = workload.attributes;
+        t = new Date(workload.createdAt);
+        hour = Util.zero(t.getHours());
+        min = Util.zero(t.getMinutes());
+        now = new Date();
+        diff = 24 * 60 * 1000 + t.getTime() - now.getTime();
+        $("#doing").append("" + (w.artwork_url ? '<img src=\"' + w.artwork_url + '\" />' : '<div class=\"noimage\">no image</div>') + "\n<img src=\"" + twitters[w.twitter_id].twitter_image + "\" />@" + hour + "時" + min + "分（あと" + (Util.time(diff)) + "）<br />\n" + w.title + " <br />\n<a href=\"#" + w.sc_id + "\" class='fixed_start btn btn-default'>この曲で集中する</a>\n<hr />");
+      }
+      return $('.fixed_start').click(function() {
+        return start();
+      });
     });
   };
 
@@ -289,15 +280,7 @@
   };
 
   ruffnote = function(id, dom) {
-    console.log('ruffnote');
     return Ruffnote.fetch("pandeiro245/245cloud/" + id, dom);
-  };
-
-  addAccesslog = function() {
-    console.log('addAccesslog');
-    return ParseParse.create('Accesslog', Util.addTwitterInfo({
-      url: location.href
-    }));
   };
 
 }).call(this);

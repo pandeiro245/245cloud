@@ -50,3 +50,11 @@ class @ParseParse
           callback(model)
       }
     )
+
+  @addAccesslog: () ->
+    console.log 'addAccesslog'
+    ParseParse.create('Accesslog',
+      Util.addTwitterInfo({
+        url: location.href
+      })
+    )

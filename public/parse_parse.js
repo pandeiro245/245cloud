@@ -77,6 +77,13 @@
       });
     };
 
+    ParseParse.addAccesslog = function() {
+      console.log('addAccesslog');
+      return ParseParse.create('Accesslog', Util.addTwitterInfo({
+        url: location.href
+      }));
+    };
+
     return ParseParse;
 
   })();

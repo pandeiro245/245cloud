@@ -1,8 +1,4 @@
 $ ->
-  init()
-
-init = () ->
-  console.log 'init'
   if location.href.match(/^http:\/\/245cloud.com/)
     app_id  = "8QzCMkUbx7TyEApZjDRlhpLQ2OUj0sQWTnkEExod"
     key = "gzlnFfIOoLFQzQ08bU4mxkhAHcSqEok3rox0PBOM"
@@ -11,52 +7,33 @@ init = () ->
     key = "yYO5mVgOdcCSiGMyog7vDp2PzTHqukuFGYnZU9wU"
   Parse.initialize(app_id, key)
   localStorage['client_id'] = '2b9312964a1619d99082a76ad2d6d8c6'
-  addAccesslog()
-  $body = $('body')
-  $body.attr(style: 'text-align:center;')
-
-  $body.html('')
-  for id in ['header', 'contents', 'doing', 'logs', 'footer']
-    $item = $('<div></div>')
-    $item.attr('id', id)
-    $body.append($item)
-
+  ParseParse.addAccesslog()
+  Util.scaffolds(['header', 'contents', 'doing', 'logs', 'footer'])
   ruffnote(13475, 'header')
   ruffnote(13477, 'footer')
+  showDoing()
+  showLogs()
+  initStart()
 
-  ParseParse.all("Twitter", (res) ->
-    twitters = {}
-    for twitter in res
-      twitters[twitter.attributes.twitter_id] = twitter.attributes
-    t = new Date((new Date()).getTime() - 24*60*1000)
-    cond = [
-      ["is_done", null],
-      ['host', '245cloud.com'],
-      ["createdAt", t, 'greaterThan']
-    ]
-    ParseParse.where("Workload", cond, (workloads) ->
-      if workloads.length > 0
-        $("#doing").append("<h2>NOW DOING</h2>")
-      for workload in workloads
-        w = workload.attributes
-        t = new Date(workload.createdAt)
-        hour = Util.zero(t.getHours())
-        min = Util.zero(t.getMinutes())
-        now = new Date()
-        diff = 24*60*1000 + t.getTime() - now.getTime()
-        $("#doing").append("""
-          #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div style=\"display:inline; border: 1px solid #000; padding:20px; text-align:center; vertical-align:middle;\">no image</div>'}
-          <img src=\"#{twitters[w.twitter_id].twitter_image}\" />@#{hour}時#{min}分（あと#{Util.time(diff)}）<br />
-          #{w.title} <br />
-          <a href=\"##{w.sc_id}\" class='fixed_start btn btn-default'>この曲で集中する</a>
-          <hr />
-        """)
-      $('.fixed_start').click(() ->
-        start()
-      )
+initStart = () ->
+  if localStorage['twitter_id']
+    $start = $('<input>').attr('type', 'submit')
+    $start.attr('id', 'start').attr('value', '曲お任せで24分間集中する！！').attr('type', 'submit')
+    $start.attr('class', 'btn btn-default')
+    $('#contents').html($start)
+    $('#start').click(() ->
+      start()
     )
-  )
+  else
+    $start = $('<a></a>').html('Twitterログイン')
+    $start.attr('href', '/auth/twitter')
+    $start.attr('class', 'btn btn-default')
+    $('#contents').html($start)
 
+
+initTwLogin = () ->
+
+showLogs = () ->
   $("#logs").append("<hr />")
   $("#logs").append("<h2>DONE</h2>")
   ParseParse.all("Twitter", (res) ->
@@ -113,16 +90,27 @@ init = () ->
     )
   )
 
-  if localStorage['twitter_id']
-    $start = $('<input>').attr('type', 'submit')
-    $start.attr('id', 'start').attr('value', '曲お任せで24分間集中する！！').attr('type', 'submit')
-  else
-    $start = $('<a></a>').html('Twitterログイン')
-    $start.attr('href', '/auth/twitter')
-  $start.attr('class', 'btn btn-default')
-  $('#contents').html($start)
-  $('#start').click(() ->
-    start()
+showDoing = () ->
+  ParseParse.where("Workload", cond, (workloads) ->
+    if workloads.length > 0
+      $("#doing").append("<h2>NOW DOING</h2>")
+    for workload in workloads
+      w = workload.attributes
+      t = new Date(workload.createdAt)
+      hour = Util.zero(t.getHours())
+      min = Util.zero(t.getMinutes())
+      now = new Date()
+      diff = 24*60*1000 + t.getTime() - now.getTime()
+      $("#doing").append("""
+        #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div class=\"noimage\">no image</div>'}
+        <img src=\"#{twitters[w.twitter_id].twitter_image}\" />@#{hour}時#{min}分（あと#{Util.time(diff)}）<br />
+        #{w.title} <br />
+        <a href=\"##{w.sc_id}\" class='fixed_start btn btn-default'>この曲で集中する</a>
+        <hr />
+      """)
+    $('.fixed_start').click(() ->
+      start()
+    )
   )
 
 start = (sc_id=null) ->
@@ -262,26 +250,14 @@ window.comment = (body) ->
   t = new Date()
   hour = t.getHours()
   min = t.getMinutes()
-
   $tr = $('<tr></tr>')
-
   img = localStorage['twitter_image']
   $tr.append("<td><img src='#{img}' /><td>")
   $tr.append("<td>#{Util.parseHttp(body)}</td>")
   $tr.append("<td>#{hour}時#{min}分</td>")
-
   $recents.prepend($tr)
 
   $('#comment').val('')
 
 ruffnote = (id, dom) ->
-  console.log 'ruffnote'
   Ruffnote.fetch("pandeiro245/245cloud/#{id}", dom)
-
-addAccesslog = () ->
-  console.log 'addAccesslog'
-  ParseParse.create('Accesslog',
-    Util.addTwitterInfo({
-      url: location.href
-    })
-  )

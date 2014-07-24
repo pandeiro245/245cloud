@@ -4,6 +4,20 @@
   Util = (function() {
     function Util() {}
 
+    Util.scaffolds = function(ids) {
+      var $body, $item, id, _i, _len, _results;
+      $body = $('body');
+      $body.html('');
+      _results = [];
+      for (_i = 0, _len = ids.length; _i < _len; _i++) {
+        id = ids[_i];
+        $item = $('<div></div>');
+        $item.attr('id', id);
+        _results.push($body.append($item));
+      }
+      return _results;
+    };
+
     Util.time = function(mtime) {
       var day, hour, min, month, sec, time;
       if (mtime < 24 * 3600 * 1000) {

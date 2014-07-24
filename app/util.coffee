@@ -1,4 +1,12 @@
 class Util
+  @scaffolds: (ids) ->
+    $body = $('body')
+    $body.html('') # remove contents for SEO
+    for id in ids
+      $item = $('<div></div>')
+      $item.attr('id', id)
+      $body.append($item)
+
   @time: (mtime) ->
     if mtime < 24 * 3600 * 1000
       time = parseInt(mtime/1000)
