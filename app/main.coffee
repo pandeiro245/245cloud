@@ -67,20 +67,22 @@ initLogs = () ->
           ["createdAt", '>', first]
         ]
         ParseParse.where("Workload", cond, (workload, data) ->
+          workload.set('number', data.length + 1)
           workload.save()
         , workload)
 
+      $("#logs").append("""
+        #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div style=\"display:inline; border: 1px solid #000; padding:20px; text-align:center; vertical-align:middle;\">no image</div>'}
+        <img class='twitter_image_#{w.twitter_id}' />
+        <span id=\"workload_#{workload.id}\">#{w.number}</span>回目@#{hour}:#{min}<br />
+        #{w.title} <br />
+        <a href=\"##{w.sc_id}\" class='fixed_start btn btn-default'>この曲で集中する</a>
+        <hr />
+      """)
+
       if w.twitter
         ParseParse.fetch("twitter", workload, (workload, twitter) ->
-          w = workload.attributes
-          $("#logs").append("""
-            #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div style=\"display:inline; border: 1px solid #000; padding:20px; text-align:center; vertical-align:middle;\">no image</div>'}
-            <img src=\"#{twitter.attributes.twitter_image}\" />
-            <span id=\"workload_#{workload.id}\">#{w.number}</span>回目@#{hour}:#{min}<br />
-            #{w.title} <br />
-            <a href=\"##{w.sc_id}\" class='fixed_start btn btn-default'>この曲で集中する</a>
-            <hr />
-          """)
+          $(".twitter_image_#{twitter.get('twitter_id')}").attr('src', twitter.get('twitter_image'))
         )
       else
         cond = [
@@ -166,10 +168,8 @@ play = (sc_id=null) ->
     localStorage['artwork_url'] = track.artwork_url
 
     if localStorage['is_dev']
-      Util.countDown(30*1000, complete)
-      #Util.countDown(24*60*1000, complete)
+      Util.countDown(5*1000, complete)
     else
-      #Util.countDown(track.duration, complete)
       Util.countDown(24*60*1000, complete)
 
     ap = if localStorage['is_dev'] then 'false' else 'true'
