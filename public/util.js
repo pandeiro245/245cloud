@@ -4,6 +4,10 @@
   Util = (function() {
     function Util() {}
 
+    Util.minAgo = function(min) {
+      return new Date((new Date()).getTime() - min * 60 * 1000);
+    };
+
     Util.scaffolds = function(ids) {
       var $body, $item, id, _i, _len, _results;
       $body = $('body');

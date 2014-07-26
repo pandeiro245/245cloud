@@ -1,15 +1,21 @@
 class @ParseParse
   @find: (model_name, id, callback) ->
 
+  @fetch: (model_name, child, callback) ->
+    child.get(model_name).fetch({
+      success: (parent) ->
+        callback(child, parent)
+    })
+
   @where: (model_name, cond, callback, instance=null) ->
     Model = Parse.Object.extend(model_name)
     query = new Parse.Query(Model)
     for c in cond
       if c[2]
-        if c[2] == 'lessThan'
-          query.lessThan(c[0], c[1])
-        else if c[2] == 'greaterThan'
-          query.greaterThan(c[0], c[1])
+        if c[1] == '<'
+          query.lessThan(c[0], c[2])
+        else if c[1] == '>'
+          query.greaterThan(c[0], c[2])
       else
         query.equalTo(c[0], c[1])
 

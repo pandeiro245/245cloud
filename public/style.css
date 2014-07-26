@@ -2,7 +2,12 @@ body {
   text-align: center;
 }
 
-.noimage{
+table {
+  width: 500px;
+  margin: 0 auto;
+}
+
+.noimage {
   display:inline;
   border: 1px solid #000;
   padding:20px;

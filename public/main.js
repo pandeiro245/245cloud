@@ -1,5 +1,5 @@
 (function() {
-  var complete, initStart, initTwLogin, play, ruffnote, showDoing, showLogs, start;
+  var complete, initDoing, initLogs, initStart, play, ruffnote, start;
 
   $(function() {
     var app_id, key;
@@ -16,14 +16,18 @@
     Util.scaffolds(['header', 'contents', 'doing', 'logs', 'footer']);
     ruffnote(13475, 'header');
     ruffnote(13477, 'footer');
-    showDoing();
-    showLogs();
+    initDoing();
+    initLogs();
     return initStart();
   });
 
   initStart = function() {
     var $start;
+    console.log('initStart');
     if (localStorage['twitter_id']) {
+      ParseParse.where('Twitter', ['twitter_id', localStorage['twitter_id']], function(twitters) {
+        return window.twitter = twitters[0];
+      });
       $start = $('<input>').attr('type', 'submit');
       $start.attr('id', 'start').attr('value', '曲お任せで24分間集中する！！').attr('type', 'submit');
       $start.attr('class', 'btn btn-default');
@@ -39,72 +43,82 @@
     }
   };
 
-  initTwLogin = function() {};
-
-  showLogs = function() {
+  initLogs = function() {
+    var cond;
+    console.log('initLogs');
     $("#logs").append("<hr />");
     $("#logs").append("<h2>DONE</h2>");
-    return ParseParse.all("Twitter", function(res) {
-      var cond, twitter, twitters, _i, _len;
-      twitters = {};
-      for (_i = 0, _len = res.length; _i < _len; _i++) {
-        twitter = res[_i];
-        twitters[twitter.attributes.twitter_id] = twitter.attributes;
-      }
-      cond = [["is_done", true], ['host', '245cloud.com']];
-      return ParseParse.where("Workload", cond, function(workloads) {
-        var date, day, first, hour, i, min, month, t, w, workload, _j, _len1;
-        date = "";
-        for (_j = 0, _len1 = workloads.length; _j < _len1; _j++) {
-          workload = workloads[_j];
-          w = workload.attributes;
-          t = new Date(workload.createdAt);
-          month = t.getMonth() + 1;
-          day = t.getDate();
-          hour = Util.zero(t.getHours());
-          min = Util.zero(t.getMinutes());
-          i = "" + month + "月" + day + "日";
-          if (date !== i) {
-            $("#logs").append("<h2>" + i + "</h2>");
-          }
-          date = i;
-          if (!w.number) {
-            first = new Date(workload.createdAt);
-            first = first.getTime() - first.getHours() * 60 * 60 * 1000 - first.getMinutes() * 60 * 1000 - first.getSeconds() * 1000;
-            first = new Date(first);
-            cond = [["is_done", true], ['host', '245cloud.com'], ['twitter_id', w.twitter_id], ["createdAt", workload.createdAt, 'lessThan'], ["createdAt", first, 'greaterThan']];
-            ParseParse.where("Workload", cond, function(workload, data) {
-              return workload.save();
-            }, workload);
-          }
-          $("#logs").append("" + (w.artwork_url ? '<img src=\"' + w.artwork_url + '\" />' : '<div style=\"display:inline; border: 1px solid #000; padding:20px; text-align:center; vertical-align:middle;\">no image</div>') + "\n<img src=\"" + twitters[w.twitter_id].twitter_image + "\" />\n<span id=\"workload_" + workload.id + "\">" + w.number + "</span>回目@" + hour + ":" + min + "<br />\n" + w.title + " <br />\n<a href=\"#" + w.sc_id + "\" class='fixed_start btn btn-default'>この曲で集中する</a>\n<hr />");
+    cond = [["is_done", true]];
+    return ParseParse.where("Workload", cond, function(workloads) {
+      var date, day, first, hour, i, min, month, t, w, workload, _i, _len;
+      date = "";
+      for (_i = 0, _len = workloads.length; _i < _len; _i++) {
+        workload = workloads[_i];
+        w = workload.attributes;
+        t = new Date(workload.createdAt);
+        month = t.getMonth() + 1;
+        day = t.getDate();
+        hour = Util.zero(t.getHours());
+        min = Util.zero(t.getMinutes());
+        i = "" + month + "月" + day + "日";
+        if (date !== i) {
+          $("#logs").append("<h2>" + i + "</h2>");
         }
-        return $('.fixed_start').click(function() {
-          if (localStorage['twitter_id']) {
-            return start($(this).attr('href').replace(/^#/, ''));
-          } else {
-            return alert('Twitterログインをお願いします！');
-          }
-        });
+        date = i;
+        if (!w.number) {
+          first = new Date(workload.createdAt);
+          first = first.getTime() - first.getHours() * 60 * 60 * 1000 - first.getMinutes() * 60 * 1000 - first.getSeconds() * 1000;
+          first = new Date(first);
+          cond = [["is_done", true], ['twitter_id', w.twitter_id], ["createdAt", '<', workload.createdAt], ["createdAt", '>', first]];
+          ParseParse.where("Workload", cond, function(workload, data) {
+            return workload.save();
+          }, workload);
+        }
+        if (w.twitter) {
+          ParseParse.fetch("twitter", workload, function(workload, twitter) {
+            w = workload.attributes;
+            return $("#logs").append("" + (w.artwork_url ? '<img src=\"' + w.artwork_url + '\" />' : '<div style=\"display:inline; border: 1px solid #000; padding:20px; text-align:center; vertical-align:middle;\">no image</div>') + "\n<img src=\"" + twitter.attributes.twitter_image + "\" />\n<span id=\"workload_" + workload.id + "\">" + w.number + "</span>回目@" + hour + ":" + min + "<br />\n" + w.title + " <br />\n<a href=\"#" + w.sc_id + "\" class='fixed_start btn btn-default'>この曲で集中する</a>\n<hr />");
+          });
+        } else {
+          cond = [['twitter_id', w.twitter_id]];
+          ParseParse.where('Twitter', cond, function(workload, twitters) {
+            workload.set('twitter', twitters[0]);
+            return workload.save();
+          }, workload);
+        }
+      }
+      return $('.fixed_start').click(function() {
+        if (localStorage['twitter_id']) {
+          return start($(this).attr('href').replace(/^#/, ''));
+        } else {
+          return alert('Twitterログインをお願いします！');
+        }
       });
     });
   };
 
-  showDoing = function() {
+  initDoing = function() {
+    var cond;
+    cond = [["is_done", null], ["createdAt", '>', Util.minAgo(24)]];
     return ParseParse.where("Workload", cond, function(workloads) {
-      var diff, hour, min, now, t, w, workload, _i, _len;
+      var diff, hour, min, now, t, workload, _i, _len;
       if (workloads.length > 0) {
         $("#doing").append("<h2>NOW DOING</h2>");
       }
       for (_i = 0, _len = workloads.length; _i < _len; _i++) {
         workload = workloads[_i];
-        w = workload.attributes;
         t = new Date(workload.createdAt);
         hour = Util.zero(t.getHours());
         min = Util.zero(t.getMinutes());
         now = new Date();
         diff = 24 * 60 * 1000 + t.getTime() - now.getTime();
-        $("#doing").append("" + (w.artwork_url ? '<img src=\"' + w.artwork_url + '\" />' : '<div class=\"noimage\">no image</div>') + "\n<img src=\"" + twitters[w.twitter_id].twitter_image + "\" />@" + hour + "時" + min + "分（あと" + (Util.time(diff)) + "）<br />\n" + w.title + " <br />\n<a href=\"#" + w.sc_id + "\" class='fixed_start btn btn-default'>この曲で集中する</a>\n<hr />");
+        workload.get("twitter").fetch({
+          success: function(twitter) {
+            var w;
+            w = workload.attributes;
+            return $("#doing").append("" + (w.artwork_url ? '<img src=\"' + w.artwork_url + '\" />' : '<div class=\"noimage\">no image</div>') + "\n<img src=\"" + (twitter.get('twitter_image')) + "\" />@" + hour + "時" + min + "分（あと" + (Util.time(diff)) + "）<br />\n" + w.title + " <br />\n<a href=\"#" + w.sc_id + "\" class='fixed_start btn btn-default'>この曲で集中する</a>\n<hr />");
+          }
+        }, workload);
       }
       return $('.fixed_start').click(function() {
         return start();
@@ -152,6 +166,7 @@
         key = _ref[_i];
         params[key] = localStorage[key];
       }
+      params['twitter'] = window.twitter;
       _ref1 = ['title', 'artwork_url'];
       for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
         key = _ref1[_j];
@@ -163,7 +178,7 @@
       });
       localStorage['artwork_url'] = track.artwork_url;
       if (localStorage['is_dev']) {
-        Util.countDown(5 * 1000, complete);
+        Util.countDown(30 * 1000, complete);
       } else {
         Util.countDown(24 * 60 * 1000, complete);
       }
@@ -178,7 +193,7 @@
     window.workload.set('is_done', true);
     window.workload.save();
     localStorage['nishiko_end'] = (new Date()).getTime();
-    $note = $('<table></table').attr('id', 'note').addClass('table').attr('style', 'width: 500px; margin: 0 auto;');
+    $note = $('<table></table>').attr('id', 'note').addClass('table');
     $note.html('24分おつかれさまでした！5分間交換ノートが見られます');
     $recents = $('<div></div>').attr('class', 'recents');
     $note.append($recents);

@@ -1,4 +1,8 @@
 class Util
+
+  @minAgo: (min) ->
+    new Date((new Date()).getTime() - min*60*1000)
+
   @scaffolds: (ids) ->
     $body = $('body')
     $body.html('') # remove contents for SEO

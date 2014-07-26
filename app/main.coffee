@@ -11,12 +11,16 @@ $ ->
   Util.scaffolds(['header', 'contents', 'doing', 'logs', 'footer'])
   ruffnote(13475, 'header')
   ruffnote(13477, 'footer')
-  showDoing()
-  showLogs()
+  initDoing()
+  initLogs()
   initStart()
 
 initStart = () ->
-  if localStorage['twitter_id']
+  console.log 'initStart'
+  if localStorage['twitter_id'] #TODO must be parse.com key, not twitter_id
+    ParseParse.where('Twitter', ['twitter_id', localStorage['twitter_id']], (twitters) ->
+      window.twitter = twitters[0]
+    )
     $start = $('<input>').attr('type', 'submit')
     $start.attr('id', 'start').attr('value', '曲お任せで24分間集中する！！').attr('type', 'submit')
     $start.attr('class', 'btn btn-default')
@@ -30,84 +34,96 @@ initStart = () ->
     $start.attr('class', 'btn btn-default')
     $('#contents').html($start)
 
-
-initTwLogin = () ->
-
-showLogs = () ->
+initLogs = () ->
+  console.log 'initLogs'
   $("#logs").append("<hr />")
   $("#logs").append("<h2>DONE</h2>")
-  ParseParse.all("Twitter", (res) ->
-    twitters = {}
-    for twitter in res
-      twitters[twitter.attributes.twitter_id] = twitter.attributes
-    cond = [
-      ["is_done", true]
-      ['host', '245cloud.com']
-    ]
-    ParseParse.where("Workload", cond, (workloads) ->
-      date = ""
-      for workload in workloads
-        w = workload.attributes
-        t = new Date(workload.createdAt)
-        month = t.getMonth() + 1
-        day   = t.getDate()
-        hour  = Util.zero(t.getHours())
-        min   = Util.zero(t.getMinutes())
-        i = "#{month}月#{day}日"
-        if date != i
-          $("#logs").append("<h2>#{i}</h2>")
-        date = i
 
-        unless w.number
-          first = new Date(workload.createdAt)
-          first = first.getTime() - first.getHours()*60*60*1000 - first.getMinutes()*60*1000 - first.getSeconds() * 1000
-          first = new Date(first)
-          cond = [
-            ["is_done", true]
-            ['host', '245cloud.com']
-            ['twitter_id', w.twitter_id]
-            ["createdAt", workload.createdAt, 'lessThan']
-            ["createdAt", first, 'greaterThan']
-          ]
-          ParseParse.where("Workload", cond, (workload, data) ->
-            workload.save()
-          , workload)
+  cond = [
+    ["is_done", true]
+  ]
+  ParseParse.where("Workload", cond, (workloads) ->
+    date = ""
+    for workload in workloads
+      w = workload.attributes
+      t = new Date(workload.createdAt)
+      month = t.getMonth() + 1
+      day   = t.getDate()
+      hour  = Util.zero(t.getHours())
+      min   = Util.zero(t.getMinutes())
+      i = "#{month}月#{day}日"
+      if date != i
+        $("#logs").append("<h2>#{i}</h2>")
+      date = i
 
-        $("#logs").append("""
-          #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div style=\"display:inline; border: 1px solid #000; padding:20px; text-align:center; vertical-align:middle;\">no image</div>'}
-          <img src=\"#{twitters[w.twitter_id].twitter_image}\" />
-          <span id=\"workload_#{workload.id}\">#{w.number}</span>回目@#{hour}:#{min}<br />
-          #{w.title} <br />
-          <a href=\"##{w.sc_id}\" class='fixed_start btn btn-default'>この曲で集中する</a>
-          <hr />
-        """)
-      $('.fixed_start').click(() ->
-        if localStorage['twitter_id']
-          start($(this).attr('href').replace(/^#/,''))
-        else
-          alert 'Twitterログインをお願いします！'
-      )
+      unless w.number
+        first = new Date(workload.createdAt)
+        first = first.getTime() - first.getHours()*60*60*1000 - first.getMinutes()*60*1000 - first.getSeconds() * 1000
+        first = new Date(first)
+        cond = [
+          ["is_done", true]
+          ['twitter_id', w.twitter_id]
+          ["createdAt", '<', workload.createdAt]
+          ["createdAt", '>', first]
+        ]
+        ParseParse.where("Workload", cond, (workload, data) ->
+          workload.save()
+        , workload)
+
+      if w.twitter
+        ParseParse.fetch("twitter", workload, (workload, twitter) ->
+          w = workload.attributes
+          $("#logs").append("""
+            #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div style=\"display:inline; border: 1px solid #000; padding:20px; text-align:center; vertical-align:middle;\">no image</div>'}
+            <img src=\"#{twitter.attributes.twitter_image}\" />
+            <span id=\"workload_#{workload.id}\">#{w.number}</span>回目@#{hour}:#{min}<br />
+            #{w.title} <br />
+            <a href=\"##{w.sc_id}\" class='fixed_start btn btn-default'>この曲で集中する</a>
+            <hr />
+          """)
+        )
+      else
+        cond = [
+          ['twitter_id', w.twitter_id]
+        ]
+        ParseParse.where('Twitter', cond, (workload, twitters) ->
+          workload.set('twitter', twitters[0])
+          workload.save()
+        , workload)
+
+    $('.fixed_start').click(() ->
+      if localStorage['twitter_id']
+        start($(this).attr('href').replace(/^#/,''))
+      else
+        alert 'Twitterログインをお願いします！'
     )
   )
 
-showDoing = () ->
+initDoing = () ->
+  cond = [
+    ["is_done", null]
+    ["createdAt", '>', Util.minAgo(24)]
+  ]
   ParseParse.where("Workload", cond, (workloads) ->
     if workloads.length > 0
       $("#doing").append("<h2>NOW DOING</h2>")
     for workload in workloads
-      w = workload.attributes
       t = new Date(workload.createdAt)
       hour = Util.zero(t.getHours())
       min = Util.zero(t.getMinutes())
       now = new Date()
       diff = 24*60*1000 + t.getTime() - now.getTime()
-      $("#doing").append("""
-        #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div class=\"noimage\">no image</div>'}
-        <img src=\"#{twitters[w.twitter_id].twitter_image}\" />@#{hour}時#{min}分（あと#{Util.time(diff)}）<br />
-        #{w.title} <br />
-        <a href=\"##{w.sc_id}\" class='fixed_start btn btn-default'>この曲で集中する</a>
-        <hr />
-      """)
+      workload.get("twitter").fetch({
+        success: (twitter) ->
+          w = workload.attributes
+          $("#doing").append("""
+            #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div class=\"noimage\">no image</div>'}
+            <img src=\"#{twitter.get('twitter_image')}\" />@#{hour}時#{min}分（あと#{Util.time(diff)}）<br />
+            #{w.title} <br />
+            <a href=\"##{w.sc_id}\" class='fixed_start btn btn-default'>この曲で集中する</a>
+            <hr />
+          """)
+      }, workload)
     $('.fixed_start').click(() ->
       start()
     )
@@ -139,6 +155,7 @@ play = (sc_id=null) ->
     params = {}
     for key in ['sc_id', 'twitter_id']
       params[key] = localStorage[key]
+    params['twitter'] = window.twitter
     for key in ['title', 'artwork_url']
       params[key] = track[key]
     params['host'] = location.host
@@ -149,7 +166,7 @@ play = (sc_id=null) ->
     localStorage['artwork_url'] = track.artwork_url
 
     if localStorage['is_dev']
-      Util.countDown(5*1000, complete)
+      Util.countDown(30*1000, complete)
       #Util.countDown(24*60*1000, complete)
     else
       #Util.countDown(track.duration, complete)
@@ -167,7 +184,7 @@ complete = () ->
   window.workload.save()
   localStorage['nishiko_end'] = (new Date()).getTime()
 
-  $note = $('<table></table').attr('id', 'note').addClass('table').attr('style', 'width: 500px; margin: 0 auto;')
+  $note = $('<table></table>').attr('id', 'note').addClass('table')
   $note.html('24分おつかれさまでした！5分間交換ノートが見られます')
 
   $recents = $('<div></div>').attr('class', 'recents')
@@ -232,7 +249,6 @@ complete = () ->
           alert "「#{q}」で24分前後の曲はまだ出てないようです...。他のキーワードで探してみてください！"
       )
   )
-
   Util.countDown(5*60*1000, 'finish')
 
 window.finish = () ->

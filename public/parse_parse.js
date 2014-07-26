@@ -4,6 +4,14 @@
 
     ParseParse.find = function(model_name, id, callback) {};
 
+    ParseParse.fetch = function(model_name, child, callback) {
+      return child.get(model_name).fetch({
+        success: function(parent) {
+          return callback(child, parent);
+        }
+      });
+    };
+
     ParseParse.where = function(model_name, cond, callback, instance) {
       var Model, c, query, _i, _len;
       if (instance == null) {
@@ -14,10 +22,10 @@
       for (_i = 0, _len = cond.length; _i < _len; _i++) {
         c = cond[_i];
         if (c[2]) {
-          if (c[2] === 'lessThan') {
-            query.lessThan(c[0], c[1]);
-          } else if (c[2] === 'greaterThan') {
-            query.greaterThan(c[0], c[1]);
+          if (c[1] === '<') {
+            query.lessThan(c[0], c[2]);
+          } else if (c[1] === '>') {
+            query.greaterThan(c[0], c[2]);
           }
         } else {
           query.equalTo(c[0], c[1]);
