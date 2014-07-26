@@ -109,35 +109,55 @@ initDoing = () ->
   ParseParse.where("Workload", cond, (workloads) ->
     if workloads.length > 0
       $("#doing").append("<h2>NOW DOING</h2>")
+    ids = {}
     for workload in workloads
-      t = new Date(workload.createdAt)
-      hour = Util.zero(t.getHours())
-      min = Util.zero(t.getMinutes())
-      now = new Date()
-      diff = 24*60*1000 + t.getTime() - now.getTime()
-      workload.get("twitter").fetch({
-        success: (twitter) ->
-          w = workload.attributes
-          $("#doing").append("""
-            #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div class=\"noimage\">no image</div>'}
-            <img src=\"#{twitter.get('twitter_image')}\" />@#{hour}時#{min}分（あと#{Util.time(diff)}）<br />
-            #{w.title} <br />
-            <a href=\"##{w.sc_id}\" class='fixed_start btn btn-default'>この曲で集中する</a>
-            <hr />
-          """)
-      }, workload)
-    $('.fixed_start').click(() ->
-      start()
-    )
+      twitter_id = workload.get('twitter_id')
+
+      if !ids[twitter_id] && workload.get('twitter')
+        ids[twitter_id] = true
+        if twitter_id == parseInt(localStorage['twitter_id'])
+          #resume
+          start(workload.get('sc_id'), workload)
+        w = workload.attributes
+        t = new Date(workload.createdAt)
+        hour = Util.zero(t.getHours())
+        min = Util.zero(t.getMinutes())
+        now = new Date()
+        diff = 24*60*1000 + t.getTime() - now.getTime()
+
+        $("#doing").append("""
+          #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div class=\"noimage\">no image</div>'}
+          <img class='twitter_image_#{w.twitter_id}' />
+          <span id=\"workload_#{workload.id}\">#{w.number}</span>回目@#{hour}時#{min}分（あと#{Util.time(diff)}）<br />
+          #{w.title} <br />
+          <hr />
+        """)
+
+        if w.twitter
+          ParseParse.fetch("twitter", workload, (workload, twitter) ->
+            $(".twitter_image_#{twitter.get('twitter_id')}").attr('src', twitter.get('twitter_image'))
+          )
+        else
+          cond = [
+            ['twitter_id', w.twitter_id]
+          ]
+          ParseParse.where('Twitter', cond, (workload, twitters) ->
+            workload.set('twitter', twitters[0])
+            workload.save()
+          , workload)
+
+        $('.fixed_start').click(() ->
+          start()
+        )
   )
 
-start = (sc_id=null) ->
+start = (sc_id=null, workload=nil) ->
   console.log 'start'
   $("#logs").hide()
   $start = $('<div></div>').attr('id', 'playing')
   $('#contents').html($start)
   if sc_id
-    play(sc_id)
+    play(sc_id, workload)
     return
   if localStorage['sc_id'] == location.hash.replace(/#/, '') || location.hash.length < 1
     ParseParse.all("Music", (musics) ->
@@ -149,28 +169,34 @@ start = (sc_id=null) ->
   else
     play()
 
-play = (sc_id=null) ->
+play = (sc_id=null, workload=nil) ->
   console.log 'play'
   localStorage['sc_id'] = if sc_id then sc_id else location.hash.replace(/#/, '')
 
   Soundcloud.fetch(localStorage['sc_id'], localStorage['client_id'], (track) ->
-    params = {}
-    for key in ['sc_id', 'twitter_id']
-      params[key] = localStorage[key]
-    params['twitter'] = window.twitter
-    for key in ['title', 'artwork_url']
-      params[key] = track[key]
-    params['host'] = location.host
-    ParseParse.create("Workload", params, (workload) ->
-      window.workload = workload
-    )
+    if workload #resume
+      t = new Date(workload.createdAt)
+      now = new Date()
+      diff = 24*60*1000 + t.getTime() - now.getTime()
+      Util.countDown(diff, complete)
+    else # new
+      params = {}
+      for key in ['sc_id', 'twitter_id']
+        params[key] = localStorage[key]
+      params['twitter'] = window.twitter
+      for key in ['title', 'artwork_url']
+        params[key] = track[key]
+      params['host'] = location.host
+      ParseParse.create("Workload", params, (workload) ->
+        window.workload = workload
+      )
 
-    localStorage['artwork_url'] = track.artwork_url
+      localStorage['artwork_url'] = track.artwork_url
 
-    if localStorage['is_dev']
-      Util.countDown(5*1000, complete)
-    else
-      Util.countDown(24*60*1000, complete)
+      if localStorage['is_dev']
+        Util.countDown(24*60*1000, complete)
+      else
+        Util.countDown(24*60*1000, complete)
 
     ap = if localStorage['is_dev'] then 'false' else 'true'
     $("#playing").html("""

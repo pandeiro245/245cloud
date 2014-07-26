@@ -55,19 +55,18 @@
       if (started == null) {
         started = null;
       }
-      if (!localStorage['countdown_start']) {
-        localStorage['countdown_start'] = (new Date()).getTime();
+      if (!started) {
+        started = (new Date()).getTime();
       }
-      past = (new Date()).getTime() - parseInt(localStorage['countdown_start']);
+      past = (new Date()).getTime() - started;
       if (duration > past) {
         $('title').html(Util.time(duration - past));
         if (callback === 'reload') {
-          return setTimeout("Util.countDown(" + duration + ")", 1000);
+          return setTimeout("Util.countDown(" + duration + ", null, " + started + ")", 1000);
         } else {
-          return setTimeout("Util.countDown(" + duration + ", " + callback + ")", 1000);
+          return setTimeout("Util.countDown(" + duration + ", " + callback + ", " + started + ")", 1000);
         }
       } else {
-        localStorage.removeItem('countdown_start');
         if (callback === 'reload') {
           return location.reload();
         } else {

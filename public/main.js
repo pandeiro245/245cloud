@@ -102,42 +102,63 @@
     var cond;
     cond = [["is_done", null], ["createdAt", '>', Util.minAgo(24)]];
     return ParseParse.where("Workload", cond, function(workloads) {
-      var diff, hour, min, now, t, workload, _i, _len;
+      var diff, hour, ids, min, now, t, twitter_id, w, workload, _i, _len, _results;
       if (workloads.length > 0) {
         $("#doing").append("<h2>NOW DOING</h2>");
       }
+      ids = {};
+      _results = [];
       for (_i = 0, _len = workloads.length; _i < _len; _i++) {
         workload = workloads[_i];
-        t = new Date(workload.createdAt);
-        hour = Util.zero(t.getHours());
-        min = Util.zero(t.getMinutes());
-        now = new Date();
-        diff = 24 * 60 * 1000 + t.getTime() - now.getTime();
-        workload.get("twitter").fetch({
-          success: function(twitter) {
-            var w;
-            w = workload.attributes;
-            return $("#doing").append("" + (w.artwork_url ? '<img src=\"' + w.artwork_url + '\" />' : '<div class=\"noimage\">no image</div>') + "\n<img src=\"" + (twitter.get('twitter_image')) + "\" />@" + hour + "時" + min + "分（あと" + (Util.time(diff)) + "）<br />\n" + w.title + " <br />\n<a href=\"#" + w.sc_id + "\" class='fixed_start btn btn-default'>この曲で集中する</a>\n<hr />");
+        twitter_id = workload.get('twitter_id');
+        if (!ids[twitter_id] && workload.get('twitter')) {
+          ids[twitter_id] = true;
+          if (twitter_id === parseInt(localStorage['twitter_id'])) {
+            start(workload.get('sc_id'), workload);
           }
-        }, workload);
+          w = workload.attributes;
+          t = new Date(workload.createdAt);
+          hour = Util.zero(t.getHours());
+          min = Util.zero(t.getMinutes());
+          now = new Date();
+          diff = 24 * 60 * 1000 + t.getTime() - now.getTime();
+          $("#doing").append("" + (w.artwork_url ? '<img src=\"' + w.artwork_url + '\" />' : '<div class=\"noimage\">no image</div>') + "\n<img class='twitter_image_" + w.twitter_id + "' />\n<span id=\"workload_" + workload.id + "\">" + w.number + "</span>回目@" + hour + "時" + min + "分（あと" + (Util.time(diff)) + "）<br />\n" + w.title + " <br />\n<hr />");
+          if (w.twitter) {
+            ParseParse.fetch("twitter", workload, function(workload, twitter) {
+              return $(".twitter_image_" + (twitter.get('twitter_id'))).attr('src', twitter.get('twitter_image'));
+            });
+          } else {
+            cond = [['twitter_id', w.twitter_id]];
+            ParseParse.where('Twitter', cond, function(workload, twitters) {
+              workload.set('twitter', twitters[0]);
+              return workload.save();
+            }, workload);
+          }
+          _results.push($('.fixed_start').click(function() {
+            return start();
+          }));
+        } else {
+          _results.push(void 0);
+        }
       }
-      return $('.fixed_start').click(function() {
-        return start();
-      });
+      return _results;
     });
   };
 
-  start = function(sc_id) {
+  start = function(sc_id, workload) {
     var $start;
     if (sc_id == null) {
       sc_id = null;
+    }
+    if (workload == null) {
+      workload = nil;
     }
     console.log('start');
     $("#logs").hide();
     $start = $('<div></div>').attr('id', 'playing');
     $('#contents').html($start);
     if (sc_id) {
-      play(sc_id);
+      play(sc_id, workload);
       return;
     }
     if (localStorage['sc_id'] === location.hash.replace(/#/, '') || location.hash.length < 1) {
@@ -153,35 +174,45 @@
     }
   };
 
-  play = function(sc_id) {
+  play = function(sc_id, workload) {
     if (sc_id == null) {
       sc_id = null;
+    }
+    if (workload == null) {
+      workload = nil;
     }
     console.log('play');
     localStorage['sc_id'] = sc_id ? sc_id : location.hash.replace(/#/, '');
     return Soundcloud.fetch(localStorage['sc_id'], localStorage['client_id'], function(track) {
-      var ap, key, params, _i, _j, _len, _len1, _ref, _ref1;
-      params = {};
-      _ref = ['sc_id', 'twitter_id'];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        key = _ref[_i];
-        params[key] = localStorage[key];
-      }
-      params['twitter'] = window.twitter;
-      _ref1 = ['title', 'artwork_url'];
-      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-        key = _ref1[_j];
-        params[key] = track[key];
-      }
-      params['host'] = location.host;
-      ParseParse.create("Workload", params, function(workload) {
-        return window.workload = workload;
-      });
-      localStorage['artwork_url'] = track.artwork_url;
-      if (localStorage['is_dev']) {
-        Util.countDown(5 * 1000, complete);
+      var ap, diff, key, now, params, t, _i, _j, _len, _len1, _ref, _ref1;
+      if (workload) {
+        t = new Date(workload.createdAt);
+        now = new Date();
+        diff = 24 * 60 * 1000 + t.getTime() - now.getTime();
+        Util.countDown(diff, complete);
       } else {
-        Util.countDown(24 * 60 * 1000, complete);
+        params = {};
+        _ref = ['sc_id', 'twitter_id'];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          key = _ref[_i];
+          params[key] = localStorage[key];
+        }
+        params['twitter'] = window.twitter;
+        _ref1 = ['title', 'artwork_url'];
+        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+          key = _ref1[_j];
+          params[key] = track[key];
+        }
+        params['host'] = location.host;
+        ParseParse.create("Workload", params, function(workload) {
+          return window.workload = workload;
+        });
+        localStorage['artwork_url'] = track.artwork_url;
+        if (localStorage['is_dev']) {
+          Util.countDown(24 * 60 * 1000, complete);
+        } else {
+          Util.countDown(24 * 60 * 1000, complete);
+        }
       }
       ap = localStorage['is_dev'] ? 'false' : 'true';
       return $("#playing").html("<iframe width=\"100%\" height=\"400\" scrolling=\"no\" frameborder=\"no\" src=\"https://w.soundcloud.com/player/?visual=true&url=http%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F" + localStorage['sc_id'] + "&show_artwork=true&client_id=" + localStorage['client_id'] + "&auto_play=" + ap + "\"></iframe>");

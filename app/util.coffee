@@ -29,18 +29,17 @@ class Util
     if i < 10 then "0#{i}" else "#{i}"
 
   @countDown: (duration, callback='reload', started=null) ->
-    unless localStorage['countdown_start']
-      localStorage['countdown_start'] = (new Date()).getTime()
-    past = (new Date()).getTime() - parseInt(localStorage['countdown_start'])
+    unless started
+      started = (new Date()).getTime()
+    past = (new Date()).getTime() - started
 
-    if duration > past
+    if duration > past # yet end
       $('title').html(Util.time(duration-past))
       if callback == 'reload'
-        setTimeout("Util.countDown(#{duration})", 1000)
+        setTimeout("Util.countDown(#{duration}, null, #{started})", 1000)
       else
-        setTimeout("Util.countDown(#{duration}, #{callback})", 1000)
-    else
-      localStorage.removeItem('countdown_start')
+        setTimeout("Util.countDown(#{duration}, #{callback}, #{started})", 1000)
+    else # end
       if callback == 'reload'
         location.reload()
       else
