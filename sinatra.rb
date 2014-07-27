@@ -3,6 +3,7 @@ require 'net/http'
 require 'uri'
 require 'dotenv'
 require 'omniauth-twitter'
+require 'coffee-script'
 
 Dotenv.load
 
@@ -10,6 +11,10 @@ configure do
   set :sessions, true
   set :inline_templates, true
   set :session_secret, ENV['SESSIONSECRET']
+end
+
+get "/:filename.js" do
+  coffee params[:filename].to_sym
 end
 
 get '/' do
