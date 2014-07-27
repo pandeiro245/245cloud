@@ -128,7 +128,7 @@ initDoing = () ->
         $("#doing").append("""
           #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div class=\"noimage\">no image</div>'}
           <img class='twitter_image_#{w.twitter_id}' />
-          <span id=\"workload_#{workload.id}\">#{w.number}</span>回目@#{hour}時#{min}分（あと#{Util.time(diff)}）<br />
+          <span id=\"workload_#{workload.id}\">@#{hour}時#{min}分（あと#{Util.time(diff)}）<br />
           #{w.title} <br />
           <hr />
         """)
@@ -151,7 +151,7 @@ initDoing = () ->
         )
   )
 
-start = (sc_id=null, workload=nil) ->
+start = (sc_id=null, workload=null) ->
   console.log 'start'
   $("#logs").hide()
   $start = $('<div></div>').attr('id', 'playing')
@@ -169,7 +169,7 @@ start = (sc_id=null, workload=nil) ->
   else
     play()
 
-play = (sc_id=null, workload=nil) ->
+play = (sc_id=null, workload=null) ->
   console.log 'play'
   localStorage['sc_id'] = if sc_id then sc_id else location.hash.replace(/#/, '')
 

@@ -122,7 +122,7 @@
           min = Util.zero(t.getMinutes());
           now = new Date();
           diff = 24 * 60 * 1000 + t.getTime() - now.getTime();
-          $("#doing").append("" + (w.artwork_url ? '<img src=\"' + w.artwork_url + '\" />' : '<div class=\"noimage\">no image</div>') + "\n<img class='twitter_image_" + w.twitter_id + "' />\n<span id=\"workload_" + workload.id + "\">" + w.number + "</span>回目@" + hour + "時" + min + "分（あと" + (Util.time(diff)) + "）<br />\n" + w.title + " <br />\n<hr />");
+          $("#doing").append("" + (w.artwork_url ? '<img src=\"' + w.artwork_url + '\" />' : '<div class=\"noimage\">no image</div>') + "\n<img class='twitter_image_" + w.twitter_id + "' />\n<span id=\"workload_" + workload.id + "\">@" + hour + "時" + min + "分（あと" + (Util.time(diff)) + "）<br />\n" + w.title + " <br />\n<hr />");
           if (w.twitter) {
             ParseParse.fetch("twitter", workload, function(workload, twitter) {
               return $(".twitter_image_" + (twitter.get('twitter_id'))).attr('src', twitter.get('twitter_image'));
@@ -151,7 +151,7 @@
       sc_id = null;
     }
     if (workload == null) {
-      workload = nil;
+      workload = null;
     }
     console.log('start');
     $("#logs").hide();
@@ -179,7 +179,7 @@
       sc_id = null;
     }
     if (workload == null) {
-      workload = nil;
+      workload = null;
     }
     console.log('play');
     localStorage['sc_id'] = sc_id ? sc_id : location.hash.replace(/#/, '');
