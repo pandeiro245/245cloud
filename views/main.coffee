@@ -282,7 +282,7 @@ window.finish = () ->
 window.comment = (body) ->
   console.log 'comment'
   params = {body: body}
-  for key in ['twitter_id', 'twitter_nickname', 'twitter_image', 'sc_id', 'artwork_url']
+  for key in ['twitter_id', 'twitter_nickname', 'twitter_image', 'sc_id']
     params[key] = localStorage[key]
   ParseParse.create('Comment', params)
   $recents = $('#note .recents')
