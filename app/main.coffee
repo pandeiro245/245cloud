@@ -175,6 +175,7 @@ play = (sc_id=null, workload=null) ->
 
   Soundcloud.fetch(localStorage['sc_id'], localStorage['client_id'], (track) ->
     if workload #resume
+      window.workload = workload
       t = new Date(workload.createdAt)
       now = new Date()
       diff = 24*60*1000 + t.getTime() - now.getTime()
@@ -194,7 +195,7 @@ play = (sc_id=null, workload=null) ->
       localStorage['artwork_url'] = track.artwork_url
 
       if localStorage['is_dev']
-        Util.countDown(24*60*1000, complete)
+        Util.countDown(4*60*1000, complete)
       else
         Util.countDown(24*60*1000, complete)
 
@@ -208,7 +209,6 @@ complete = () ->
   console.log 'complete'
   window.workload.set('is_done', true)
   window.workload.save()
-  localStorage['nishiko_end'] = (new Date()).getTime()
 
   $note = $('<table></table>').attr('id', 'note').addClass('table')
   $note.html('24分おつかれさまでした！5分間交換ノートが見られます')
@@ -279,7 +279,6 @@ complete = () ->
 
 window.finish = () ->
   console.log 'finish'
-  localStorage.removeItem('nishiko_end')
   location.reload()
 
 window.comment = (body) ->
