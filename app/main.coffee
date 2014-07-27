@@ -2,9 +2,11 @@ $ ->
   if location.href.match(/^http:\/\/245cloud.com/)
     app_id  = "8QzCMkUbx7TyEApZjDRlhpLQ2OUj0sQWTnkEExod"
     key = "gzlnFfIOoLFQzQ08bU4mxkhAHcSqEok3rox0PBOM"
+    window.pomotime = 24
   else
     app_id  = "FbrNkMgFmJ5QXas2RyRvpg82MakbIA1Bz7C8XXX5"
     key = "yYO5mVgOdcCSiGMyog7vDp2PzTHqukuFGYnZU9wU"
+    window.pomotime = 0.5
   Parse.initialize(app_id, key)
   localStorage['client_id'] = '2b9312964a1619d99082a76ad2d6d8c6'
   ParseParse.addAccesslog()
@@ -104,7 +106,7 @@ initLogs = () ->
 initDoing = () ->
   cond = [
     ["is_done", null]
-    ["createdAt", '>', Util.minAgo(24)]
+    ["createdAt", '>', Util.minAgo(window.pomotime)]
   ]
   ParseParse.where("Workload", cond, (workloads) ->
     if workloads.length > 0
@@ -123,7 +125,7 @@ initDoing = () ->
         hour = Util.zero(t.getHours())
         min = Util.zero(t.getMinutes())
         now = new Date()
-        diff = 24*60*1000 + t.getTime() - now.getTime()
+        diff = window.pomotime*60*1000 + t.getTime() - now.getTime()
 
         $("#doing").append("""
           #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div class=\"noimage\">no image</div>'}
@@ -178,7 +180,7 @@ play = (sc_id=null, workload=null) ->
       window.workload = workload
       t = new Date(workload.createdAt)
       now = new Date()
-      diff = 24*60*1000 + t.getTime() - now.getTime()
+      diff = window.pomotime*60*1000 + t.getTime() - now.getTime()
       Util.countDown(diff, complete)
     else # new
       params = {}
@@ -193,11 +195,7 @@ play = (sc_id=null, workload=null) ->
       )
 
       localStorage['artwork_url'] = track.artwork_url
-
-      if localStorage['is_dev']
-        Util.countDown(4*60*1000, complete)
-      else
-        Util.countDown(24*60*1000, complete)
+      Util.countDown(window.pomotime*60*1000, complete)
 
     ap = if localStorage['is_dev'] then 'false' else 'true'
     $("#playing").html("""

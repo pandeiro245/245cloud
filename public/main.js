@@ -6,9 +6,11 @@
     if (location.href.match(/^http:\/\/245cloud.com/)) {
       app_id = "8QzCMkUbx7TyEApZjDRlhpLQ2OUj0sQWTnkEExod";
       key = "gzlnFfIOoLFQzQ08bU4mxkhAHcSqEok3rox0PBOM";
+      window.pomotime = 24;
     } else {
       app_id = "FbrNkMgFmJ5QXas2RyRvpg82MakbIA1Bz7C8XXX5";
       key = "yYO5mVgOdcCSiGMyog7vDp2PzTHqukuFGYnZU9wU";
+      window.pomotime = 0.5;
     }
     Parse.initialize(app_id, key);
     localStorage['client_id'] = '2b9312964a1619d99082a76ad2d6d8c6';
@@ -100,7 +102,7 @@
 
   initDoing = function() {
     var cond;
-    cond = [["is_done", null], ["createdAt", '>', Util.minAgo(24)]];
+    cond = [["is_done", null], ["createdAt", '>', Util.minAgo(window.pomotime)]];
     return ParseParse.where("Workload", cond, function(workloads) {
       var diff, hour, ids, min, now, t, twitter_id, w, workload, _i, _len, _results;
       if (workloads.length > 0) {
@@ -121,7 +123,7 @@
           hour = Util.zero(t.getHours());
           min = Util.zero(t.getMinutes());
           now = new Date();
-          diff = 24 * 60 * 1000 + t.getTime() - now.getTime();
+          diff = window.pomotime * 60 * 1000 + t.getTime() - now.getTime();
           $("#doing").append("" + (w.artwork_url ? '<img src=\"' + w.artwork_url + '\" />' : '<div class=\"noimage\">no image</div>') + "\n<img class='twitter_image_" + w.twitter_id + "' />\n<span id=\"workload_" + workload.id + "\">@" + hour + "時" + min + "分（あと" + (Util.time(diff)) + "）<br />\n" + w.title + " <br />\n<hr />");
           if (w.twitter) {
             ParseParse.fetch("twitter", workload, function(workload, twitter) {
@@ -189,7 +191,7 @@
         window.workload = workload;
         t = new Date(workload.createdAt);
         now = new Date();
-        diff = 24 * 60 * 1000 + t.getTime() - now.getTime();
+        diff = window.pomotime * 60 * 1000 + t.getTime() - now.getTime();
         Util.countDown(diff, complete);
       } else {
         params = {};
@@ -209,11 +211,7 @@
           return window.workload = workload;
         });
         localStorage['artwork_url'] = track.artwork_url;
-        if (localStorage['is_dev']) {
-          Util.countDown(4 * 60 * 1000, complete);
-        } else {
-          Util.countDown(24 * 60 * 1000, complete);
-        }
+        Util.countDown(window.pomotime * 60 * 1000, complete);
       }
       ap = localStorage['is_dev'] ? 'false' : 'true';
       return $("#playing").html("<iframe width=\"100%\" height=\"400\" scrolling=\"no\" frameborder=\"no\" src=\"https://w.soundcloud.com/player/?visual=true&url=http%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F" + localStorage['sc_id'] + "&show_artwork=true&client_id=" + localStorage['client_id'] + "&auto_play=" + ap + "\"></iframe>");
