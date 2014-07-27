@@ -1,11 +1,3 @@
-# for coffeescript
-
-```
-$ npm install gulp
-$ npm install gulp-coffee
-$ gulp watch
-```
-
 # mac
 
 ```
