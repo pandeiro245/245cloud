@@ -155,6 +155,8 @@ initDoing = () ->
 
 start = (sc_id=null, workload=null) ->
   console.log 'start'
+  if localStorage['twitter_id'] == "3726491"
+    window.open("https://ruffnote.com/my_issues", "_blank")
   $("#logs").hide()
   $start = $('<div></div>').attr('id', 'playing')
   $('#contents').html($start)
