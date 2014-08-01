@@ -47,6 +47,9 @@ class @ParseParse
       val = params[key]
       val = parseInt(val) if key.match(/_id$/)
       model.set(key, val)
+    modelACL = new Parse.ACL(Parse.User.current())
+    modelACL.setPublicReadAccess(true)
+    model.setACL(modelACL)
     model.save(null, {
       error: (model, error) ->
         console.log error
