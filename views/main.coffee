@@ -6,7 +6,7 @@ $ ->
   else
     app_id  = "FbrNkMgFmJ5QXas2RyRvpg82MakbIA1Bz7C8XXX5"
     key = "yYO5mVgOdcCSiGMyog7vDp2PzTHqukuFGYnZU9wU"
-    window.pomotime = 0.1
+    window.pomotime = 0.01
   Parse.initialize(app_id, key)
   localStorage['client_id'] = '2b9312964a1619d99082a76ad2d6d8c6'
   ParseParse.addAccesslog()
@@ -155,8 +155,8 @@ initDoing = () ->
 
 start = (sc_id=null, workload=null) ->
   console.log 'start'
-  if localStorage['twitter_id'] == "3726491"
-    window.open("https://ruffnote.com/my_issues", "_blank")
+  if localStorage['next_url'] && localStorage['next_url'].length > 1 && localStorage['next_url'].match('^http')
+    window.open(localStorage['next_url'], "_blank")
   $("#logs").hide()
   $start = $('<div></div>').attr('id', 'playing')
   $('#contents').html($start)
@@ -210,10 +210,19 @@ complete = () ->
   window.workload.set('is_done', true)
   window.workload.save()
 
-  $note = $('<table></table>').attr('id', 'note').addClass('table')
+  $note = $('<div></div>').attr('id', 'note')
   $note.html('24分おつかれさまでした！5分間交換ノートが見られます')
 
-  $recents = $('<div></div>').attr('class', 'recents')
+  $nextUrl = $('<a></a>').addClass('next_url').html('タスクURLを設定する').attr('href', location.hash)
+  $note.append($nextUrl)
+
+  $nextUrlCancel = $('<a></a>').addClass('next_url_cancel').html('タスクURLを削除する').attr('href', location.hash).hide()
+  $note.append($nextUrlCancel)
+
+  $('.next_url_cancel').fadeIn()
+
+
+  $recents = $('<table></table>').addClass('table recents')
   $note.append($recents)
 
   Comment = Parse.Object.extend("Comment")
@@ -229,21 +238,27 @@ complete = () ->
           body = $('#comment').val()
           window.comment(body)
       )
-
       for c in comments
         t = new Date(c.createdAt)
         hour = t.getHours()
         min = t.getMinutes()
-        $recents.append("<tr>")
         img = c.attributes.twitter_image ||  ""
-        $recents.append("<td><img src='#{img}' /><td>")
-        $recents.append("<td>#{Util.parseHttp(c.attributes.body)}</td>")
-        $recents.append("<td>#{hour}時#{min}分</td>")
-        $recents.append("</tr>")
+        $recents.append("""
+        <tr>
+        <td><img src='#{img}' /><td>
+        <td>#{Util.parseHttp(c.attributes.body)}</td>
+        <td>#{hour}時#{min}分</td>
+        </tr>
+        """)
       $('#note').append($recents)
+      $('.next_url').click(() ->
+        nextUrl()
+      )
+      $('.next_url_cancel').click(() ->
+        nextUrlCancel()
+      )
   })
 
-  $('#contents').attr(style: 'text-align:center;')
   $('#contents').html($note)
 
   $track = $("<input />").attr('id', 'track')
@@ -276,6 +291,22 @@ complete = () ->
       )
   )
   Util.countDown(5*60*1000, 'finish')
+
+window.nextUrl = () ->
+  console.log 'nextUrl'
+  content = localStorage['next_url']
+  content = 'http://' if !content or content.length < 1
+  next_url = prompt("次の作業のURLを入れてください（必ずhttpからはじめてください）", content)
+  if next_url != null
+    localStorage['next_url'] = next_url
+    alert "#{next_url}を次スタートする時に自動で開くように設定しました"
+    $('.next_url_cancel').fadeIn()
+
+window.nextUrlCancel = () ->
+  console.log 'nextUrlCancel'
+  localStorage.removeItem('next_url')
+  alert "次スタートする時に自動で開くURLを削除しました"
+  $('.next_url_cancel').fadeOut()
 
 window.finish = () ->
   console.log 'finish'

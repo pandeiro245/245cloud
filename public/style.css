@@ -8,9 +8,17 @@ body {
 }
 
 .noimage {
-  display:inline;
+  display: inline;
   border: 1px solid #000;
-  padding:20px;
-  text-align:center;
-  vertical-align:middle;
+  padding: 20px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+#contents {
+  text-align: center;
+}
+
+.next_url, .next_url_cancel{
+  display: block;
 }
