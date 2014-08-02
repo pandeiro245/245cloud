@@ -2,7 +2,6 @@ require 'sinatra'
 require 'net/http'
 require 'uri'
 require 'dotenv'
-require 'omniauth-twitter'
 require 'coffee-script'
 
 Dotenv.load
