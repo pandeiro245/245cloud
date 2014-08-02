@@ -20,10 +20,9 @@ window.fbAsyncInit = () ->
         alert("User signed up and logged in through Facebook!")
       else
         alert("User logged in through Facebook!")
+      location.reload()
     ,
     error: (user, error) ->
       console.log error
       alert("User cancelled the Facebook login or did not fully authorize.")
   })
-
-#window.fbAsyncInit()

@@ -19,22 +19,17 @@ $ ->
 
 initStart = () ->
   console.log 'initStart'
-  if localStorage['twitter_id'] #TODO must be parse.com key, not twitter_id
-    ParseParse.where('Twitter', ['twitter_id', localStorage['twitter_id']], (twitters) ->
-      window.twitter = twitters[0]
-    )
-    $start = $('<input>').attr('type', 'submit')
-    $start.attr('id', 'start').attr('value', '曲お任せで24分間集中する！！').attr('type', 'submit')
-    $start.attr('class', 'btn btn-default')
-    $('#contents').html($start)
-    $('#start').click(() ->
-      start()
-    )
+  $start = $('<input>').attr('type', 'submit').attr('id', 'start')
+  if Parse.User.current()
+    text = '曲お任せで24分間集中する！！'
   else
-    $start = $('<a></a>').html('Twitterログイン')
-    $start.attr('href', '/auth/twitter')
-    $start.attr('class', 'btn btn-default')
-    $('#contents').html($start)
+    text = 'facebookログイン'
+  $start.attr('value', text)
+  $start.attr('class', 'btn btn-default')
+  $('#contents').html($start)
+  $('#start').click(() ->
+    start()
+  )
 
 initLogs = () ->
   console.log 'initLogs'
@@ -153,7 +148,13 @@ initDoing = () ->
         )
   )
 
+login = () ->
+  console.log 'login'
+  window.fbAsyncInit()
+
 start = (sc_id=null, workload=null) ->
+  unless Parse.User.current()
+    login()
   console.log 'start'
   if localStorage['next_url'] && localStorage['next_url'].length > 1 && localStorage['next_url'].match('^http')
     window.open(localStorage['next_url'], "_blank")
