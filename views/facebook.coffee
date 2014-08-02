@@ -14,11 +14,12 @@ window.fbAsyncInit = () ->
     xfbml      : true
   })
 
-  Parse.FacebookUtils.logIn(null, {
+  Parse.FacebookUtils.logIn("user_likes", {
     success: (user) ->
       if !user.existed()
         alert("User signed up and logged in through Facebook!")
       else
+        console.log user
         alert("User logged in through Facebook!")
       location.reload()
     ,
