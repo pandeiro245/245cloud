@@ -6,7 +6,7 @@ $ ->
   else
     app_id  = "FbrNkMgFmJ5QXas2RyRvpg82MakbIA1Bz7C8XXX5"
     key = "yYO5mVgOdcCSiGMyog7vDp2PzTHqukuFGYnZU9wU"
-    window.pomotime = 0.01
+    window.pomotime = 0.1
   Parse.initialize(app_id, key)
   localStorage['client_id'] = '2b9312964a1619d99082a76ad2d6d8c6'
   ParseParse.addAccesslog()
@@ -230,7 +230,7 @@ complete = () ->
   query.descending("createdAt")
   query.find({
     success: (comments) ->
-      $comment = $('<input />').attr('id', 'comment').attr('style', 'width:100%; display: block;')
+      $comment = $('<input />').attr('id', 'comment')
       $('#note').append($comment)
 
       $('#comment').keypress((e) ->
@@ -257,6 +257,7 @@ complete = () ->
       $('.next_url_cancel').click(() ->
         nextUrlCancel()
       )
+      $('#comment').focus()
   })
 
   $('#contents').html($note)

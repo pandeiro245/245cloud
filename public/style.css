@@ -22,3 +22,13 @@ body {
 .next_url, .next_url_cancel{
   display: block;
 }
+
+input {
+  display: block;
+  text-align: center;
+}
+
+#comment {
+  margin: 0 auto;
+  width: 80%;
+}
