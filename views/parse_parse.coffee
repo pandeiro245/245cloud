@@ -1,3 +1,5 @@
+Parse.initialize(window.env['parse_app_id'], window.env['parse_key'])
+
 class @ParseParse
   @find: (model_name, id, callback) ->
 

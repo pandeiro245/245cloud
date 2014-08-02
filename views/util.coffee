@@ -1,5 +1,4 @@
 class Util
-
   @minAgo: (min) ->
     new Date((new Date()).getTime() - min*60*1000)
 

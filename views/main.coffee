@@ -1,20 +1,10 @@
 $ ->
-  if location.href.match(/^http:\/\/245cloud.com/)
-    app_id  = "8QzCMkUbx7TyEApZjDRlhpLQ2OUj0sQWTnkEExod"
-    key = "gzlnFfIOoLFQzQ08bU4mxkhAHcSqEok3rox0PBOM"
-    window.pomotime = 24
-  else
-    app_id  = "FbrNkMgFmJ5QXas2RyRvpg82MakbIA1Bz7C8XXX5"
-    key = "yYO5mVgOdcCSiGMyog7vDp2PzTHqukuFGYnZU9wU"
-    window.pomotime = 0.1
-  Parse.initialize(app_id, key)
-  localStorage['client_id'] = '2b9312964a1619d99082a76ad2d6d8c6'
   ParseParse.addAccesslog()
-  Util.scaffolds(['header', 'contents', 'doing', 'logs', 'footer'])
+  Util.scaffolds(['header', 'contents', 'doing', 'done', 'footer'])
   ruffnote(13475, 'header')
   ruffnote(13477, 'footer')
   initDoing()
-  initLogs()
+  initDone()
   initStart()
 
 initStart = () ->
@@ -31,11 +21,10 @@ initStart = () ->
     start()
   )
 
-initLogs = () ->
-  console.log 'initLogs'
-  $("#logs").append("<hr />")
-  $("#logs").append("<h2>DONE</h2>")
-
+initDone = () ->
+  console.log 'initDone'
+  $("#done").append("<hr />")
+  $("#done").append("<h2>DONE</h2>")
   cond = [
     ["is_done", true]
   ]
@@ -50,7 +39,7 @@ initLogs = () ->
       min   = Util.zero(t.getMinutes())
       i = "#{month}月#{day}日"
       if date != i
-        $("#logs").append("<h2>#{i}</h2>")
+        $("#done").append("<h2>#{i}</h2>")
       date = i
 
       unless w.number
@@ -68,7 +57,7 @@ initLogs = () ->
           workload.save()
         , workload)
 
-      $("#logs").append("""
+      $("#done").append("""
         #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div style=\"display:inline; border: 1px solid #000; padding:20px; text-align:center; vertical-align:middle;\">no image</div>'}
         <img class='twitter_image_#{w.twitter_id}' />
         <span id=\"workload_#{workload.id}\">#{w.number}</span>回目@#{hour}:#{min}<br />
@@ -158,7 +147,7 @@ start = (sc_id=null, workload=null) ->
   console.log 'start'
   if localStorage['next_url'] && localStorage['next_url'].length > 1 && localStorage['next_url'].match('^http')
     window.open(localStorage['next_url'], "_blank")
-  $("#logs").hide()
+  $("#done").hide()
   $start = $('<div></div>').attr('id', 'playing')
   $('#contents').html($start)
   if sc_id
