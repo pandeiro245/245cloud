@@ -22,7 +22,19 @@ class Util
       day  = time.getDate()
       hour = time.getHours()
       min  = time.getMinutes()
-      "#{Util.zero(month)}/#{Util.zero(day)} #{Util.zero(hour)}:#{Util.zero(min)}"
+      "#{Util.zero(month)}月#{Util.zero(day)}日"
+
+  @monthDay: (time) ->
+    date = new Date(time)
+    month = date.getMonth() + 1
+    day  = date.getDate()
+    "#{Util.zero(month)}月#{Util.zero(day)}日"
+
+  @hourMin: (time) ->
+    date = new Date(time)
+    hour = date.getHours()
+    min  = date.getMinutes()
+    "#{Util.zero(hour)}:#{Util.zero(min)}"
 
   @zero: (i) ->
     if i < 10 then "0#{i}" else "#{i}"

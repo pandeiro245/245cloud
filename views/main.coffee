@@ -25,59 +25,29 @@ initDone = () ->
   console.log 'initDone'
   $("#done").append("<hr />")
   $("#done").append("<h2>DONE</h2>")
-  cond = [
-    ["is_done", true]
-  ]
+  cond = [["is_done", true]]
   ParseParse.where("Workload", cond, (workloads) ->
     date = ""
     for workload in workloads
+      continue unless workload.attributes.user
       w = workload.attributes
-      t = new Date(workload.createdAt)
-      month = t.getMonth() + 1
-      day   = t.getDate()
-      hour  = Util.zero(t.getHours())
-      min   = Util.zero(t.getMinutes())
-      i = "#{month}月#{day}日"
+      i = Util.monthDay(workload.createdAt)
       if date != i
         $("#done").append("<h2>#{i}</h2>")
       date = i
 
-      unless w.number
-        first = new Date(workload.createdAt)
-        first = first.getTime() - first.getHours()*60*60*1000 - first.getMinutes()*60*1000 - first.getSeconds() * 1000
-        first = new Date(first)
-        cond = [
-          ["is_done", true]
-          ['twitter_id', w.twitter_id]
-          ["createdAt", '<', workload.createdAt]
-          ["createdAt", '>', first]
-        ]
-        ParseParse.where("Workload", cond, (workload, data) ->
-          workload.set('number', data.length + 1)
-          workload.save()
-        , workload)
-
       $("#done").append("""
         #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div style=\"display:inline; border: 1px solid #000; padding:20px; text-align:center; vertical-align:middle;\">no image</div>'}
-        <img class='twitter_image_#{w.twitter_id}' />
-        <span id=\"workload_#{workload.id}\">#{w.number}</span>回目@#{hour}:#{min}<br />
+        <img class='icon icon_#{w.user.id}' />
+        <span id=\"workload_#{workload.id}\">#{w.number}</span>回目@#{Util.hourMin(workload.createdAt)}<br />
         #{w.title} <br />
         <a href=\"##{w.sc_id}\" class='fixed_start btn btn-default'>この曲で集中する</a>
         <hr />
       """)
 
-      if w.twitter
-        ParseParse.fetch("twitter", workload, (workload, twitter) ->
-          $(".twitter_image_#{twitter.get('twitter_id')}").attr('src', twitter.get('twitter_image'))
-        )
-      else
-        cond = [
-          ['twitter_id', w.twitter_id]
-        ]
-        ParseParse.where('Twitter', cond, (workload, twitters) ->
-          workload.set('twitter', twitters[0])
-          workload.save()
-        , workload)
+      ParseParse.fetch("user", workload, (workload, user) ->
+        $(".icon_#{user.id}").attr('src', user.get('icon')._url)
+      )
 
     $('.fixed_start').click(() ->
       if localStorage['twitter_id']
@@ -197,8 +167,22 @@ play = (sc_id=null, workload=null) ->
 
 complete = () ->
   console.log 'complete'
-  window.workload.set('is_done', true)
-  window.workload.save()
+  workload = window.workload
+  w = workload.attributes
+  first = new Date(workload.createdAt)
+  first = first.getTime() - first.getHours()*60*60*1000 - first.getMinutes()*60*1000 - first.getSeconds() * 1000
+  first = new Date(first)
+  cond = [
+    ["is_done", true]
+    ['twitter_id', w.twitter_id]
+    ["createdAt", '<', workload.createdAt]
+    ["createdAt", '>', first]
+  ]
+  ParseParse.where("Workload", cond, (workload, data) ->
+    workload.set('number', data.length + 1)
+    workload.set('is_done', true)
+    workload.save()
+  , workload)
 
   $note = $('<div></div>').attr('id', 'note')
   $note.html('24分おつかれさまでした！5分間交換ノートが見られます')
@@ -313,13 +297,14 @@ window.comment = (body) ->
   t = new Date()
   hour = t.getHours()
   min = t.getMinutes()
-  $tr = $('<tr></tr>')
   img = localStorage['twitter_image']
-  $tr.append("<td><img src='#{img}' /><td>")
-  $tr.append("<td>#{Util.parseHttp(body)}</td>")
-  $tr.append("<td>#{hour}時#{min}分</td>")
-  $recents.prepend($tr)
-
+  $recents.prepend("""
+  <tr>
+  <td><img src='#{img}' /><td>
+  <td>#{Util.parseHttp(body)}</td>
+  <td>#{hour}時#{min}分</td>
+  </tr>
+  """)
   $('#comment').val('')
 
 ruffnote = (id, dom) ->
