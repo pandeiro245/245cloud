@@ -22,7 +22,7 @@ class Util
       day  = time.getDate()
       hour = time.getHours()
       min  = time.getMinutes()
-      "#{Util.zero(month)}月#{Util.zero(day)}日"
+      "#{Util.zero(month)}/#{Util.zero(day)} #{Util.zero(hour)}:#{Util.zero(min)}"
 
   @monthDay: (time) ->
     date = new Date(time)
