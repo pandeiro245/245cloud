@@ -9,6 +9,7 @@ $ ->
 
 initStart = () ->
   console.log 'initStart'
+  window.pomotime = 1/10
   $start = $('<input>').attr('type', 'submit').attr('id', 'start')
   if Parse.User.current()
     text = '曲お任せで24分間集中する！！'
@@ -60,7 +61,7 @@ initDone = () ->
 initDoing = () ->
   cond = [
     ["is_done", null]
-    ["createdAt", '>', Util.minAgo(window.pomotime)]
+    ["createdAt", '>', Util.minAgo(24)]
   ]
   ParseParse.where("Workload", cond, (workloads) ->
     if workloads.length > 0
@@ -146,9 +147,8 @@ play = (sc_id=null, workload=null) ->
       Util.countDown(diff, complete)
     else # new
       params = {}
-      for key in ['sc_id', 'twitter_id']
+      for key in ['sc_id']
         params[key] = localStorage[key]
-      params['twitter'] = window.twitter
       for key in ['title', 'artwork_url']
         params[key] = track[key]
       params['host'] = location.host
@@ -195,7 +195,42 @@ complete = () ->
 
   $('.next_url_cancel').fadeIn()
 
+  initComments()
 
+  $('#contents').html($note)
+
+  $track = $("<input />").attr('id', 'track')
+  $tracks = $("<div></div>").attr('id', 'tracks')
+
+  $('#contents').append("<hr /><h3>好きなパワーソングを探す</h3>")
+  $('#contents').append($track)
+  $('#contents').append($tracks)
+
+  $('#track').keypress((e) ->
+    if e.which == 13 #enter
+      q = $('#track').val()
+      url = "http://api.soundcloud.com/tracks.json?client_id=#{localStorage['client_id']}&q=#{q}&duration[from]=#{19*60*1000}&duration[to]=#{24*60*1000}"
+      $.get(url, (tracks) ->
+        if tracks[0]
+          for track in tracks
+            artwork = ''
+            if track.artwork_url
+              artwork = "<img src=\"#{track.artwork_url}\" width=100px/>"
+
+            $('#tracks').append("""
+              <tr>
+                <td><a href=\"##{track.id}\">#{track.title}</a></td>
+                <td>#{artwork}</td>
+                <td>#{Util.time(track.duration)}</td>
+              </tr>
+            """)
+        else
+          alert "「#{q}」で24分前後の曲はまだ出てないようです...。他のキーワードで探してみてください！"
+      )
+  )
+  Util.countDown(5*60*1000, 'finish')
+
+initComments = () ->
   $recents = $('<table></table>').addClass('table recents')
   $note.append($recents)
 
@@ -231,41 +266,9 @@ complete = () ->
       $('.next_url_cancel').click(() ->
         nextUrlCancel()
       )
+      $('#comment').val('')
       $('#comment').focus()
   })
-
-  $('#contents').html($note)
-
-  $track = $("<input />").attr('id', 'track')
-  $tracks = $("<div></div>").attr('id', 'tracks')
-
-  $('#contents').append("<hr /><h3>好きなパワーソングを探す</h3>")
-  $('#contents').append($track)
-  $('#contents').append($tracks)
-
-  $('#track').keypress((e) ->
-    if e.which == 13 #enter
-      q = $('#track').val()
-      url = "http://api.soundcloud.com/tracks.json?client_id=#{localStorage['client_id']}&q=#{q}&duration[from]=#{19*60*1000}&duration[to]=#{24*60*1000}"
-      $.get(url, (tracks) ->
-        if tracks[0]
-          for track in tracks
-            artwork = ''
-            if track.artwork_url
-              artwork = "<img src=\"#{track.artwork_url}\" width=100px/>"
-
-            $('#tracks').append("""
-              <tr>
-                <td><a href=\"##{track.id}\">#{track.title}</a></td>
-                <td>#{artwork}</td>
-                <td>#{Util.time(track.duration)}</td>
-              </tr>
-            """)
-        else
-          alert "「#{q}」で24分前後の曲はまだ出てないようです...。他のキーワードで探してみてください！"
-      )
-  )
-  Util.countDown(5*60*1000, 'finish')
 
 window.nextUrl = () ->
   console.log 'nextUrl'
@@ -290,22 +293,12 @@ window.finish = () ->
 window.comment = (body) ->
   console.log 'comment'
   params = {body: body}
-  for key in ['twitter_id', 'twitter_nickname', 'twitter_image', 'sc_id']
+  for key in ['sc_id']
     params[key] = localStorage[key]
-  ParseParse.create('Comment', params)
-  $recents = $('#note .recents')
-  t = new Date()
-  hour = t.getHours()
-  min = t.getMinutes()
-  img = localStorage['twitter_image']
-  $recents.prepend("""
-  <tr>
-  <td><img src='#{img}' /><td>
-  <td>#{Util.parseHttp(body)}</td>
-  <td>#{hour}時#{min}分</td>
-  </tr>
-  """)
-  $('#comment').val('')
+
+  ParseParse.create('Comment', params, ()->
+    initComments()
+  )
 
 ruffnote = (id, dom) ->
   Ruffnote.fetch("pandeiro245/245cloud/#{id}", dom)
