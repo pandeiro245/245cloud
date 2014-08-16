@@ -51,10 +51,10 @@ initDone = () ->
       )
 
     $('.fixed_start').click(() ->
-      if localStorage['twitter_id']
+      if Parse.User.current()
         start($(this).attr('href').replace(/^#/,''))
       else
-        alert 'Twitterログインをお願いします！'
+        alert 'Facebookログインをお願いします！'
     )
   )
 
@@ -230,45 +230,49 @@ complete = () ->
   )
   Util.countDown(5*60*1000, 'finish')
 
-initComments = () ->
+window.initComments = () ->
+  $note = $('#note')
   $recents = $('<table></table>').addClass('table recents')
   $note.append($recents)
 
-  Comment = Parse.Object.extend("Comment")
-  query = new Parse.Query(Comment)
-  query.descending("createdAt")
-  query.find({
-    success: (comments) ->
-      $comment = $('<input />').attr('id', 'comment')
-      $('#note').append($comment)
+  ParseParse.where("Comment", [], (comments) ->
+    $comment = $('<input />').attr('id', 'comment')
+    $('#note').append($comment)
 
-      $('#comment').keypress((e) ->
-        if e.which == 13 #enter
-          body = $('#comment').val()
-          window.comment(body)
-      )
-      for c in comments
-        t = new Date(c.createdAt)
-        hour = t.getHours()
-        min = t.getMinutes()
-        img = c.attributes.twitter_image ||  ""
+    $('#comment').keypress((e) ->
+      if e.which == 13 #enter
+        body = $('#comment').val()
+        window.comment(body)
+    )
+    for comment in comments
+      c = comment.attributes
+      t = new Date(comment.createdAt)
+      hour = t.getHours()
+      min = t.getMinutes()
+
+      if c.user
         $recents.append("""
         <tr>
-        <td><img src='#{img}' /><td>
-        <td>#{Util.parseHttp(c.attributes.body)}</td>
+        <td><img class='icon icon_#{c.user.id}' /><td>
+        <td>#{Util.parseHttp(c.body)}</td>
         <td>#{hour}時#{min}分</td>
         </tr>
         """)
-      $('#note').append($recents)
-      $('.next_url').click(() ->
-        nextUrl()
-      )
-      $('.next_url_cancel').click(() ->
-        nextUrlCancel()
-      )
-      $('#comment').val('')
-      $('#comment').focus()
-  })
+
+        ParseParse.fetch("user", comment, (comment, user) ->
+          $(".icon_#{user.id}").attr('src', user.get('icon')._url)
+        )
+
+    $('#note').append($recents)
+    $('.next_url').click(() ->
+      nextUrl()
+    )
+    $('.next_url_cancel').click(() ->
+      nextUrlCancel()
+    )
+    $('#comment').val('')
+    $('#comment').focus()
+  )
 
 window.nextUrl = () ->
   console.log 'nextUrl'
