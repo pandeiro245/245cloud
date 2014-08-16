@@ -9,6 +9,7 @@ $ ->
 
 initStart = () ->
   console.log 'initStart'
+  window.is_commenting = false
   window.pomotime = 1/10
   $start = $('<input>').attr('type', 'submit').attr('id', 'start')
   if Parse.User.current()
@@ -191,10 +192,10 @@ complete = () ->
   $nextUrl = $('<a></a>').addClass('next_url').html('タスクURLを設定する').attr('href', location.hash)
   $complete.append($nextUrl)
 
-  $nextUrlCancel = $('<a></a>').addClass('next_url_cancel').html('タスクURLを削除する').attr('href', location.hash).hide()
-  $complete.append($nextUrlCancel)
+  $nextUrlCancel = $('<a></a>').addClass('next_url_cancel').html('タスクURLを削除する').attr('href', location.hash)
+  $nextUrlCancel.hide() if typeof(localStorage['next_url']) == 'undefined'
 
-  $('.next_url_cancel').fadeIn()
+  $complete.append($nextUrlCancel)
 
   $comment = $('<input />').attr('id', 'comment')
   $('#complete').append($comment)
@@ -247,7 +248,7 @@ window.initComments = () ->
     $('#comment').keypress((e) ->
       if e.which == 13 #enter
         body = $('#comment').val()
-        window.comment(body)
+        window.comment(body) unless window.is_commenting
     )
     for comment in comments
       c = comment.attributes
@@ -294,11 +295,15 @@ window.finish = () ->
 
 window.comment = (body) ->
   console.log 'comment'
+  return if body.length < 1
+  return if window.is_commenting
+  window.is_commenting = true
   params = {body: body}
   for key in ['sc_id']
     params[key] = localStorage[key]
 
   ParseParse.create('Comment', params, ()->
+    window.is_commenting = false
     initComments()
   )
 
