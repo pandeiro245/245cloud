@@ -15,7 +15,7 @@ body {
   vertical-align: middle;
 }
 
-#contents {
+#contents, #search{
   text-align: center;
 }
 

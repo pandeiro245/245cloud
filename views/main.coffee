@@ -1,6 +1,6 @@
 $ ->
   ParseParse.addAccesslog()
-  Util.scaffolds(['header', 'contents', 'doing', 'done', 'footer'])
+  Util.scaffolds(['header', 'contents', 'doing', 'done', 'complete', 'comments', 'search', 'footer'])
   ruffnote(13475, 'header')
   ruffnote(13477, 'footer')
   initDoing()
@@ -167,6 +167,7 @@ play = (sc_id=null, workload=null) ->
 
 complete = () ->
   console.log 'complete'
+  $("#playing").fadeOut()
   workload = window.workload
   w = workload.attributes
   first = new Date(workload.createdAt)
@@ -184,27 +185,35 @@ complete = () ->
     workload.save()
   , workload)
 
-  $note = $('<div></div>').attr('id', 'note')
-  $note.html('24分おつかれさまでした！5分間交換ノートが見られます')
+  $complete = $('#complete')
+  $complete.html('24分おつかれさまでした！5分間交換ノートが見られます')
 
   $nextUrl = $('<a></a>').addClass('next_url').html('タスクURLを設定する').attr('href', location.hash)
-  $note.append($nextUrl)
+  $complete.append($nextUrl)
 
   $nextUrlCancel = $('<a></a>').addClass('next_url_cancel').html('タスクURLを削除する').attr('href', location.hash).hide()
-  $note.append($nextUrlCancel)
+  $complete.append($nextUrlCancel)
 
   $('.next_url_cancel').fadeIn()
 
-  initComments()
+  $comment = $('<input />').attr('id', 'comment')
+  $('#complete').append($comment)
 
-  $('#contents').html($note)
+  $('.next_url').click(() ->
+    nextUrl()
+  )
+  $('.next_url_cancel').click(() ->
+    nextUrlCancel()
+  )
+
+  initComments()
 
   $track = $("<input />").attr('id', 'track')
   $tracks = $("<div></div>").attr('id', 'tracks')
 
-  $('#contents').append("<hr /><h3>好きなパワーソングを探す</h3>")
-  $('#contents').append($track)
-  $('#contents').append($tracks)
+  $('#search').append("<hr /><h3>好きなパワーソングを探す</h3>")
+  $('#search').append($track)
+  $('#search').append($tracks)
 
   $('#track').keypress((e) ->
     if e.which == 13 #enter
@@ -231,14 +240,10 @@ complete = () ->
   Util.countDown(5*60*1000, 'finish')
 
 window.initComments = () ->
-  $note = $('#note')
   $recents = $('<table></table>').addClass('table recents')
-  $note.append($recents)
+  $comments = $("#comments")
 
   ParseParse.where("Comment", [], (comments) ->
-    $comment = $('<input />').attr('id', 'comment')
-    $('#note').append($comment)
-
     $('#comment').keypress((e) ->
       if e.which == 13 #enter
         body = $('#comment').val()
@@ -262,14 +267,7 @@ window.initComments = () ->
         ParseParse.fetch("user", comment, (comment, user) ->
           $(".icon_#{user.id}").attr('src', user.get('icon')._url)
         )
-
-    $('#note').append($recents)
-    $('.next_url').click(() ->
-      nextUrl()
-    )
-    $('.next_url_cancel').click(() ->
-      nextUrlCancel()
-    )
+    $comments.html($recents)
     $('#comment').val('')
     $('#comment').focus()
   )
