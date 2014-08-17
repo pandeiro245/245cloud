@@ -11,6 +11,7 @@ initStart = () ->
   console.log 'initStart'
   window.is_commenting = false
   window.pomotime = 1/10
+  window.sc_client_id = '2b9312964a1619d99082a76ad2d6d8c6'
   $start = $('<input>').attr('type', 'submit').attr('id', 'start')
   if Parse.User.current()
     text = '曲お任せで24分間集中する！！'
@@ -139,7 +140,7 @@ play = (sc_id=null, workload=null) ->
   console.log 'play'
   localStorage['sc_id'] = if sc_id then sc_id else location.hash.replace(/#/, '')
 
-  Soundcloud.fetch(localStorage['sc_id'], localStorage['client_id'], (track) ->
+  Soundcloud.fetch(localStorage['sc_id'], window.sc_client_id, (track) ->
     if workload #resume
       window.workload = workload
       t = new Date(workload.createdAt)
@@ -162,7 +163,7 @@ play = (sc_id=null, workload=null) ->
 
     ap = if localStorage['is_dev'] then 'false' else 'true'
     $("#playing").html("""
-    <iframe width="100%" height="400" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?visual=true&url=http%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F#{localStorage['sc_id']}&show_artwork=true&client_id=#{localStorage['client_id']}&auto_play=#{ap}"></iframe>
+    <iframe width="100%" height="400" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?visual=true&url=http%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F#{localStorage['sc_id']}&show_artwork=true&client_id=#{window.sc_client_id}&auto_play=#{ap}"></iframe>
     """)
   )
 
@@ -219,7 +220,7 @@ complete = () ->
   $('#track').keypress((e) ->
     if e.which == 13 #enter
       q = $('#track').val()
-      url = "http://api.soundcloud.com/tracks.json?client_id=#{localStorage['client_id']}&q=#{q}&duration[from]=#{19*60*1000}&duration[to]=#{24*60*1000}"
+      url = "http://api.soundcloud.com/tracks.json?client_id=#{window.sc_client_id}&q=#{q}&duration[from]=#{19*60*1000}&duration[to]=#{24*60*1000}"
       $.get(url, (tracks) ->
         if tracks[0]
           for track in tracks
