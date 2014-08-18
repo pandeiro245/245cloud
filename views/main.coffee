@@ -9,8 +9,10 @@ $ ->
 
 initStart = () ->
   console.log 'initStart'
-  window.is_commenting = false
-  window.pomotime = 24
+  if localStorage['is_dev']
+    window.pomotime = 0.1
+  else
+    window.pomotime = 24
   window.sc_client_id = '2b9312964a1619d99082a76ad2d6d8c6'
   $start = $('<input>').attr('type', 'submit').attr('id', 'start')
   if Parse.User.current()
@@ -229,8 +231,7 @@ window.initComments = () ->
   ParseParse.where("Comment", [], (comments) ->
     $('#comment').keypress((e) ->
       if e.which == 13 #enter
-        body = $('#comment').val()
-        window.comment(body) unless window.is_commenting
+        window.comment()
     )
     for comment in comments
       c = comment.attributes
@@ -275,17 +276,17 @@ window.finish = () ->
   console.log 'finish'
   location.reload()
 
-window.comment = (body) ->
+window.comment = () ->
   console.log 'comment'
+  $comment = $('#comment')
+  body = $comment.val()
+  $comment.val('')
   return if body.length < 1
-  return if window.is_commenting
-  window.is_commenting = true
+
   params = {body: body}
-  for key in ['sc_id']
-    params[key] = localStorage[key]
+  params['sc_id'] = localStorage['sc_id']
 
   ParseParse.create('Comment', params, ()->
-    window.is_commenting = false
     initComments()
   )
 
