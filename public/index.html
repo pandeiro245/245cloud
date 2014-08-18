@@ -6,8 +6,13 @@
     <link rel="stylesheet" href="./style.css">
     <script>
     window.env = {}
-    window.env['parse_app_id'] = 'FbrNkMgFmJ5QXas2RyRvpg82MakbIA1Bz7C8XXX5';
-    window.env['parse_key'] = 'yYO5mVgOdcCSiGMyog7vDp2PzTHqukuFGYnZU9wU';
+    if(localStorage["is_dev"]){
+      window.env['parse_app_id'] = '8QzCMkUbx7TyEApZjDRlhpLQ2OUj0sQWTnkEExod';
+      window.env['parse_key'] = 'gzlnFfIOoLFQzQ08bU4mxkhAHcSqEok3rox0PBOM';
+    } else {
+      window.env['parse_app_id'] = 'FbrNkMgFmJ5QXas2RyRvpg82MakbIA1Bz7C8XXX5';
+      window.env['parse_key'] = 'yYO5mVgOdcCSiGMyog7vDp2PzTHqukuFGYnZU9wU';
+    }
     </script>
     <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
     <script src="http://www.parsecdn.com/js/parse-1.2.18.min.js"></script>
