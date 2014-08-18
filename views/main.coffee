@@ -158,7 +158,7 @@ complete = () ->
   first = new Date(first)
   cond = [
     ["is_done", true]
-    ['twitter_id', w.twitter_id]
+    ['user', w.user]
     ["createdAt", '<', workload.createdAt]
     ["createdAt", '>', first]
   ]
