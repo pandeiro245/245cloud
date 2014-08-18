@@ -9,7 +9,7 @@ window.fbAsyncInit = () ->
   )(document, 'script', 'facebook-jssdk')
 
   Parse.FacebookUtils.init({
-    appId      : '275431495992174',
+    appId      : '275431199325537',
     status     : true,
     xfbml      : true
   })
