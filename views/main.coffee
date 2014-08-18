@@ -10,7 +10,7 @@ $ ->
 initStart = () ->
   console.log 'initStart'
   window.is_commenting = false
-  window.pomotime = 1/10
+  window.pomotime = 24
   window.sc_client_id = '2b9312964a1619d99082a76ad2d6d8c6'
   $start = $('<input>').attr('type', 'submit').attr('id', 'start')
   if Parse.User.current()
@@ -68,47 +68,28 @@ initDoing = () ->
   ParseParse.where("Workload", cond, (workloads) ->
     if workloads.length > 0
       $("#doing").append("<h2>NOW DOING</h2>")
-    ids = {}
-    for workload in workloads
-      twitter_id = workload.get('twitter_id')
 
-      if !ids[twitter_id] && workload.get('twitter')
-        ids[twitter_id] = true
-        if twitter_id == parseInt(localStorage['twitter_id'])
-          #resume
-          start(workload.get('sc_id'), workload)
+      for workload in workloads
+        continue unless workload.attributes.user
         w = workload.attributes
         t = new Date(workload.createdAt)
-        hour = Util.zero(t.getHours())
-        min = Util.zero(t.getMinutes())
+        i = Util.monthDay(workload.createdAt)
         now = new Date()
         diff = window.pomotime*60*1000 + t.getTime() - now.getTime()
 
         $("#doing").append("""
-          #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div class=\"noimage\">no image</div>'}
-          <img class='twitter_image_#{w.twitter_id}' />
-          <span id=\"workload_#{workload.id}\">@#{hour}時#{min}分（あと#{Util.time(diff)}）<br />
+          #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div style=\"display:inline; border: 1px solid #000; padding:20px; text-align:center; vertical-align:middle;\">no image</div>'}
+          <img class='icon icon_#{w.user.id}' />
+          @#{Util.hourMin(workload.createdAt)}（あと#{Util.time(diff)}）<br />
           #{w.title} <br />
+          <a href=\"##{w.sc_id}\" class='fixed_start btn btn-default'>この曲で集中する</a>
           <hr />
         """)
 
-        if w.twitter
-          ParseParse.fetch("twitter", workload, (workload, twitter) ->
-            $(".twitter_image_#{twitter.get('twitter_id')}").attr('src', twitter.get('twitter_image'))
-          )
-        else
-          cond = [
-            ['twitter_id', w.twitter_id]
-          ]
-          ParseParse.where('Twitter', cond, (workload, twitters) ->
-            workload.set('twitter', twitters[0])
-            workload.save()
-          , workload)
-
-        $('.fixed_start').click(() ->
-          start()
+        ParseParse.fetch("user", workload, (workload, user) ->
+          $(".icon_#{user.id}").attr('src', user.get('icon')._url)
         )
-  )
+    )
 
 login = () ->
   console.log 'login'
