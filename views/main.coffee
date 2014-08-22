@@ -153,6 +153,7 @@ play = (sc_id=null, workload=null) ->
 complete = () ->
   console.log 'complete'
   $("#playing").fadeOut()
+  $("#playing").html('') # for stopping
   workload = window.workload
   w = workload.attributes
   first = new Date(workload.createdAt)
