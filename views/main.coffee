@@ -91,6 +91,7 @@ initDoing = () ->
         """)
 
         ParseParse.fetch("user", workload, (workload, user) ->
+          img = user.get('icon')
           if img then img = img._url else img = '/245img.png'
           $(".icon_#{user.id}").attr('src', img)
 
@@ -255,6 +256,7 @@ window.initComments = () ->
         """)
 
         ParseParse.fetch("user", comment, (comment, user) ->
+          img = user.get('icon')
           if img then img = img._url else img = '/245img.png'
           $(".icon_#{user.id}").attr('src', img)
         )
