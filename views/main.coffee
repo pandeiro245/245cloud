@@ -51,7 +51,9 @@ initDone = () ->
       """)
 
       ParseParse.fetch("user", workload, (workload, user) ->
-        $(".icon_#{user.id}").attr('src', user.get('icon')._url)
+        img = user.get('icon')
+        if img then img = img._url else img = '/245img.png'
+        $(".icon_#{user.id}").attr('src', img)
       )
 
     $('.fixed_start').click(() ->
@@ -89,7 +91,9 @@ initDoing = () ->
         """)
 
         ParseParse.fetch("user", workload, (workload, user) ->
-          $(".icon_#{user.id}").attr('src', user.get('icon')._url)
+          if img then img = img._url else img = '/245img.png'
+          $(".icon_#{user.id}").attr('src', img)
+
         )
     )
 
@@ -251,7 +255,8 @@ window.initComments = () ->
         """)
 
         ParseParse.fetch("user", comment, (comment, user) ->
-          $(".icon_#{user.id}").attr('src', user.get('icon')._url)
+          if img then img = img._url else img = '/245img.png'
+          $(".icon_#{user.id}").attr('src', img)
         )
     $comments.html($recents)
     $('#comment').val('')
