@@ -12,7 +12,7 @@ initStart = () ->
   window.is_commenting = false
   window.pomotime = 24
   window.sc_client_id = '2b9312964a1619d99082a76ad2d6d8c6'
-  $start = $('<input>').attr('type', 'submit').attr('id', 'start')
+  $start = $('<input />').attr('type', 'submit').attr('id', 'start')
   if Parse.User.current()
     text = '曲お任せで24分間集中する！！'
   else
@@ -99,8 +99,6 @@ start = (sc_id=null, workload=null) ->
   unless Parse.User.current()
     login()
   console.log 'start'
-  if localStorage['next_url'] && localStorage['next_url'].length > 1 && localStorage['next_url'].match('^http')
-    window.open(localStorage['next_url'], "_blank")
   $("#done").hide()
   $start = $('<div></div>').attr('id', 'playing')
   $('#contents').html($start)
@@ -171,23 +169,11 @@ complete = () ->
   $complete = $('#complete')
   $complete.html('24分おつかれさまでした！5分間交換ノートが見られます')
 
-  $nextUrl = $('<a></a>').addClass('next_url').html('タスクURLを設定する').attr('href', location.hash)
-  $complete.append($nextUrl)
-
-  $nextUrlCancel = $('<a></a>').addClass('next_url_cancel').html('タスクURLを削除する').attr('href', location.hash)
-  $nextUrlCancel.hide() if typeof(localStorage['next_url']) == 'undefined'
-
   $complete.append($nextUrlCancel)
 
   $comment = $('<input />').attr('id', 'comment')
   $('#complete').append($comment)
 
-  $('.next_url').click(() ->
-    nextUrl()
-  )
-  $('.next_url_cancel').click(() ->
-    nextUrlCancel()
-  )
 
   initComments()
 
@@ -254,22 +240,6 @@ window.initComments = () ->
     $('#comment').val('')
     $('#comment').focus()
   )
-
-window.nextUrl = () ->
-  console.log 'nextUrl'
-  content = localStorage['next_url']
-  content = 'http://' if !content or content.length < 1
-  next_url = prompt("次の作業のURLを入れてください（必ずhttpからはじめてください）", content)
-  if next_url != null
-    localStorage['next_url'] = next_url
-    alert "#{next_url}を次スタートする時に自動で開くように設定しました"
-    $('.next_url_cancel').fadeIn()
-
-window.nextUrlCancel = () ->
-  console.log 'nextUrlCancel'
-  localStorage.removeItem('next_url')
-  alert "次スタートする時に自動で開くURLを削除しました"
-  $('.next_url_cancel').fadeOut()
 
 window.finish = () ->
   console.log 'finish'
