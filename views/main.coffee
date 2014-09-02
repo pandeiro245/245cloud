@@ -1,6 +1,6 @@
 $ ->
   ParseParse.addAccesslog()
-  Util.scaffolds(['header', 'contents', 'doing', 'done', 'complete', 'comments', 'search', 'footer'])
+  Util.scaffolds(['header', 'contents', 'doing', 'done', 'graph', 'complete', 'comments', 'search', 'footer'])
   ruffnote(13475, 'header')
   ruffnote(13477, 'footer')
   initDoing()
@@ -159,6 +159,27 @@ complete = () ->
   console.log 'complete'
   $("#playing").fadeOut()
   $("#playing").html('') # for stopping
+  $("#doing").fadeOut()
+
+  $graph = $('#graph').css('height', '300px')
+
+  cond = [[]]
+
+  ParseParse.where("GraphDaily", cond, (items) ->
+    chart = {}
+    for item in items
+      i = item.attributes
+      chart[i.user.id] = {} unless chart[i.user.id]
+      chart[i.user.id]['name'] = i.user.id unless chart[i.user.id]['name']
+      chart[i.user.id]['data'] = {} unless chart[i.user.id]['data']
+      chart[i.user.id]['data'][i.date] = i.val
+
+    arr = []
+    for i of chart
+      arr.push(chart[i])
+    new Chartkick.LineChart("graph", arr)
+  )
+
   workload = window.workload
   w = workload.attributes
   first = new Date(workload.createdAt)
