@@ -9,16 +9,6 @@ $ ->
 
 initStart = () ->
   console.log 'initStart'
-    window.env = {}
-  if location.href.match(/245cloud.com/)
-    window.env['parse_app_id'] = '8QzCMkUbx7TyEApZjDRlhpLQ2OUj0sQWTnkEExod'
-    window.env['parse_key'] = 'gzlnFfIOoLFQzQ08bU4mxkhAHcSqEok3rox0PBOM'
-    window.env['facebook_app_id'] = '275431199325537'
-  else  if location.href.match(/nishikocloud-c9.herokuapp.com/)
-    window.env['parse_app_id'] = 'FbrNkMgFmJ5QXas2RyRvpg82MakbIA1Bz7C8XXX5'
-    window.env['parse_key'] = 'yYO5mVgOdcCSiGMyog7vDp2PzTHqukuFGYnZU9wU'
-    window.env['facebook_app_id'] = '287966291405361'
-
   window.is_commenting = false
   window.pomotime = 24
   window.sc_client_id = '2b9312964a1619d99082a76ad2d6d8c6'
