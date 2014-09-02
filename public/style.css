@@ -19,10 +19,6 @@ body {
   text-align: center;
 }
 
-.next_url, .next_url_cancel{
-  display: block;
-}
-
 input {
   display: block;
   text-align: center;
