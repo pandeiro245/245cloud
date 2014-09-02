@@ -12,7 +12,7 @@ initStart = () ->
   window.is_commenting = false
   window.pomotime = 24
   window.sc_client_id = '2b9312964a1619d99082a76ad2d6d8c6'
-  $start = $('<input />').attr('type', 'submit').attr('id', 'start')
+  $start = $('<input>').attr('type', 'submit').attr('id', 'start')
   if Parse.User.current()
     text = '曲お任せで24分間集中する！！'
   else
