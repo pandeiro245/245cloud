@@ -8,14 +8,8 @@ window.fbAsyncInit = () ->
      fjs.parentNode.insertBefore(js, fjs)
   )(document, 'script', 'facebook-jssdk')
 
-  #FIXME
-  if localStorage['is_dev']
-    app_id = '275431495992174'
-  else
-    app_id = '275431199325537'
-
   Parse.FacebookUtils.init({
-    appId      : app_id,
+    appId      : window.env['facebook_app_id'],
     status     : true,
     xfbml      : true
   })
