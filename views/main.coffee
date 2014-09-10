@@ -156,7 +156,7 @@ play = (sc_id=null, workload=null) ->
 complete = () ->
   console.log 'complete'
   $("#playing").fadeOut()
-  $("#playing").html('') # for stopping
+  $("#playing").html('<iframe width="1px" height="1px" scrolling="no" frameborder="no" src="//simplynoise.com/"></iframe>')
   workload = window.workload
   w = workload.attributes
   first = new Date(workload.createdAt)
