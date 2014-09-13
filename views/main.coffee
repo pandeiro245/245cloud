@@ -9,6 +9,13 @@ $ ->
 
 initStart = () ->
   console.log 'initStart'
+  
+  $(document).ready(() ->
+    $(window).on("beforeunload", (e)->
+      return "閉じると24分やりなおしですが閉じても大丈夫ですか？";
+    )
+  )
+  
   if localStorage['is_dev']
     window.pomotime = 0.1
   else
@@ -42,7 +49,7 @@ initDone = () ->
       date = i
 
       $("#done").append("""
-        #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div style=\"display:inline; border: 1px solid #000; padding:20px; text-align:center; vertical-align:middle;\">no image</div>'}
+        #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div class="noimage">no image</div>'}
         <img class='icon icon_#{w.user.id}' />
         <span id=\"workload_#{workload.id}\">#{w.number}</span>回目@#{Util.hourMin(workload.createdAt)}<br />
         #{w.title} <br />
@@ -192,7 +199,6 @@ complete = () ->
   $('#track').keypress((e) ->
     if e.which == 13 #enter
       q = $('#track').val()
-      #url = "http://api.soundcloud.com/tracks.json?client_id=#{window.sc_client_id}&q=#{q}&duration[from]=#{19*60*1000}&duration[to]=#{24*60*1000}"
       url = "http://api.soundcloud.com/tracks.json?client_id=#{window.sc_client_id}&q=#{q}&duration[from]=#{19*60*1000}"
       $.get(url, (tracks) ->
         if tracks[0]
