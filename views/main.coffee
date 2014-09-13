@@ -157,11 +157,7 @@ play = (sc_id=null, workload=null) ->
 
       localStorage['artwork_url'] = track.artwork_url
       Util.countDown(window.pomotime*60*1000, complete)
-
-    ap = if localStorage['is_dev'] then 'false' else 'true'
-    $("#playing").html("""
-    <iframe width="100%" height="400" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?visual=true&url=http%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F#{localStorage['sc_id']}&show_artwork=true&client_id=#{window.sc_client_id}&auto_play=#{ap}"></iframe>
-    """)
+    Soundcloud.play(localStorage['sc_id'], window.sc_client_id, $("#playing"), !localStorage['is_dev'])
   )
 
 complete = () ->
