@@ -10,9 +10,12 @@ $ ->
 initStart = () ->
   console.log 'initStart'
   
+  window.isDoing = false
+  
   $(document).ready(() ->
     $(window).on("beforeunload", (e)->
-      return "閉じると24分やりなおしですが閉じても大丈夫ですか？";
+      if window.isDoing
+        return "24分やり直しでも大丈夫ですか？"
     )
   )
   
@@ -113,6 +116,7 @@ start = (sc_id=null, workload=null) ->
   unless Parse.User.current()
     login()
   console.log 'start'
+  window.isDoing = true
   $("#done").hide()
   $start = $('<div></div>').attr('id', 'playing')
   $('#contents').html($start)
@@ -162,6 +166,7 @@ play = (sc_id=null, workload=null) ->
 
 complete = () ->
   console.log 'complete'
+  window.isDoing = false
   $("#playing").fadeOut()
   $("#playing").html('') # for stopping
   workload = window.workload
@@ -218,7 +223,11 @@ complete = () ->
           alert "「#{q}」で24分前後の曲はまだ出てないようです...。他のキーワードで探してみてください！"
       )
   )
-  Util.countDown(5*60*1000, 'finish')
+  if localStorage['is_dev']
+    window.pomotime
+    Util.countDown(10*1000, 'finish')
+  else
+    Util.countDown(5*60*1000, 'finish')
 
 window.initComments = () ->
   $recents = $('<table></table>').addClass('table recents')
