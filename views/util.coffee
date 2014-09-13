@@ -72,5 +72,11 @@ class Util
         twitter_image: localStorage['twitter_image']
       }
     )
+    
+  @addButton: (id, $dom, text, callback) ->
+    $button = $('<input>').attr('type', 'submit').attr('id', id)
+    $button.attr('value', text)
+    $button.attr('class', 'btn btn-default')
+    $dom.append($button)
 
 window.Util = window.Util || Util
