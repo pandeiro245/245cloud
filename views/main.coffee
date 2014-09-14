@@ -158,7 +158,7 @@ start_random = () ->
   ParseParse.all("Music", (musics) ->
     n = Math.floor(Math.random() * musics.length)
     sc_id = musics[n].attributes.sc_id
-    location.hash = sc_id
+    location.hash = "soundcloud:#{sc_id}"
     play("soundcloud:#{sc_id}")
   )
   
