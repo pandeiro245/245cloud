@@ -131,6 +131,7 @@ initDone = () ->
         """)        
 
       ParseParse.fetch("user", workload, (workload, user) ->
+        window.hoge = user
         img = if typeof(user.get('icon_url')) == "undefined" then user.get('icon') else user.get('icon_url')
         $(".icon_#{user.id}").attr('src', img)
       )
