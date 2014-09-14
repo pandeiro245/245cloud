@@ -66,7 +66,5 @@ class @ParseParse
   @addAccesslog: () ->
     console.log 'addAccesslog'
     ParseParse.create('Accesslog',
-      Util.addTwitterInfo({
-        url: location.href
-      })
+      {url: location.href}
     )

@@ -64,15 +64,6 @@ class Util
       "<a href=\"#{http}\" target=\"_blank\">#{text}</a>"
     )
 
-  @addTwitterInfo: (params) ->
-    $.extend(params,
-      {
-        twitter_id: localStorage['twitter_id']
-        twitter_nickname: localStorage['twitter_nickname']
-        twitter_image: localStorage['twitter_image']
-      }
-    )
-    
   @addButton: (id, $dom, text, callback) ->
     $button = $('<input>').attr('type', 'submit').attr('id', id)
     $button.attr('value', text)
