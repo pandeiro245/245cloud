@@ -133,6 +133,7 @@ initDone = () ->
 
       ParseParse.fetch("user", workload, (workload, user) ->
         console.log user
+        window.hoge = user
         img = user.get('icon')
         if img then img = img._url else img = '/245img.png'
         $(".icon_#{user.id}").attr('src', img)
@@ -291,7 +292,7 @@ window.initComments = () ->
       if c.user
         $recents.append("""
         <tr>
-        <td><img class='icon icon_#{c.user.id}' /><td>
+        <td><a class='facebook_#{c.user.id}' target='_blank'><img class='icon icon_#{c.user.id}' /></a><td>
         <td>#{Util.parseHttp(c.body)}</td>
         <td>#{hour}時#{min}分</td>
         </tr>
@@ -301,6 +302,8 @@ window.initComments = () ->
           img = user.get('icon')
           if img then img = img._url else img = '/245img.png'
           $(".icon_#{user.id}").attr('src', img)
+          href = "https://facebook.com/#{user.get('authData').facebook.id}"
+          $(".facebook_#{user.id}").attr('href', href)
         )
     $comments.html($recents)
     $('#comment').val('')
