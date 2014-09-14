@@ -1,6 +1,6 @@
 $ ->
   ParseParse.addAccesslog()
-  Util.scaffolds(['header', 'contents', 'doing', 'done', 'complete', 'comments', 'search', 'footer'])
+  Util.scaffolds(['header', 'contents', 'doing', 'done', 'playing', 'complete', 'comments', 'search', 'footer'])
   ruffnote(13475, 'header')
   ruffnote(13477, 'footer')
   initDoing()
@@ -23,19 +23,31 @@ initStart = () ->
     window.pomotime = 0.1
   else
     window.pomotime = 24
+    
   window.sc_client_id = '2b9312964a1619d99082a76ad2d6d8c6'
-  $start = $('<input>').attr('type', 'submit').attr('id', 'start')
+  
   if Parse.User.current()
-    text = '曲お任せで24分間集中する！！'
+    text = '曲お任せで24分間集中する！'
+    Util.addButton('start', $('#contents'), text, start_random)
+    
+    text = '無音で24分集中'
+    Util.addButton('start', $('#contents'), text, start_nomusic)
+
+    id = location.hash.split(':')[1]
+    if location.hash.match(/soundcloud/)
+      Soundcloud.fetch(id, window.sc_client_id, (track) ->
+        text = "「#{track['title']}」で24分集中"
+        Util.addButton('start', $('#contents'), text, start_hash)
+      )
+    if location.hash.match(/youtube/)
+      Youtube.fetch(id, (track) ->
+        text = "「#{track['entry']['title']['$t']}」で24分集中"
+        Util.addButton('start', $('#contents'), text, start_hash)
+      )
   else
     text = 'facebookログイン'
-  $start.attr('value', text)
-  $start.attr('class', 'btn btn-default')
-  $('#contents').html($start)
-  $('#start').click(() ->
-    start()
-  )
-
+    Util.addButton('login', $('#contents'), text, login)
+  
 initDone = () ->
   console.log 'initDone'
   $("#done").append("<hr />")
@@ -50,15 +62,30 @@ initDone = () ->
       if date != i
         $("#done").append("<h2>#{i}</h2>")
       date = i
-
-      $("#done").append("""
-        #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div class="noimage">no image</div>'}
-        <img class='icon icon_#{w.user.id}' />
-        <span id=\"workload_#{workload.id}\">#{w.number}</span>回目@#{Util.hourMin(workload.createdAt)}<br />
-        #{w.title} <br />
-        <a href=\"##{w.sc_id}\" class='fixed_start btn btn-default'>この曲で集中する</a>
-        <hr />
-      """)
+      
+      if w.title
+        href = '#'
+        if w.sc_id
+          href += "soundcloud:#{w.sc_id}"
+        if w.yt_id
+          href += "youtube:#{w.yt_id}"
+        
+        $("#done").append("""
+          #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div class="noimage">no image</div>'}
+          <img class='icon icon_#{w.user.id}' />
+          <span id=\"workload_#{workload.id}\">#{w.number}</span>回目@#{Util.hourMin(workload.createdAt)}<br />
+          #{w.title} <br />
+          <a href=\"#{href}\" class='fixed_start btn btn-default'>この曲で集中する</a>
+          <hr />
+        """)
+      else
+        $("#done").append("""
+          <div class=\"noimage\">無音</div>
+          <img class='icon icon_#{w.user.id}' />
+          <span id=\"workload_#{workload.id}\">#{w.number}</span>回目@#{Util.hourMin(workload.createdAt)}<br />
+          無音
+          <hr />
+        """)        
 
       ParseParse.fetch("user", workload, (workload, user) ->
         img = user.get('icon')
@@ -68,7 +95,8 @@ initDone = () ->
 
     $('.fixed_start').click(() ->
       if Parse.User.current()
-        start($(this).attr('href').replace(/^#/,''))
+        start()
+        play($(this).attr('href').replace(/^#/, ''))
       else
         alert 'Facebookログインをお願いします！'
     )
@@ -77,7 +105,7 @@ initDone = () ->
 initDoing = () ->
   cond = [
     ["is_done", null]
-    ["createdAt", '>', Util.minAgo(24)]
+    ["createdAt", '>', Util.minAgo(window.pomotime)]
   ]
   ParseParse.where("Workload", cond, (workloads) ->
     if workloads.length > 0
@@ -90,21 +118,33 @@ initDoing = () ->
         i = Util.monthDay(workload.createdAt)
         now = new Date()
         diff = window.pomotime*60*1000 + t.getTime() - now.getTime()
-
-        $("#doing").append("""
-          #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div style=\"display:inline; border: 1px solid #000; padding:20px; text-align:center; vertical-align:middle;\">no image</div>'}
-          <img class='icon icon_#{w.user.id}' />
-          @#{Util.hourMin(workload.createdAt)}（あと#{Util.time(diff)}）<br />
-          #{w.title} <br />
-          <a href=\"##{w.sc_id}\" class='fixed_start btn btn-default'>この曲で集中する</a>
-          <hr />
-        """)
-
+        
+        if w.title
+          href = '#'
+          if w.sc_id
+            href += "soundcloud:#{w.sc_id}"
+          if w.yt_id
+            href += "youtube:#{w.yt_id}"
+          $("#doing").append("""
+            #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div class=\"noimage\">no image</div>'}
+            <img class='icon icon_#{w.user.id}' />
+            @#{Util.hourMin(workload.createdAt)}（あと#{Util.time(diff)}）<br />
+            #{w.title} <br />
+            <a href=\"#{href}\" class='fixed_start btn btn-default'>この曲で集中する</a>
+            <hr />
+          """)
+        else
+          $("#doing").append("""
+            <div class=\"noimage\">無音</div>
+            <img class='icon icon_#{w.user.id}' />
+            @#{Util.hourMin(workload.createdAt)}（あと#{Util.time(diff)}）<br />
+            無音
+            <hr />
+          """)
         ParseParse.fetch("user", workload, (workload, user) ->
           img = user.get('icon')
           if img then img = img._url else img = '/245img.png'
           $(".icon_#{user.id}").attr('src', img)
-
         )
     )
 
@@ -112,54 +152,63 @@ login = () ->
   console.log 'login'
   window.fbAsyncInit()
 
-start = (sc_id=null, workload=null) ->
-  unless Parse.User.current()
-    login()
+start_random = () ->
+  console.log 'start_random'
+  start()
+  ParseParse.all("Music", (musics) ->
+    n = Math.floor(Math.random() * musics.length)
+    sc_id = musics[n].attributes.sc_id
+    location.hash = "soundcloud:#{sc_id}"
+    play("soundcloud:#{sc_id}")
+  )
+  
+start_hash = () ->
+  console.log 'start_hash'
+  play(location.hash.replace(/#/, ''))
+  start()
+
+start_nomusic = () ->
+  console.log 'start_nomusic'
+  params = {host: location.host}
+  ParseParse.create("Workload", params, (workload) ->
+    window.workload = workload
+  )
+  start()
+  
+start = () ->
   console.log 'start'
-  window.isDoing = true
   $("#done").hide()
-  $start = $('<div></div>').attr('id', 'playing')
-  $('#contents').html($start)
-  if sc_id
-    play(sc_id, workload)
-    return
-  if localStorage['sc_id'] == location.hash.replace(/#/, '') || location.hash.length < 1
-    ParseParse.all("Music", (musics) ->
-      n = Math.floor(Math.random() * musics.length)
-      sc_id = musics[n].attributes.sc_id
-      location.hash = sc_id
-      play()
-    )
-  else
-    play()
+  $("input").hide()
+  window.isDoing = true
+  Util.countDown(window.pomotime*60*1000, complete)
 
-play = (sc_id=null, workload=null) ->
+play = (key) ->
   console.log 'play'
-  localStorage['sc_id'] = if sc_id then sc_id else location.hash.replace(/#/, '')
+  id = key.split(':')[1]
+  params = {host: location.host}
 
-  Soundcloud.fetch(localStorage['sc_id'], window.sc_client_id, (track) ->
-    if workload #resume
-      window.workload = workload
-      t = new Date(workload.createdAt)
-      now = new Date()
-      diff = window.pomotime*60*1000 + t.getTime() - now.getTime()
-      Util.countDown(diff, complete)
-    else # new
-      params = {}
-      for key in ['sc_id']
-        params[key] = localStorage[key]
+  if key.match(/^soundcloud/)
+    Soundcloud.fetch(id, window.sc_client_id, (track) ->
+      params['sc_id'] = parseInt(id)
       for key in ['title', 'artwork_url']
         params[key] = track[key]
-      params['host'] = location.host
       ParseParse.create("Workload", params, (workload) ->
         window.workload = workload
       )
-
       localStorage['artwork_url'] = track.artwork_url
-      Util.countDown(window.pomotime*60*1000, complete)
-    Soundcloud.play(localStorage['sc_id'], window.sc_client_id, $("#playing"), !localStorage['is_dev'])
-  )
-
+      Soundcloud.play(id, window.sc_client_id, $("#playing"), !localStorage['is_dev'])
+    )
+  else if key.match(/^youtube/)
+    Youtube.fetch(id, (track) ->
+      params['yt_id'] = id
+      params['title'] = track['entry']['title']['$t']
+      params['artwork_url'] = track['entry']['media$group']['media$thumbnail'][3]['url']
+      ParseParse.create("Workload", params, (workload) ->
+        window.workload = workload
+      )
+      Youtube.play(id, $("#playing"), !localStorage['is_dev'])
+    )
+    
 complete = () ->
   console.log 'complete'
   window.isDoing = false
@@ -271,7 +320,6 @@ window.comment = () ->
   return if body.length < 1
 
   params = {body: body}
-  params['sc_id'] = localStorage['sc_id']
 
   ParseParse.create('Comment', params, ()->
     initComments()

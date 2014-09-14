@@ -47,7 +47,6 @@ class @ParseParse
     model = new Model()
     for key of params
       val = params[key]
-      val = parseInt(val) if key.match(/_id$/)
       model.set(key, val)
     if Parse.User.current()
       model.set('user', Parse.User.current())
