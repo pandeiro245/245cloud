@@ -78,5 +78,9 @@ class Util
     $button.attr('value', text)
     $button.attr('class', 'btn btn-default')
     $dom.append($button)
+    $button.click(() ->
+      callback()
+    )
+
 
 window.Util = window.Util || Util
