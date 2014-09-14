@@ -86,7 +86,7 @@ initDoing = () ->
             <hr />
           """)
         ParseParse.fetch("user", workload, (workload, user) ->
-          img = user.get('icon_url') || user.get('icon')
+          img = user.get('icon_url') || user.get('icon')._url
           $(".icon_#{user.id}").attr('src', img)
         )
     )
@@ -131,8 +131,7 @@ initDone = () ->
         """)        
 
       ParseParse.fetch("user", workload, (workload, user) ->
-        window.hoge = user
-        img = if typeof(user.get('icon_url')) == "undefined" then user.get('icon') else user.get('icon_url')
+        img = user.get('icon_url') || user.get('icon')._url
         $(".icon_#{user.id}").attr('src', img)
       )
 
@@ -301,7 +300,7 @@ window.initComments = () ->
         """)
 
         ParseParse.fetch("user", comment, (comment, user) ->
-          img = user.get('icon_url') || user.get('icon')
+          img = user.get('icon_url') || user.get('icon')._url
           $(".icon_#{user.id}").attr('src', img)
           href = "https://facebook.com/#{user.get('authData').facebook.id}"
           $(".facebook_#{user.id}").attr('href', href)
