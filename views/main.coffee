@@ -1,4 +1,9 @@
 $ ->
+  if localStorage['is_dev']
+    window.pomotime = 0.1
+  else
+    window.pomotime = 24
+  window.sc_client_id = '2b9312964a1619d99082a76ad2d6d8c6'
   ParseParse.addAccesslog()
   Util.scaffolds(['header', 'contents', 'doing', 'done', 'playing', 'complete', 'comments', 'search', 'footer'])
   ruffnote(13475, 'header')
@@ -19,12 +24,6 @@ initStart = () ->
     )
   )
   
-  if localStorage['is_dev']
-    window.pomotime = 0.1
-  else
-    window.pomotime = 24
-    
-  window.sc_client_id = '2b9312964a1619d99082a76ad2d6d8c6'
   
   if Parse.User.current()
     text = '曲お任せで24分間集中する！'
