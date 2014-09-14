@@ -19,8 +19,8 @@ window.fbAsyncInit = () ->
       if !user.existed()
         alert("User signed up and logged in through Facebook!")
       else
-        console.log user
-        alert("User logged in through Facebook!")
+        alert("Facebookログインに成功しました！")
+      
       location.reload()
     ,
     error: (user, error) ->

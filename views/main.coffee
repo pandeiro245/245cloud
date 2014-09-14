@@ -24,7 +24,6 @@ initStart = () ->
     )
   )
   
-  
   if Parse.User.current()
     text = '曲お任せで24分間集中する！'
     Util.addButton('start', $('#contents'), text, start_random)
@@ -87,6 +86,7 @@ initDone = () ->
         """)        
 
       ParseParse.fetch("user", workload, (workload, user) ->
+        console.log user
         img = user.get('icon')
         if img then img = img._url else img = '/245img.png'
         $(".icon_#{user.id}").attr('src', img)
