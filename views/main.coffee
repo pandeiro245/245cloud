@@ -1,9 +1,4 @@
 $ ->
-  if localStorage['is_dev']
-    window.pomotime = 0.1
-  else
-    window.pomotime = 24
-  window.sc_client_id = '2b9312964a1619d99082a76ad2d6d8c6'
   ParseParse.addAccesslog()
   Util.scaffolds(['header', 'contents', 'doing', 'done', 'playing', 'complete', 'comments', 'search', 'footer'])
   ruffnote(13475, 'header')
@@ -14,7 +9,6 @@ $ ->
 
 initStart = () ->
   console.log 'initStart'
-  
   window.isDoing = false
   
   $(document).ready(() ->
@@ -33,7 +27,7 @@ initStart = () ->
 
     id = location.hash.split(':')[1]
     if location.hash.match(/soundcloud/)
-      Soundcloud.fetch(id, window.sc_client_id, (track) ->
+      Soundcloud.fetch(id, @env.sc_client_id, (track) ->
         text = "「#{track['title']}」で24分集中"
         Util.addButton('start', $('#contents'), text, start_hash)
       )
@@ -49,7 +43,7 @@ initStart = () ->
 initDoing = () ->
   cond = [
     ["is_done", null]
-    ["createdAt", '>', Util.minAgo(window.pomotime)]
+    ["createdAt", '>', Util.minAgo(@env.pomotime)]
   ]
   ParseParse.where("Workload", cond, (workloads) ->
     if workloads.length > 0
@@ -61,7 +55,7 @@ initDoing = () ->
         t = new Date(workload.createdAt)
         i = Util.monthDay(workload.createdAt)
         now = new Date()
-        diff = window.pomotime*60*1000 + t.getTime() - now.getTime()
+        diff = @env.pomotime*60*1000 + t.getTime() - now.getTime()
         
         if w.title
           href = '#'
@@ -167,7 +161,7 @@ start_nomusic = () ->
   console.log 'start_nomusic'
   params = {host: location.host}
   ParseParse.create("Workload", params, (workload) ->
-    window.workload = workload
+    @workload = workload
   )
   start()
   
@@ -175,8 +169,8 @@ start = () ->
   console.log 'start'
   $("#done").hide()
   $("input").hide()
-  window.isDoing = true
-  Util.countDown(window.pomotime*60*1000, complete)
+  @isDoing = true
+  Util.countDown(@env.pomotime*60*1000, complete)
 
 play = (key) ->
   console.log 'play'
@@ -184,15 +178,15 @@ play = (key) ->
   params = {host: location.host}
 
   if key.match(/^soundcloud/)
-    Soundcloud.fetch(id, window.sc_client_id, (track) ->
+    Soundcloud.fetch(id, @env.sc_client_id, (track) ->
       params['sc_id'] = parseInt(id)
       for key in ['title', 'artwork_url']
         params[key] = track[key]
       ParseParse.create("Workload", params, (workload) ->
-        window.workload = workload
+        @workload = workload
       )
       localStorage['artwork_url'] = track.artwork_url
-      Soundcloud.play(id, window.sc_client_id, $("#playing"), !localStorage['is_dev'])
+      Soundcloud.play(id, @env.sc_client_id, $("#playing"), !localStorage['is_dev'])
     )
   else if key.match(/^youtube/)
     Youtube.fetch(id, (track) ->
@@ -200,17 +194,17 @@ play = (key) ->
       params['title'] = track['entry']['title']['$t']
       params['artwork_url'] = track['entry']['media$group']['media$thumbnail'][3]['url']
       ParseParse.create("Workload", params, (workload) ->
-        window.workload = workload
+        @workload = workload
       )
       Youtube.play(id, $("#playing"), !localStorage['is_dev'])
     )
     
 complete = () ->
   console.log 'complete'
-  window.isDoing = false
+  @isDoing = false
   $("#playing").fadeOut()
   $("#playing").html('') # for stopping
-  workload = window.workload
+  workload = @workload
   w = workload.attributes
   first = new Date(workload.createdAt)
   first = first.getTime() - first.getHours()*60*60*1000 - first.getMinutes()*60*1000 - first.getSeconds() * 1000
@@ -265,7 +259,6 @@ complete = () ->
       )
   )
   if localStorage['is_dev']
-    window.pomotime
     Util.countDown(10*1000, 'finish')
   else
     Util.countDown(5*60*1000, 'finish')
