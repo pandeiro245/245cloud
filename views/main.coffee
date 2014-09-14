@@ -86,8 +86,7 @@ initDoing = () ->
             <hr />
           """)
         ParseParse.fetch("user", workload, (workload, user) ->
-          img = user.get('icon')
-          if img then img = img._url else img = '/245img.png'
+          img = user.get('icon_url') || user.get('icon')
           $(".icon_#{user.id}").attr('src', img)
         )
     )
@@ -132,10 +131,8 @@ initDone = () ->
         """)        
 
       ParseParse.fetch("user", workload, (workload, user) ->
-        console.log user
         window.hoge = user
-        img = user.get('icon')
-        if img then img = img._url else img = '/245img.png'
+        img = user.get('icon_url') || user.get('icon')
         $(".icon_#{user.id}").attr('src', img)
       )
 
@@ -292,18 +289,24 @@ window.initComments = () ->
       if c.user
         $recents.append("""
         <tr>
-        <td><a class='facebook_#{c.user.id}' target='_blank'><img class='icon icon_#{c.user.id}' /></a><td>
+        <td>
+        <a class='facebook_#{c.user.id}' target='_blank'>
+        <img class='icon icon_#{c.user.id}' />
+        <div class='facebook_name_#{c.user.id}'></div>
+        </a>
+        <td>
         <td>#{Util.parseHttp(c.body)}</td>
         <td>#{hour}時#{min}分</td>
         </tr>
         """)
 
         ParseParse.fetch("user", comment, (comment, user) ->
-          img = user.get('icon')
-          if img then img = img._url else img = '/245img.png'
+          img = user.get('icon_url') || user.get('icon')
           $(".icon_#{user.id}").attr('src', img)
           href = "https://facebook.com/#{user.get('authData').facebook.id}"
           $(".facebook_#{user.id}").attr('href', href)
+          name = user.get('name')
+          $(".facebook_name_#{user.id}").html(name)
         )
     $comments.html($recents)
     $('#comment').val('')

@@ -20,8 +20,20 @@ window.fbAsyncInit = () ->
         alert("User signed up and logged in through Facebook!")
       else
         alert("Facebookログインに成功しました！")
-      
-      location.reload()
+      FB.api(
+        "/me/picture",
+        (response) ->
+          if response && !response.error
+            user.set('icon_url', response.data.url)
+            FB.api(
+              "/me",
+              (response) ->
+                if response && !response.error
+                  user.set('name', response.name)
+                  user.save()
+                  location.reload()
+            )
+      )
     ,
     error: (user, error) ->
       console.log error
