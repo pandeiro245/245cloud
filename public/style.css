@@ -33,10 +33,14 @@ input {
   width: 60px;
 }
 
-.noimage{
+.noimage {
   display:inline;
   border: 1px solid #000;
   padding: 20px;
   text-align:center;
   vertical-align:middle;
+}
+
+.countdown {
+  font-size: 30px;
 }

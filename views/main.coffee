@@ -19,6 +19,8 @@ initStart = () ->
   )
   
   if Parse.User.current()
+    $('#contents').append("<div class='countdown'></div>")
+      
     text = '曲お任せで24分間集中する！'
     Util.addButton('start', $('#contents'), text, start_random)
     

@@ -45,7 +45,9 @@ class Util
     past = (new Date()).getTime() - started
 
     if duration > past # yet end
-      $('title').html(Util.time(duration-past))
+      remain = Util.time(duration-past)
+      $('title').html(remain)
+      $('.countdown').html("あと#{remain}")
       if callback == 'reload'
         setTimeout("Util.countDown(#{duration}, null, #{started})", 1000)
       else
