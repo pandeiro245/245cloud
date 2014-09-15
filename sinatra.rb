@@ -8,3 +8,7 @@ end
 get '/' do
   File.open 'public/index.html'
 end
+
+get '/c9' do
+  redirect 'https://ide.c9.io/pandeiro245/245cloud'
+end
