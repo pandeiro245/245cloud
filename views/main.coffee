@@ -241,7 +241,7 @@ complete = () ->
   $('#track').keypress((e) ->
     if e.which == 13 #enter
       q = $('#track').val()
-      url = "http://api.soundcloud.com/tracks.json?client_id=#{window.sc_client_id}&q=#{q}&duration[from]=#{19*60*1000}"
+      url = "http://api.soundcloud.com/tracks.json?client_id=#{window.env.sc_client_id}&q=#{q}&duration[from]=#{19*60*1000}"
       $.get(url, (tracks) ->
         if tracks[0]
           for track in tracks
@@ -251,7 +251,7 @@ complete = () ->
 
             $('#tracks').append("""
               <tr>
-                <td><a href=\"##{track.id}\">#{track.title}</a></td>
+                <td><a href=\"#soundcloud:#{track.id}\">#{track.title}</a></td>
                 <td>#{artwork}</td>
                 <td>#{Util.time(track.duration)}</td>
               </tr>

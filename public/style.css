@@ -44,3 +44,8 @@ input {
 .countdown {
   font-size: 30px;
 }
+
+#track {
+  width: 100%;
+  text-align: center;
+}
