@@ -226,7 +226,7 @@ complete = () ->
   $complete = $('#complete')
   $complete.html('24分おつかれさまでした！5分間交換ノートが見られます')
 
-  $comment = $('<input />').attr('id', 'comment')
+  $comment = $('<input />').attr('id', 'comment').attr('placeholder', 'ここに24分頑張った感想をかいてね')
   $('#complete').append($comment)
 
   initComments()
