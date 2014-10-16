@@ -1,8 +1,12 @@
 $ ->
   ParseParse.addAccesslog()
   Util.scaffolds(['header', 'contents', 'doing', 'done', 'playing', 'complete', 'comments', 'search', 'footer'])
-  ruffnote(13475, 'header')
-  ruffnote(13477, 'footer')
+  if location.href.match(/245cloud-c9-pandeiro245.c9.io/)
+    ruffnote(17011, 'header')
+    ruffnote(17013, 'footer')
+  else
+    ruffnote(13475, 'header')
+    ruffnote(13477, 'footer')
   initDoing()
   initDone()
   initStart()
@@ -356,4 +360,7 @@ window.comment = () ->
     )
 
 ruffnote = (id, dom) ->
-  Ruffnote.fetch("pandeiro245/245cloud/#{id}", dom)
+  if location.href.match(/245cloud-c9-pandeiro245.c9.io/)
+    Ruffnote.fetch("pandeiro245/1269/#{id}", dom)
+  else
+    Ruffnote.fetch("pandeiro245/245cloud/#{id}", dom)
