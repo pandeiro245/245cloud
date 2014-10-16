@@ -6,6 +6,7 @@ $ ->
   initDoing()
   initDone()
   initStart()
+  
 
 initStart = () ->
   console.log 'initStart'
@@ -228,10 +229,13 @@ complete = () ->
 
   $comment = $('<input />').attr('id', 'comment').attr('placeholder', 'ここに24分頑張った感想をかいてね')
   $('#complete').append($comment)
+  
+  $file = $('<input />').attr('type', 'file').attr('id', 'file')
+  $('#complete').append($file)
 
   initComments()
 
-  $track = $("<input />").attr('id', 'track')
+  $track = $("<input />").attr('id', 'track').attr('placeholder', 'ここにアーティスト名や曲名を入れてね')
   $tracks = $("<div></div>").attr('id', 'tracks')
 
   $('#search').append("<hr /><h3>好きなパワーソングを探す</h3>")
@@ -280,7 +284,12 @@ window.initComments = () ->
       hour = t.getHours()
       min = t.getMinutes()
 
-      if c.user
+      if c.user && c.body
+        if c.file
+          console.log c.file
+          file = "<img src=\"#{c.file._url}\" style='max-width: 500px;'/>"
+        else
+          file = "" 
         $recents.append("""
         <tr>
         <td>
@@ -289,7 +298,7 @@ window.initComments = () ->
         <div class='facebook_name_#{c.user.id}'></div>
         </a>
         <td>
-        <td>#{Util.parseHttp(c.body)}</td>
+        <td>#{Util.parseHttp(c.body)}#{file}</td>
         <td>#{hour}時#{min}分</td>
         </tr>
         """)
@@ -314,15 +323,37 @@ window.finish = () ->
 window.comment = () ->
   console.log 'comment'
   $comment = $('#comment')
+  $file = $("#file")
+  
   body = $comment.val()
+
   $comment.val('')
+  
   return if body.length < 1
 
   params = {body: body}
 
-  ParseParse.create('Comment', params, ()->
-    initComments()
-  )
+  fileUploadControl = $file[0]
+      
+  if fileUploadControl.files.length > 0
+    file = fileUploadControl.files[0]
+    #FIXME
+    filename = 'commentfile' + file.name.split(/./).pop()
+    parseFile = new Parse.File(filename, file)
+    parseFile.save((file) ->
+      console.log file
+      params['file'] = file
+      ParseParse.create('Comment', params, ()->
+        $file.val(null)
+        initComments()
+      )
+    , (error) ->
+      # error handling
+    )
+  else
+    ParseParse.create('Comment', params, ()->
+      initComments()
+    )
 
 ruffnote = (id, dom) ->
   Ruffnote.fetch("pandeiro245/245cloud/#{id}", dom)
