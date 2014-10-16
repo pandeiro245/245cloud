@@ -24,7 +24,7 @@ input {
   text-align: center;
 }
 
-#comment {
+#comment , #file{
   margin: 0 auto;
   width: 80%;
 }
