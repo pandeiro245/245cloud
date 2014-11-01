@@ -18,7 +18,12 @@ else if location.href.match(/245cloud-c9-pandeiro245.c9.io/)
   env.parse_key = 'yYO5mVgOdcCSiGMyog7vDp2PzTHqukuFGYnZU9wU'
   env.facebook_app_id = '287966291405361'
 
+  # 245cloud2
   #env.parse_app_id = 'jemiGIUHsvNeVQojqiUaXxFJZvzFDxFbUsfjPr78'
   #env.parse_key = 'ZoyMZflFV5H2VoASJv505vJ2wWd9zqa2ZW5MU780'
+  
+  # 245cloud-old
+  env.parse_app_id = '8QzCMkUbx7TyEApZjDRlhpLQ2OUj0sQWTnkEExod'
+  env.parse_key = 'gzlnFfIOoLFQzQ08bU4mxkhAHcSqEok3rox0PBOM'
 
 @env = env

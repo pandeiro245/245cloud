@@ -1,6 +1,7 @@
 $ ->
   ParseParse.addAccesslog()
   Util.scaffolds(['header', 'contents', 'doing', 'done', 'playing', 'complete', 'comments', 'search', 'footer'])
+  # Ruffnoteがslugに対応してくれれば不要になるはず
   if location.href.match(/245cloud-c9-pandeiro245.c9.io/)
     ruffnote(17011, 'header')
     ruffnote(17013, 'footer')
@@ -11,7 +12,6 @@ $ ->
   initDone()
   initStart()
   
-
 initStart = () ->
   console.log 'initStart'
   window.isDoing = false
@@ -306,14 +306,14 @@ window.initComments = () ->
         <td>#{hour}時#{min}分</td>
         </tr>
         """)
-
         ParseParse.fetch("user", comment, (comment, user) ->
-          img = user.get('icon_url') || user.get('icon')._url
-          $(".icon_#{user.id}").attr('src', img)
-          href = "https://facebook.com/#{user.get('authData').facebook.id}"
-          $(".facebook_#{user.id}").attr('href', href)
-          name = user.get('name')
-          $(".facebook_name_#{user.id}").html(name)
+          if user.get('facebook_id')
+            img = user.get('icon_url') || user.get('icon')._url
+            $(".icon_#{user.id}").attr('src', img)
+            href = "https://facebook.com/#{user.get('facebook_id')}"
+            $(".facebook_#{user.id}").attr('href', href)
+            if name = user.get('name')
+              $(".facebook_name_#{user.id}").html(name)
         )
     $comments.html($recents)
     $('#comment').val('')
