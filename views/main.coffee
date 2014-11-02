@@ -307,13 +307,13 @@ window.initComments = () ->
         </tr>
         """)
         ParseParse.fetch("user", comment, (comment, user) ->
+          img = user.get('icon_url') || user.get('icon')._url
+          $(".icon_#{user.id}").attr('src', img)
           if user.get('facebook_id')
-            img = user.get('icon_url') || user.get('icon')._url
-            $(".icon_#{user.id}").attr('src', img)
             href = "https://facebook.com/#{user.get('facebook_id')}"
             $(".facebook_#{user.id}").attr('href', href)
-            if name = user.get('name')
-              $(".facebook_name_#{user.id}").html(name)
+          if name = user.get('name')
+            $(".facebook_name_#{user.id}").html(name)
         )
     $comments.html($recents)
     $('#comment').val('')

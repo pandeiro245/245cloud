@@ -19,6 +19,17 @@ body {
   text-align: center;
 }
 
+@media (min-width: 657px) {
+  #header img {
+    width: 657px;
+  }
+}
+@media (max-width: 657px) {
+  #header img {
+    width: 100%;
+  }
+}
+  
 input {
   display: block;
   text-align: center;
