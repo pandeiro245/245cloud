@@ -159,9 +159,11 @@ start_random = () ->
     play("soundcloud:#{sc_id}")
   )
   
-start_hash = () ->
+window.start_hash = (key = null) ->
   console.log 'start_hash'
-  play(location.hash.replace(/#/, ''))
+  unless key
+    key = location.hash.replace(/#/, '')
+  play(key)
   start()
 
 start_nomusic = () ->
