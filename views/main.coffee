@@ -1,16 +1,20 @@
 $ ->
   ParseParse.addAccesslog()
-  Util.scaffolds(['header', 'contents', 'doing', 'done', 'playing', 'complete', 'comments', 'search', 'footer'])
-  # Ruffnoteがslugに対応してくれれば不要になるはず
+  Util.scaffolds(['header', 'contents', 'doing', 'done', 'playing', 'complete', 'comments', 'ranking', 'search', 'music_ranking', 'footer'])
+  # Ruffnoteがslugに対応してくれればここの分岐は不要になるはず
   if location.href.match(/245cloud-c9-pandeiro245.c9.io/)
     ruffnote(17011, 'header')
     ruffnote(17013, 'footer')
+    ruffnote(17315, 'music_ranking')
   else
     ruffnote(13475, 'header')
     ruffnote(13477, 'footer')
+    ruffnote(17314, 'music_ranking')
+
   initDoing()
   initDone()
   initStart()
+  # initRanking()
   
 initStart = () ->
   console.log 'initStart'
@@ -360,6 +364,9 @@ window.comment = () ->
     ParseParse.create('Comment', params, ()->
       initComments()
     )
+
+initRanking = () ->
+  $('#ranking').html('ここにランキング結果が入ります')
 
 ruffnote = (id, dom) ->
   if location.href.match(/245cloud-c9-pandeiro245.c9.io/)
