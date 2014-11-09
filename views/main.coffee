@@ -3,27 +3,27 @@ $ ->
     for user in users
       img = user.get('icon_url')
       localStorage["icon_#{user.id}"] = img if img
-
-    # FIXME
-    ParseParse.addAccesslog()
-    Util.scaffolds(['header', 'contents', 'doing', 'done', 'playing', 'complete', 'comments', 'ranking', 'search', 'music_ranking', 'footer'])
-    # Ruffnoteがslugに対応してくれればここの分岐は不要になるはず
-    if location.href.match(/245cloud-c9-pandeiro245.c9.io/)
-      ruffnote(17011, 'header')
-      ruffnote(17013, 'footer')
-      ruffnote(17315, 'music_ranking')
-    else
-      ruffnote(13475, 'header')
-      ruffnote(13477, 'footer')
-      ruffnote(17314, 'music_ranking')
-
-    initDoing()
-    initDone()
-    initStart()
-    # initRanking()
-    initFixedStart()
+      $(".icon_#{user.id}").attr('src', img)
   )
- 
+
+  ParseParse.addAccesslog()
+  Util.scaffolds(['header', 'contents', 'doing', 'done', 'playing', 'complete', 'comments', 'ranking', 'search', 'music_ranking', 'footer'])
+  # Ruffnoteがslugに対応してくれればここの分岐は不要になるはず
+  if location.href.match(/245cloud-c9-pandeiro245.c9.io/)
+    ruffnote(17011, 'header')
+    ruffnote(17013, 'footer')
+    ruffnote(17315, 'music_ranking')
+  else
+    ruffnote(13475, 'header')
+    ruffnote(13477, 'footer')
+    ruffnote(17314, 'music_ranking')
+
+  initDoing()
+  initDone()
+  initStart()
+  # initRanking()
+  initFixedStart()
+
 initStart = () ->
   console.log 'initStart'
   window.isDoing = false
