@@ -15,6 +15,7 @@ $ ->
   initDone()
   initStart()
   # initRanking()
+  initFixedStart()
   
 initStart = () ->
   console.log 'initStart'
@@ -70,7 +71,8 @@ initDoing = () ->
 
       disp = "@#{Util.hourMin(workload.createdAt)}（あと#{Util.time(diff)}）"
       addWorkload("#doing", workload, disp)
-    )
+    initFixedStart()
+  )
 
 initDone = () ->
   console.log 'initDone'
@@ -88,14 +90,7 @@ initDone = () ->
       date = i
       disp = "#{workload.attributes.number}回目@#{Util.hourMin(workload.createdAt)}"
       addWorkload("#done", workload, disp)
-
-    $('.fixed_start').click(() ->
-      if Parse.User.current()
-        start()
-        play($(this).attr('href').replace(/^#/, ''))
-      else
-        alert 'Facebookログインをお願いします！'
-    )
+    initFixedStart()
   )
   
 login = () ->
@@ -130,7 +125,9 @@ start_nomusic = () ->
 start = () ->
   console.log 'start'
   $("#done").hide()
+  $("#doing").hide()
   $("input").hide()
+  $("#music_ranking").hide()
   @isDoing = true
   Util.countDown(@env.pomotime*60*1000, complete)
 
@@ -349,6 +346,14 @@ addWorkload = (dom, workload, disp) ->
       $(".icon_#{user.id}").attr('src', img)
     )
 
+initFixedStart = () ->
+  $('.fixed_start').click(() ->
+    if Parse.User.current()
+      start()
+      play($(this).attr('href').replace(/^#/, ''))
+    else
+      alert 'Facebookログインをお願いします！'
+  )
 
 ruffnote = (id, dom) ->
   if location.href.match(/245cloud-c9-pandeiro245.c9.io/)
