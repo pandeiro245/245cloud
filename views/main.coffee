@@ -237,7 +237,7 @@ window.initComments = () ->
     )
     $comments.html($recents)
     for comment in comments
-      addComment(comment)
+      @addComment(comment)
     $('#comment').val('')
     $('#comment').focus()
   )
@@ -273,6 +273,7 @@ window.comment = () ->
       params['file'] = file
       ParseParse.create('Comment', params, ()->
         $file.val(null)
+        comment['icon_url'] = Parse.User.current().attributes.icon_url
         @socket.send(comment)
       )
     , (error) ->
@@ -280,7 +281,12 @@ window.comment = () ->
     )
   else
     ParseParse.create('Comment', params, (comment)->
-      @socket.send(comment)
+      icon_url = Parse.User.current().attributes.icon_url
+      @socket.send({
+        type: 'comment'
+        comment: comment
+        icon_url: icon_url
+      })
     )
 
 initRanking = () ->
@@ -333,38 +339,51 @@ ruffnote = (id, dom) ->
   else
     Ruffnote.fetch("pandeiro245/245cloud/#{id}", dom)
 
-addComment = (comment) ->
-  $recents = $('#recents')
-  c = comment.attributes
+@addComment = (comment, icon_url = null) ->
+  console.log comment
+
+  $recents = $('.recents')
+  if typeof(comment.attributes) != 'undefined'
+    c = comment.attributes
+    src = ''
+  else
+    c = comment
+    src = "src ='#{icon_url}'"
+  user = c.user
+
   t = new Date(comment.createdAt)
   hour = t.getHours()
   min = t.getMinutes()
 
-  if c.user && c.body
+  if user && c.body
     if c.file
       console.log c.file
       file = "<img src=\"#{c.file._url}\" style='max-width: 500px;'/>"
     else
       file = "" 
-    $recents.append("""
+    html = """
     <tr>
     <td>
-    <a class='facebook_#{c.user.id}' target='_blank'>
-    <img class='icon icon_#{c.user.id}' />
-    <div class='facebook_name_#{c.user.id}'></div>
+    <a class='facebook_#{user.id}' target='_blank'>
+    <img class='icon icon_#{user.id}' #{src} />
+    <div class='facebook_name_#{user.id}'></div>
     </a>
     <td>
     <td>#{Util.parseHttp(c.body)}#{file}</td>
     <td>#{hour}時#{min}分</td>
     </tr>
-    """)
-    ParseParse.fetch("user", comment, (comment, user) ->
-      img = user.get('icon_url') || user.get('icon')._url
-      $(".icon_#{user.id}").attr('src', img)
-      if user.get('facebook_id')
-        href = "https://facebook.com/#{user.get('facebook_id')}"
-        $(".facebook_#{user.id}").attr('href', href)
-      if name = user.get('name')
-        $(".facebook_name_#{user.id}").html(name)
-    )
+    """
+    if typeof(comment.attributes) != 'undefined'
+      $recents.append(html)
+      ParseParse.fetch("user", comment, (ent, user) ->
+        img = user.get('icon_url') || user.get('icon')._url
+        $(".icon_#{user.id}").attr('src', img)
+        if user.get('facebook_id')
+          href = "https://facebook.com/#{user.get('facebook_id')}"
+          $(".facebook_#{user.id}").attr('href', href)
+        if name = user.get('name')
+          $(".facebook_name_#{user.id}").html(name)
+      )
+    else
+      $recents.prepend(html)
 

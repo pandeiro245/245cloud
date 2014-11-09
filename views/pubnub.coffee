@@ -10,8 +10,9 @@ pubnub_setup = {
   console.log('Connection Established! Ready to send/receive data!')
 )
 
-@socket.on( 'message', (message) ->
-  console.log(message)
+@socket.on( 'message', (params) ->
+  if params.type == 'comment'
+    @addComment(params.comment, params.icon_url)
 )
 
 @socket.on( 'disconnect', () ->
