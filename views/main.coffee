@@ -76,8 +76,7 @@ initDoing = () ->
       now = new Date()
       diff = @env.pomotime*60*1000 + t.getTime() - now.getTime()
 
-      disp = "#{Util.hourMin(workload.createdAt)}開始（あと#{Util.time(diff)}）"
-      addWorkload("#doing", workload, disp)
+      @addDoing(workload)
     initFixedStart()
   )
 
@@ -96,7 +95,7 @@ initDone = () ->
         $("#done").append("<h2>#{i}</h2>")
       date = i
       disp = "#{workload.attributes.number}回目@#{Util.hourMin(workload.createdAt)}"
-      addWorkload("#done", workload, disp)
+      @addWorkload("#done", workload, disp)
     initFixedStart()
   )
   
@@ -132,7 +131,6 @@ start_nomusic = () ->
 start = () ->
   console.log 'start'
   $("#done").hide()
-  $("#doing").hide()
   $("input").hide()
   $("#music_ranking").hide()
   @isDoing = true
@@ -299,7 +297,11 @@ window.comment = () ->
 initRanking = () ->
   $('#ranking').html('ここにランキング結果が入ります')
 
-addWorkload = (dom, workload, disp) ->
+@addDoing = (workload) ->
+  disp = "#{Util.hourMin(workload.createdAt)}開始（あと#{Util.time(diff)}）"
+  @addWorkload("#doing", workload, disp)
+
+@addWorkload = (dom, workload, disp) ->
   w = workload.attributes
   if w.title
     href = '#'

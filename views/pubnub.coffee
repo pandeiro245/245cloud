@@ -13,6 +13,8 @@ pubnub_setup = {
 @socket.on( 'message', (params) ->
   if params.type == 'comment'
     @addComment(params.comment)
+  else if params.type == 'doing'
+    @addDoing(params.workload)
 )
 
 @socket.on( 'disconnect', () ->
