@@ -15,6 +15,7 @@ $ ->
   initDone()
   initStart()
   # initRanking()
+  initFixedStart()
   
 initStart = () ->
   console.log 'initStart'
@@ -52,101 +53,44 @@ initStart = () ->
     Util.addButton('login', $('#contents'), text, login)
 
 initDoing = () ->
+  console.log 'initDoing'
   cond = [
     ["is_done", null]
     ["createdAt", '>', Util.minAgo(@env.pomotime)]
   ]
   ParseParse.where("Workload", cond, (workloads) ->
-    if workloads.length > 0
-      $("#doing").append("<h2>NOW DOING</h2>")
+    return unless workloads.length > 0
+    $("#doing").append("<h2>NOW DOING</h2>")
 
-      for workload in workloads
-        continue unless workload.attributes.user
-        w = workload.attributes
-        t = new Date(workload.createdAt)
-        i = Util.monthDay(workload.createdAt)
-        now = new Date()
-        diff = @env.pomotime*60*1000 + t.getTime() - now.getTime()
-        
-        if w.title
-          href = '#'
-          if w.sc_id
-            href += "soundcloud:#{w.sc_id}"
-          if w.yt_id
-            href += "youtube:#{w.yt_id}"
-          $("#doing").append("""
-            #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div class=\"noimage\">no image</div>'}
-            <img class='icon icon_#{w.user.id}' />
-            @#{Util.hourMin(workload.createdAt)}（あと#{Util.time(diff)}）<br />
-            #{w.title} <br />
-            <a href=\"#{href}\" class='fixed_start btn btn-default'>この曲で集中する</a>
-            <hr />
-          """)
-        else
-          $("#doing").append("""
-            <div class=\"noimage\">無音</div>
-            <img class='icon icon_#{w.user.id}' />
-            @#{Util.hourMin(workload.createdAt)}（あと#{Util.time(diff)}）<br />
-            無音
-            <hr />
-          """)
-        ParseParse.fetch("user", workload, (workload, user) ->
-          img = user.get('icon_url') || user.get('icon')._url
-          $(".icon_#{user.id}").attr('src', img)
-        )
-    )
+    for workload in workloads
+      continue unless workload.attributes.user
+      t = new Date(workload.createdAt)
+      i = Util.monthDay(workload.createdAt)
+      now = new Date()
+      diff = @env.pomotime*60*1000 + t.getTime() - now.getTime()
+
+      disp = "@#{Util.hourMin(workload.createdAt)}（あと#{Util.time(diff)}）"
+      addWorkload("#doing", workload, disp)
+    initFixedStart()
+  )
 
 initDone = () ->
   console.log 'initDone'
-  $("#done").append("<hr />")
-  $("#done").append("<h2>DONE</h2>")
   cond = [["is_done", true]]
   ParseParse.where("Workload", cond, (workloads) ->
+    return unless workloads.length > 0
+    $("#done").append("<h2>DONE</h2>")
+
     date = ""
     for workload in workloads
       continue unless workload.attributes.user
-      w = workload.attributes
       i = Util.monthDay(workload.createdAt)
       if date != i
         $("#done").append("<h2>#{i}</h2>")
       date = i
-      
-      if w.title
-        href = '#'
-        if w.sc_id
-          href += "soundcloud:#{w.sc_id}"
-        if w.yt_id
-          href += "youtube:#{w.yt_id}"
-        
-        $("#done").append("""
-          #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div class="noimage">no image</div>'}
-          <img class='icon icon_#{w.user.id}' />
-          <span id=\"workload_#{workload.id}\">#{w.number}</span>回目@#{Util.hourMin(workload.createdAt)}<br />
-          #{w.title} <br />
-          <a href=\"#{href}\" class='fixed_start btn btn-default'>この曲で集中する</a>
-          <hr />
-        """)
-      else
-        $("#done").append("""
-          <div class=\"noimage\">無音</div>
-          <img class='icon icon_#{w.user.id}' />
-          <span id=\"workload_#{workload.id}\">#{w.number}</span>回目@#{Util.hourMin(workload.createdAt)}<br />
-          無音
-          <hr />
-        """)        
-
-      ParseParse.fetch("user", workload, (workload, user) ->
-        img = user.get('icon_url') || user.get('icon')._url
-        $(".icon_#{user.id}").attr('src', img)
-      )
-
-    $('.fixed_start').click(() ->
-      if Parse.User.current()
-        start()
-        play($(this).attr('href').replace(/^#/, ''))
-      else
-        alert 'Facebookログインをお願いします！'
-    )
+      disp = "#{workload.attributes.number}回目@#{Util.hourMin(workload.createdAt)}"
+      addWorkload("#done", workload, disp)
+    initFixedStart()
   )
   
 login = () ->
@@ -181,7 +125,9 @@ start_nomusic = () ->
 start = () ->
   console.log 'start'
   $("#done").hide()
+  $("#doing").hide()
   $("input").hide()
+  $("#music_ranking").hide()
   @isDoing = true
   Util.countDown(@env.pomotime*60*1000, complete)
 
@@ -367,6 +313,47 @@ window.comment = () ->
 
 initRanking = () ->
   $('#ranking').html('ここにランキング結果が入ります')
+
+addWorkload = (dom, workload, disp) ->
+  w = workload.attributes
+  if w.title
+    href = '#'
+    if w.sc_id
+      href += "soundcloud:#{w.sc_id}"
+    if w.yt_id
+      href += "youtube:#{w.yt_id}"
+    
+    $("#{dom}").append("""
+      #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div class="noimage">no image</div>'}
+      <img class='icon icon_#{w.user.id}' />
+      #{disp}<br />
+      #{w.title} <br />
+      <a href=\"#{href}\" class='fixed_start btn btn-default'>この曲で集中する</a>
+      <hr />
+    """)
+  else
+    $("#{dom}").append("""
+      <div class=\"noimage\">無音</div>
+      <img class='icon icon_#{w.user.id}' />
+      #{disp}<br />
+      無音
+      <hr />
+    """)
+
+    # FIXME
+    ParseParse.fetch("user", workload, (workload, user) ->
+      img = user.get('icon_url') || user.get('icon')._url
+      $(".icon_#{user.id}").attr('src', img)
+    )
+
+initFixedStart = () ->
+  $('.fixed_start').click(() ->
+    if Parse.User.current()
+      start()
+      play($(this).attr('href').replace(/^#/, ''))
+    else
+      alert 'Facebookログインをお願いします！'
+  )
 
 ruffnote = (id, dom) ->
   if location.href.match(/245cloud-c9-pandeiro245.c9.io/)
