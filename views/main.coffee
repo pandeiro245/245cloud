@@ -1,7 +1,7 @@
 $ ->
   ParseParse.all("User", (users) ->
     for user in users
-      img = user.get('icon_url') || user.get('icon')._url
+      img = user.get('icon_url')
       localStorage["icon_#{user.id}"] = img if img
 
     # FIXME
