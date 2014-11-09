@@ -221,7 +221,8 @@ complete = () ->
       )
   )
   if localStorage['is_dev']
-    Util.countDown(10*1000, 'finish')
+    #Util.countDown(10*1000, 'finish')
+    Util.countDown(5*60*1000, 'finish')
   else
     Util.countDown(5*60*1000, 'finish')
 
@@ -234,40 +235,9 @@ window.initComments = () ->
       if e.which == 13 #enter
         window.comment()
     )
-    for comment in comments
-      c = comment.attributes
-      t = new Date(comment.createdAt)
-      hour = t.getHours()
-      min = t.getMinutes()
-
-      if c.user && c.body
-        if c.file
-          console.log c.file
-          file = "<img src=\"#{c.file._url}\" style='max-width: 500px;'/>"
-        else
-          file = "" 
-        $recents.append("""
-        <tr>
-        <td>
-        <a class='facebook_#{c.user.id}' target='_blank'>
-        <img class='icon icon_#{c.user.id}' />
-        <div class='facebook_name_#{c.user.id}'></div>
-        </a>
-        <td>
-        <td>#{Util.parseHttp(c.body)}#{file}</td>
-        <td>#{hour}時#{min}分</td>
-        </tr>
-        """)
-        ParseParse.fetch("user", comment, (comment, user) ->
-          img = user.get('icon_url') || user.get('icon')._url
-          $(".icon_#{user.id}").attr('src', img)
-          if user.get('facebook_id')
-            href = "https://facebook.com/#{user.get('facebook_id')}"
-            $(".facebook_#{user.id}").attr('href', href)
-          if name = user.get('name')
-            $(".facebook_name_#{user.id}").html(name)
-        )
     $comments.html($recents)
+    for comment in comments
+      @addComment(comment)
     $('#comment').val('')
     $('#comment').focus()
   )
@@ -287,6 +257,7 @@ window.comment = () ->
   
   return if body.length < 1
 
+
   params = {body: body}
 
   fileUploadControl = $file[0]
@@ -295,20 +266,27 @@ window.comment = () ->
     file = fileUploadControl.files[0]
     #FIXME
     filename = 'commentfile' + file.name.split(/./).pop()
+
     parseFile = new Parse.File(filename, file)
     parseFile.save((file) ->
       console.log file
       params['file'] = file
       ParseParse.create('Comment', params, ()->
         $file.val(null)
-        initComments()
+        comment['icon_url'] = Parse.User.current().attributes.icon_url
+        @socket.send(comment)
       )
     , (error) ->
       # error handling
     )
   else
-    ParseParse.create('Comment', params, ()->
-      initComments()
+    ParseParse.create('Comment', params, (comment)->
+      icon_url = Parse.User.current().attributes.icon_url
+      @socket.send({
+        type: 'comment'
+        comment: comment
+        icon_url: icon_url
+      })
     )
 
 initRanking = () ->
@@ -360,3 +338,52 @@ ruffnote = (id, dom) ->
     Ruffnote.fetch("pandeiro245/1269/#{id}", dom)
   else
     Ruffnote.fetch("pandeiro245/245cloud/#{id}", dom)
+
+@addComment = (comment, icon_url = null) ->
+  console.log comment
+
+  $recents = $('.recents')
+  if typeof(comment.attributes) != 'undefined'
+    c = comment.attributes
+    src = ''
+  else
+    c = comment
+    src = "src ='#{icon_url}'"
+  user = c.user
+
+  t = new Date(comment.createdAt)
+  hour = t.getHours()
+  min = t.getMinutes()
+
+  if user && c.body
+    if c.file
+      console.log c.file
+      file = "<img src=\"#{c.file._url}\" style='max-width: 500px;'/>"
+    else
+      file = "" 
+    html = """
+    <tr>
+    <td>
+    <a class='facebook_#{user.id}' target='_blank'>
+    <img class='icon icon_#{user.id}' #{src} />
+    <div class='facebook_name_#{user.id}'></div>
+    </a>
+    <td>
+    <td>#{Util.parseHttp(c.body)}#{file}</td>
+    <td>#{hour}時#{min}分</td>
+    </tr>
+    """
+    if typeof(comment.attributes) != 'undefined'
+      $recents.append(html)
+      ParseParse.fetch("user", comment, (ent, user) ->
+        img = user.get('icon_url') || user.get('icon')._url
+        $(".icon_#{user.id}").attr('src', img)
+        if user.get('facebook_id')
+          href = "https://facebook.com/#{user.get('facebook_id')}"
+          $(".facebook_#{user.id}").attr('href', href)
+        if name = user.get('name')
+          $(".facebook_name_#{user.id}").html(name)
+      )
+    else
+      $recents.prepend(html)
+
