@@ -69,7 +69,7 @@ initDoing = () ->
       now = new Date()
       diff = @env.pomotime*60*1000 + t.getTime() - now.getTime()
 
-      disp = "@#{Util.hourMin(workload.createdAt)}（あと#{Util.time(diff)}）"
+      disp = "#{Util.hourMin(workload.createdAt)}開始（あと#{Util.time(diff)}）"
       addWorkload("#doing", workload, disp)
     initFixedStart()
   )
