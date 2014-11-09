@@ -1,22 +1,29 @@
 $ ->
-  ParseParse.addAccesslog()
-  Util.scaffolds(['header', 'contents', 'doing', 'done', 'playing', 'complete', 'comments', 'ranking', 'search', 'music_ranking', 'footer'])
-  # Ruffnoteがslugに対応してくれればここの分岐は不要になるはず
-  if location.href.match(/245cloud-c9-pandeiro245.c9.io/)
-    ruffnote(17011, 'header')
-    ruffnote(17013, 'footer')
-    ruffnote(17315, 'music_ranking')
-  else
-    ruffnote(13475, 'header')
-    ruffnote(13477, 'footer')
-    ruffnote(17314, 'music_ranking')
+  ParseParse.all("User", (users) ->
+    for user in users
+      img = user.get('icon_url') || user.get('icon')._url
+      localStorage["icon_#{user.id}"] = img if img
 
-  initDoing()
-  initDone()
-  initStart()
-  # initRanking()
-  initFixedStart()
-  
+    # FIXME
+    ParseParse.addAccesslog()
+    Util.scaffolds(['header', 'contents', 'doing', 'done', 'playing', 'complete', 'comments', 'ranking', 'search', 'music_ranking', 'footer'])
+    # Ruffnoteがslugに対応してくれればここの分岐は不要になるはず
+    if location.href.match(/245cloud-c9-pandeiro245.c9.io/)
+      ruffnote(17011, 'header')
+      ruffnote(17013, 'footer')
+      ruffnote(17315, 'music_ranking')
+    else
+      ruffnote(13475, 'header')
+      ruffnote(13477, 'footer')
+      ruffnote(17314, 'music_ranking')
+
+    initDoing()
+    initDone()
+    initStart()
+    # initRanking()
+    initFixedStart()
+  )
+ 
 initStart = () ->
   console.log 'initStart'
   window.isDoing = false
@@ -303,7 +310,7 @@ addWorkload = (dom, workload, disp) ->
     
     $("#{dom}").append("""
       #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div class="noimage">no image</div>'}
-      <img class='icon icon_#{w.user.id}' />
+      <img class='icon icon_#{w.user.id}' src='#{userIdToIconUrl(w.user.id)}' />
       #{disp}<br />
       #{w.title} <br />
       <a href=\"#{href}\" class='fixed_start btn btn-default'>この曲で集中する</a>
@@ -312,17 +319,11 @@ addWorkload = (dom, workload, disp) ->
   else
     $("#{dom}").append("""
       <div class=\"noimage\">無音</div>
-      <img class='icon icon_#{w.user.id}' />
+      <img class='icon icon_#{w.user.id}' src='#{userIdToIconUrl(w.user.id)}' />
       #{disp}<br />
       無音
       <hr />
     """)
-
-    # FIXME
-    ParseParse.fetch("user", workload, (workload, user) ->
-      img = user.get('icon_url') || user.get('icon')._url
-      $(".icon_#{user.id}").attr('src', img)
-    )
 
 initFixedStart = () ->
   $('.fixed_start').click(() ->
@@ -339,16 +340,12 @@ ruffnote = (id, dom) ->
   else
     Ruffnote.fetch("pandeiro245/245cloud/#{id}", dom)
 
-@addComment = (comment, icon_url = null) ->
-  console.log comment
-
+@addComment = (comment) ->
   $recents = $('.recents')
   if typeof(comment.attributes) != 'undefined'
     c = comment.attributes
-    src = ''
   else
     c = comment
-    src = "src ='#{icon_url}'"
   user = c.user
 
   t = new Date(comment.createdAt)
@@ -365,7 +362,7 @@ ruffnote = (id, dom) ->
     <tr>
     <td>
     <a class='facebook_#{user.id}' target='_blank'>
-    <img class='icon icon_#{user.id}' #{src} />
+    <img class='icon icon_#{user.id}' src='#{userIdToIconUrl(c.user.objectId)}' />
     <div class='facebook_name_#{user.id}'></div>
     </a>
     <td>
@@ -386,4 +383,7 @@ ruffnote = (id, dom) ->
       )
     else
       $recents.prepend(html)
+
+userIdToIconUrl = (userId) ->
+  localStorage["icon_#{userId}"] 
 

@@ -12,7 +12,7 @@ pubnub_setup = {
 
 @socket.on( 'message', (params) ->
   if params.type == 'comment'
-    @addComment(params.comment, params.icon_url)
+    @addComment(params.comment)
 )
 
 @socket.on( 'disconnect', () ->
