@@ -7,18 +7,15 @@ $ ->
   )
 
   ParseParse.addAccesslog()
-  Util.scaffolds(['header', 'contents', 'doing', 'done', 'playing', 'complete', 'comments', 'ranking', 'search', 'music_ranking', 'footer'])
-  # Ruffnoteがslugに対応してくれればここの分岐は不要になるはず
-  if location.href.match(/245cloud-c9-pandeiro245.c9.io/)
-    ruffnote(17011, 'header')
-    ruffnote(17013, 'footer')
-    ruffnote(17315, 'music_ranking')
-  else
-    ruffnote(13475, 'header')
-    ruffnote(13477, 'footer')
-    ruffnote(17314, 'music_ranking')
+  Util.scaffolds(['header', 'contents', 'chatting_title', 'chatting', 'doing_title', 'doing', 'online_title', 'online', 'done', 'playing', 'complete', 'comments', 'ranking', 'search', 'music_ranking', 'footer'])
 
+  ruffnote(13475, 'header')
+  ruffnote(13477, 'footer')
+  ruffnote(17314, 'music_ranking')
+
+  initChatting()
   initDoing()
+  initOnline()
   initDone()
   initStart()
   # initRanking()
@@ -59,26 +56,32 @@ initStart = () ->
     text = 'facebookログイン'
     Util.addButton('login', $('#contents'), text, login)
 
+initChatting = () ->
+  console.log 'initChatting'
+  $("#chatting_title").html("<h2>NOW CHATTING</h2>")
+
 initDoing = () ->
   console.log 'initDoing'
+  $("#doing_title").html("<h2>NOW DOING</h2>")
+
   cond = [
     ["is_done", null]
     ["createdAt", '>', Util.minAgo(@env.pomotime)]
   ]
   ParseParse.where("Workload", cond, (workloads) ->
     return unless workloads.length > 0
-    $("#doing").append("<h2>NOW DOING</h2>")
+    $("#doing_title").show()
 
     for workload in workloads
       continue unless workload.attributes.user
-      t = new Date(workload.createdAt)
-      i = Util.monthDay(workload.createdAt)
-      now = new Date()
-      diff = @env.pomotime*60*1000 + t.getTime() - now.getTime()
-
       @addDoing(workload)
     initFixedStart()
   )
+  
+initOnline = () ->
+  console.log 'initOnline'
+  $("#online_title").html("<h2>ON LINE</h2>")
+
 
 initDone = () ->
   console.log 'initDone'
@@ -105,38 +108,39 @@ login = () ->
 
 start_random = () ->
   console.log 'start_random'
-  start()
   ParseParse.all("Music", (musics) ->
     n = Math.floor(Math.random() * musics.length)
     sc_id = musics[n].attributes.sc_id
     location.hash = "soundcloud:#{sc_id}"
-    play("soundcloud:#{sc_id}")
+    play("soundcloud:#{sc_id}", start)
   )
   
 window.start_hash = (key = null) ->
   console.log 'start_hash'
   unless key
     key = location.hash.replace(/#/, '')
-  play(key)
-  start()
+  play(key, start)
 
 start_nomusic = () ->
   console.log 'start_nomusic'
   params = {host: location.host}
   ParseParse.create("Workload", params, (workload) ->
     @workload = workload
+    start()
   )
-  start()
   
 start = () ->
   console.log 'start'
   $("#done").hide()
   $("input").hide()
+  $(".fixed_start").hide()
   $("#music_ranking").hide()
   @isDoing = true
+  workloadSync()
+
   Util.countDown(@env.pomotime*60*1000, complete)
 
-play = (key) ->
+play = (key, callback) ->
   console.log 'play'
   id = key.split(':')[1]
   params = {host: location.host}
@@ -148,6 +152,7 @@ play = (key) ->
         params[key] = track[key]
       ParseParse.create("Workload", params, (workload) ->
         @workload = workload
+        callback()
       )
       localStorage['artwork_url'] = track.artwork_url
       Soundcloud.play(id, @env.sc_client_id, $("#playing"), !localStorage['is_dev'])
@@ -159,6 +164,7 @@ play = (key) ->
       params['artwork_url'] = track['entry']['media$group']['media$thumbnail'][3]['url']
       ParseParse.create("Workload", params, (workload) ->
         @workload = workload
+        callback()
       )
       Youtube.play(id, $("#playing"), !localStorage['is_dev'])
     )
@@ -276,33 +282,37 @@ window.comment = () ->
     parseFile.save((file) ->
       console.log file
       params['file'] = file
-      ParseParse.create('Comment', params, ()->
+      ParseParse.create('Comment', params, (comment)->
         $file.val(null)
-        comment['icon_url'] = Parse.User.current().attributes.icon_url
-        @socket.send(comment)
+        syncComment(comment)
       )
     , (error) ->
       # error handling
     )
   else
     ParseParse.create('Comment', params, (comment)->
-      icon_url = Parse.User.current().attributes.icon_url
-      @socket.send({
-        type: 'comment'
-        comment: comment
-        icon_url: icon_url
-      })
+      syncComment(comment)
     )
 
 initRanking = () ->
   $('#ranking').html('ここにランキング結果が入ります')
 
 @addDoing = (workload) ->
+  t = new Date(workload.createdAt)
+  i = Util.monthDay(workload.createdAt)
+  now = new Date()
+  diff = @env.pomotime*60*1000 + t.getTime() - now.getTime()
   disp = "#{Util.hourMin(workload.createdAt)}開始（あと#{Util.time(diff)}）"
   @addWorkload("#doing", workload, disp)
 
 @addWorkload = (dom, workload, disp) ->
-  w = workload.attributes
+  if workload.attributes
+    w = workload.attributes
+    user_id = w.user.id
+  else
+    w = workload
+    user_id = w.user.objectId
+
   if w.title
     href = '#'
     if w.sc_id
@@ -310,22 +320,28 @@ initRanking = () ->
     if w.yt_id
       href += "youtube:#{w.yt_id}"
     
-    $("#{dom}").append("""
+    html = """
       #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div class="noimage">no image</div>'}
-      <img class='icon icon_#{w.user.id}' src='#{userIdToIconUrl(w.user.id)}' />
+      <img class='icon icon_#{user_id}' src='#{userIdToIconUrl(user_id)}' />
       #{disp}<br />
       #{w.title} <br />
       <a href=\"#{href}\" class='fixed_start btn btn-default'>この曲で集中する</a>
       <hr />
-    """)
+    """
   else
-    $("#{dom}").append("""
+    html = """
       <div class=\"noimage\">無音</div>
-      <img class='icon icon_#{w.user.id}' src='#{userIdToIconUrl(w.user.id)}' />
+      <img class='icon icon_#{user_id}' src='#{userIdToIconUrl(user_id)}' />
       #{disp}<br />
       無音
       <hr />
-    """)
+    """
+  if workload.attributes
+    $("#{dom}").append(html)
+  else
+    $("#{dom}").prepend(html)
+  $("#{dom}").hide()
+  $("#{dom}").fadeIn()
 
 initFixedStart = () ->
   $('.fixed_start').click(() ->
@@ -387,5 +403,18 @@ ruffnote = (id, dom) ->
       $recents.prepend(html)
 
 userIdToIconUrl = (userId) ->
-  localStorage["icon_#{userId}"] 
+  localStorage["icon_#{userId}"] || ""
+
+
+workloadSync = () ->
+  @socket.send({
+    type: 'doing'
+    workload: @workload
+  })
+
+syncComment = (comment) ->
+  @socket.send({
+    type: 'comment'
+    comment: comment
+  })
 

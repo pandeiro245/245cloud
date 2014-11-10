@@ -11,6 +11,7 @@ pubnub_setup = {
 )
 
 @socket.on( 'message', (params) ->
+  console.log 'pubnub', params
   if params.type == 'comment'
     @addComment(params.comment)
   else if params.type == 'doing'
@@ -24,5 +25,4 @@ pubnub_setup = {
 @socket.on( 'reconnect', () ->
   console.log('my connection has been restored!')
 )
-
 
