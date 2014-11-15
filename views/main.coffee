@@ -60,6 +60,23 @@ initChatting = () ->
   console.log 'initChatting'
   $("#chatting_title").html("<h2>NOW CHATTING</h2>")
 
+  cond = [
+    ["is_done", true]
+    ["createdAt", '>', Util.minAgo(@env.pomotime + @env.chattime)]
+    ["createdAt", '<', Util.minAgo(@env.pomotime)]
+  ]
+  ParseParse.where("Workload", cond, (workloads) ->
+    console.log workloads
+    return unless workloads.length > 0
+    $("#chatting_title").show()
+
+    for workload in workloads
+      continue unless workload.attributes.user
+      @addChatting(workload)
+    initFixedStart()
+  )
+
+
 initDoing = () ->
   console.log 'initDoing'
   $("#doing_title").html("<h2>NOW DOING</h2>")
@@ -233,11 +250,7 @@ complete = () ->
           alert "「#{q}」で24分前後の曲はまだ出てないようです...。他のキーワードで探してみてください！"
       )
   )
-  if localStorage['is_dev']
-    #Util.countDown(10*1000, 'finish')
-    Util.countDown(5*60*1000, 'finish')
-  else
-    Util.countDown(5*60*1000, 'finish')
+  Util.countDown(@env.chattime*60*1000, 'finish')
 
 window.initComments = () ->
   $recents = $('<table></table>').addClass('table recents')
@@ -257,6 +270,7 @@ window.initComments = () ->
 
 window.finish = () ->
   console.log 'finish'
+  @syncWorkload('finish')
   location.reload()
 
 window.comment = () ->
@@ -269,7 +283,6 @@ window.comment = () ->
   $comment.val('')
   
   return if body.length < 1
-
 
   params = {body: body}
 
@@ -441,4 +454,8 @@ syncComment = (comment) ->
     type: 'comment'
     comment: comment
   })
+
+@stopUser = (user_id) ->
+  $("#chatting .user_#{user_id}").remove()
+  $("#doing .user_#{user_id}").remove()
 

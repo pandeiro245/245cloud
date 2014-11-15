@@ -2,8 +2,7 @@ env = {
   sc_client_id: '2b9312964a1619d99082a76ad2d6d8c6'
 }
 env.pomotime =  if localStorage['is_dev'] then 0.1 else 24
-
-env.pomotime = 0.1 if location.href.match(/245cloud-c9-pandeiro245.c9.io/)
+env.chattime =  if localStorage['is_dev_chat'] then 0.1 else 5
 
 if location.href.match(/245cloud.com/)
   env.parse_app_id = 'jemiGIUHsvNeVQojqiUaXxFJZvzFDxFbUsfjPr78'
