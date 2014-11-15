@@ -1,8 +1,8 @@
 env = {
   sc_client_id: '2b9312964a1619d99082a76ad2d6d8c6'
 }
-env.pomotime =  if localStorage['is_dev'] then 0.1 else 24
-env.chattime =  if localStorage['is_dev_chat'] then 0.1 else 5
+env.pomotime =  if localStorage['dev_pomo'] then parseInt(localStorage['dev_pomo']) else 24
+env.chattime =  if localStorage['dev_chat'] then parseInt(localStorage['dev_chat']) else 5
 
 if location.href.match(/245cloud.com/)
   env.parse_app_id = 'jemiGIUHsvNeVQojqiUaXxFJZvzFDxFbUsfjPr78'
