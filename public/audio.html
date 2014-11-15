@@ -1,0 +1,12 @@
+<audio currentTime=333 id="audio" src="https://ec-media.soundcloud.com/C5Fgll10JJRz.128.mp3?f10880d39085a94a0418a7ef69b03d522cd6dfee9399eeb9a522009968f1be3bcadc008f9917458386bec8d13b171dc522b86ea250ffb54f3864d71cdccd8c83dcf8b3272f&AWSAccessKeyId=AKIAJNIGGLK7XA7YZSNQ&Expires=1415790743&Signature=n3cs86PyTLATGbIK4gyiUjiztuI%3D" controls></audio>
+
+<script>
+var audio = document.getElementById("audio");
+audio.play();
+</script>
+
+
+  <button onclick="document.getElementById('audio').play()">Play the Audio</button>
+  <button onclick="document.getElementById('audio').pause()">Pause the Audio</button>
+  <button onclick="document.getElementById('audio').volume+=0.1">Increase Volume</button>
+  <button onclick="document.getElementById('audio').volume-=0.1">Decrease Volume</button>
