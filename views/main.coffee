@@ -314,7 +314,6 @@ initRanking = () ->
   else
     w = workload
     user_id = w.user.objectId
-
   if w.title
     href = '#'
     if w.sc_id
@@ -338,12 +337,20 @@ initRanking = () ->
       無音
       <hr />
     """
-  if workload.attributes
-    $("#{dom}").append(html)
+
+  if dom == '#doing' and $("#{dom} .user_#{user_id}").length
+    $("#{dom} .user_#{user_id}").html(html)
   else
-    $("#{dom}").prepend(html)
+    $workload = $('<div></div>')
+    $workload.addClass("user_#{user_id}")
+    $workload.html(html)
+    if workload.attributes
+      $("#{dom}").append($workload)
+    else
+      $("#{dom}").prepend($workload)
+
   if @isDoing
-    $(".fixed_start").hide()
+      $(".fixed_start").hide()
 
   $("#{dom}").hide()
   $("#{dom}").fadeIn()
