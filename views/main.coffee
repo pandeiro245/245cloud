@@ -59,6 +59,7 @@ initStart = () ->
 initChatting = () ->
   console.log 'initChatting'
   $("#chatting_title").html("<h2>NOW CHATTING</h2>")
+  $("#chatting").html("ここに現在5分休憩中の人が表示される予定（開発中）")
 
 initDoing = () ->
   console.log 'initDoing'
@@ -80,7 +81,8 @@ initDoing = () ->
   
 initOnline = () ->
   console.log 'initOnline'
-  $("#online_title").html("<h2>ON LINE</h2>")
+  $("#online_title").html("<h2>ONLINE</h2>")
+  $("#online").html("ここにオンラインの人が表示される予定（開発中）")
 
 
 initDone = () ->
@@ -112,14 +114,14 @@ start_random = () ->
     n = Math.floor(Math.random() * musics.length)
     sc_id = musics[n].attributes.sc_id
     location.hash = "soundcloud:#{sc_id}"
-    play("soundcloud:#{sc_id}", start)
+    play("soundcloud:#{sc_id}")
   )
   
 window.start_hash = (key = null) ->
   console.log 'start_hash'
   unless key
     key = location.hash.replace(/#/, '')
-  play(key, start)
+  play(key)
 
 start_nomusic = () ->
   console.log 'start_nomusic'
@@ -136,11 +138,11 @@ start = () ->
   $(".fixed_start").hide()
   $("#music_ranking").hide()
   @isDoing = true
-  workloadSync()
+  syncWorkload()
 
   Util.countDown(@env.pomotime*60*1000, complete)
 
-play = (key, callback) ->
+play = (key) ->
   console.log 'play'
   id = key.split(':')[1]
   params = {host: location.host}
@@ -152,7 +154,7 @@ play = (key, callback) ->
         params[key] = track[key]
       ParseParse.create("Workload", params, (workload) ->
         @workload = workload
-        callback()
+        start()
       )
       localStorage['artwork_url'] = track.artwork_url
       Soundcloud.play(id, @env.sc_client_id, $("#playing"), !localStorage['is_dev'])
@@ -164,7 +166,7 @@ play = (key, callback) ->
       params['artwork_url'] = track['entry']['media$group']['media$thumbnail'][3]['url']
       ParseParse.create("Workload", params, (workload) ->
         @workload = workload
-        callback()
+        start()
       )
       Youtube.play(id, $("#playing"), !localStorage['is_dev'])
     )
@@ -340,13 +342,15 @@ initRanking = () ->
     $("#{dom}").append(html)
   else
     $("#{dom}").prepend(html)
+  if @isDoing
+    $(".fixed_start").hide()
+
   $("#{dom}").hide()
   $("#{dom}").fadeIn()
 
 initFixedStart = () ->
   $('.fixed_start').click(() ->
     if Parse.User.current()
-      start()
       play($(this).attr('href').replace(/^#/, ''))
     else
       alert 'Facebookログインをお願いします！'
@@ -405,8 +409,7 @@ ruffnote = (id, dom) ->
 userIdToIconUrl = (userId) ->
   localStorage["icon_#{userId}"] || ""
 
-
-workloadSync = () ->
+syncWorkload = () ->
   @socket.send({
     type: 'doing'
     workload: @workload

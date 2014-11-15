@@ -1,5 +1,10 @@
+if location.href.match(/245cloud.com/)
+  channel = '245cloud_prod'
+else
+  channel = '245cloud_dev'
+
 pubnub_setup = {
-  channel       : '245cloud_prod',
+  channel       : channel,
   publish_key: 'pub-c-3a4bd949-4c5d-4803-86a4-503439a445dc',
   subscribe_key: 'sub-c-449d11bc-67c1-11e4-814d-02ee2ddab7fe'
 }
