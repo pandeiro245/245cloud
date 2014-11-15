@@ -65,10 +65,10 @@ initChatting = () ->
     ["createdAt", '>', Util.minAgo(@env.pomotime + @env.chattime)]
     ["createdAt", '<', Util.minAgo(@env.pomotime)]
   ]
+  $("#chatting_title").hide()
   ParseParse.where("Workload", cond, (workloads) ->
     return unless workloads.length > 0
     $("#chatting_title").show()
-
     for workload in workloads
       continue unless workload.attributes.user
       @addChatting(workload)
@@ -79,6 +79,7 @@ initChatting = () ->
 initDoing = () ->
   console.log 'initDoing'
   $("#doing_title").html("<h2>NOW DOING</h2>")
+  $("#doing_title").hide()
 
   cond = [
     ["is_done", null]
@@ -306,12 +307,14 @@ initRanking = () ->
   $('#ranking').html('ここにランキング結果が入ります')
 
 @addDoing = (workload) ->
+  $("#doing_title").show()
   t = new Date(workload.createdAt)
   end_time = @env.pomotime*60*1000 + t.getTime()
   disp = "#{Util.hourMin(workload.createdAt)}開始（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
   @addWorkload("#doing", workload, disp)
 
 @addChatting = (workload) ->
+  $("#chatting_title").show()
   t = new Date(workload.createdAt)
   end_time = @env.pomotime*60*1000 + @env.chattime*60*1000 + t.getTime()
   disp = "#{Util.hourMin(workload.createdAt)}開始（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
@@ -444,5 +447,9 @@ syncComment = (comment) ->
 
 @stopUser = (user_id) ->
   $("#chatting .user_#{user_id}").remove()
+  if $("#chatting div").length < 1
+    $("#chatting_title").hide()
   $("#doing .user_#{user_id}").remove()
+  if $("#doing div").length < 1
+    $("#doing_title").hide()
 
