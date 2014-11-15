@@ -7,7 +7,7 @@ $ ->
   )
 
   ParseParse.addAccesslog()
-  Util.scaffolds(['header', 'contents', 'chatting_title', 'chatting', 'doing_title', 'doing', 'online_title', 'online', 'done', 'playing', 'complete', 'comments', 'ranking', 'search', 'music_ranking', 'footer'])
+  Util.scaffolds(['header', 'contents', 'chatting_title', 'chatting', 'doing_title', 'doing', 'done', 'playing', 'complete', 'comments', 'ranking', 'search', 'music_ranking', 'footer'])
 
   ruffnote(13475, 'header')
   ruffnote(13477, 'footer')
@@ -15,7 +15,6 @@ $ ->
 
   initChatting()
   initDoing()
-  initOnline()
   initDone()
   initStart()
   # initRanking()
@@ -94,12 +93,6 @@ initDoing = () ->
       @addDoing(workload)
     initFixedStart()
   )
-  
-initOnline = () ->
-  console.log 'initOnline'
-  $("#online_title").html("<h2>ONLINE</h2>")
-  $("#online").html("ここにオンラインの人が表示される予定（開発中）")
-
 
 initDone = () ->
   console.log 'initDone'
@@ -362,9 +355,8 @@ initRanking = () ->
   unless dom == '#done'
     $("#chatting .user_#{user_id}").remove()
     $("#doing .user_#{user_id}").remove()
-    $("#online .user_#{user_id}").remove()
 
-  if (dom == '#online' or dom == '#doing' or dom == '#chatting') and $("#{dom} .user_#{user_id}").length
+  if (dom == '#doing' or dom == '#chatting') and $("#{dom} .user_#{user_id}").length
 
     $("#{dom} .user_#{user_id}").html(html)
   else
