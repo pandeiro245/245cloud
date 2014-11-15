@@ -58,6 +58,14 @@ class Util
       else
         callback()
 
+  @realtime: () ->
+    setTimeout("Util.realtime()", 1000)
+    for dom in $('.realtime')
+      $dom = $(dom)
+      diff = parseInt($dom.attr('data-countdown')) - (new Date()).getTime()
+      disp = Util.time(diff)
+      $(dom).html(disp)
+
   @parseHttp: (str) ->
     str.replace(/https?:\/\/[\w?=&.\/-;#~%-]+(?![\w\s?&.\/;#~%"=-]*>)/g, (http) ->
       text = http

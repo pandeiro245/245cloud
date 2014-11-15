@@ -8,6 +8,7 @@ $ ->
 
   ParseParse.addAccesslog()
   Util.scaffolds(['header', 'contents', 'chatting_title', 'chatting', 'doing_title', 'doing', 'done', 'playing', 'complete', 'comments', 'ranking', 'search', 'music_ranking', 'footer'])
+  Util.realtime()
 
   ruffnote(13475, 'header')
   ruffnote(13477, 'footer')
@@ -65,7 +66,6 @@ initChatting = () ->
     ["createdAt", '<', Util.minAgo(@env.pomotime)]
   ]
   ParseParse.where("Workload", cond, (workloads) ->
-    console.log workloads
     return unless workloads.length > 0
     $("#chatting_title").show()
 
@@ -307,18 +307,14 @@ initRanking = () ->
 
 @addDoing = (workload) ->
   t = new Date(workload.createdAt)
-  i = Util.monthDay(workload.createdAt)
-  now = new Date()
-  diff = @env.pomotime*60*1000 + t.getTime() - now.getTime()
-  disp = "#{Util.hourMin(workload.createdAt)}開始（あと#{Util.time(diff)}）"
+  end_time = @env.pomotime*60*1000 + t.getTime()
+  disp = "#{Util.hourMin(workload.createdAt)}開始（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
   @addWorkload("#doing", workload, disp)
 
 @addChatting = (workload) ->
   t = new Date(workload.createdAt)
-  i = Util.monthDay(workload.createdAt)
-  now = new Date()
-  diff = @env.pomotime*60*1000 + @env.chattime*60*1000 + t.getTime() - now.getTime()
-  disp = "#{Util.hourMin(workload.createdAt)}開始（あと#{Util.time(diff)}）"
+  end_time = @env.pomotime*60*1000 + @env.chattime*60*1000 + t.getTime()
+  disp = "#{Util.hourMin(workload.createdAt)}開始（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
   @addWorkload("#chatting", workload, disp)
 
 @addWorkload = (dom, workload, disp) ->
