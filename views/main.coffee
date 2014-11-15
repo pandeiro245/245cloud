@@ -108,7 +108,7 @@ initDone = () ->
       if date != i
         $("#done").append("<h2>#{i}</h2>")
       date = i
-      disp = "#{workload.attributes.number}回目@#{Util.hourMin(workload.createdAt)}"
+      disp = "#{Util.hourMin(workload.createdAt)}開始（#{workload.attributes.number}回目）"
       @addWorkload("#done", workload, disp)
     initFixedStart()
   )
