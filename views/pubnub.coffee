@@ -21,6 +21,8 @@ pubnub_setup = {
     @addComment(params.comment)
   else if params.type == 'doing'
     @addDoing(params.workload)
+  else if params.type == 'chatting'
+    @addChatting(params.workload)
 )
 
 @socket.on( 'disconnect', () ->

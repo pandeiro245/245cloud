@@ -59,7 +59,6 @@ initStart = () ->
 initChatting = () ->
   console.log 'initChatting'
   $("#chatting_title").html("<h2>NOW CHATTING</h2>")
-  $("#chatting").html("ここに現在5分休憩中の人が表示される予定（開発中）")
 
 initDoing = () ->
   console.log 'initDoing'
@@ -138,7 +137,7 @@ start = () ->
   $(".fixed_start").hide()
   $("#music_ranking").hide()
   @isDoing = true
-  syncWorkload()
+  @syncWorkload('doing')
 
   Util.countDown(@env.pomotime*60*1000, complete)
 
@@ -174,6 +173,7 @@ play = (key) ->
 complete = () ->
   console.log 'complete'
   @isDoing = false
+  @syncWorkload('chatting')
   $("#playing").fadeOut()
   $("#playing").html('') # for stopping
   workload = @workload
@@ -307,6 +307,15 @@ initRanking = () ->
   disp = "#{Util.hourMin(workload.createdAt)}開始（あと#{Util.time(diff)}）"
   @addWorkload("#doing", workload, disp)
 
+@addChatting = (workload) ->
+  t = new Date(workload.createdAt)
+  i = Util.monthDay(workload.createdAt)
+  now = new Date()
+  diff = @env.pomotime*60*1000 + t.getTime() - now.getTime()
+  #disp = "#{Util.hourMin(workload.createdAt)}開始（あと#{Util.time(diff)}）"
+  disp = "5分休憩中"
+  @addWorkload("#chatting", workload, disp)
+
 @addWorkload = (dom, workload, disp) ->
   if workload.attributes
     w = workload.attributes
@@ -337,8 +346,13 @@ initRanking = () ->
       無音
       <hr />
     """
+  unless dom == '#done'
+    $("#chatting .user_#{user_id}").remove()
+    $("#doing .user_#{user_id}").remove()
+    $("#online .user_#{user_id}").remove()
 
-  if dom == '#doing' and $("#{dom} .user_#{user_id}").length
+  if (dom == '#online' or dom == '#doing' or dom == '#chatting') and $("#{dom} .user_#{user_id}").length
+
     $("#{dom} .user_#{user_id}").html(html)
   else
     $workload = $('<div></div>')
@@ -416,9 +430,9 @@ ruffnote = (id, dom) ->
 userIdToIconUrl = (userId) ->
   localStorage["icon_#{userId}"] || ""
 
-syncWorkload = () ->
+@syncWorkload = (type) ->
   @socket.send({
-    type: 'doing'
+    type: type
     workload: @workload
   })
 
