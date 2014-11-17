@@ -37,6 +37,7 @@ class Util
     "#{Util.zero(hour)}:#{Util.zero(min)}"
 
   @zero: (i) ->
+    return "00" if i < 0
     if i < 10 then "0#{i}" else "#{i}"
 
   @countDown: (duration, callback='reload', started=null) ->
