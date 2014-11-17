@@ -35,6 +35,7 @@ class @ParseParse
   @all: (model_name, callback) ->
     Model = Parse.Object.extend(model_name)
     query = new Parse.Query(Model)
+    query.limit(999999)
     query.find({
       success: (data) ->
         callback(data)
