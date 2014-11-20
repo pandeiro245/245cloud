@@ -45,10 +45,23 @@ class Util
       started = (new Date()).getTime()
     past = (new Date()).getTime() - started
 
+
     if duration > past # yet end
-      remain = Util.time(duration-past)
-      $('title').html(remain)
-      $('.countdown').html("あと#{remain}")
+      remain = duration-past
+     
+      console.log remain
+      if remain < 8 * 1000 && remain > 7 * 1000
+        $audio = $('<audio></audio>')
+        $audio.attr('id', 'audio')
+        # thanks for http://musicisvfr.com/free/se/clock01.html
+        $audio.attr('src', '/audio/Zihou01-4.mp3')
+        $('body').append($audio)
+        audio = document.getElementById("audio")
+        audio.play()
+
+      remain2 = Util.time(remain)
+      $('title').html(remain2)
+      $('.countdown').html("あと#{remain2}")
       if callback == 'reload'
         setTimeout("Util.countDown(#{duration}, null, #{started})", 1000)
       else
