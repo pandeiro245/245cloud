@@ -178,7 +178,13 @@ play = (key) ->
         @workload = workload
         start()
       )
-      Youtube.play(id, $("#playing"), !localStorage['is_dev'])
+      sec = track['entry']['media$group']['yt$duration']['seconds']
+      sec = parseInt(sec)
+      if sec > 24*60
+        start_sec = sec - 24*60
+      else
+        start_sec = 0
+      Youtube.play(id, $("#playing"), !localStorage['is_dev'], start_sec)
     )
     
 complete = () ->
