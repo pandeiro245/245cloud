@@ -96,21 +96,22 @@ initDoing = () ->
   )
 
 initDone = () ->
+  $('#done').html(localStorage['cache_done'])
   console.log 'initDone'
   cond = [["is_done", true]]
   ParseParse.where("Workload", cond, (workloads) ->
     return unless workloads.length > 0
-    $("#done").append("<h2>DONE</h2>")
-
+    html = "<h2>DONE</h2>"
     date = ""
     for workload in workloads
       continue unless workload.attributes.user
       i = Util.monthDay(workload.createdAt)
       if date != i
-        $("#done").append("<h2>#{i}</h2>")
+        html += "<h2>#{i}</h2>"
       date = i
       disp = "#{Util.hourMin(workload.createdAt)}開始（#{workload.attributes.number}回目）"
-      @addWorkload("#done", workload, disp)
+      html += @addWorkload("#done", workload, disp)
+    localStorage['cache_done'] = html
     initFixedStart()
   )
   
@@ -367,16 +368,16 @@ initRanking = () ->
     $workload = $('<div></div>')
     $workload.addClass("user_#{user_id}")
     $workload.html(html)
+
+    if dom = '#done'
+      return $workload.html()
+   
+
     if workload.attributes
       $("#{dom}").append($workload)
     else
       $("#{dom}").prepend($workload)
 
-  if @isDoing
-      $(".fixed_start").hide()
-
-  $("#{dom}").hide()
-  $("#{dom}").fadeIn()
 
 initFixedStart = () ->
   $('.fixed_start').click(() ->
