@@ -18,7 +18,7 @@ pubnub_setup = {
 @socket.on( 'message', (params) ->
   console.log 'pubnub', params
   if params.type == 'comment'
-    @addComment(params.comment)
+    @addComment(params.id, params.comment)
   else if params.type == 'doing'
     @addDoing(params.workload)
   else if params.type == 'chatting'

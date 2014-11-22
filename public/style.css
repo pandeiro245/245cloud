@@ -35,7 +35,7 @@ input {
   text-align: center;
 }
 
-#comment , #file{
+.create_comment , #file{
   margin: 0 auto;
   width: 80%;
 }
@@ -59,4 +59,12 @@ input {
 #track {
   width: 100%;
   text-align: center;
+}
+
+li{
+  list-style: none;
+}
+
+li label input{
+  display: inline;
 }

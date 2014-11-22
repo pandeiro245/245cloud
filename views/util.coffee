@@ -45,11 +45,9 @@ class Util
       started = (new Date()).getTime()
     past = (new Date()).getTime() - started
 
-
     if duration > past # yet end
       remain = duration-past
      
-      console.log remain
       if remain < 8 * 1000 && remain > 7 * 1000
         $audio = $('<audio></audio>')
         $audio.attr('id', 'audio')
