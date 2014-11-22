@@ -152,6 +152,9 @@ window.start_hash = (key = null) ->
 
 start_nomusic = () ->
   console.log 'start_nomusic'
+  createWorkload({}, start)
+
+createWorkload = (params = {}, callback) ->
   params = {host: location.host}
   vals = []
   for room in $("input[name='select_rooms']:checked")
@@ -160,7 +163,7 @@ start_nomusic = () ->
     params.rooms = vals
   ParseParse.create("Workload", params, (workload) ->
     @workload = workload
-    start()
+    callback()
   )
   
 start = () ->
@@ -177,20 +180,15 @@ start = () ->
 
 play = (key) ->
   console.log 'play'
+  params = {}
   id = key.split(':')[1]
-  params = {host: location.host}
-
   if key.match(/^soundcloud/)
     Soundcloud.fetch(id, @env.sc_client_id, (track) ->
       params['sc_id'] = parseInt(id)
       for key in ['title', 'artwork_url']
         params[key] = track[key]
-      if val = $("input[name='select_rooms']:checked").val()
-        params.rooms = [val]
-      ParseParse.create("Workload", params, (workload) ->
-        @workload = workload
-        start()
-      )
+      createWorkload({}, start)
+
       localStorage['artwork_url'] = track.artwork_url
       Soundcloud.play(id, @env.sc_client_id, $("#playing"), !localStorage['is_dev'])
     )
@@ -199,12 +197,7 @@ play = (key) ->
       params['yt_id'] = id
       params['title'] = track['entry']['title']['$t']
       params['artwork_url'] = track['entry']['media$group']['media$thumbnail'][3]['url']
-      if val = $("input[name='select_rooms']:checked").val()
-        params.rooms = [val]
-      ParseParse.create("Workload", params, (workload) ->
-        @workload = workload
-        start()
-      )
+      createWorkload({}, start)
       sec = track['entry']['media$group']['yt$duration']['seconds']
       sec = parseInt(sec)
       if sec > 24*60
