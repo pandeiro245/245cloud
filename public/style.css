@@ -68,3 +68,11 @@ li{
 li label input{
   display: inline;
 }
+
+.tag{
+  color: #fff;
+  background: #ccc;
+  border-radius: 3px;
+  padding: 2px;
+  margin: 2px;
+}

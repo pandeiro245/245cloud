@@ -283,7 +283,7 @@ window.initRoom = (id = 'default', title='いつもの部屋') ->
   $createComment = $('<input />').addClass('create_comment').attr('placeholder', title)
   $room.append($createComment)
   
-  $file = $('<input />').attr('type', 'file').attr('id', 'file')
+  #$file = $('<input />').attr('type', 'file').attr('id', 'file')
   #$room.append($file)
 
   $comments = $("<table></table>").addClass('table comments')
@@ -303,8 +303,6 @@ window.initRoom = (id = 'default', title='いつもの部屋') ->
     )
     for comment in comments
       @addComment(id, comment)
-    $("#room_#{id} .comment").val('')
-    $("#room_#{id} .comment").focus()
   )
 
 window.finish = () ->
@@ -381,18 +379,24 @@ initRanking = () ->
   else
     w = workload
     user_id = w.user.objectId
+
+  rooms = ""
+  if w.rooms
+    for room in w.rooms
+      rooms += "<span class=\"tag\">#{room.split(':')[1]}</span>"
+
   if w.title
     href = '#'
     if w.sc_id
       href += "soundcloud:#{w.sc_id}"
     if w.yt_id
-      href += "youtube:#{w.yt_id}"
-    
+      href += "youtube:#{w.yt_id}"    
     html = """
       #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div class="noimage">no image</div>'}
       <img class='icon icon_#{user_id}' src='#{userIdToIconUrl(user_id)}' />
       #{disp}<br />
       #{w.title} <br />
+      #{rooms}<br />
       <a href=\"#{href}\" class='fixed_start btn btn-default'>この曲で集中する</a>
       <hr />
     """
@@ -401,6 +405,7 @@ initRanking = () ->
       <div class=\"noimage\">無音</div>
       <img class='icon icon_#{user_id}' src='#{userIdToIconUrl(user_id)}' />
       #{disp}<br />
+      #{rooms}<br />
       無音
       <hr />
     """
