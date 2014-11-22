@@ -69,7 +69,7 @@ initSelectRooms = () ->
   ParseParse.all("Room", (rooms) ->
     for room in rooms
       $('#select_rooms ul').append(
-        "<li><label><input name=\"select_rooms\" type=\"checkbox\" checked=\"checked\" value=\"#{room.id}:#{room.attributes.title}\" />#{room.attributes.title}</li></label>"
+        "<li><label><input name=\"select_rooms\" type=\"checkbox\" value=\"#{room.id}:#{room.attributes.title}\" />#{room.attributes.title}</li></label>"
       )
   )
 
