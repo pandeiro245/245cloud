@@ -7,13 +7,14 @@ $ ->
   )
 
   ParseParse.addAccesslog()
-  Util.scaffolds(['header', 'contents', 'chatting_title', 'chatting', 'doing_title', 'doing', 'done', 'playing', 'complete', 'comments', 'ranking', 'search', 'music_ranking', 'footer'])
+  Util.scaffolds(['header', 'contents', 'select_rooms', 'chatting_title', 'chatting', 'doing_title', 'doing', 'done', 'playing', 'complete', 'ranking', 'search', 'music_ranking', 'footer'])
   Util.realtime()
 
   ruffnote(13475, 'header')
   ruffnote(13477, 'footer')
   ruffnote(17314, 'music_ranking')
 
+  initSelectRooms()
   initChatting()
   initDoing()
   initDone()
@@ -55,6 +56,22 @@ initStart = () ->
   else
     text = 'facebookログイン'
     Util.addButton('login', $('#contents'), text, login)
+
+initSelectRooms = () ->
+  console.log 'initSelectRooms'
+  $('#select_rooms').html("""
+  急に利用者が増えたので<br />
+  超簡易版トークルーム機能付けてみました。<br />
+  チェックした部屋は24分集中後に5分間だけ入れます。
+  チェックできる数はいずれ制限しますが今は無制限です！
+  <ul></ul>
+  """)
+  ParseParse.all("Room", (rooms) ->
+    for room in rooms
+      $('#select_rooms ul').append(
+        "<li><label><input name=\"select_rooms\" type=\"checkbox\" checked=\"checked\" value=\"#{room.id}:#{room.attributes.title}\" />#{room.attributes.title}</li></label>"
+      )
+  )
 
 initChatting = () ->
   console.log 'initChatting'
@@ -136,6 +153,11 @@ window.start_hash = (key = null) ->
 start_nomusic = () ->
   console.log 'start_nomusic'
   params = {host: location.host}
+  vals = []
+  for room in $("input[name='select_rooms']:checked")
+    vals.push($(room).val())
+  if vals.length
+    params.rooms = vals
   ParseParse.create("Workload", params, (workload) ->
     @workload = workload
     start()
@@ -143,6 +165,7 @@ start_nomusic = () ->
   
 start = () ->
   console.log 'start'
+  $("#select_rooms").hide()
   $("#done").hide()
   $("input").hide()
   $(".fixed_start").hide()
@@ -162,6 +185,8 @@ play = (key) ->
       params['sc_id'] = parseInt(id)
       for key in ['title', 'artwork_url']
         params[key] = track[key]
+      if val = $("input[name='select_rooms']:checked").val()
+        params.rooms = [val]
       ParseParse.create("Workload", params, (workload) ->
         @workload = workload
         start()
@@ -174,6 +199,8 @@ play = (key) ->
       params['yt_id'] = id
       params['title'] = track['entry']['title']['$t']
       params['artwork_url'] = track['entry']['media$group']['media$thumbnail'][3]['url']
+      if val = $("input[name='select_rooms']:checked").val()
+        params.rooms = [val]
       ParseParse.create("Workload", params, (workload) ->
         @workload = workload
         start()
@@ -213,12 +240,6 @@ complete = () ->
   $complete = $('#complete')
   $complete.html('24分おつかれさまでした！5分間交換ノートが見られます')
 
-  $comment = $('<input />').attr('id', 'comment').attr('placeholder', 'ここに24分頑張った感想をかいてね')
-  $('#complete').append($comment)
-  
-  $file = $('<input />').attr('type', 'file').attr('id', 'file')
-  $('#complete').append($file)
-
   initComments()
 
   $track = $("<input />").attr('id', 'track').attr('placeholder', 'ここにアーティスト名や曲名を入れてね')
@@ -253,19 +274,44 @@ complete = () ->
   Util.countDown(@env.chattime*60*1000, 'finish')
 
 window.initComments = () ->
-  $recents = $('<table></table>').addClass('table recents')
-  $comments = $("#comments")
+  if @workload.attributes.rooms
+    for room in @workload.attributes.rooms
+      params = room.split(':')
+      id = params[0]
+      title = params[1]
+      initRoom(id, title)
+  initRoom()
 
-  ParseParse.where("Comment", [], (comments) ->
-    $('#comment').keypress((e) ->
+
+window.initRoom = (id = 'default', title='いつもの部屋') ->
+  console.log 'initRoom'
+  $room = $('<div></div>')
+  $room.attr('id', "room_#{id}")
+  $createComment = $('<input />').addClass('create_comment').attr('placeholder', title)
+  $room.append($createComment)
+  
+  $file = $('<input />').attr('type', 'file').attr('id', 'file')
+  #$room.append($file)
+
+  $comments = $("<table></table>").addClass('table comments')
+  $room.append($comments)
+
+  $('#complete').append($room)
+  
+  if id == 'default'
+    search_id = null
+  else
+    search_id = id
+
+  ParseParse.where("Comment", [['room_id', search_id]], (comments) ->
+    $("#room_#{id} .create_comment").keypress((e) ->
       if e.which == 13 #enter
-        window.comment()
+        window.createComment(id)
     )
-    $comments.html($recents)
     for comment in comments
-      @addComment(comment)
-    $('#comment').val('')
-    $('#comment').focus()
+      @addComment(id, comment)
+    $("#room_#{id} .comment").val('')
+    $("#room_#{id} .comment").focus()
   )
 
 window.finish = () ->
@@ -273,21 +319,26 @@ window.finish = () ->
   @syncWorkload('finish')
   location.reload()
 
-window.comment = () ->
-  console.log 'comment'
-  $comment = $('#comment')
-  $file = $("#file")
+window.createComment = (room_id) ->
+  console.log 'createComment'
+  console.log 'room_id', room_id
+  $createComment = $("#room_#{room_id} .create_comment")
   
-  body = $comment.val()
+  #$file = $("#file")
+  
+  body = $createComment.val()
 
-  $comment.val('')
+  $createComment.val('')
   
   return if body.length < 1
 
   params = {body: body}
 
+  if room_id != 'default'
+    params.room_id = room_id
+
+  ###
   fileUploadControl = $file[0]
-      
   if fileUploadControl.files.length > 0
     file = fileUploadControl.files[0]
     #FIXME
@@ -299,15 +350,19 @@ window.comment = () ->
       params['file'] = file
       ParseParse.create('Comment', params, (comment)->
         $file.val(null)
-        syncComment(comment)
+        syncComment(room_id, comment)
       )
     , (error) ->
       # error handling
     )
   else
     ParseParse.create('Comment', params, (comment)->
-      syncComment(comment)
+      syncComment(room_id, comment)
     )
+  ###
+  ParseParse.create('Comment', params, (comment)->
+    syncComment(room_id, comment)
+  )
 
 initRanking = () ->
   $('#ranking').html('ここにランキング結果が入ります')
@@ -392,8 +447,8 @@ ruffnote = (id, dom) ->
   else
     Ruffnote.fetch("pandeiro245/245cloud/#{id}", dom)
 
-@addComment = (comment) ->
-  $recents = $('.recents')
+@addComment = (id, comment) ->
+  $comments = $("#room_#{id} .comments")
   if typeof(comment.attributes) != 'undefined'
     c = comment.attributes
   else
@@ -423,7 +478,7 @@ ruffnote = (id, dom) ->
     </tr>
     """
     if typeof(comment.attributes) != 'undefined'
-      $recents.append(html)
+      $comments.append(html)
       ParseParse.fetch("user", comment, (ent, user) ->
         img = user.get('icon_url') || user.get('icon')._url
         $(".icon_#{user.id}").attr('src', img)
@@ -434,7 +489,7 @@ ruffnote = (id, dom) ->
           $(".facebook_name_#{user.id}").html(name)
       )
     else
-      $recents.prepend(html)
+      $comments.prepend(html)
 
 userIdToIconUrl = (userId) ->
   localStorage["icon_#{userId}"] || ""
@@ -445,10 +500,11 @@ userIdToIconUrl = (userId) ->
     workload: @workload
   })
 
-syncComment = (comment) ->
+syncComment = (id, comment) ->
   @socket.send({
     type: 'comment'
     comment: comment
+    id: id
   })
 
 @stopUser = (user_id) ->
