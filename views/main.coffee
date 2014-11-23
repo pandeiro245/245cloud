@@ -62,14 +62,15 @@ initSelectRooms = () ->
   $('#select_rooms').html("""
   急に利用者が増えたので<br />
   超簡易版トークルーム機能付けてみました。<br />
-  チェックした部屋は24分集中後に5分間だけ入れます。
-  チェックできる数はいずれ制限しますが今は無制限です！
+  チェックした部屋は24分集中後に5分間だけ入れます。<br />
+  チェックできる数はいずれ制限しますが今は無制限です！<br />
+  （カッコ内は未読コメント数）<br /><br />
   <ul></ul>
   """)
   ParseParse.all("Room", (rooms) ->
     for room in rooms
       $('#select_rooms ul').append(
-        "<li><label><input name=\"select_rooms\" type=\"checkbox\" value=\"#{room.id}:#{room.attributes.title}\" />#{room.attributes.title}</li></label>"
+        "<li><label><input name=\"select_rooms\" type=\"checkbox\" value=\"#{room.id}:#{room.attributes.title}\" />#{room.attributes.title} (#{unread(room.id, room.attributes.comments_count)})</li></label>"
       )
   )
 
@@ -293,8 +294,10 @@ window.initRoom = (id = 'default', title='いつもの部屋') ->
   
   if id == 'default'
     search_id = null
+    limit = 100
   else
     search_id = id
+    limit = 10000
 
   ParseParse.where("Comment", [['room_id', search_id]], (comments) ->
     $("#room_#{id} .create_comment").keypress((e) ->
@@ -303,6 +306,11 @@ window.initRoom = (id = 'default', title='いつもの部屋') ->
     )
     for comment in comments
       @addComment(id, comment)
+    unreads = Parse.User.current().get("unreads")
+    unreads = {} unless unreads
+    unreads[search_id] = comments.length
+    Parse.User.current().set("unreads", unreads)
+    Parse.User.current().save()
   )
 
 window.finish = () ->
@@ -390,7 +398,7 @@ initRanking = () ->
     if w.sc_id
       href += "soundcloud:#{w.sc_id}"
     if w.yt_id
-      href += "youtube:#{w.yt_id}"    
+      href += "youtube:#{w.yt_id}"
     html = """
       #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div class="noimage">no image</div>'}
       <img class='icon icon_#{user_id}' src='#{userIdToIconUrl(user_id)}' />
@@ -491,6 +499,13 @@ ruffnote = (id, dom) ->
 
 userIdToIconUrl = (userId) ->
   localStorage["icon_#{userId}"] || ""
+
+unread = (room_id, count) ->
+  return count unless Parse.User.current()
+  return count unless Parse.User.current().get("unreads")
+  if read_count = Parse.User.current().get("unreads")[room_id]
+    count -= read_count
+  return count
 
 @syncWorkload = (type) ->
   @socket.send({

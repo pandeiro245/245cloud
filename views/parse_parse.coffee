@@ -9,9 +9,10 @@ class @ParseParse
         callback(child, parent)
     })
 
-  @where: (model_name, cond, callback, instance=null) ->
+  @where: (model_name, cond, callback, instance=null, limit=100) ->
     Model = Parse.Object.extend(model_name)
     query = new Parse.Query(Model)
+    query.limit(limit)
     for c in cond
       if c[2]
         if c[1] == '<'
