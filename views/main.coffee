@@ -71,7 +71,7 @@ initSelectRooms = () ->
     for room in rooms
       unread_count = room.attributes.comments_count
       $('#select_rooms ul').append(
-        "<li><label><input name=\"select_rooms\" type=\"checkbox\" value=\"#{room.id}:#{room.attributes.title}\" />#{room.attributes.title} (#{unread(room.id, unread_count)}/#{unread_count})</li></label>"
+        "<li><label><input name=\"select_rooms\" type=\"checkbox\" value=\"#{room.id}:#{room.attributes.title}\" />#{room.attributes.title} (#{getUnreadsCount(room.id, unread_count)}/#{unread_count})</li></label>"
       )
   )
 
@@ -212,6 +212,7 @@ play = (key) ->
 complete = () ->
   console.log 'complete'
   @isDoing = false
+  @isDone = true
   @syncWorkload('chatting')
   $("#playing").fadeOut()
   $("#playing").html('') # for stopping
@@ -361,7 +362,7 @@ window.createComment = (room_id) ->
     )
   ###
   ParseParse.create('Comment', params, (comment)->
-    syncComment(room_id, comment)
+    syncComment(room_id, comment, true)
   )
 
 initRanking = () ->
@@ -454,7 +455,7 @@ ruffnote = (id, dom) ->
   else
     Ruffnote.fetch("pandeiro245/245cloud/#{id}", dom)
 
-@addComment = (id, comment) ->
+@addComment = (id, comment, is_countup=false) ->
   $comments = $("#room_#{id} .comments")
   if typeof(comment.attributes) != 'undefined'
     c = comment.attributes
@@ -467,11 +468,22 @@ ruffnote = (id, dom) ->
   min = t.getMinutes()
 
   if user && c.body
+
+    # FIXME
+    if @isDone 
+      unreads = Parse.User.current().get("unreads")
+      unless unreads
+        unreads = {}
+        unreads[id] = 0
+      unreads[id] += 1
+      Parse.User.current().set("unreads", unreads)
+      Parse.User.current().save()
+
     if c.file
       console.log c.file
       file = "<img src=\"#{c.file._url}\" style='max-width: 500px;'/>"
     else
-      file = "" 
+      file = ""
     html = """
     <tr>
     <td>
@@ -501,12 +513,14 @@ ruffnote = (id, dom) ->
 userIdToIconUrl = (userId) ->
   localStorage["icon_#{userId}"] || ""
 
-unread = (room_id, count) ->
-  return count unless Parse.User.current()
-  return count unless Parse.User.current().get("unreads")
-  if read_count = Parse.User.current().get("unreads")[room_id]
-    count -= read_count
-  return count
+getUnreadsCount = (room_id, total_count) ->
+  return total_count unless Parse.User.current()
+  return total_count unless Parse.User.current().get("unreads")
+  if count = Parse.User.current().get("unreads")[room_id]
+    res = total_count - count
+    if res < 0 then 0  else res
+  else 
+    return total_count
 
 @syncWorkload = (type) ->
   @socket.send({
@@ -514,11 +528,12 @@ unread = (room_id, count) ->
     workload: @workload
   })
 
-syncComment = (id, comment) ->
+syncComment = (id, comment, is_countup=false) ->
   @socket.send({
     type: 'comment'
     comment: comment
     id: id
+    is_countup: is_countup
   })
 
 @stopUser = (user_id) ->
