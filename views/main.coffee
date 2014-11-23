@@ -73,7 +73,7 @@ initSelectRooms = () ->
       unread_count = getUnreadsCount(room.id, total_count)
       style = ""
       user = Parse.User.current()
-      if user and !user.get('unreads')[room.id] # 1回入ったことがない部屋
+      if user and user.get('unreads') and !user.get('unreads')[room.id] # 1回入ったことがない部屋
         style = " style=\"color: #ccc;\""
       else if unread_count > 100
         style = " style=\"color: #000;\""
