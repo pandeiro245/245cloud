@@ -72,7 +72,9 @@ initSelectRooms = () ->
       total_count = room.attributes.comments_count
       unread_count = getUnreadsCount(room.id, total_count)
       style = ""
-      if unread_count > 100
+      if !Parse.User.current().get('unreads')[room.id] # 1回入ったことがない部屋
+        style = " style=\"color: #ccc;\""
+      else if unread_count > 100
         style = " style=\"color: #000;\""
       else if unread_count > 10
         style = " style=\"color: #666;\""
