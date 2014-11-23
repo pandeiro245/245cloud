@@ -14,7 +14,7 @@ $ ->
   ruffnote(13477, 'footer')
   ruffnote(17314, 'music_ranking')
 
-  initSelectRooms()
+  #initSelectRooms()
   initChatting()
   initDoing()
   initDone()
