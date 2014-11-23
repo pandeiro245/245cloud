@@ -1,3 +1,5 @@
+@env.is_doing = false
+
 $ ->
   ParseParse.all("User", (users) ->
     for user in users
@@ -5,9 +7,23 @@ $ ->
       localStorage["icon_#{user.id}"] = img if img
       $(".icon_#{user.id}").attr('src', img)
   )
-
   ParseParse.addAccesslog()
-  Util.scaffolds(['header', 'contents', 'select_rooms', 'chatting_title', 'chatting', 'doing_title', 'doing', 'done', 'playing', 'complete', 'ranking', 'search', 'music_ranking', 'footer'])
+  Util.scaffolds([
+    'header'
+    'contents'
+    'select_rooms'
+    'chatting_title'
+    'chatting'
+    'doing_title'
+    'doing'
+    'done'
+    'playing'
+    'complete'
+    'ranking'
+    'search'
+    'music_ranking'
+    'footer'
+  ])
   Util.realtime()
 
   ruffnote(13475, 'header')
@@ -24,14 +40,8 @@ $ ->
 
 initStart = () ->
   console.log 'initStart'
-  window.isDoing = false
-  
-  $(document).ready(() ->
-    $(window).on("beforeunload", (e)->
-      if window.isDoing
-        return "24分やり直しでも大丈夫ですか？"
-    )
-  )
+  text = "24分やり直しでも大丈夫ですか？"
+  Util.beforeunload(text, 'env.is_doing')
   
   if Parse.User.current()
     $('#contents').append("<div class='countdown'></div>")
@@ -189,7 +199,7 @@ start = () ->
   $("input").hide()
   $(".fixed_start").hide()
   $("#music_ranking").hide()
-  @isDoing = true
+  @env.is_doing = true
   @syncWorkload('doing')
 
   Util.countDown(@env.pomotime*60*1000, complete)
@@ -225,7 +235,7 @@ play = (key) ->
     
 complete = () ->
   console.log 'complete'
-  @isDoing = false
+  @env.is_doing = false
   @isDone = true
   @syncWorkload('chatting')
   $("#playing").fadeOut()
@@ -449,8 +459,8 @@ initRanking = () ->
     else
       $("#{dom}").prepend($workload)
 
-  if @isDoing
-      $(".fixed_start").hide()
+  if @env.is_doing
+    $(".fixed_start").hide()
 
   $("#{dom}").hide()
   $("#{dom}").fadeIn()
@@ -533,7 +543,7 @@ getUnreadsCount = (room_id, total_count) ->
   if count = Parse.User.current().get("unreads")[room_id]
     res = total_count - count
     if res < 0 then 0  else res
-  else 
+  else
     return total_count
 
 @syncWorkload = (type) ->

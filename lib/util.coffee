@@ -94,6 +94,10 @@ class Util
     $button.click(() ->
       callback()
     )
-
+  @beforeunload: (text, flag) ->
+    $(window).on("beforeunload", (e)->
+      if flag && eval(flag)
+        return text
+    )
 
 window.Util = window.Util || Util
