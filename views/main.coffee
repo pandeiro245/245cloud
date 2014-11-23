@@ -64,13 +64,14 @@ initSelectRooms = () ->
   超簡易版トークルーム機能付けてみました。<br />
   チェックした部屋は24分集中後に5分間だけ入れます。<br />
   チェックできる数はいずれ制限しますが今は無制限です！<br />
-  （カッコ内は未読コメント数）<br /><br />
+  （カッコ内は未読コメント数/全件数）<br /><br />
   <ul></ul>
   """)
   ParseParse.all("Room", (rooms) ->
     for room in rooms
+      unread_count = room.attributes.comments_count
       $('#select_rooms ul').append(
-        "<li><label><input name=\"select_rooms\" type=\"checkbox\" value=\"#{room.id}:#{room.attributes.title}\" />#{room.attributes.title} (#{unread(room.id, room.attributes.comments_count)})</li></label>"
+        "<li><label><input name=\"select_rooms\" type=\"checkbox\" value=\"#{room.id}:#{room.attributes.title}\" />#{room.attributes.title} (#{unread(room.id, unread_count)}/#{unread_count})</li></label>"
       )
   )
 
