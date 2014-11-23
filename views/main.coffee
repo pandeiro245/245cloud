@@ -69,9 +69,20 @@ initSelectRooms = () ->
   """)
   ParseParse.all("Room", (rooms) ->
     for room in rooms
-      unread_count = room.attributes.comments_count
+      total_count = room.attributes.comments_count
+      unread_count = getUnreadsCount(room.id, total_count)
+      style = ""
+      if unread_count > 100
+        style = " style=\"color: #000;\""
+      else if unread_count > 10
+        style = " style=\"color: #666;\""
+      else if unread_count > 0 and unread_count < 10
+        style = " style=\"color: #333;\""
+      else
+        style = " style=\"color: #ccc;\""
+
       $('#select_rooms ul').append(
-        "<li><label><input name=\"select_rooms\" type=\"checkbox\" value=\"#{room.id}:#{room.attributes.title}\" />#{room.attributes.title} (#{getUnreadsCount(room.id, unread_count)}/#{unread_count})</li></label>"
+        "<li#{style}><label><input name=\"select_rooms\" type=\"checkbox\" value=\"#{room.id}:#{room.attributes.title}\" />#{room.attributes.title} (#{unread_count}/#{unread_count})</li></label>"
       )
   )
 
