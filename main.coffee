@@ -11,7 +11,6 @@ $ ->
   Util.scaffolds([
     'header'
     'contents'
-    'select_rooms'
     'chatting_title'
     'chatting'
     'doing_title'
@@ -20,6 +19,8 @@ $ ->
     'search'
     'playing'
     'complete'
+    'select_rooms'
+    'rooms'
     #'ranking'
     #'music_ranking'
     'footer'
@@ -31,7 +32,6 @@ $ ->
   #ruffnote(17314, 'music_ranking')
 
   initSearch()
-  #initSelectRooms()
   initChatting()
   initDoing()
   initDone()
@@ -91,36 +91,34 @@ initSearch = () ->
       searchMusics()
   )
 
-initSelectRooms = () ->
+@initSelectRooms = () ->
   console.log 'initSelectRooms'
   $('#select_rooms').html("""
   急に利用者が増えたので<br />
   超簡易版トークルーム機能付けてみました。<br />
   チェックした部屋は24分集中後に5分間だけ入れます。<br />
-  チェックできる数はいずれ制限しますが今は無制限です！<br />
+  チェックできる数はいずれ制限するかもですが今は無制限です！<br />
   （カッコ内は未読コメント数/全件数）<br /><br />
-  <ul></ul>
+  <select></select>
   """)
+
+  $('#select_rooms select').append(
+    "<option value=\"default:いつもの部屋\">いつもの部屋</option>"
+  )
+
   ParseParse.all("Room", (rooms) ->
     for room in rooms
       total_count = room.attributes.comments_count
       unread_count = getUnreadsCount(room.id, total_count)
       style = ""
       user = Parse.User.current()
-      if user and user.get('unreads') and !user.get('unreads')[room.id] # 1回入ったことがない部屋
-        style = " style=\"color: #ccc;\""
-      else if unread_count > 100
-        style = " style=\"color: #000;\""
-      else if unread_count > 10
-        style = " style=\"color: #666;\""
-      else if unread_count > 0 and unread_count < 10
-        style = " style=\"color: #333;\""
-      else
-        style = " style=\"color: #ccc;\""
-
-      $('#select_rooms ul').append(
-        "<li#{style}><label><input name=\"select_rooms\" type=\"checkbox\" value=\"#{room.id}:#{room.attributes.title}\" />#{room.attributes.title} (#{unread_count}/#{total_count})</li></label>"
+      $('#select_rooms select').append(
+        "<option value=\"#{room.id}:#{room.attributes.title}\">#{room.attributes.title} (#{unread_count}/#{total_count})</option>"
       )
+    $("#select_rooms select").change(() ->
+      vals = $(this).val().split(':')
+      initRoom(vals[0], vals[1])
+    )
   )
 
 initChatting = () ->
@@ -207,10 +205,6 @@ start_nomusic = () ->
 createWorkload = (params = {}, callback) ->
   params.host = location.host
   vals = []
-  for room in $("input[name='select_rooms']:checked")
-    vals.push($(room).val())
-  if vals.length
-    params.rooms = vals
   ParseParse.create("Workload", params, (workload) ->
     @workload = workload
     callback()
@@ -218,7 +212,6 @@ createWorkload = (params = {}, callback) ->
   
 start = () ->
   console.log 'start'
-  $("#select_rooms").hide()
   $("#done").hide()
   $("#search").hide()
   $("input").hide()
@@ -266,6 +259,7 @@ complete = () ->
   $("#playing").fadeOut()
   $("#search").fadeOut()
   $("#playing").html('') # for stopping
+  @initSelectRooms()
   workload = @workload
   w = workload.attributes
   first = new Date(workload.createdAt)
@@ -291,50 +285,49 @@ complete = () ->
   Util.countDown(@env.chattime*60*1000, 'finish')
 
 window.initComments = () ->
-  if @workload.attributes.rooms
-    for room in @workload.attributes.rooms
-      params = room.split(':')
-      id = params[0]
-      title = params[1]
-      initRoom(id, title)
   initRoom()
-
 
 window.initRoom = (id = 'default', title='いつもの部屋') ->
   console.log 'initRoom'
-  $room = $('<div></div>')
-  $room.attr('id', "room_#{id}")
-  $createComment = $('<input />').addClass('create_comment').attr('placeholder', title)
-  $room.append($createComment)
-  
-  #$file = $('<input />').attr('type', 'file').attr('id', 'file')
-  #$room.append($file)
 
-  $comments = $("<table></table>").addClass('table comments')
-  $room.append($comments)
+  $(".room").hide()
 
-  $('#complete').append($room)
-  
-  if id == 'default'
-    search_id = null
-    limit = 100
+  $room = $("#room_#{id}")
+
+  if $room.length
+    $room.show()
   else
-    search_id = id
-    limit = 10000
+    $room = $('<div></div>')
+    $room.addClass('room')
+    $room.attr('id', "room_#{id}")
+    $createComment = $('<input />').addClass('create_comment').attr('placeholder', title)
+    $room.append($createComment)
+  
+    $comments = $("<table></table>").addClass('table comments')
+    $room.append($comments)
 
-  ParseParse.where("Comment", [['room_id', search_id]], (comments) ->
-    $("#room_#{id} .create_comment").keypress((e) ->
-      if e.which == 13 #enter
-        window.createComment(id)
-    )
-    for comment in comments
-      @addComment(id, comment)
-    unreads = Parse.User.current().get("unreads")
-    unreads = {} unless unreads
-    unreads[search_id] = comments.length
-    Parse.User.current().set("unreads", unreads)
-    Parse.User.current().save()
-  )
+    $('#rooms').append($room)
+    
+    if id == 'default'
+      search_id = null
+      limit = 100
+    else
+      search_id = id
+      limit = 10000
+
+    ParseParse.where("Comment", [['room_id', search_id]], (comments) ->
+      $("#room_#{id} .create_comment").keypress((e) ->
+        if e.which == 13 #enter
+          window.createComment(id)
+      )
+      for comment in comments
+        @addComment(id, comment)
+      unreads = Parse.User.current().get("unreads")
+      unreads = {} unless unreads
+      unreads[search_id] = comments.length
+      Parse.User.current().set("unreads", unreads)
+      Parse.User.current().save()
+    , null, limit)
 
 window.finish = () ->
   console.log 'finish'
@@ -607,7 +600,6 @@ searchMusics = () ->
   $.get(url, (tracks) ->
     if tracks[0]
       for track in tracks
-        console.log track
         artwork = ''
         if track.artwork_url
           artwork = "<img src=\"#{track.artwork_url}\" width=100px/>"
