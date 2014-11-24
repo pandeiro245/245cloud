@@ -96,9 +96,8 @@ initSearch = () ->
   $('#select_rooms').html("""
   急に利用者が増えたので<br />
   超簡易版トークルーム機能付けてみました。<br />
-  チェックした部屋は24分集中後に5分間だけ入れます。<br />
-  チェックできる数はいずれ制限するかもですが今は無制限です！<br />
-  （カッコ内は未読コメント数/全件数）<br /><br />
+  カッコ内は未読コメント数/全件数<br />
+  ですが色々バグあるかもしれませんｗ<br /><br />
   <select></select>
   """)
 
@@ -204,7 +203,7 @@ start_nomusic = () ->
 
 createWorkload = (params = {}, callback) ->
   params.host = location.host
-  vals = []
+
   ParseParse.create("Workload", params, (workload) ->
     @workload = workload
     callback()
@@ -300,7 +299,7 @@ window.initRoom = (id = 'default', title='いつもの部屋') ->
     $room = $('<div></div>')
     $room.addClass('room')
     $room.attr('id', "room_#{id}")
-    $createComment = $('<input />').addClass('create_comment').attr('placeholder', title)
+    $createComment = $('<input />').addClass('create_comment').attr('placeholder', "「#{title}」に書き込む)
     $room.append($createComment)
   
     $comments = $("<table></table>").addClass('table comments')
