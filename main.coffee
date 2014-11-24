@@ -70,7 +70,7 @@ initStart = () ->
 
 initSearch = () ->
   $track = $("<input />").attr('id', 'track').attr('placeholder', 'ここにアーティスト名や曲名を入れてね')
-  localStorage['search_music_title'] = '作業BGM'
+  localStorage['search_music_title'] = '作業BGM' unless localStorage['search_music_title']
   if localStorage['search_music_title'].length > 1
     $track.attr('value', localStorage['search_music_title'])
 
@@ -579,7 +579,9 @@ searchMusics = () ->
         duration = parseInt(track['media$group']['yt$duration']['seconds']) * 1000
         continue if duration < 24 * 60 *1000
 
-        id = track['id']['$t'].split("/")[track['id']['$t'].split("/").length - 1]
+        tmp = track['id']['$t']
+        id = tmp.split("/")[tmp.split("/").length - 1]
+        url = "https://www.youtube.com/watch?v=#{id}"
         title = track['title']['$t']
         artwork_url = track['media$group']['media$thumbnail'][3]['url']
         duration = parseInt(track['media$group']['yt$duration']['seconds']) * 1000
@@ -590,13 +592,12 @@ searchMusics = () ->
         $('#tracks').append("""
           <div>
             #{artwork}
-            #{title}
-            (#{Util.time(duration)})
+            <a href='#{url}' target='_blank'>#{title}</a>
+            (#{Util.time(duration)})<br />
             <a href=\"#{href}\" class='fixed_start btn btn-default'>この曲で集中</a>
             <a href=\"#\" class='add_playlist btn btn-default'>プレイリストに追加（準備中）</a>
           </div>
         """)
-        console.log $('#tracks')
       initFixedStart()
     else
       $("#tracks").append("<div>「#{q}」YouTubeCloudにはで24分前後の曲はまだ出てないようです...。他のキーワードで探してみてください！</div>")
@@ -606,15 +607,17 @@ searchMusics = () ->
   $.get(url, (tracks) ->
     if tracks[0]
       for track in tracks
+        console.log track
         artwork = ''
         if track.artwork_url
           artwork = "<img src=\"#{track.artwork_url}\" width=100px/>"
         href = "soundcloud:#{track.id}"
         $('#tracks').append("""
+          <hr />
           <div>
             #{artwork}
-            #{track.title}
-            (#{Util.time(track.duration)})
+            <a href='#{track.permalink_url}' target='_blank'>#{track.title}</a>
+            (#{Util.time(track.duration)})<br />
             <a href=\"#{href}\" class='fixed_start btn btn-default'>この曲で集中</a>
             <a href=\"#\" class='add_playlist btn btn-default'>プレイリストに追加（準備中）</a>
           </div>
