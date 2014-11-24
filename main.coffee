@@ -176,7 +176,7 @@ initDone = () ->
       disp = "#{Util.hourMin(workload.createdAt)}開始（#{workload.attributes.number}回目）"
       @addWorkload("#done", workload, disp)
     initFixedStart()
-  , null, 3)
+  , null, 10)
   
 login = () ->
   console.log 'login'
@@ -299,7 +299,7 @@ window.initRoom = (id = 'default', title='いつもの部屋') ->
     $room = $('<div></div>')
     $room.addClass('room')
     $room.attr('id', "room_#{id}")
-    $createComment = $('<input />').addClass('create_comment').attr('placeholder', "「#{title}」に書き込む)
+    $createComment = $('<input />').addClass('create_comment').attr('placeholder', "「#{title}」に書き込む")
     $room.append($createComment)
   
     $comments = $("<table></table>").addClass('table comments')
