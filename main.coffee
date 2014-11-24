@@ -463,10 +463,7 @@ initFixedStart = () ->
   )
 
 ruffnote = (id, dom) ->
-  if location.href.match(/245cloud-c9-pandeiro245.c9.io/)
-    Ruffnote.fetch("pandeiro245/1269/#{id}", dom)
-  else
-    Ruffnote.fetch("pandeiro245/245cloud/#{id}", dom)
+  Ruffnote.fetch("pandeiro245/245cloud/#{id}", dom)
 
 @addComment = (id, comment, is_countup=false) ->
   $comments = $("#room_#{id} .comments")
@@ -583,9 +580,10 @@ searchMusics = () ->
         href = "youtube:#{id}"
         $('#tracks').append("""
           <div>
-            #{artwork}
             <a href='#{url}' target='_blank'>#{title}</a>
             (#{Util.time(duration)})<br />
+            <br />
+            #{artwork}
             <a href=\"#{href}\" class='fixed_start btn btn-default'>この曲で集中</a>
             <a href=\"#\" class='add_playlist btn btn-default'>プレイリストに追加（準備中）</a>
           </div>
@@ -606,9 +604,10 @@ searchMusics = () ->
         $('#tracks').append("""
           <hr />
           <div>
-            #{artwork}
             <a href='#{track.permalink_url}' target='_blank'>#{track.title}</a>
             (#{Util.time(track.duration)})<br />
+            <br />
+            #{artwork}
             <a href=\"#{href}\" class='fixed_start btn btn-default'>この曲で集中</a>
             <a href=\"#\" class='add_playlist btn btn-default'>プレイリストに追加（準備中）</a>
           </div>
