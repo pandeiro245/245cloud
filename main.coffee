@@ -11,6 +11,7 @@ $ ->
   Util.scaffolds([
     'header'
     'contents'
+    'search'
     'select_rooms'
     'chatting_title'
     'chatting'
@@ -19,17 +20,17 @@ $ ->
     'done'
     'playing'
     'complete'
-    'ranking'
-    'search'
-    'music_ranking'
+    #'ranking'
+    #'music_ranking'
     'footer'
   ])
   Util.realtime()
 
   ruffnote(13475, 'header')
   ruffnote(13477, 'footer')
-  ruffnote(17314, 'music_ranking')
+  #ruffnote(17314, 'music_ranking')
 
+  initSearch()
   #initSelectRooms()
   initChatting()
   initDoing()
@@ -66,6 +67,29 @@ initStart = () ->
   else
     text = 'facebookログイン'
     Util.addButton('login', $('#contents'), text, login)
+
+initSearch = () ->
+  $track = $("<input />").attr('id', 'track').attr('placeholder', 'ここにアーティスト名や曲名を入れてね')
+  localStorage['search_music_title'] = '作業BGM'
+  if localStorage['search_music_title'].length > 1
+    $track.attr('value', localStorage['search_music_title'])
+
+  $tracks = $("<div></div>").attr('id', 'tracks')
+
+  $('#search').append("<hr /><h3>好きなパワーソングを探す</h3>")
+  $('#search').append($track)
+  $('#search').append($tracks)
+
+  $('#search input').focus(() ->
+    $(this).select()
+  )
+  $('#search input').focus()
+  searchMusics()
+
+  $('#track').keypress((e) ->
+    if e.which == 13 #enter
+      searchMusics()
+  )
 
 initSelectRooms = () ->
   console.log 'initSelectRooms'
@@ -155,7 +179,7 @@ initDone = () ->
       disp = "#{Util.hourMin(workload.createdAt)}開始（#{workload.attributes.number}回目）"
       @addWorkload("#done", workload, disp)
     initFixedStart()
-  )
+  , null, 3)
   
 login = () ->
   console.log 'login'
@@ -196,6 +220,7 @@ start = () ->
   console.log 'start'
   $("#select_rooms").hide()
   $("#done").hide()
+  $("#search").hide()
   $("input").hide()
   $(".fixed_start").hide()
   $("#music_ranking").hide()
@@ -239,6 +264,7 @@ complete = () ->
   @isDone = true
   @syncWorkload('chatting')
   $("#playing").fadeOut()
+  $("#search").fadeOut()
   $("#playing").html('') # for stopping
   workload = @workload
   w = workload.attributes
@@ -262,35 +288,6 @@ complete = () ->
 
   initComments()
 
-  $track = $("<input />").attr('id', 'track').attr('placeholder', 'ここにアーティスト名や曲名を入れてね')
-  $tracks = $("<div></div>").attr('id', 'tracks')
-
-  $('#search').append("<hr /><h3>好きなパワーソングを探す</h3>")
-  $('#search').append($track)
-  $('#search').append($tracks)
-
-  $('#track').keypress((e) ->
-    if e.which == 13 #enter
-      q = $('#track').val()
-      url = "http://api.soundcloud.com/tracks.json?client_id=#{window.env.sc_client_id}&q=#{q}&duration[from]=#{19*60*1000}"
-      $.get(url, (tracks) ->
-        if tracks[0]
-          for track in tracks
-            artwork = ''
-            if track.artwork_url
-              artwork = "<img src=\"#{track.artwork_url}\" width=100px/>"
-
-            $('#tracks').append("""
-              <tr>
-                <td><a href=\"#soundcloud:#{track.id}\">#{track.title}</a></td>
-                <td>#{artwork}</td>
-                <td>#{Util.time(track.duration)}</td>
-              </tr>
-            """)
-        else
-          alert "「#{q}」で24分前後の曲はまだ出てないようです...。他のキーワードで探してみてください！"
-      )
-  )
   Util.countDown(@env.chattime*60*1000, 'finish')
 
 window.initComments = () ->
@@ -567,4 +564,64 @@ syncComment = (id, comment, is_countup=false) ->
   $("#doing .user_#{user_id}").remove()
   if $("#doing div").length < 1
     $("#doing_title").hide()
+
+searchMusics = () ->
+  q = $('#track').val()
+  return if q.length < 1
+  $('#tracks').html('')
+  localStorage['search_music_title'] = q
+
+  url = "http://gdata.youtube.com/feeds/api/videos?q=#{q}&filter=long&alt=json"
+  $.get(url, (tracks) ->
+    tracks = tracks.feed.entry
+    if tracks[0]
+      for track in tracks
+        duration = parseInt(track['media$group']['yt$duration']['seconds']) * 1000
+        continue if duration < 24 * 60 *1000
+
+        id = track['id']['$t'].split("/")[track['id']['$t'].split("/").length - 1]
+        title = track['title']['$t']
+        artwork_url = track['media$group']['media$thumbnail'][3]['url']
+        duration = parseInt(track['media$group']['yt$duration']['seconds']) * 1000
+        artwork = ''
+        if artwork_url
+          artwork = "<img src=\"#{artwork_url}\" width=100px/>"
+        href = "youtube:#{id}"
+        $('#tracks').append("""
+          <div>
+            #{artwork}
+            #{title}
+            (#{Util.time(duration)})
+            <a href=\"#{href}\" class='fixed_start btn btn-default'>この曲で集中</a>
+            <a href=\"#\" class='add_playlist btn btn-default'>プレイリストに追加（準備中）</a>
+          </div>
+        """)
+        console.log $('#tracks')
+      initFixedStart()
+    else
+      $("#tracks").append("<div>「#{q}」YouTubeCloudにはで24分前後の曲はまだ出てないようです...。他のキーワードで探してみてください！</div>")
+  )
+
+  url = "http://api.soundcloud.com/tracks.json?client_id=#{window.env.sc_client_id}&q=#{q}&duration[from]=#{24*60*1000}"
+  $.get(url, (tracks) ->
+    if tracks[0]
+      for track in tracks
+        artwork = ''
+        if track.artwork_url
+          artwork = "<img src=\"#{track.artwork_url}\" width=100px/>"
+        href = "soundcloud:#{track.id}"
+        $('#tracks').append("""
+          <div>
+            #{artwork}
+            #{track.title}
+            (#{Util.time(track.duration)})
+            <a href=\"#{href}\" class='fixed_start btn btn-default'>この曲で集中</a>
+            <a href=\"#\" class='add_playlist btn btn-default'>プレイリストに追加（準備中）</a>
+          </div>
+        """)
+      initFixedStart()
+    else
+      $("#tracks").append("<div>「#{q}」SoundCloudにはで24分前後の曲はまだ出てないようです...。他のキーワードで探してみてください！</div>")
+  )
+
 
