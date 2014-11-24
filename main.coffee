@@ -579,6 +579,7 @@ searchMusics = () ->
           artwork = "<img src=\"#{artwork_url}\" width=100px/>"
         href = "youtube:#{id}"
         $('#tracks').append("""
+          <hr />
           <div>
             <a href='#{url}' target='_blank'>#{title}</a>
             (#{Util.time(duration)})<br />
