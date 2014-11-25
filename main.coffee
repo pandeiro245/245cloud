@@ -161,7 +161,10 @@ initDoing = () ->
 
 initDone = () ->
   console.log 'initDone'
-  cond = [["is_done", true]]
+  cond = [
+    ["is_done", true]
+    ["createdAt", '<', Util.minAgo(@env.pomotime + @env.chattime)]
+  ]
   ParseParse.where("Workload", cond, (workloads) ->
     return unless workloads.length > 0
     $("#done").append("<h2>DONE</h2>")
