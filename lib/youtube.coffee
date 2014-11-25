@@ -12,7 +12,7 @@ class @Youtube
       <iframe width="560" height="315" src="//www.youtube.com/embed/#{youtube_key}?autoplay=#{if is_autoplay then '1' else '0'}&start=#{start_sec}" frameborder="0" allowfullscreen></iframe>
     """)
 
-  @search: (keyword, $dom) ->
+  @search: (keyword, $dom, callback) ->
     url = "http://gdata.youtube.com/feeds/api/videos?q=#{keyword}&filter=long&alt=json"
     $.get(url, (tracks) ->
       tracks = tracks.feed.entry

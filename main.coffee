@@ -564,7 +564,7 @@ searchMusics = () ->
   $('#tracks').html('')
   localStorage['search_music_title'] = q
 
-
   $tracks = $('#tracks')
-  Sounccloud.search(q, @env.sc_client_id, $tracks, initFixedStart)
+  Youtube.search(q, $tracks, initFixedStart)
+  Soundcloud.search(q, @env.sc_client_id, $tracks, initFixedStart)
 
