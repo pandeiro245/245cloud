@@ -11,10 +11,10 @@ $ ->
   Util.scaffolds([
     'header'
     'contents'
-    'chatting_title'
-    'chatting'
     'doing_title'
     'doing'
+    'chatting_title'
+    'chatting'
     'done'
     'search'
     'playing'
