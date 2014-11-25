@@ -101,6 +101,7 @@ initSearch = () ->
   <select></select>
   """)
 
+  $('#select_rooms select').html('')
   $('#select_rooms select').append(
     "<option value=\"default:いつもの部屋\">いつもの部屋</option>"
   )
