@@ -418,35 +418,54 @@ initRanking = () ->
       href += "soundcloud:#{w.sc_id}"
     if w.yt_id
       href += "youtube:#{w.yt_id}"
-    html = """
-      #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<img src=\"/img/noimage.png\" />'}
-      <img class='icon icon_#{user_id}' src='#{userIdToIconUrl(user_id)}' />
-      #{disp}<br />
-      #{w.title} <br />
-      #{rooms}<br />
-      <a href=\"#{href}\" class='fixed_start btn btn-default'>この曲で集中する</a>
-      <hr />
-    """
+    fixed = "<a href=\"#{href}\" class='fixed_start btn btn-default'>この曲で集中する</a>"
+    jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<img src=\"/img/noimage.png\" />'}"
+    title = w.title
   else
-    html = """
-      <img src=\"/img/nomusic.png\" />
-      <img class='icon icon_#{user_id}' src='#{userIdToIconUrl(user_id)}' />
-      #{disp}<br />
-      #{rooms}<br />
-      無音
-      <hr />
-    """
+    title = '無音'
+    fixed = ""
+    jacket = "<img src=\"/img/nomusic.png\" />"
+  user_img = "<img class='icon icon_#{user_id} img-thumbnail' src='#{userIdToIconUrl(user_id)}' />"
+
+  ###
+  $item = $('<div></div>')
+  $left = $('<div></div>')
+  $right = $('<div></div>')
+  $item.addClass('media row')
+
+  $left.addClass('media-left col-lg-1 col-lg-push-4')
+  $left.html(jacket)
+  $item.append($left)
+
+  $right.addClass('media-right col-lg-3 col-lg-push-4')
+  $right.append([user_img, disp, '<br />', title, rooms, '<br />', fixed])
+  $item.append($right)
+
+  $item.append('<hr />')
+  ###
+
+  $item = $("""
+   #{jacket}
+   #{user_img}
+   #{disp}<br />
+   #{title} <br />
+   #{rooms}<br />
+   #{fixed}<br />
+   <hr />
+  """)
+
+
   unless dom == '#done'
     $("#chatting .user_#{user_id}").remove()
     $("#doing .user_#{user_id}").remove()
 
   if (dom == '#doing' or dom == '#chatting') and $("#{dom} .user_#{user_id}").length
 
-    $("#{dom} .user_#{user_id}").html(html)
+    $("#{dom} .user_#{user_id}").html($item)
   else
     $workload = $('<div></div>')
     $workload.addClass("user_#{user_id}")
-    $workload.html(html)
+    $workload.html($item)
     if workload.attributes
       $("#{dom}").append($workload)
     else
