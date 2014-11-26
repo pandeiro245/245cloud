@@ -101,12 +101,11 @@ initSearch = () ->
   <select></select>
   """)
 
-  $('#select_rooms select').html('')
-  $('#select_rooms select').append(
-    "<option value=\"default:いつもの部屋\">いつもの部屋</option>"
-  )
-
   ParseParse.all("Room", (rooms) ->
+    $('#select_rooms select').html('')
+    $('#select_rooms select').append(
+      "<option value=\"default:いつもの部屋\">いつもの部屋</option>"
+    )
     for room in rooms
       total_count = room.attributes.comments_count
       unread_count = getUnreadsCount(room.id, total_count)
