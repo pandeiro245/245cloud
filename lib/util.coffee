@@ -86,10 +86,12 @@ class Util
       "<a href=\"#{http}\" target=\"_blank\">#{text}</a>"
     )
 
-  @addButton: (id, $dom, text, callback) ->
+  @addButton: (id, $dom, text, callback, tooltip=null) ->
     $button = $('<input>').attr('type', 'submit').attr('id', id)
     $button.attr('value', text)
     $button.attr('class', 'btn btn-default')
+    if tooltip
+      $button.tooltip({title: tooltip})
     $dom.append($button)
     $button.click(() ->
       callback()

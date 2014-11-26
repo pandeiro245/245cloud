@@ -48,10 +48,12 @@ initStart = () ->
     $('#contents').append("<div class='countdown'></div>")
       
     text = '曲お任せで24分間集中する！'
-    Util.addButton('start', $('#contents'), text, start_random)
+    tooltip = '現在はSoundcloudの人気曲からランダム再生ですが今後もっと賢くなっていくはず'
+    Util.addButton('start', $('#contents'), text, start_random, tooltip)
     
     text = '無音で24分集中'
-    Util.addButton('start', $('#contents'), text, start_nomusic)
+    tooltip = '無音ですが終了直前にはとぽっぽが鳴ります'
+    Util.addButton('start', $('#contents'), text, start_nomusic, tooltip)
 
     id = location.hash.split(':')[1]
     if location.hash.match(/soundcloud/)
