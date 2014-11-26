@@ -7,14 +7,6 @@ body {
   margin: 0 auto;
 }
 
-.noimage {
-  display: inline;
-  border: 1px solid #000;
-  padding: 20px;
-  text-align: center;
-  vertical-align: middle;
-}
-
 #contents, #search{
   text-align: center;
 }
@@ -42,14 +34,6 @@ input {
 
 .icon {
   width: 60px;
-}
-
-.noimage {
-  display:inline;
-  border: 1px solid #000;
-  padding: 20px;
-  text-align:center;
-  vertical-align:middle;
 }
 
 .countdown {

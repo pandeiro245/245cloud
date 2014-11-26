@@ -419,7 +419,7 @@ initRanking = () ->
     if w.yt_id
       href += "youtube:#{w.yt_id}"
     html = """
-      #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<div class="noimage">no image</div>'}
+      #{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<img src=\"/img/noimage.png\" />'}
       <img class='icon icon_#{user_id}' src='#{userIdToIconUrl(user_id)}' />
       #{disp}<br />
       #{w.title} <br />
@@ -429,7 +429,7 @@ initRanking = () ->
     """
   else
     html = """
-      <div class=\"noimage\">無音</div>
+      <img src=\"/img/nomusic.png\" />
       <img class='icon icon_#{user_id}' src='#{userIdToIconUrl(user_id)}' />
       #{disp}<br />
       #{rooms}<br />
