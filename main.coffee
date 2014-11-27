@@ -241,7 +241,7 @@ window.play = (key) ->
       localStorage['artwork_url'] = track.artwork_url
       Soundcloud.play(id, @env.sc_client_id, $("#playing"))
       str = "play\(\"#{key}\"\)"
-      setTimeout(str, track.duration)
+      #setTimeout(str, track.duration)
     )
   else if key.match(/^youtube/)
     Youtube.fetch(id, (track) ->
@@ -258,7 +258,7 @@ window.play = (key) ->
       Youtube.play(id, $("#playing"), true, start_sec)
       #setTimeout("play\(\"key\"\)", sec * 1000)
       str = "play\(\"#{key}\"\)"
-      setTimeout(str, sec * 1000)
+      #setTimeout(str, sec * 1000)
     )
     
 complete = () ->
