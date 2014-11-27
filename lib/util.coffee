@@ -3,7 +3,7 @@ class Util
     new Date((new Date()).getTime() - min*60*1000)
 
   @scaffolds: (ids) ->
-    $body = $('body')
+    $body = $('#nc')
     $body.html('') # remove contents for SEO
     for id in ids
       $item = $('<div></div>')

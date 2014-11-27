@@ -584,62 +584,7 @@ searchMusics = () ->
   $('#tracks').html('')
   localStorage['search_music_title'] = q
 
-  url = "http://gdata.youtube.com/feeds/api/videos?q=#{q}&filter=long&alt=json"
-  $.get(url, (tracks) ->
-    tracks = tracks.feed.entry
-    if tracks[0]
-      for track in tracks
-        duration = parseInt(track['media$group']['yt$duration']['seconds']) * 1000
-        continue if duration < 24 * 60 *1000
-
-        tmp = track['id']['$t']
-        id = tmp.split("/")[tmp.split("/").length - 1]
-        url = "https://www.youtube.com/watch?v=#{id}"
-        title = track['title']['$t']
-        artwork_url = track['media$group']['media$thumbnail'][3]['url']
-        duration = parseInt(track['media$group']['yt$duration']['seconds']) * 1000
-        artwork = ''
-        if artwork_url
-          artwork = "<img src=\"#{artwork_url}\" width=100px/>"
-        href = "youtube:#{id}"
-        $('#tracks').append("""
-          <hr />
-          <div>
-            <a href='#{url}' target='_blank'>#{title}</a>
-            (#{Util.time(duration)})<br />
-            <br />
-            #{artwork}
-            <a href=\"#{href}\" class='fixed_start btn btn-default'>この曲で集中</a>
-            <a href=\"#\" class='add_playlist btn btn-default'>プレイリストに追加（準備中）</a>
-          </div>
-        """)
-      initFixedStart()
-    else
-      $("#tracks").append("<div>「#{q}」YouTubeCloudにはで24分前後の曲はまだ出てないようです...。他のキーワードで探してみてください！</div>")
-  )
-
-  url = "http://api.soundcloud.com/tracks.json?client_id=#{window.env.sc_client_id}&q=#{q}&duration[from]=#{24*60*1000}"
-  $.get(url, (tracks) ->
-    if tracks[0]
-      for track in tracks
-        artwork = ''
-        if track.artwork_url
-          artwork = "<img src=\"#{track.artwork_url}\" width=100px/>"
-        href = "soundcloud:#{track.id}"
-        $('#tracks').append("""
-          <hr />
-          <div>
-            <a href='#{track.permalink_url}' target='_blank'>#{track.title}</a>
-            (#{Util.time(track.duration)})<br />
-            <br />
-            #{artwork}
-            <a href=\"#{href}\" class='fixed_start btn btn-default'>この曲で集中</a>
-            <a href=\"#\" class='add_playlist btn btn-default'>プレイリストに追加（準備中）</a>
-          </div>
-        """)
-      initFixedStart()
-    else
-      $("#tracks").append("<div>「#{q}」SoundCloudにはで24分前後の曲はまだ出てないようです...。他のキーワードで探してみてください！</div>")
-  )
-
+  $tracks = $('#tracks')
+  Youtube.search(q, $tracks, initFixedStart)
+  Soundcloud.search(q, @env.sc_client_id, $tracks, initFixedStart)
 
