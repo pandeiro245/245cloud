@@ -7,7 +7,7 @@ class @Youtube
     )
     
   @play: (youtube_key, $dom, is_autoplay=true, start_sec=0) ->
-    is_autoplay = true
+    console.log 'youtube_key', youtube_key
     $dom.html("""
       <iframe width="560" height="315" src="//www.youtube.com/embed/#{youtube_key}?autoplay=#{if is_autoplay then '1' else '0'}&start=#{start_sec}" frameborder="0" allowfullscreen></iframe>
     """)

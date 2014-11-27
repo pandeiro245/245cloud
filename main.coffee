@@ -193,14 +193,14 @@ start_random = () ->
     n = Math.floor(Math.random() * musics.length)
     sc_id = musics[n].attributes.sc_id
     location.hash = "soundcloud:#{sc_id}"
-    play("soundcloud:#{sc_id}")
+    window.play("soundcloud:#{sc_id}")
   )
   
 window.start_hash = (key = null) ->
   console.log 'start_hash'
   unless key
     key = location.hash.replace(/#/, '')
-  play(key)
+  window.play(key)
 
 start_nomusic = () ->
   console.log 'start_nomusic'
@@ -226,8 +226,9 @@ start = () ->
 
   Util.countDown(@env.pomotime*60*1000, complete)
 
-play = (key) ->
-  console.log 'play'
+window.play = (key) ->
+  console.log 'play', key
+  return false if  @env.is_done
   params = {}
   id = key.split(':')[1]
   if key.match(/^soundcloud/)
@@ -238,7 +239,9 @@ play = (key) ->
       createWorkload(params, start)
 
       localStorage['artwork_url'] = track.artwork_url
-      Soundcloud.play(id, @env.sc_client_id, $("#playing"), !localStorage['is_dev'])
+      Soundcloud.play(id, @env.sc_client_id, $("#playing"))
+      str = "play\(\"#{key}\"\)"
+      setTimeout(str, track.duration)
     )
   else if key.match(/^youtube/)
     Youtube.fetch(id, (track) ->
@@ -252,13 +255,16 @@ play = (key) ->
         start_sec = sec - 24*60
       else
         start_sec = 0
-      Youtube.play(id, $("#playing"), !localStorage['is_dev'], start_sec)
+      Youtube.play(id, $("#playing"), true, start_sec)
+      #setTimeout("play\(\"key\"\)", sec * 1000)
+      str = "play\(\"#{key}\"\)"
+      setTimeout(str, sec * 1000)
     )
     
 complete = () ->
   console.log 'complete'
   @env.is_doing = false
-  @isDone = true
+  @env.is_done = true
   @syncWorkload('chatting')
   $("#playing").fadeOut()
   $("#search").fadeOut()
@@ -481,7 +487,7 @@ initRanking = () ->
 initFixedStart = () ->
   $('.fixed_start').click(() ->
     if Parse.User.current()
-      play($(this).attr('href').replace(/^#/, ''))
+      window.play($(this).attr('href').replace(/^#/, ''))
     else
       alert 'Facebookログインをお願いします！'
   )
@@ -504,7 +510,7 @@ ruffnote = (id, dom) ->
   if user && c.body
 
     # FIXME
-    if @isDone 
+    if @env.is_done 
       unreads = Parse.User.current().get("unreads")
       unless unreads
         unreads = {}
