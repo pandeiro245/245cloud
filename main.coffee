@@ -38,6 +38,7 @@ $ ->
   initStart()
   # initRanking()
   initFixedStart()
+  ParseBatch.repeat()
 
 initStart = () ->
   console.log 'initStart'
