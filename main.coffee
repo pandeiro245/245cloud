@@ -153,10 +153,12 @@ initDoing = () ->
   ParseParse.where("Workload", cond, (workloads) ->
     return unless workloads.length > 0
     $("#doing_title").show()
-
+    user_keys = {}
     for workload in workloads
       continue unless workload.attributes.user
-      @addDoing(workload)
+      @addDoing(workload) unless user_keys[workload.attributes.user.id]
+      console.log user_keys[workload.attributes.user.id]
+      user_keys[workload.attributes.user.id] = true
     initFixedStart()
   )
 
