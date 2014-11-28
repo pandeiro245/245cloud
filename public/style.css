@@ -60,3 +60,11 @@ li label input{
   padding: 2px;
   margin: 2px;
 }
+
+h5 {
+  max-height: 20px;
+}
+
+.img-thumbnail.doing {
+  background: #fc0;
+}

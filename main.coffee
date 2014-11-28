@@ -125,7 +125,7 @@ initSearch = () ->
 
 initChatting = () ->
   console.log 'initChatting'
-  $("#chatting_title").html("<h2>NOW CHATTING</h2>")
+  # $("#chatting_title").html("<h2>NOW CHATTING</h2>")
 
   cond = [
     ["is_done", true]
@@ -144,7 +144,7 @@ initChatting = () ->
 
 initDoing = () ->
   console.log 'initDoing'
-  $("#doing_title").html("<h2>NOW DOING</h2>")
+  # $("#doing_title").html("<h2>NOW DOING</h2>")
   $("#doing_title").hide()
 
   cond = [
@@ -170,19 +170,13 @@ initDone = () ->
   ]
   ParseParse.where("Workload", cond, (workloads) ->
     return unless workloads.length > 0
-    $("#done").append("<h2>DONE</h2>")
-
-    date = ""
+    # $("#done").append("<h2>DONE</h2>")
     for workload in workloads
       continue unless workload.attributes.user
-      i = Util.monthDay(workload.createdAt)
-      if date != i
-        $("#done").append("<h2>#{i}</h2>")
-      date = i
       disp = "#{Util.hourMin(workload.createdAt)}開始（#{workload.attributes.number}回目）"
       @addWorkload("#done", workload, disp)
     initFixedStart()
-  , null, 10)
+  , null, 100)
   
 login = () ->
   console.log 'login'
@@ -427,7 +421,7 @@ initRanking = () ->
       href += "soundcloud:#{w.sc_id}"
     if w.yt_id
       href += "youtube:#{w.yt_id}"
-    fixed = "<a href=\"#{href}\" class='fixed_start btn btn-default'>この曲で集中する</a>"
+    fixed = "<a href=\"#{href}\" class='fixed_start btn btn-default'>再生</a><a href=\"#\" class='btn btn-default'>追加</a>"
     jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<img src=\"/img/noimage.png\" />'}"
     title = w.title
   else
@@ -435,6 +429,7 @@ initRanking = () ->
     fixed = ""
     jacket = "<img src=\"/img/nomusic.png\" />"
   user_img = "<img class='icon icon_#{user_id} img-thumbnail' src='#{userIdToIconUrl(user_id)}' />"
+  user_img2 = "<img class='icon icon_#{user_id} doing img-thumbnail' src='#{userIdToIconUrl(user_id)}' />"
 
   ###
   $item = $('<div></div>')
@@ -454,13 +449,14 @@ initRanking = () ->
   ###
 
   $item = $("""
-   #{jacket}
+   <!-- <h5>#{title} </h5> -->
+   #{jacket}<br />
+   #{user_img2}
    #{user_img}
-   #{disp}<br />
-   #{title} <br />
+   #{user_img}
+   <!-- #{disp}<br /> -->
    #{rooms}<br />
    #{fixed}<br />
-   <hr />
   """)
 
   unless dom == '#done'
@@ -473,6 +469,8 @@ initRanking = () ->
   else
     $workload = $('<div></div>')
     $workload.addClass("user_#{user_id}")
+    $workload.addClass("col-lg-2")
+    $workload.css("min-height", '280px')
     $workload.html($item)
     if workload.attributes
       $("#{dom}").append($workload)

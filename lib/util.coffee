@@ -8,6 +8,7 @@ class Util
     for id in ids
       $item = $('<div></div>')
       $item.attr('id', id)
+      $item.addClass('row')
       $body.append($item)
 
   @time: (mtime) ->
