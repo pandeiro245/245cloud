@@ -11,8 +11,7 @@ class @Soundcloud
     """)
 
   @search: (keyword, client_id, $dom, callback) ->
-    #url = "http://api.soundcloud.com/tracks.json?client_id=#{window.env.sc_client_id}&q=#{keyword}&duration[from]=#{24*60*1000}"
-    url = "http://api.soundcloud.com/tracks.json?client_id=#{window.env.sc_client_id}&q=#{keyword}&duration[to]=#{1*60*1000}"
+    url = "http://api.soundcloud.com/tracks.json?client_id=#{window.env.sc_client_id}&q=#{keyword}&duration[from]=#{24*60*1000}"
     $.get(url, (tracks) ->
       if tracks[0]
         for track in tracks
