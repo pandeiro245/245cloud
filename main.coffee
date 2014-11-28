@@ -486,7 +486,9 @@ initRanking = () ->
 initFixedStart = () ->
   $('.fixed_start').click(() ->
     if Parse.User.current()
-      window.play($(this).attr('href').replace(/^#/, ''))
+      hash = $(this).attr('href').replace(/^#/, '')
+      location.hash = hash
+      window.play(hash)
     else
       alert 'Facebookログインをお願いします！'
   )
