@@ -233,7 +233,7 @@ window.play = (key) ->
     Soundcloud.fetch(id, @env.sc_client_id, (track) ->
       params['sc_id'] = parseInt(id)
       for k in ['title', 'artwork_url']
-        params[k] = track[key]
+        params[k] = track[k]
       createWorkload(params, start)
       window.play_repeat(key, track.duration)
     )
