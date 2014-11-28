@@ -228,7 +228,6 @@ start = () ->
 
 window.play = (key) ->
   console.log 'play', key
-  return false if  @env.is_done
   params = {}
   id = key.split(':')[1]
   if key.match(/^soundcloud/)
@@ -237,11 +236,7 @@ window.play = (key) ->
       for key in ['title', 'artwork_url']
         params[key] = track[key]
       createWorkload(params, start)
-
-      localStorage['artwork_url'] = track.artwork_url
-      Soundcloud.play(id, @env.sc_client_id, $("#playing"))
-      str = "play\(\"#{key}\"\)"
-      #setTimeout(str, track.duration)
+      window.play_repeat(key, track.duration)
     )
   else if key.match(/^youtube/)
     Youtube.fetch(id, (track) ->
@@ -253,14 +248,20 @@ window.play = (key) ->
       sec = parseInt(sec)
       if sec > 24*60
         start_sec = sec - 24*60
+        Youtube.play(id, $("#playing"), true, start_sec)
       else
-        start_sec = 0
-      Youtube.play(id, $("#playing"), true, start_sec)
-      #setTimeout("play\(\"key\"\)", sec * 1000)
-      str = "play\(\"#{key}\"\)"
-      #setTimeout(str, sec * 1000)
+        window.play_repeat(key, sec * 1000)
     )
-    
+   
+window.play_repeat = (key, duration) ->
+  console.log 'play_repeat'
+  id = key.split(':')[1]
+  if key.match(/^soundcloud/)
+    Soundcloud.play(id, @env.sc_client_id, $("#playing"))
+  else if key.match(/^youtube/)
+    Youtube.play(id, $("#playing"))
+  setTimeout("play_repeat\(\"#{key}\"\, #{duration})", duration)
+
 complete = () ->
   console.log 'complete'
   @env.is_doing = false
@@ -460,7 +461,6 @@ initRanking = () ->
    #{fixed}<br />
    <hr />
   """)
-
 
   unless dom == '#done'
     $("#chatting .user_#{user_id}").remove()
