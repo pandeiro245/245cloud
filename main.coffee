@@ -141,7 +141,6 @@ initChatting = () ->
     initFixedStart()
   )
 
-
 initDoing = () ->
   console.log 'initDoing'
   $("#doing_title").html("<h2>NOW DOING</h2>")
@@ -233,8 +232,8 @@ window.play = (key) ->
   if key.match(/^soundcloud/)
     Soundcloud.fetch(id, @env.sc_client_id, (track) ->
       params['sc_id'] = parseInt(id)
-      for key in ['title', 'artwork_url']
-        params[key] = track[key]
+      for k in ['title', 'artwork_url']
+        params[k] = track[key]
       createWorkload(params, start)
       window.play_repeat(key, track.duration)
     )
