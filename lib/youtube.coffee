@@ -27,9 +27,9 @@ class @Youtube
           title = track['title']['$t']
           artwork_url = track['media$group']['media$thumbnail'][3]['url']
           duration = parseInt(track['media$group']['yt$duration']['seconds']) * 1000
-          artwork = ''
+          artwork = "<img src=\"https://ruffnote.com/attachments/24162\" width='100px'/>"
           if artwork_url
-            artwork = "<img src=\"#{artwork_url}\" width=100px/>"
+            artwork = "<img src=\"#{artwork_url}\" width='100px'/>"
           href = "youtube:#{id}"
           $dom.append("""
             <div class='col-lg-2' style='min-height: 200px;'>

@@ -430,12 +430,12 @@ initRanking = () ->
       href += "youtube:#{w.yt_id}"
     #fixed = "<a href=\"#{href}\" class='fixed_start btn btn-default'>再生</a><a href=\"#\" class='btn btn-default add_playlist'>追加</a>"
     fixed = "<a href=\"#{href}\" class='fixed_start btn btn-default'>再生</a>"
-    jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<img src=\"/img/noimage.png\" />'}"
+    jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<img src=\"https://ruffnote.com/attachments/24162\" />'}"
     title = w.title
   else
     title = '無音'
     fixed = ""
-    jacket = "<img src=\"/img/nomusic.png\" />"
+    jacket = "<img src=\"https://ruffnote.com/attachments/24163\" />"
   user_img = "<img class='icon icon_#{user_id} img-thumbnail' src='#{userIdToIconUrl(user_id)}' />"
 
   $item = $("""

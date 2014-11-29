@@ -15,7 +15,7 @@ class @Soundcloud
     $.get(url, (tracks) ->
       if tracks[0]
         for track in tracks
-          artwork = ''
+          artwork = "<img src=\"https://ruffnote.com/attachments/24162\" width='100px'/>"
           if track.artwork_url
             artwork = "<img src=\"#{track.artwork_url}\" width='100px'/>"
           href = "soundcloud:#{track.id}"
