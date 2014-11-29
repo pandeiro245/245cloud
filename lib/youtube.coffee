@@ -38,7 +38,7 @@ class @Youtube
               <br />
               #{artwork}
               <a href=\"#{href}\" class='fixed_start btn btn-default'>再生</a>
-              <a href=\"#\" class='add_playlist btn btn-default'>追加</a>
+              <!--<a href=\"#\" class='add_playlist btn btn-default'>追加</a>-->
             </div>
           """)
         callback()

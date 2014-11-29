@@ -428,7 +428,8 @@ initRanking = () ->
       href += "soundcloud:#{w.sc_id}"
     if w.yt_id
       href += "youtube:#{w.yt_id}"
-    fixed = "<a href=\"#{href}\" class='fixed_start btn btn-default'>再生</a><a href=\"#\" class='btn btn-default add_playlist'>追加</a>"
+    #fixed = "<a href=\"#{href}\" class='fixed_start btn btn-default'>再生</a><a href=\"#\" class='btn btn-default add_playlist'>追加</a>"
+    fixed = "<a href=\"#{href}\" class='fixed_start btn btn-default'>再生</a>"
     jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<img src=\"/img/noimage.png\" />'}"
     title = w.title
   else
