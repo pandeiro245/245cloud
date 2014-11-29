@@ -138,12 +138,10 @@ initChatting = () ->
     $("#chatting_title").show()
     for workload, i in workloads
       continue unless workload.attributes.user
-      offset = null
-      is_first = if i == 0 then true else false
 
-      @addChatting(workload, is_first)
-    $('.first').addClass("col-lg-offset-#{getOffset(workloads.length)}")
+      @addChatting(workload)
     initFixedStart()
+    renderWorkloads('#chatting')
   )
 
 initDoing = () ->
@@ -162,15 +160,11 @@ initDoing = () ->
     user_count = 0
     for workload, i in workloads
       continue unless workload.attributes.user
-
-      is_first = if i == 0 then true else false
-
       unless user_keys[workload.attributes.user.id]
-        @addDoing(workload, is_first) 
+        @addDoing(workload)
         user_keys[workload.attributes.user.id] = true
-        user_count += 1
-    $('.first').addClass("col-lg-offset-#{getOffset(user_count)}")
     initFixedStart()
+    renderWorkloads('#doing')
   )
 
 initDone = () ->
@@ -399,21 +393,21 @@ window.createComment = (room_id) ->
 initRanking = () ->
   $('#ranking').html('ここにランキング結果が入ります')
 
-@addDoing = (workload, is_first=false) ->
+@addDoing = (workload) ->
   $("#doing_title").show()
   t = new Date(workload.createdAt)
   end_time = @env.pomotime*60*1000 + t.getTime()
   disp = "#{Util.hourMin(workload.createdAt)}開始（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
-  @addWorkload("#doing", workload, disp, is_first)
+  @addWorkload("#doing", workload, disp)
 
-@addChatting = (workload, is_first=false) ->
+@addChatting = (workload) ->
   $("#chatting_title").show()
   t = new Date(workload.createdAt)
   end_time = @env.pomotime*60*1000 + @env.chattime*60*1000 + t.getTime()
   disp = "#{Util.hourMin(workload.createdAt)}開始（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
-  @addWorkload("#chatting", workload, disp, is_first)
+  @addWorkload("#chatting", workload, disp)
 
-@addWorkload = (dom, workload, disp, is_first=false) ->
+@addWorkload = (dom, workload, disp) ->
   if workload.attributes
     w = workload.attributes
     user_id = w.user.id
@@ -441,23 +435,6 @@ initRanking = () ->
     jacket = "<img src=\"/img/nomusic.png\" />"
   user_img = "<img class='icon icon_#{user_id} img-thumbnail' src='#{userIdToIconUrl(user_id)}' />"
 
-  ###
-  $item = $('<div></div>')
-  $left = $('<div></div>')
-  $right = $('<div></div>')
-  $item.addClass('media row')
-
-  $left.addClass('media-left col-lg-1 col-lg-push-4')
-  $left.html(jacket)
-  $item.append($left)
-
-  $right.addClass('media-right col-lg-3 col-lg-push-4')
-  $right.append([user_img, disp, '<br />', title, rooms, '<br />', fixed])
-  $item.append($right)
-
-  $item.append('<hr />')
-  ###
-
   $item = $("""
    <!-- <h5>#{title} </h5> -->
    #{jacket}<br />
@@ -478,21 +455,13 @@ initRanking = () ->
     $workload = $('<div></div>')
     $workload.addClass("user_#{user_id}")
     $workload.addClass("col-lg-2")
-    $workload.addClass("first") if is_first
     $workload.css("min-height", '280px')
     $workload.html($item)
     if workload.attributes # init
       $("#{dom}").append($workload)
     else # with PubNub
-      $("#{dom} .first").removeClass('col-lg-offset-2')
-      $("#{dom} .first").removeClass('col-lg-offset-3')
-      $("#{dom} .first").removeClass('col-lg-offset-4')
-      $("#{dom} .first").removeClass('col-lg-offset-5')
-      $("#{dom} .first").removeClass('first')
-      $workload.addClass("first")
-      count = $("#{dom} div").length + 1
-      $workload.addClass("col-lg-offset-#{getOffset(count)}")
       $("#{dom}").prepend($workload)
+      renderWorkloads(dom)
 
   if @env.is_doing
     $(".fixed_start").hide()
@@ -625,5 +594,18 @@ getOffset = (all_count) ->
     4: 2
   }
   data[all_count]
+
+renderWorkloads = (dom) ->
+  console.log 'renderWorkloads'
+  $dom = $("#{dom}")
+  $items = $("#{dom} div")
+  $first = $("#{dom} div:first")
+  $items.removeClass('col-lg-offset-2')
+  $items.removeClass('col-lg-offset-3')
+  $items.removeClass('col-lg-offset-4')
+  $items.removeClass('col-lg-offset-5')
+  $first.addClass("col-lg-offset-#{getOffset($items.length)}")
+  console.log $items.length
+
 
 
