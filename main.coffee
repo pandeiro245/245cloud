@@ -142,6 +142,7 @@ initChatting = () ->
       @addChatting(workload)
     initFixedStart()
     renderWorkloads('#chatting')
+    renderWorkloads('#doing')
   )
 
 initDoing = () ->
