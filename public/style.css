@@ -32,8 +32,34 @@ input {
   width: 80%;
 }
 
-.icon {
-  width: 60px;
+.jacket {
+  background-repeat: no-repeat;
+}
+
+a.workload{
+  text-decoration: none;
+}
+
+@media (min-width: 657px) {
+  .jacket {
+    width: 120px;
+    min-height: 90px;
+    position: relative;
+  }
+  .icon {
+    width: 50px;
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    border-top: 3px solid #fff;
+    border-left: 3px solid #fff;
+    border-radius: 3px;
+  }
+  .info {
+    color: #fff;
+    padding-left: 3px;
+    position: absolute;
+  }
 }
 
 .countdown {
@@ -63,7 +89,7 @@ li label input{
 
 h5 {
   max-height: 20px;
-  color: #ccc;
+  color: #ddd;
 }
 
 .img-thumbnail.doing {
