@@ -10,6 +10,7 @@ $ ->
   ParseParse.addAccesslog()
   Util.scaffolds([
     'header'
+    'otukare'
     'contents'
     'doing_title'
     'doing'
@@ -29,6 +30,9 @@ $ ->
 
   ruffnote(13475, 'header')
   ruffnote(13477, 'footer')
+
+  $('#otukare').hide()
+  ruffnote(17498, 'otukare')
   #ruffnote(17314, 'music_ranking')
 
   initSearch()
@@ -96,13 +100,7 @@ initSearch = () ->
 
 @initSelectRooms = () ->
   console.log 'initSelectRooms'
-  $('#select_rooms').html("""
-  急に利用者が増えたので<br />
-  超簡易版トークルーム機能付けてみました。<br />
-  カッコ内は未読コメント数/全件数<br />
-  ですが色々バグあるかもしれませんｗ<br /><br />
-  <select></select>
-  """)
+  $('#select_rooms').html("<select></select>")
 
   ParseParse.all("Room", (rooms) ->
     $('#select_rooms select').html('')
@@ -265,6 +263,9 @@ window.play_repeat = (key, duration) ->
 
 complete = () ->
   console.log 'complete'
+  $('#header').hide()
+  $('#otukare').fadeIn()
+
   @env.is_doing = false
   @env.is_done = true
   @syncWorkload('chatting')
@@ -462,7 +463,8 @@ initRanking = () ->
       $("#{dom}").append($workload)
     else # with PubNub
       $("#{dom}").prepend($workload)
-      renderWorkloads(dom)
+      renderWorkloads('#doing')
+      renderWorkloads('#chatting')
 
   if @env.is_doing
     $(".fixed_start").hide()

@@ -13,7 +13,7 @@ body {
 
 @media (min-width: 657px) {
   #header img {
-    width: 657px;
+    /* width: 657px; */
   }
 }
 @media (max-width: 657px) {
