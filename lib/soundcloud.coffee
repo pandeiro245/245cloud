@@ -20,14 +20,13 @@ class @Soundcloud
             artwork = "<img src=\"#{track.artwork_url}\" width='100px'/>"
           href = "soundcloud:#{track.id}"
           $dom.append("""
-            <hr />
-            <div>
+            <div class='col-lg-2' style='min-height: 200px;'>
               <a href='#{track.permalink_url}' target='_blank'>#{track.title}</a>
               (#{Util.time(track.duration)})<br />
               <br />
               #{artwork}
-              <a href=\"#{href}\" class='fixed_start btn btn-default'>この曲で集中</a>
-              <a href=\"#\" class='add_playlist btn btn-default'>プレイリストに追加（準備中）</a>
+              <a href=\"#{href}\" class='fixed_start btn btn-default'>再生</a>
+              <a href=\"#\" class='add_playlist btn btn-default'>追加</a>
             </div>
           """)
         callback()

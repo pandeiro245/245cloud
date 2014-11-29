@@ -125,7 +125,7 @@ initSearch = () ->
 
 initChatting = () ->
   console.log 'initChatting'
-  # $("#chatting_title").html("<h2>NOW CHATTING</h2>")
+  $("#chatting_title").html("<h2>NOW CHATTING</h2>")
 
   cond = [
     ["is_done", true]
@@ -136,15 +136,19 @@ initChatting = () ->
   ParseParse.where("Workload", cond, (workloads) ->
     return unless workloads.length > 0
     $("#chatting_title").show()
-    for workload in workloads
+    for workload, i in workloads
       continue unless workload.attributes.user
-      @addChatting(workload)
+      offset = null
+      console.log 'workloads.length in chatting', workloads.length
+      offset = getOffset(workloads.length) if i == 0
+
+      @addChatting(workload, offset)
     initFixedStart()
   )
 
 initDoing = () ->
   console.log 'initDoing'
-  # $("#doing_title").html("<h2>NOW DOING</h2>")
+  $("#doing_title").html("<h2>NOW DOING</h2>")
   $("#doing_title").hide()
 
   cond = [
@@ -155,9 +159,14 @@ initDoing = () ->
     return unless workloads.length > 0
     $("#doing_title").show()
     user_keys = {}
-    for workload in workloads
+    for workload, i in workloads
       continue unless workload.attributes.user
-      @addDoing(workload) unless user_keys[workload.attributes.user.id]
+
+      console.log 'workloads.length in doing', workloads.length
+      offset = null
+      offset = getOffset(workloads.length) if i == 0
+
+      @addDoing(workload, offset) unless user_keys[workload.attributes.user.id]
       user_keys[workload.attributes.user.id] = true
     initFixedStart()
   )
@@ -170,7 +179,7 @@ initDone = () ->
   ]
   ParseParse.where("Workload", cond, (workloads) ->
     return unless workloads.length > 0
-    # $("#done").append("<h2>DONE</h2>")
+    $("#done").append("<h2>DONE</h2>")
     for workload in workloads
       continue unless workload.attributes.user
       disp = "#{Util.hourMin(workload.createdAt)}開始（#{workload.attributes.number}回目）"
@@ -388,21 +397,21 @@ window.createComment = (room_id) ->
 initRanking = () ->
   $('#ranking').html('ここにランキング結果が入ります')
 
-@addDoing = (workload) ->
+@addDoing = (workload, offset) ->
   $("#doing_title").show()
   t = new Date(workload.createdAt)
   end_time = @env.pomotime*60*1000 + t.getTime()
   disp = "#{Util.hourMin(workload.createdAt)}開始（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
-  @addWorkload("#doing", workload, disp)
+  @addWorkload("#doing", workload, disp, offset)
 
-@addChatting = (workload) ->
+@addChatting = (workload, offset) ->
   $("#chatting_title").show()
   t = new Date(workload.createdAt)
   end_time = @env.pomotime*60*1000 + @env.chattime*60*1000 + t.getTime()
   disp = "#{Util.hourMin(workload.createdAt)}開始（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
-  @addWorkload("#chatting", workload, disp)
+  @addWorkload("#chatting", workload, disp, offset)
 
-@addWorkload = (dom, workload, disp) ->
+@addWorkload = (dom, workload, disp, offset=null) ->
   if workload.attributes
     w = workload.attributes
     user_id = w.user.id
@@ -429,7 +438,6 @@ initRanking = () ->
     fixed = ""
     jacket = "<img src=\"/img/nomusic.png\" />"
   user_img = "<img class='icon icon_#{user_id} img-thumbnail' src='#{userIdToIconUrl(user_id)}' />"
-  user_img2 = "<img class='icon icon_#{user_id} doing img-thumbnail' src='#{userIdToIconUrl(user_id)}' />"
 
   ###
   $item = $('<div></div>')
@@ -451,10 +459,8 @@ initRanking = () ->
   $item = $("""
    <!-- <h5>#{title} </h5> -->
    #{jacket}<br />
-   #{user_img2}
-   #{user_img}
-   #{user_img}
-   <!-- #{disp}<br /> -->
+   #{user_img}<br />
+   #{disp}<br />
    #{rooms}<br />
    #{fixed}<br />
   """)
@@ -470,6 +476,7 @@ initRanking = () ->
     $workload = $('<div></div>')
     $workload.addClass("user_#{user_id}")
     $workload.addClass("col-lg-2")
+    $workload.addClass("col-lg-offset-#{offset}") if offset
     $workload.css("min-height", '280px')
     $workload.html($item)
     if workload.attributes
@@ -594,4 +601,15 @@ searchMusics = () ->
   $tracks = $('#tracks')
   Youtube.search(q, $tracks, initFixedStart)
   Soundcloud.search(q, @env.sc_client_id, $tracks, initFixedStart)
+
+getOffset = (all_count) ->
+  return 0 if all_count >= 5
+  data = {
+    1: 5
+    2: 4
+    3: 4
+    4: 2
+  }
+  data[all_count]
+
 
