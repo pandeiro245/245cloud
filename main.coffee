@@ -158,7 +158,6 @@ initDoing = () ->
     for workload in workloads
       continue unless workload.attributes.user
       @addDoing(workload) unless user_keys[workload.attributes.user.id]
-      console.log user_keys[workload.attributes.user.id]
       user_keys[workload.attributes.user.id] = true
     initFixedStart()
   )
