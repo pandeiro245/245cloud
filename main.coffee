@@ -482,9 +482,17 @@ initRanking = () ->
     $workload.addClass("first") if is_first
     $workload.css("min-height", '280px')
     $workload.html($item)
-    if workload.attributes
+    if workload.attributes # init
       $("#{dom}").append($workload)
-    else
+    else # with PubNub
+      $("#{dom} .first").removeClass('col-lg-offset-2')
+      $("#{dom} .first").removeClass('col-lg-offset-3')
+      $("#{dom} .first").removeClass('col-lg-offset-4')
+      $("#{dom} .first").removeClass('col-lg-offset-5')
+      $("#{dom} .first").removeClass('first')
+      $workload.addClass("first")
+      count = $("#{dom} div").length + 1
+      $workload.addClass("col-lg-offset-#{getOffset(count)}")
       $("#{dom}").prepend($workload)
 
   if @env.is_doing
