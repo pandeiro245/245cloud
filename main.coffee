@@ -169,7 +169,6 @@ initDoing = () ->
         @addDoing(workload, is_first) 
         user_keys[workload.attributes.user.id] = true
         user_count += 1
-    console.log user_count
     $('.first').addClass("col-lg-offset-#{getOffset(user_count)}")
     initFixedStart()
   )

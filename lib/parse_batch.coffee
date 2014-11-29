@@ -1,6 +1,6 @@
 class @ParseBatch
   @do: () ->
-    console.log "this is test"
+    console.log "in the batch"
     ParseParse.all("Room", (rooms) ->
       for room in rooms
         ParseParse.where("Comment", [['room_id', room.id]], (room, comments) ->
