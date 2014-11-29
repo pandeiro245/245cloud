@@ -436,7 +436,7 @@ initRanking = () ->
   user_img = "<img class='icon icon_#{user_id} img-thumbnail' src='#{userIdToIconUrl(user_id)}' />"
 
   $item = $("""
-   <!-- <h5>#{title} </h5> -->
+   <h5>#{title} </h5>
    #{jacket}<br />
    #{user_img}<br />
    #{disp}<br />
