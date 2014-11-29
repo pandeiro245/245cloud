@@ -139,10 +139,10 @@ initChatting = () ->
     for workload, i in workloads
       continue unless workload.attributes.user
       offset = null
-      console.log 'workloads.length in chatting', workloads.length
-      offset = getOffset(workloads.length) if i == 0
+      is_first = if i == 0 then true else false
 
-      @addChatting(workload, offset)
+      @addChatting(workload, is_first)
+    $('.first').addClass("col-lg-offset-#{getOffset(workloads.length)}")
     initFixedStart()
   )
 
@@ -159,15 +159,18 @@ initDoing = () ->
     return unless workloads.length > 0
     $("#doing_title").show()
     user_keys = {}
+    user_count = 0
     for workload, i in workloads
       continue unless workload.attributes.user
 
-      console.log 'workloads.length in doing', workloads.length
-      offset = null
-      offset = getOffset(workloads.length) if i == 0
+      is_first = if i == 0 then true else false
 
-      @addDoing(workload, offset) unless user_keys[workload.attributes.user.id]
-      user_keys[workload.attributes.user.id] = true
+      unless user_keys[workload.attributes.user.id]
+        @addDoing(workload, is_first) 
+        user_keys[workload.attributes.user.id] = true
+        user_count += 1
+    console.log user_count
+    $('.first').addClass("col-lg-offset-#{getOffset(user_count)}")
     initFixedStart()
   )
 
@@ -397,21 +400,21 @@ window.createComment = (room_id) ->
 initRanking = () ->
   $('#ranking').html('ここにランキング結果が入ります')
 
-@addDoing = (workload, offset) ->
+@addDoing = (workload, is_first=false) ->
   $("#doing_title").show()
   t = new Date(workload.createdAt)
   end_time = @env.pomotime*60*1000 + t.getTime()
   disp = "#{Util.hourMin(workload.createdAt)}開始（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
-  @addWorkload("#doing", workload, disp, offset)
+  @addWorkload("#doing", workload, disp, is_first)
 
-@addChatting = (workload, offset) ->
+@addChatting = (workload, is_first=false) ->
   $("#chatting_title").show()
   t = new Date(workload.createdAt)
   end_time = @env.pomotime*60*1000 + @env.chattime*60*1000 + t.getTime()
   disp = "#{Util.hourMin(workload.createdAt)}開始（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
-  @addWorkload("#chatting", workload, disp, offset)
+  @addWorkload("#chatting", workload, disp, is_first)
 
-@addWorkload = (dom, workload, disp, offset=null) ->
+@addWorkload = (dom, workload, disp, is_first=false) ->
   if workload.attributes
     w = workload.attributes
     user_id = w.user.id
@@ -430,7 +433,7 @@ initRanking = () ->
       href += "soundcloud:#{w.sc_id}"
     if w.yt_id
       href += "youtube:#{w.yt_id}"
-    fixed = "<a href=\"#{href}\" class='fixed_start btn btn-default'>再生</a><a href=\"#\" class='btn btn-default'>追加</a>"
+    fixed = "<a href=\"#{href}\" class='fixed_start btn btn-default'>再生</a><a href=\"#\" class='btn btn-default add_playlist'>追加</a>"
     jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<img src=\"/img/noimage.png\" />'}"
     title = w.title
   else
@@ -476,7 +479,7 @@ initRanking = () ->
     $workload = $('<div></div>')
     $workload.addClass("user_#{user_id}")
     $workload.addClass("col-lg-2")
-    $workload.addClass("col-lg-offset-#{offset}") if offset
+    $workload.addClass("first") if is_first
     $workload.css("min-height", '280px')
     $workload.html($item)
     if workload.attributes
@@ -499,6 +502,10 @@ initFixedStart = () ->
     else
       alert 'Facebookログインをお願いします！'
   )
+  $('.add_playlist').click(() ->
+    alert 'プレイリストに追加する機能は現在開発中です。。。'
+  )
+
 
 ruffnote = (id, dom) ->
   Ruffnote.fetch("pandeiro245/245cloud/#{id}", dom)
@@ -607,7 +614,7 @@ getOffset = (all_count) ->
   data = {
     1: 5
     2: 4
-    3: 4
+    3: 3
     4: 2
   }
   data[all_count]
