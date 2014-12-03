@@ -177,10 +177,11 @@ initDone = () ->
     $("#done").append("<h2>DONE</h2>")
     for workload in workloads
       continue unless workload.attributes.user
-      disp = "#{Util.hourMin(workload.createdAt)}開始（#{workload.attributes.number}回目）"
+      #disp = "#{Util.hourMin(workload.createdAt)}〜<br />（#{workload.attributes.number}）"
+      disp = "#{Util.hourMin(workload.createdAt)}〜"
       @addWorkload("#done", workload, disp)
     initFixedStart()
-  , null, 100)
+  , null, 12 * 30)
   
 login = () ->
   console.log 'login'
@@ -400,14 +401,14 @@ initRanking = () ->
   $("#doing_title").show()
   t = new Date(workload.createdAt)
   end_time = @env.pomotime*60*1000 + t.getTime()
-  disp = "#{Util.hourMin(workload.createdAt)}開始（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
+  disp = "#{Util.hourMin(workload.createdAt)}〜<br />（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
   @addWorkload("#doing", workload, disp)
 
 @addChatting = (workload) ->
   $("#chatting_title").show()
   t = new Date(workload.createdAt)
   end_time = @env.pomotime*60*1000 + @env.chattime*60*1000 + t.getTime()
-  disp = "#{Util.hourMin(workload.createdAt)}開始（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
+  disp = "#{Util.hourMin(workload.createdAt)}〜<br />（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
   @addWorkload("#chatting", workload, disp)
 
 @addWorkload = (dom, workload, disp) ->
@@ -430,22 +431,28 @@ initRanking = () ->
     if w.yt_id
       href += "youtube:#{w.yt_id}"
     #fixed = "<a href=\"#{href}\" class='fixed_start btn btn-default'>再生</a><a href=\"#\" class='btn btn-default add_playlist'>追加</a>"
-    fixed = "<a href=\"#{href}\" class='fixed_start btn btn-default'>再生</a>"
-    jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<img src=\"https://ruffnote.com/attachments/24162\" />'}"
+    #fixed = "<a href=\"#{href}\" class='fixed_start btn btn-default'>再生</a>"
+    #
+    fixed = ""
+
+    jacket_url = if w.artwork_url then w.artwork_url  else 'https://ruffnote.com/attachments/24162'
     title = w.title
   else
     title = '無音'
     fixed = ""
-    jacket = "<img src=\"https://ruffnote.com/attachments/24163\" />"
-  user_img = "<img class='icon icon_#{user_id} img-thumbnail' src='#{userIdToIconUrl(user_id)}' />"
+    jacket_url = "https://ruffnote.com/attachments/24163"
+  user_img = "<img class='icon icon_#{user_id}' src='#{userIdToIconUrl(user_id)}' />"
 
   $item = $("""
-   <h5>#{title} </h5>
-   #{jacket}<br />
-   #{user_img}<br />
-   #{disp}<br />
-   #{rooms}<br />
-   #{fixed}<br />
+    <h5>#{title} </h5>
+    <div class= 'jacket' style='background-image: url("#{jacket_url}");'>
+    #{user_img}
+    <div class= 'info'>
+    #{disp}<br />
+    #{rooms}<br />
+    #{fixed}
+    </div>
+    </div>
   """)
 
   unless dom == '#done'
@@ -456,10 +463,18 @@ initRanking = () ->
 
     $("#{dom} .user_#{user_id}").html($item)
   else
-    $workload = $('<div></div>')
+    $workload = $('<a></a>')
+    $workload.attr('href', href)
+    $workload.addClass('fixed_start')
+    if title == '無音'
+      tooltip = "音を鳴らさずに24分集中します"
+    else
+      tooltip = "クリックすると「#{title}」が24分間流れます。"
+    $workload.tooltip({title: tooltip})
     $workload.addClass("user_#{user_id}")
-    $workload.addClass("col-sm-2")
-    $workload.css("min-height", '280px')
+    $workload.addClass("col-sm-1")
+    $workload.addClass("workload")
+    $workload.css("min-height", '150px')
     $workload.html($item)
     if workload.attributes # init
       $("#{dom}").append($workload)
@@ -591,6 +606,7 @@ searchMusics = () ->
   Soundcloud.search(q, @env.sc_client_id, $tracks, initFixedStart)
 
 getOffset = (all_count) ->
+  ###
   return 0 if all_count >= 5
   data = {
     1: 5
@@ -598,13 +614,29 @@ getOffset = (all_count) ->
     3: 3
     4: 2
   }
+  ###
+  return 0 if all_count >= 12
+  data = {
+    1: 5
+    2: 5
+    3: 5
+    4: 4
+    5: 4
+    6: 3
+    7: 3
+    8: 2
+    9: 2
+    10: 1
+    11: 1
+  }
   data[all_count]
 
 renderWorkloads = (dom) ->
   console.log 'renderWorkloads'
   $dom = $("#{dom}")
-  $items = $("#{dom} div")
-  $first = $("#{dom} div:first")
+  $items = $("#{dom} .workload")
+  $first = $("#{dom} .workload:first")
+  $items.removeClass('col-sm-offset-1')
   $items.removeClass('col-sm-offset-2')
   $items.removeClass('col-sm-offset-3')
   $items.removeClass('col-sm-offset-4')
