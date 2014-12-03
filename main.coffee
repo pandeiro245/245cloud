@@ -254,6 +254,7 @@ window.play = (key) ->
    
 window.play_repeat = (key, duration) ->
   console.log 'play_repeat'
+  return false if @env.is_done
   id = key.split(':')[1]
   if key.match(/^soundcloud/)
     Soundcloud.play(id, @env.sc_client_id, $("#playing"))
@@ -610,6 +611,4 @@ renderWorkloads = (dom) ->
   $items.removeClass('col-sm-offset-5')
   $first.addClass("col-sm-offset-#{getOffset($items.length)}")
   console.log $items.length
-
-
 
