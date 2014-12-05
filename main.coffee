@@ -441,10 +441,10 @@ initRanking = () ->
 
   $item = $("""
    <h5>#{title} </h5>
-   #{jacket}<br />
-   #{user_img}<br />
-   #{disp}<br />
-   #{rooms}<br />
+   <div>#{jacket}</div>
+   <div style='margin: 8px 0 5px;'>#{user_img}</div>
+   <div>#{disp}</div>
+   <div>#{rooms}</div>
    #{fixed}<br />
   """)
 
@@ -476,6 +476,7 @@ initRanking = () ->
 
 initFixedStart = () ->
   $('.fixed_start').click(() ->
+    mixpanel.track("fixed_start")
     if Parse.User.current()
       hash = $(this).attr('href').replace(/^#/, '')
       location.hash = hash
