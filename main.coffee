@@ -458,6 +458,7 @@ initRanking = () ->
   else
     $workload = $('<div></div>')
     $workload.addClass("user_#{user_id}")
+    $workload.addClass("workload")
     $workload.addClass("col-sm-2")
     $workload.css("min-height", '280px')
     $workload.html($item)
@@ -604,8 +605,8 @@ getOffset = (all_count) ->
 renderWorkloads = (dom) ->
   console.log 'renderWorkloads'
   $dom = $("#{dom}")
-  $items = $("#{dom} div")
-  $first = $("#{dom} div:first")
+  $items = $("#{dom} .workload")
+  $first = $("#{dom} .workload:first")
   $items.removeClass('col-sm-offset-2')
   $items.removeClass('col-sm-offset-3')
   $items.removeClass('col-sm-offset-4')
