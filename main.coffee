@@ -186,7 +186,7 @@ initDone = () ->
   , null, 100)
  
 initKpi = () ->
-  $('#kpi_title').html('245cloudのKPIは「同時利用人数」です')
+  ruffnote(17548, 'kpi_title')
   $('#kpi').css('height', '300px')
 
   cond = [
