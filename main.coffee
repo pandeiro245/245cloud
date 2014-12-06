@@ -186,7 +186,7 @@ initDone = () ->
   , null, 100)
  
 initKpi = () ->
-  $('#kpi_title').html('245cloudのKPIは「同時に集中している人の人数」です')
+  $('#kpi_title').html('245cloudのKPIは「同時利用人数」です')
   $('#kpi').css('height', '300px')
 
   cond = [
@@ -195,7 +195,10 @@ initKpi = () ->
   ParseParse.where('Workload', cond, (workloads) ->
     chart = {}
     for workload in workloads
+      continue unless workload.get('synchro_start')
+      # 開始時の人数
       chart[workload.createdAt] = workload.get('synchro_start')
+      # 終了時（開始から29分後）の人数
       chart[Util.minAgo(-24 -5, workload.createdAt)] = workload.get('synchro_end')
     new Chartkick.LineChart("kpi", chart)
   , null, 1000)
