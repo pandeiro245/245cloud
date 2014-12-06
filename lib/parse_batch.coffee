@@ -12,6 +12,7 @@ class @ParseBatch
     console.log "kpi in the barch"
     cond = [
       ['is_done', true]
+      ['synchro_start', null]
       ['user', Parse.User.current()]
     ]
     ParseParse.where("Workload", cond, (workloads) ->
