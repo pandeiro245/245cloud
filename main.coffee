@@ -194,13 +194,19 @@ initKpi = () ->
   ]
   ParseParse.where('Workload', cond, (workloads) ->
     chart = {}
+    chart_viewer = {}
     for workload in workloads
       continue unless workload.get('synchro_start')
-      # 開始時の人数
+      if workload.get('user') && Parse.User.current() && workload.get('user').id == Parse.User.current().id
+        chart_viewer[workload.createdAt] = workload.get('synchro_start')
+        chart_viewer[Util.minAgo(-24 -5, workload.createdAt)] = workload.get('synchro_end')
       chart[workload.createdAt] = workload.get('synchro_start')
-      # 終了時（開始から29分後）の人数
       chart[Util.minAgo(-24 -5, workload.createdAt)] = workload.get('synchro_end')
-    new Chartkick.LineChart("kpi", chart)
+    data = [
+      {name: '全体', data: chart},
+      {name: 'あなた', data: chart_viewer}
+    ]
+    new Chartkick.LineChart("kpi", data)
   , null, 1000)
 
 login = () ->
