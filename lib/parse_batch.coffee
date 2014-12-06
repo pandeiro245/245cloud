@@ -19,6 +19,7 @@ class @ParseBatch
       for workload in workloads
         # 開始29分前〜開始時間
         cond = [
+          ['is_done', true]
           ['createdAt', '>', Util.minAgo(24 + 5, workload.createdAt)]
           ['createdAt', '<', workload.createdAt]
         ]
@@ -29,6 +30,7 @@ class @ParseBatch
 
         # 終了29分前（＝開始時間）〜終了時間
         cond = [
+          ['is_done', true]
           ['createdAt', '>', workload.createdAt]
           ['createdAt', '<', Util.minAgo(-24 -5, workload.createdAt)]
         ]
@@ -36,7 +38,7 @@ class @ParseBatch
           workload.set('synchro_end', workloads3.length + 0)
           workload.save()
         , workload, 1000)
-    , null, 5)
+    , null, 30)
 
     ###
     ParseParse.where("Workload", [['is_done', true]], (workloads) ->
