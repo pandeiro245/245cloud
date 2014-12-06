@@ -24,6 +24,8 @@ $ ->
     'rooms'
     #'ranking'
     #'music_ranking'
+    'kpi_title'
+    'kpi'
     'footer'
   ])
   Util.realtime()
@@ -42,6 +44,7 @@ $ ->
   initStart()
   # initRanking()
   initFixedStart()
+  initKpi()
   ParseBatch.repeat()
 
 initStart = () ->
@@ -181,7 +184,22 @@ initDone = () ->
       @addWorkload("#done", workload, disp)
     initFixedStart()
   , null, 100)
-  
+ 
+initKpi = () ->
+  $('#kpi_title').html('245cloudのKPIは「同時に集中している人の人数」です')
+  $('#kpi').css('height', '300px')
+
+  cond = [
+    ['is_done', true]
+  ]
+  ParseParse.where('Workload', cond, (workloads) ->
+    chart = {}
+    for workload in workloads
+      chart[workload.createdAt] = workload.get('synchro_start')
+      chart[Util.minAgo(-24 -5, workload.createdAt)] = workload.get('synchro_end')
+    new Chartkick.LineChart("kpi", chart)
+  , null, 1000)
+
 login = () ->
   console.log 'login'
   window.fbAsyncInit()
@@ -291,6 +309,26 @@ complete = () ->
     workload.set('is_done', true)
     workload.save()
   , workload)
+
+  # 開始29分前〜開始時間
+  cond = [
+    ['createdAt', '>', Util.minAgo(24 + 5, workload.createdAt)]
+    ['createdAt', '<', workload.createdAt]
+  ]
+  ParseParse.where('Workload', cond, (workload, workloads2) ->
+    workload.set('synchro_start', workloads2.length + 1)
+    workload.save()
+  , workload, 99999)
+
+  # 終了29分前〜終了時間
+  cond = [
+    ['createdAt', '>', workload.createdAt]
+    ['createdAt', '<', Util.minAgo(-24 -5, workload.createdAt)]
+  ]
+  ParseParse.where('Workload', cond, (workload, workloads3) ->
+    workload.set('synchro_end', workloads3.length + 0)
+    workload.save()
+  , workload, 9999)
 
   $complete = $('#complete')
   $complete.html('24分おつかれさまでした！5分間交換ノートが見られます')

@@ -1,6 +1,7 @@
 class Util
-  @minAgo: (min) ->
-    new Date((new Date()).getTime() - min*60*1000)
+  @minAgo: (min, date=null) ->
+    date = new Date() unless date
+    new Date(date.getTime() - min*60*1000)
 
   @scaffolds: (ids) ->
     $body = $('#nc')

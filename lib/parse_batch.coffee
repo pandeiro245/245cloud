@@ -8,6 +8,7 @@ class @ParseBatch
           room.save()
         , room, 1000000)
     )
+    
     ###
     ParseParse.where("Workload", [['is_done', true]], (workloads) ->
       hash = {}
