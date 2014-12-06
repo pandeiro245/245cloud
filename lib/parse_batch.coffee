@@ -9,7 +9,7 @@ class @ParseBatch
         , room, 1000000)
     )
 
-    console.log "kpi in the barch"
+    console.log "kpi in the batch"
     cond = [
       ['is_done', true]
       ['synchro_start', null]
@@ -17,6 +17,7 @@ class @ParseBatch
     ]
     ParseParse.where("Workload", cond, (workloads) ->
       for workload in workloads
+        console.log 'workload in kpi batch', workload
         # 開始29分前〜開始時間
         cond = [
           ['is_done', true]
