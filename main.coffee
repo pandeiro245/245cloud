@@ -25,7 +25,12 @@ $ ->
     #'ranking'
     #'music_ranking'
     'kpi_title'
-    'kpi'
+    'kpi3_title'
+    'kpi3'
+    'kpi2_title'
+    'kpi2'
+    'kpi1_title'
+    'kpi1'
     'footer'
   ])
   Util.realtime()
@@ -187,26 +192,72 @@ initDone = () ->
  
 initKpi = () ->
   ruffnote(17548, 'kpi_title')
-  $('#kpi').css('height', '300px')
+  $('#kpi3').css('height', '300px')
+  $('#kpi2').css('height', '300px')
+  $('#kpi1').css('height', '300px')
+  $('#kpi3_title').html('<h2>直近50回分</h2>')
+  $('#kpi2_title').html('<h2>直近300回分</h2>')
+  $('#kpi1_title').html("<h2 style='margin-top: 30px;'>直近1000回分</h2>")
 
   cond = [
     ['is_done', true]
   ]
   ParseParse.where('Workload', cond, (workloads) ->
-    chart = {}
-    chart_viewer = {}
-    for workload in workloads
+    chart1 = {}
+    chart_viewer1 = {}
+    chart2 = {}
+    chart_viewer2 = {}
+    chart3 = {}
+    chart_viewer3 = {}
+    for workload, i in workloads
       continue unless workload.get('synchro_start')
+      key_start = workload.createdAt
+      val_start = workload.get('synchro_start')
+      key_end = Util.minAgo(-24 -5, workload.createdAt)
+      val_end = workload.get('synchro_end')
+
+      # kPI1: 1000
       if workload.get('user') && Parse.User.current() && workload.get('user').id == Parse.User.current().id
-        chart_viewer[workload.createdAt] = workload.get('synchro_start')
-        chart_viewer[Util.minAgo(-24 -5, workload.createdAt)] = workload.get('synchro_end')
-      chart[workload.createdAt] = workload.get('synchro_start')
-      chart[Util.minAgo(-24 -5, workload.createdAt)] = workload.get('synchro_end')
-    data = [
-      {name: '全体', data: chart},
-      {name: 'あなた', data: chart_viewer}
+        chart_viewer1[key_start] = val_start
+        chart_viewer1[key_end] = val_end
+      chart1[key_start] = val_start
+      chart1[key_end] = val_end
+
+      continue if i > 300
+
+      # KPI2: 300
+      if workload.get('user') && Parse.User.current() && workload.get('user').id == Parse.User.current().id
+        chart_viewer2[key_start] = val_start
+        chart_viewer2[key_end] = val_end
+      chart2[key_start] = val_start
+      chart2[key_end] = val_end
+
+      continue if i > 50
+
+      # KPI3: 50
+      if workload.get('user') && Parse.User.current() && workload.get('user').id == Parse.User.current().id
+        chart_viewer3[key_start] = val_start
+        chart_viewer3[key_end] = val_end
+      chart3[key_start] = val_start
+      chart3[key_end] = val_end
+ 
+    data1 = [
+      {name: '全体', data: chart1},
+      {name: 'あなた', data: chart_viewer1}
     ]
-    new Chartkick.LineChart("kpi", data)
+    new Chartkick.LineChart("kpi1", data1)
+ 
+    data2 = [
+      {name: '全体', data: chart2},
+      {name: 'あなた', data: chart_viewer2}
+    ]
+    new Chartkick.LineChart("kpi2", data2)
+   
+    data3 = [
+      {name: '全体', data: chart3},
+      {name: 'あなた', data: chart_viewer3}
+    ]
+    new Chartkick.LineChart("kpi3", data3)
   , null, 1000)
 
 login = () ->
