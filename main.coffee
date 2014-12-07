@@ -354,7 +354,7 @@ window.play_repeat = (key, duration) ->
 
 complete = () ->
   console.log 'complete'
-  alert '完了！' if location.href.match('alert')
+  alert '完了！' if location.href.match('alert') unless @env.is_done
   $('#header').hide()
   $('#otukare').fadeIn()
 
