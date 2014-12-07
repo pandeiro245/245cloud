@@ -298,6 +298,18 @@ start = () ->
   $("input").hide()
   $(".fixed_start").hide()
   $("#music_ranking").hide()
+  doms = [ 
+    'kpi_title'
+    'kpi3_title'
+    'kpi3'
+    'kpi2_title'
+    'kpi2'
+    'kpi1_title'
+    'kpi1'
+  ]
+  for dom in doms
+    $("##{dom}").hide()
+
   @env.is_doing = true
   @syncWorkload('doing')
 
