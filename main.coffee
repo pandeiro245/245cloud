@@ -735,5 +735,4 @@ renderWorkloads = (dom) ->
   $items.removeClass('col-sm-offset-4')
   $items.removeClass('col-sm-offset-5')
   $first.addClass("col-sm-offset-#{getOffset($items.length)}")
-  console.log $items.length
 
