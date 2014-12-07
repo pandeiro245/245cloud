@@ -213,7 +213,7 @@ initKpi = () ->
       continue unless workload.get('synchro_start')
       key_start = workload.createdAt
       val_start = workload.get('synchro_start')
-      key_end = Util.minAgo(-24 -5, workload.createdAt)
+      key_end = Util.minAgo(-24, workload.createdAt)
       val_end = workload.get('synchro_end')
 
       # kPI1: 1000
@@ -383,7 +383,7 @@ complete = () ->
   # 終了29分前〜終了時間
   cond = [
     ['createdAt', '>', workload.createdAt]
-    ['createdAt', '<', Util.minAgo(-24 -5, workload.createdAt)]
+    ['createdAt', '<', Util.minAgo(-24, workload.createdAt)]
   ]
   ParseParse.where('Workload', cond, (workload, workloads3) ->
     workload.set('synchro_end', workloads3.length + 0)

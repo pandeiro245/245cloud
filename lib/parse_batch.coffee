@@ -33,7 +33,7 @@ class @ParseBatch
         cond = [
           ['is_done', true]
           ['createdAt', '>', workload.createdAt]
-          ['createdAt', '<', Util.minAgo(-24 -5, workload.createdAt)]
+          ['createdAt', '<', Util.minAgo(-24, workload.createdAt)]
         ]
         ParseParse.where('Workload', cond, (workload, workloads3) ->
           workload.set('synchro_end', workloads3.length + 0)
