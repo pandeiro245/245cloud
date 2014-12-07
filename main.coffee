@@ -11,6 +11,7 @@ $ ->
   Util.scaffolds([
     'header'
     'otukare'
+    'ad'
     'contents'
     'doing_title'
     'doing'
@@ -357,6 +358,17 @@ complete = () ->
   alert '完了！' if location.href.match('alert') unless @env.is_done
   $('#header').hide()
   $('#otukare').fadeIn()
+  if location.href.match("ad=") and !$('#ad iframe').length
+    ParseParse.all("Ad", (ads) ->
+      n = Math.floor(Math.random() * ads.length)
+      ad = ads[n].attributes
+      $('#ad').html(
+        """
+        <h2><a href=\"#{ad.click_url}?from=245cloud.com\" target=\"_blank\">#{ad.name}</a></h2>
+        <iframe width=\"560\" height=\"315\" src=\"#{ad.movie_url}\" frameborder=\"0\" allowfullscreen></iframe>
+        """
+      )
+    )
 
   @env.is_doing = false
   @env.is_done = true
