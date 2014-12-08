@@ -80,6 +80,10 @@ initStart = () ->
         text = "「#{track['entry']['title']['$t']}」で24分集中"
         Util.addButton('start', $('#contents'), text, start_hash)
       )
+    if location.hash.match(/mixcloud/)
+      text = "「#{location.hash}」で24分集中"
+      Util.addButton('start', $('#contents'), text, start_hash)
+
   else
     text = 'facebookログイン'
     Util.addButton('login', $('#contents'), text, login)
@@ -342,7 +346,11 @@ window.play = (key) ->
       else
         window.play_repeat(key, sec * 1000)
     )
-   
+  else if key.match(/^mixcloud/)
+      params['yt_id'] = id
+      params['title'] = key.split('/')[key.split('/').length + 1]
+      Mixcloud.play(id, $("#playing"), true)
+
 window.play_repeat = (key, duration) ->
   console.log 'play_repeat'
   return false if @env.is_done
@@ -714,6 +722,8 @@ searchMusics = () ->
   $tracks = $('#tracks')
   Youtube.search(q, $tracks, initFixedStart)
   Soundcloud.search(q, @env.sc_client_id, $tracks, initFixedStart)
+  #Mixcloud.search(q, $tracks, initFixedStart)
+  #EightTracks.search(q, $tracks, initFixedStart)
 
 getOffset = (all_count) ->
   return 0 if all_count >= 5
