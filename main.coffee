@@ -81,9 +81,10 @@ initStart = () ->
         Util.addButton('start', $('#contents'), text, start_hash)
       )
     if location.hash.match(/mixcloud/)
-      text = "「#{location.hash}」で24分集中"
-      Util.addButton('start', $('#contents'), text, start_hash)
-
+      Mixcloud.fetch(id, (track) ->
+        text = "「#{track.name}」で24分集中"
+        Util.addButton('start', $('#contents'), text, start_hash)
+      )
   else
     text = 'facebookログイン'
     Util.addButton('login', $('#contents'), text, login)
@@ -218,7 +219,7 @@ initKpi = () ->
       continue unless workload.get('synchro_start')
       key_start = workload.createdAt
       val_start = workload.get('synchro_start')
-      key_end = Util.minAgo(-24, workload.createdAt)
+      key_end = Util.minAgo(-1 * @env.pomotime, workload.createdAt)
       val_end = workload.get('synchro_end')
 
       # kPI1: 1000
@@ -347,10 +348,13 @@ window.play = (key) ->
         window.play_repeat(key, sec * 1000)
     )
   else if key.match(/^mixcloud/)
-      params['yt_id'] = id
-      params['title'] = key.split('/')[key.split('/').length + 1]
+    Mixcloud.fetch(id, (track) ->
+      params['mc_id'] = id
+      params['title'] = track.name
+      params['artwork_url'] = track.pictures.medium
+      createWorkload(params, start)
       Mixcloud.play(id, $("#playing"), true)
-
+  )
 window.play_repeat = (key, duration) ->
   console.log 'play_repeat'
   return false if @env.is_done
@@ -404,7 +408,7 @@ complete = () ->
 
   # 開始29分前〜開始時間
   cond = [
-    ['createdAt', '>', Util.minAgo(24 + 5, workload.createdAt)]
+    ['createdAt', '>', Util.minAgo(@env.pomotime, workload.createdAt)]
     ['createdAt', '<', workload.createdAt]
   ]
   ParseParse.where('Workload', cond, (workload, workloads2) ->
@@ -415,7 +419,7 @@ complete = () ->
   # 終了29分前〜終了時間
   cond = [
     ['createdAt', '>', workload.createdAt]
-    ['createdAt', '<', Util.minAgo(-24, workload.createdAt)]
+    ['createdAt', '<', Util.minAgo(-1 * @env.pomotime, workload.createdAt)]
   ]
   ParseParse.where('Workload', cond, (workload, workloads3) ->
     workload.set('synchro_end', workloads3.length + 0)
@@ -722,7 +726,7 @@ searchMusics = () ->
   $tracks = $('#tracks')
   Youtube.search(q, $tracks, initFixedStart)
   Soundcloud.search(q, @env.sc_client_id, $tracks, initFixedStart)
-  #Mixcloud.search(q, $tracks, initFixedStart)
+  Mixcloud.search(q, $tracks, initFixedStart)
   #EightTracks.search(q, $tracks, initFixedStart)
 
 getOffset = (all_count) ->
