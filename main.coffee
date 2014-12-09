@@ -353,7 +353,10 @@ window.play = (key) ->
       params['title'] = track.name
       params['artwork_url'] = track.pictures.medium
       createWorkload(params, start)
-      Mixcloud.play(id, $("#playing"), true)
+      if track.audio_length > 24*60
+        Mixcloud.play(id, $("#playing"), true)
+      else
+        window.play_repeat(key, track.audio_length * 1000)
   )
 window.play_repeat = (key, duration) ->
   console.log 'play_repeat'
@@ -363,13 +366,26 @@ window.play_repeat = (key, duration) ->
     Soundcloud.play(id, @env.sc_client_id, $("#playing"))
   else if key.match(/^youtube/)
     Youtube.play(id, $("#playing"))
+  else if key.match(/^mixcloud/)
+    Mixcloud.play(id, $("#playing"),)
   setTimeout("play_repeat\(\"#{key}\"\, #{duration})", duration)
 
 complete = () ->
   console.log 'complete'
-  alert '完了！' if location.href.match('alert') unless @env.is_done
+  @syncWorkload('chatting')
+  Util.countDown(@env.chattime*60*1000, 'finish')
   $('#header').hide()
   $('#otukare').fadeIn()
+  $("#playing").fadeOut()
+  $("#search").fadeOut()
+  $("#playing").html('') # for stopping
+  @initSelectRooms()
+
+  alert '完了！' if location.href.match('alert') unless @env.is_done
+
+  @env.is_doing = false
+  @env.is_done = true
+
   if location.href.match("ad=") and !$('#ad iframe').length
     ParseParse.all("Ad", (ads) ->
       n = Math.floor(Math.random() * ads.length)
@@ -382,13 +398,6 @@ complete = () ->
       )
     )
 
-  @env.is_doing = false
-  @env.is_done = true
-  @syncWorkload('chatting')
-  $("#playing").fadeOut()
-  $("#search").fadeOut()
-  $("#playing").html('') # for stopping
-  @initSelectRooms()
   workload = @workload
   w = workload.attributes
   first = new Date(workload.createdAt)
@@ -431,7 +440,6 @@ complete = () ->
 
   initComments()
 
-  Util.countDown(@env.chattime*60*1000, 'finish')
 
 window.initComments = () ->
   initRoom()
