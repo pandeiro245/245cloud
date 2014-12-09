@@ -85,6 +85,12 @@ initStart = () ->
         text = "「#{track.name}」で24分集中"
         Util.addButton('start', $('#contents'), text, start_hash)
       )
+    if location.hash.match(/8tracks/)
+      EightTracks.fetch(id, @env.et_client_id, (track) ->
+        text = "「#{track.mix.name}」で24分集中"
+        Util.addButton('start', $('#contents'), text, start_hash)
+      )
+
   else
     text = 'facebookログイン'
     Util.addButton('login', $('#contents'), text, login)
@@ -357,7 +363,16 @@ window.play = (key) ->
         Mixcloud.play(id, $("#playing"), true)
       else
         window.play_repeat(key, track.audio_length * 1000)
-  )
+    )
+  if key.match(/^8tracks/)
+    EightTracks.fetch(id, @env.et_client_id, (track) ->
+      params['et_id'] = parseInt(id)
+      params.title = track.mix.name
+      params.artwork_url = track.mix.cover_urls.sq100
+      createWorkload(params, start)
+      window.play_repeat(key, track.mix.duration * 1000)
+    )
+
 window.play_repeat = (key, duration) ->
   console.log 'play_repeat'
   return false if @env.is_done
@@ -368,6 +383,8 @@ window.play_repeat = (key, duration) ->
     Youtube.play(id, $("#playing"))
   else if key.match(/^mixcloud/)
     Mixcloud.play(id, $("#playing"),)
+  else if key.match(/^8tracks/)
+    EightTracks.play(id, $("#playing"))
   setTimeout("play_repeat\(\"#{key}\"\, #{duration})", duration)
 
 complete = () ->
@@ -574,6 +591,8 @@ initRanking = () ->
       href += "youtube:#{w.yt_id}"
     if w.mc_id
       href += "mixcloud:#{w.mc_id}"
+    if w.et_id
+      href += "8tracks:#{w.et_id}"
     #fixed = "<a href=\"#{href}\" class='fixed_start btn btn-default'>再生</a><a href=\"#\" class='btn btn-default add_playlist'>追加</a>"
     fixed = "<a href=\"#{href}\" class='fixed_start btn btn-default'>再生</a>"
     jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<img src=\"https://ruffnote.com/attachments/24162\" />'}"
