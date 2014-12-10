@@ -1,8 +1,14 @@
 class @EightTracks
   @fetch: (et_id, client_id, callback) ->
-    url = "//8tracks.com/mixes/#{et_id}?format=json&api_key=#{client_id}"
+    console.log et_id
+    id = parseInt(et_id)
+    if id  > 0
+      url = "//8tracks.com/mixes/#{et_id}?format=json&api_key=#{client_id}"
+    else
+      url = "//8tracks.com/#{et_id}.json?api_key=#{client_id}"
     $.get(url, (track) ->
       console.log track
+      location.hash = "8tracks:#{track.mix.id}"
       callback(track)
     )
     
