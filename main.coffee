@@ -44,11 +44,11 @@ $ ->
   initChatting()
   initDoing()
   initDone()
-  # initStart()
+  initStart()
   # initRanking()
   initFixedStart()
-  initKpi()
-  ParseBatch.repeat()
+  #initKpi()
+  #ParseBatch.repeat()
 
 init8tracks = () ->
   $('#8tracks').html('<h2>attripさんmix</h2>')
@@ -795,16 +795,36 @@ syncComment = (id, comment, is_countup=false) ->
     $("#doing_title").hide()
 
 searchMusics = () ->
+  console.log 'searchMusics'
   q = $('#track').val()
   return if q.length < 1
   $('#tracks').html('')
   localStorage['search_music_title'] = q
 
   $tracks = $('#tracks')
-  Youtube.search(q, $tracks)
-  Soundcloud.search(q, @env.sc_client_id, $tracks)
-  Mixcloud.search(q, $tracks)
-  #EightTracks.search(q, $tracks)
+  ParseMusic.search(q, (tracks) ->
+    for track in tracks
+      artwork = "<img src=\"https://ruffnote.com/attachments/24162\" width='100px'/>"
+      if track.picture
+        artwork = "<img src=\"#{track.picture}\" width='100px'/>"
+      href = "soundcloud:#{track.id}"
+      $tracks.append("""
+        <div class='col-sm-2' style='min-height: 200px;'>
+          <a href='#{track.url}' target='_blank'>#{track.title}</a>
+          (#{Util.time(track.duration)})<br />
+          <br />
+          #{artwork}
+          <br />
+          <a href=\"##{href}\" class='fixed_start btn btn-default'>再生</a>
+          <!--<a href=\"#\" class='add_playlist btn btn-default'>追加</a>-->
+        </div>
+      """)
+  )
+  
+  #Youtube.search(q, $tracks, initFixedStart)
+  #Soundcloud.search(q, @env.sc_client_id, $tracks, initFixedStart)
+  #Mixcloud.search(q, $tracks, initFixedStart)
+  #EightTracks.search(q, $tracks, initFixedStart)
 
 getOffset = (all_count) ->
   return 0 if all_count >= 5
