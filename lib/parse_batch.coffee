@@ -17,7 +17,7 @@ class @ParseBatch
     ]
     ParseParse.where("Workload", cond, (workloads) ->
       for workload in workloads
-        console.log 'workload in kpi batch', workload.get('user').id
+        console.log 'workload in kpi batch'
         # 開始29分前〜開始時間
         cond = [
           ['is_done', true]

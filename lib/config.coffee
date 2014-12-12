@@ -27,7 +27,7 @@ else if location.href.match(/vast-reef-2868.herokuapp.com/)
   env.parse_key = 'gzlnFfIOoLFQzQ08bU4mxkhAHcSqEok3rox0PBOM'
   env.facebook_app_id = '322021711333152'
   
-else if location.href.match(/localhost:3000/)
+else if location.href.match(/localhost:3001/)
   env.parse_app_id = '8QzCMkUbx7TyEApZjDRlhpLQ2OUj0sQWTnkEExod'
   env.parse_key = 'gzlnFfIOoLFQzQ08bU4mxkhAHcSqEok3rox0PBOM'
   env.facebook_app_id = '322004764668180'

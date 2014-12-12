@@ -36,6 +36,7 @@ $ ->
   ])
   Util.realtime()
 
+  $('#header').removeClass('row')
   ruffnote(13475, 'header')
   ruffnote(13477, 'footer')
 
@@ -59,7 +60,7 @@ initStart = () ->
   Util.beforeunload(text, 'env.is_doing')
   
   if Parse.User.current()
-    $('#contents').append("<div class='countdown'></div>")
+    $('#contents').append("<div class='countdown' ></div>")
       
     text = '曲お任せで24分間集中する！'
     tooltip = '現在はSoundcloudの人気曲からランダム再生ですが今後もっと賢くなっていくはず'
