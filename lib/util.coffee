@@ -50,7 +50,7 @@ class Util
     if duration > past # yet end
       remain = duration-past
      
-      if remain < 8 * 1000 && remain > 7 * 1000
+      if remain < 8 * 1000 && remain >= 7 * 1000
         $audio = $('<audio></audio>')
         $audio.attr('id', 'audio')
         # thanks for http://musicisvfr.com/free/se/clock01.html
