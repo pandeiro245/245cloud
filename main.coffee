@@ -85,7 +85,6 @@ initStart = () ->
         text = "「#{track.mix.name}」で24分集中"
         Util.addButton('start', $('#contents'), text, start_hash)
       )
-
   else
     text = 'facebookログイン'
     Util.addButton('login', $('#contents'), text, login)
@@ -596,7 +595,8 @@ initRanking = () ->
     title = '無音'
     fixed = ""
     jacket = "<img src=\"https://ruffnote.com/attachments/24163\" />"
-  user_img = "<img class='icon icon_#{user_id} img-thumbnail' src='https://graph.facebook.com/1266278030/picture?type=square' />"
+  user_img = "<img class='icon icon_#{user_id} img-thumbnail' />"
+  syncUserImg(workload)
 
   $item = $("""
    <h5>#{title} </h5>
@@ -685,7 +685,7 @@ ruffnote = (id, dom) ->
     <tr>
     <td>
     <a class='facebook_#{user.id}' target='_blank'>
-    <img class='icon icon_#{user.id}' src='https://graph.facebook.com/1266278030/picture?type=square' />
+    <img class='icon icon_#{user.id}' />
     <div class='facebook_name_#{user.id}'></div>
     </a>
     <td>
@@ -695,18 +695,10 @@ ruffnote = (id, dom) ->
     """
     if typeof(comment.attributes) != 'undefined'
       $comments.append(html)
-      ParseParse.fetch("user", comment, (ent, user) ->
-        img = "https://graph.facebook.com/#{user.get('facebook_id')}/picture?type=square"
-        $(".icon_#{user.id}").attr('src', img)
-        href = "https://facebook.com/#{user.get('facebook_id')}"
-        $(".facebook_#{user.id}").attr('href', href)
-        if name = user.get('name')
-          $(".facebook_name_#{user.id}").html(name)
-        else
-          $(".facebook_name_#{user.id}").html("※利用者名取得中...")
-      )
+      syncUserImg(comment)
     else
       $comments.prepend(html)
+    syncUserImg(workload)
 
 getUnreadsCount = (room_id, total_count) ->
   return total_count unless Parse.User.current()
@@ -771,4 +763,16 @@ renderWorkloads = (dom) ->
   $items.removeClass('col-sm-offset-4')
   $items.removeClass('col-sm-offset-5')
   $first.addClass("col-sm-offset-#{getOffset($items.length)}")
+
+syncUserImg = (instance) ->
+  ParseParse.fetch("user", instance, (ent, user) ->
+    img = "https://graph.facebook.com/#{user.get('facebook_id')}/picture?type=square"
+    $(".icon_#{user.id}").attr('src', img)
+    href = "https://facebook.com/#{user.get('facebook_id')}"
+    $(".facebook_#{user.id}").attr('href', href)
+    if name = user.get('name')
+      $(".facebook_name_#{user.id}").html(name)
+    else
+      $(".facebook_name_#{user.id}").html("※利用者名取得中...")
+  )
 
