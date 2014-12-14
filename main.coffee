@@ -91,7 +91,10 @@ initStart = () ->
       Util.addButton('start', $('#contents'), text, start_hash)
     )
 
-  unless Parse.User.current()
+  if Parse.User.current()
+    text = 'ログアウト'
+    Util.addButton('logout', $('#contents'), text, logout)
+  else
     text = 'facebookログイン'
     tooltip = '個人の過去の頑張りグラフ機能とか実装予定'
     Util.addButton('login', $('#contents'), text, login, tooltip)
@@ -156,8 +159,6 @@ initChatting = () ->
     return unless workloads.length > 0
     $("#chatting_title").show()
     for workload, i in workloads
-      continue unless workload.attributes.user
-
       @addChatting(workload)
     initFixedStart()
     renderWorkloads('#chatting')
@@ -179,7 +180,6 @@ initDoing = () ->
     user_keys = {}
     user_count = 0
     for workload, i in workloads
-      continue unless workload.attributes.user
       unless user_keys[workload.attributes.user.id]
         @addDoing(workload)
         user_keys[workload.attributes.user.id] = true
@@ -197,7 +197,6 @@ initDone = () ->
     return unless workloads.length > 0
     $("#done").append("<h2>DONE</h2>")
     for workload in workloads
-      continue unless workload.attributes.user
       disp = "#{Util.hourMin(workload.createdAt)}開始（#{workload.attributes.number}回目）"
       @addWorkload("#done", workload, disp)
     initFixedStart()
@@ -276,6 +275,11 @@ initKpi = () ->
 login = () ->
   console.log 'login'
   window.fbAsyncInit()
+
+logout = () ->
+  Parse.User.logOut()
+  alert 'ログアウトしました'
+  location.reload()
 
 start_random = () ->
   console.log 'start_random'
@@ -574,7 +578,7 @@ initRanking = () ->
 @addWorkload = (dom, workload, disp) ->
   if workload.attributes
     w = workload.attributes
-    user_id = w.user.id
+    user_id = w.user.id if w.user
   else if workload.user
     w = workload
     user_id = w.user.objectId
