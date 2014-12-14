@@ -650,7 +650,8 @@ initRanking = () ->
     title = '無音'
     fixed = "<a href=\"#\" class='fixed_start'><img src='https://ruffnote.com/attachments/24333' /></a>"
     jacket = "<img src=\"https://ruffnote.com/attachments/24163\" />"
-  user_img = "<img class='icon icon_#{user_id} img-thumbnail' src='https://graph.facebook.com/1266278030/picture?type=square' />"
+  user_img = "<img class='icon icon_#{user_id} img-thumbnail' />"
+  syncUserImg(workload)
 
   $item = $("""
    <h5>#{title} </h5>
@@ -737,7 +738,7 @@ ruffnote = (id, dom, callback=null) ->
     <tr>
     <td>
     <a class='facebook_#{user.id}' target='_blank'>
-    <img class='icon icon_#{user.id}' src='https://graph.facebook.com/1266278030/picture?type=square' />
+    <img class='icon icon_#{user.id}' />
     <div class='facebook_name_#{user.id}'></div>
     </a>
     <td>
@@ -748,7 +749,7 @@ ruffnote = (id, dom, callback=null) ->
     if typeof(comment.attributes) != 'undefined'
       $comments.append(html)
       ParseParse.fetch("user", comment, (ent, user) ->
-        img = "https://graph.facebook.com/#{user.get('facebook_id')}/picture?type=square"
+        img = "https://graph.facebook.com/#{user.get('facebook_id_str')}/picture?type=square"
         $(".icon_#{user.id}").attr('src', img)
         if user.get('facebook_id_str')
           href = "https://facebook.com/#{user.get('facebook_id_str')}"
@@ -760,6 +761,7 @@ ruffnote = (id, dom, callback=null) ->
       )
     else
       $comments.prepend(html)
+    syncUserImg(workload)
 
 getUnreadsCount = (room_id, total_count) ->
   return total_count unless Parse.User.current()
@@ -828,3 +830,4 @@ renderWorkloads = (dom) ->
 start_unless_doing = ()->
   unless @env.is_doing
     start_hash()
+
