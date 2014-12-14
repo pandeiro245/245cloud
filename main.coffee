@@ -59,42 +59,42 @@ initStart = () ->
   text = "24分やり直しでも大丈夫ですか？"
   Util.beforeunload(text, 'env.is_doing')
   
-  if Parse.User.current()
-    $('#contents').append("<div class='countdown' ></div>")
-      
-    text = '曲お任せで24分間集中する！'
-    tooltip = '現在はSoundcloudの人気曲からランダム再生ですが今後もっと賢くなっていくはず'
-    Util.addButton('start', $('#contents'), text, start_random, tooltip)
+  $('#contents').append("<div class='countdown' ></div>")
     
-    text = '無音で24分集中'
-    tooltip = '無音ですが終了直前にはとぽっぽが鳴ります'
-    Util.addButton('start', $('#contents'), text, start_nomusic, tooltip)
+  text = '曲お任せで24分間集中する！'
+  tooltip = '現在はSoundcloudの人気曲からランダム再生ですが今後もっと賢くなっていくはず'
+  Util.addButton('start', $('#contents'), text, start_random, tooltip)
+  
+  text = '無音で24分集中'
+  tooltip = '無音ですが終了直前にはとぽっぽが鳴ります'
+  Util.addButton('start', $('#contents'), text, start_nomusic, tooltip)
 
-    id = location.hash.split(':')[1]
-    if location.hash.match(/soundcloud/)
-      Soundcloud.fetch(id, @env.sc_client_id, (track) ->
-        text = "「#{track['title']}」で24分集中"
-        Util.addButton('start', $('#contents'), text, start_hash)
-      )
-    if location.hash.match(/youtube/)
-      Youtube.fetch(id, (track) ->
-        text = "「#{track['entry']['title']['$t']}」で24分集中"
-        Util.addButton('start', $('#contents'), text, start_hash)
-      )
-    if location.hash.match(/mixcloud/)
-      Mixcloud.fetch(id, (track) ->
-        text = "「#{track.name}」で24分集中"
-        Util.addButton('start', $('#contents'), text, start_hash)
-      )
-    if location.hash.match(/8tracks/)
-      EightTracks.fetch(id, @env.et_client_id, (track) ->
-        text = "「#{track.mix.name}」で24分集中"
-        Util.addButton('start', $('#contents'), text, start_hash)
-      )
+  id = location.hash.split(':')[1]
+  if location.hash.match(/soundcloud/)
+    Soundcloud.fetch(id, @env.sc_client_id, (track) ->
+      text = "「#{track['title']}」で24分集中"
+      Util.addButton('start', $('#contents'), text, start_hash)
+    )
+  if location.hash.match(/youtube/)
+    Youtube.fetch(id, (track) ->
+      text = "「#{track['entry']['title']['$t']}」で24分集中"
+      Util.addButton('start', $('#contents'), text, start_hash)
+    )
+  if location.hash.match(/mixcloud/)
+    Mixcloud.fetch(id, (track) ->
+      text = "「#{track.name}」で24分集中"
+      Util.addButton('start', $('#contents'), text, start_hash)
+    )
+  if location.hash.match(/8tracks/)
+    EightTracks.fetch(id, @env.et_client_id, (track) ->
+      text = "「#{track.mix.name}」で24分集中"
+      Util.addButton('start', $('#contents'), text, start_hash)
+    )
 
-  else
+  unless Parse.User.current()
     text = 'facebookログイン'
-    Util.addButton('login', $('#contents'), text, login)
+    tooltip = '個人の過去の頑張りグラフ機能とか実装予定'
+    Util.addButton('login', $('#contents'), text, login, tooltip)
 
 initSearch = () ->
   $track = $("<input />").attr('id', 'track').attr('placeholder', 'ここにアーティスト名や曲名を入れてね')
@@ -575,9 +575,12 @@ initRanking = () ->
   if workload.attributes
     w = workload.attributes
     user_id = w.user.id
-  else
+  else if workload.user
     w = workload
     user_id = w.user.objectId
+  else
+    w = workload
+    user_id = null
 
   rooms = ""
   if w.rooms
@@ -594,7 +597,6 @@ initRanking = () ->
       href += "mixcloud:#{w.mc_id}"
     if w.et_id
       href += "8tracks:#{w.et_id}"
-    #fixed = "<a href=\"#{href}\" class='fixed_start btn btn-default'>再生</a><a href=\"#\" class='btn btn-default add_playlist'>追加</a>"
     fixed = "<a href=\"#{href}\" class='fixed_start btn btn-default'>再生</a>"
     jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<img src=\"https://ruffnote.com/attachments/24162\" />'}"
     title = w.title
@@ -643,12 +645,9 @@ initRanking = () ->
 initFixedStart = () ->
   $('.fixed_start').click(() ->
     mixpanel.track("fixed_start")
-    if Parse.User.current()
-      hash = $(this).attr('href').replace(/^#/, '')
-      location.hash = hash
-      window.play(hash)
-    else
-      alert 'Facebookログインをお願いします！'
+    hash = $(this).attr('href').replace(/^#/, '')
+    location.hash = hash
+    window.play(hash)
   )
   $('.add_playlist').click(() ->
     alert 'プレイリストに追加する機能は現在開発中です。。。'
@@ -714,6 +713,7 @@ ruffnote = (id, dom) ->
       $comments.prepend(html)
 
 userIdToIconUrl = (userId) ->
+  return "https://ruffnote.com/attachments/24163" unless userId
   localStorage["icon_#{userId}"] || ""
 
 getUnreadsCount = (room_id, total_count) ->
