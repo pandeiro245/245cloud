@@ -766,13 +766,13 @@ renderWorkloads = (dom) ->
 
 syncUserImg = (instance) ->
   ParseParse.fetch("user", instance, (ent, user) ->
-    img = "https://graph.facebook.com/#{user.get('facebook_id')}/picture?type=square"
+    img = "https://graph.facebook.com/#{user.get('facebook_id_str')}/picture?type=square"
     $(".icon_#{user.id}").attr('src', img)
-    href = "https://facebook.com/#{user.get('facebook_id')}"
+    href = "https://facebook.com/#{user.get('facebook_id_str')}"
     $(".facebook_#{user.id}").attr('href', href)
     if name = user.get('name')
       $(".facebook_name_#{user.id}").html(name)
     else
-      $(".facebook_name_#{user.id}").html("※利用者名取得中...")
+      # $(".facebook_name_#{user.id}").html("※利用者名取得中...")
   )
 
