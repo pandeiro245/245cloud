@@ -13,26 +13,27 @@ window.fbAsyncInit = () ->
     status     : true,
     xfbml      : true
   })
-
   Parse.FacebookUtils.logIn("user_likes", {
     success: (user) ->
-      if !user.existed()
-        alert("User signed up and logged in through Facebook!")
-      else
-        alert("Facebookログインに成功しました！")
+      alert("Facebookログインに成功しました！")
       FB.api(
-        "/me/picture",
+        "/me",
         (response) ->
           if response && !response.error
             user.set('icon_url', response.data.url)
             FB.api(
               "/me",
               (response) ->
-                if response && !response.error
-                  user.set('name', response.name)
-                  user.set('facebook_id_str', response.id)
-                  user.save()
-                  location.reload()
+                success: () ->
+                  if response && !response.error
+                    user.set('name', response.name)
+                    user.set('facebook_id_str', response.id)
+                    user.save()
+                    location.reload()
+                ,
+                error: (model, error) ->
+                  console.log error
+                  alert '何かしらのエラーが発生しました...西小倉に直接ご連絡お願いします...'
             )
       )
     ,
