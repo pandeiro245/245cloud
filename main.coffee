@@ -595,7 +595,7 @@ initRanking = () ->
     title = '無音'
     fixed = ""
     jacket = "<img src=\"https://ruffnote.com/attachments/24163\" />"
-  user_img = "<img class='icon icon_#{user_id} img-thumbnail' />"
+  user_img = "<img class='icon icon_#{user_id} icon_loading img-thumbnail' />"
   syncUserImg(workload)
 
   $item = $("""
@@ -685,7 +685,7 @@ ruffnote = (id, dom) ->
     <tr>
     <td>
     <a class='facebook_#{user.id}' target='_blank'>
-    <img class='icon icon_#{user.id}' />
+    <img class='icon icon_#{user.id} icon_loading' />
     <div class='facebook_name_#{user.id}'></div>
     </a>
     <td>
@@ -767,7 +767,8 @@ renderWorkloads = (dom) ->
 syncUserImg = (instance) ->
   ParseParse.fetch("user", instance, (ent, user) ->
     img = "https://graph.facebook.com/#{user.get('facebook_id_str')}/picture?type=square"
-    $(".icon_#{user.id}").attr('src', img)
+    $(".icon_#{user.id}.icon_loading").attr('src', img)
+    $(".icon_#{user.id}.icon_loading").removeClass('icon_loading')
     href = "https://facebook.com/#{user.get('facebook_id_str')}"
     $(".facebook_#{user.id}").attr('href', href)
     if name = user.get('name')
