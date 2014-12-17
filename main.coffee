@@ -650,7 +650,7 @@ initRanking = () ->
     title = '無音'
     fixed = "<a href=\"#\" class='fixed_start'><img src='https://ruffnote.com/attachments/24333' /></a>"
     jacket = "<img src=\"https://ruffnote.com/attachments/24163\" />"
-  user_img = "<img class='icon icon_#{user_id} img-thumbnail' />"
+  user_img = "<img class='icon icon_#{user_id} icon_loading img-thumbnail' />"
   syncUserImg(workload)
 
   $item = $("""
@@ -738,7 +738,7 @@ ruffnote = (id, dom, callback=null) ->
     <tr>
     <td>
     <a class='facebook_#{user.id}' target='_blank'>
-    <img class='icon icon_#{user.id}' />
+    <img class='icon icon_#{user.id} icon_loading' />
     <div class='facebook_name_#{user.id}'></div>
     </a>
     <td>
