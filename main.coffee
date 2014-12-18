@@ -2,6 +2,9 @@
 
 $ ->
   ParseParse.addAccesslog()
+  if location.href.match(/sparta/)
+    Util.countDown(0.1*60*1000, start_hash)
+
   Util.scaffolds([
     'header'
     'otukare'
@@ -283,9 +286,12 @@ window.start_hash = (key = null) ->
   console.log 'start_hash'
   unless key
     key = location.hash.replace(/#/, '')
-  window.play(key)
+  if key
+    window.play(key)
+  else
+    start_nomusic()
 
-start_nomusic = () ->
+window.start_nomusic = () ->
   console.log 'start_nomusic'
   createWorkload({}, start)
 
