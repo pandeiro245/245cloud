@@ -3,7 +3,8 @@
 $ ->
   ParseParse.addAccesslog()
   if location.href.match(/sparta/)
-    Util.countDown(@env.spartatime*60*1000, start_hash)
+    #Util.countDown(@env.spartatime*60*1000, start_hash)
+    Util.countDown(1*60*1000, start_hash)
 
   Util.scaffolds([
     'header'
