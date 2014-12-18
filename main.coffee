@@ -1,12 +1,6 @@
 @env.is_doing = false
 
 $ ->
-  ParseParse.all("User", (users) ->
-    for user in users
-      img = user.get('icon_url')
-      localStorage["icon_#{user.id}"] = img if img
-      $(".icon_#{user.id}").attr('src', img)
-  )
   ParseParse.addAccesslog()
   Util.scaffolds([
     'header'
@@ -58,6 +52,9 @@ initStart = () ->
   console.log 'initStart'
   text = "24分やり直しでも大丈夫ですか？"
   Util.beforeunload(text, 'env.is_doing')
+
+  if location.href.match(/sparta/) && !@env.is_doing
+    Util.countDown(@env.spartatime*60*1000, start_hash)
   
   if Parse.User.current()
     $('#contents').append("<div class='countdown' ></div>")
@@ -91,7 +88,6 @@ initStart = () ->
         text = "「#{track.mix.name}」で24分集中"
         Util.addButton('start', $('#contents'), text, start_hash)
       )
-
   else
     text = 'facebookログイン'
     Util.addButton('login', $('#contents'), text, login)
@@ -290,9 +286,12 @@ window.start_hash = (key = null) ->
   console.log 'start_hash'
   unless key
     key = location.hash.replace(/#/, '')
-  window.play(key)
+  if key
+    window.play(key)
+  else
+    start_nomusic()
 
-start_nomusic = () ->
+window.start_nomusic = () ->
   console.log 'start_nomusic'
   createWorkload({}, start)
 
@@ -602,7 +601,8 @@ initRanking = () ->
     title = '無音'
     fixed = ""
     jacket = "<img src=\"https://ruffnote.com/attachments/24163\" />"
-  user_img = "<img class='icon icon_#{user_id} img-thumbnail' src='#{userIdToIconUrl(user_id)}' />"
+  user_img = "<img class='icon icon_#{user_id} icon_loading img-thumbnail' />"
+  syncUserImg(workload)
 
   $item = $("""
    <h5>#{title} </h5>
@@ -691,7 +691,7 @@ ruffnote = (id, dom) ->
     <tr>
     <td>
     <a class='facebook_#{user.id}' target='_blank'>
-    <img class='icon icon_#{user.id}' src='#{userIdToIconUrl(c.user.objectId)}' />
+    <img class='icon icon_#{user.id} icon_loading' />
     <div class='facebook_name_#{user.id}'></div>
     </a>
     <td>
@@ -701,20 +701,10 @@ ruffnote = (id, dom) ->
     """
     if typeof(comment.attributes) != 'undefined'
       $comments.append(html)
-      ParseParse.fetch("user", comment, (ent, user) ->
-        img = user.get('icon_url') || user.get('icon')._url
-        $(".icon_#{user.id}").attr('src', img)
-        if user.get('facebook_id')
-          href = "https://facebook.com/#{user.get('facebook_id')}"
-          $(".facebook_#{user.id}").attr('href', href)
-        if name = user.get('name')
-          $(".facebook_name_#{user.id}").html(name)
-      )
+      syncUserImg(comment)
     else
       $comments.prepend(html)
-
-userIdToIconUrl = (userId) ->
-  localStorage["icon_#{userId}"] || ""
+    syncUserImg(workload)
 
 getUnreadsCount = (room_id, total_count) ->
   return total_count unless Parse.User.current()
@@ -779,4 +769,17 @@ renderWorkloads = (dom) ->
   $items.removeClass('col-sm-offset-4')
   $items.removeClass('col-sm-offset-5')
   $first.addClass("col-sm-offset-#{getOffset($items.length)}")
+
+syncUserImg = (instance) ->
+  ParseParse.fetch("user", instance, (ent, user) ->
+    img = "https://graph.facebook.com/#{user.get('facebook_id_str')}/picture?type=square"
+    $(".icon_#{user.id}.icon_loading").attr('src', img)
+    $(".icon_#{user.id}.icon_loading").removeClass('icon_loading')
+    href = "https://facebook.com/#{user.get('facebook_id_str')}"
+    $(".facebook_#{user.id}").attr('href', href)
+    if name = user.get('name')
+      $(".facebook_name_#{user.id}").html(name)
+    else
+      # $(".facebook_name_#{user.id}").html("※利用者名取得中...")
+  )
 

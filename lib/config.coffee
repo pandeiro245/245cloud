@@ -4,6 +4,7 @@ env = {
 }
 env.pomotime =  if localStorage['dev_pomo'] then parseFloat(localStorage['dev_pomo']) else 24
 env.chattime =  if localStorage['dev_chat'] then parseFloat(localStorage['dev_chat']) else 5
+env.spartatime =  if localStorage['dev_sparta'] then parseFloat(localStorage['dev_sparta']) else 1
 
 if location.href.match(/245cloud.com/)
   env.parse_app_id = 'jemiGIUHsvNeVQojqiUaXxFJZvzFDxFbUsfjPr78'
