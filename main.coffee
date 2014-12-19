@@ -58,7 +58,7 @@ initStart = () ->
   console.log 'initStart'
 
   if location.href.match(/sparta/) && !@env.is_doing
-    Util.countDown(0.2*60*1000, start_hash)
+    Util.countDown(1*60*1000, start_hash)
 
   text = "24分やり直しでも大丈夫ですか？"
   Util.beforeunload(text, 'env.is_doing')
