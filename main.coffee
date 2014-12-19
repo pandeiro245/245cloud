@@ -32,6 +32,7 @@ $ ->
     'kpi2'
     'kpi1_title'
     'kpi1'
+    'mlkcca'
     'footer'
   ])
   Util.realtime()
@@ -52,6 +53,7 @@ $ ->
   # initRanking()
   initFixedStart()
   initKpi()
+  initMlkcca()
   ParseBatch.repeat()
 
 initStart = () ->
@@ -352,6 +354,16 @@ createWorkload = (params = {}, callback) ->
   
 start = () ->
   console.log 'start'
+
+  mlkcca = new MilkCocoa("https://io-ui2n0gy4p.mlkcca.com:443")
+  spartaDataStore = mlkcca.dataStore('sparta')
+  spartaDataStore.push({
+    userId: Parse.User.current().id
+  }, (data) ->
+    console.log data 
+  )
+
+
   $("#done").hide()
   $("#search").hide()
   $("input").hide()
@@ -828,3 +840,28 @@ renderWorkloads = (dom) ->
 start_unless_doing = ()->
   unless @env.is_doing
     start_hash()
+
+
+
+initMlkcca = () ->
+  if user = Parse.User.current()
+    $('#mlkcca').html("""
+    <textarea>
+    <script src="//cdn.mlkcca.com/v0.2.8/milkcocoa.js"></script>
+    <script>
+    var userId = '#{user.id}';
+    var milkcocoa = new MilkCocoa("https://io-ui2n0gy4p.mlkcca.com:443");
+    var spartaDataStore = milkcocoa.dataStore("sparta");
+    spartaDataStore.on("push",function(data){
+      if(data.value.userId == userId) {
+        alert('24分間頑張ってください！');
+      }
+    });
+    </script> 
+    </textarea>
+    """)
+    $('#mlkcca textarea').css('width', '500px')
+    $('#mlkcca textarea').css('height', '500px')
+
+
+
