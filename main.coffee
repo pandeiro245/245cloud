@@ -56,6 +56,10 @@ $ ->
 
 initStart = () ->
   console.log 'initStart'
+
+  if location.href.match(/sparta/) && !@env.is_doing
+    Util.countDown(0.2*60*1000, start_hash)
+
   text = "24分やり直しでも大丈夫ですか？"
   Util.beforeunload(text, 'env.is_doing')
   
@@ -290,9 +294,13 @@ window.start_hash = (key = null) ->
   console.log 'start_hash'
   unless key
     key = location.hash.replace(/#/, '')
-  window.play(key)
 
-start_nomusic = () ->
+  if key
+     window.play(key)
+   else
+     start_nomusic()
+
+window.start_nomusic = () ->
   console.log 'start_nomusic'
   createWorkload({}, start)
 
@@ -399,7 +407,7 @@ complete = () ->
   $("#playing").html('') # for stopping
   @initSelectRooms()
 
-  alert '完了！' if location.href.match('alert') unless @env.is_done
+  alert '24分間お疲れ様でした！5分間交換日記ができます☆' if location.href.match('alert') unless @env.is_done
 
   @env.is_doing = false
   @env.is_done = true
