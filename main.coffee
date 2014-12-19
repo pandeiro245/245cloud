@@ -43,6 +43,7 @@ $ ->
     'kpi1_title'
     'kpi1'
     ['whatis', {is_row: false}]
+    'mlkcca'
     'footer'
     ['otukare_services', {is_hide: true}]
     'hatopoppo'
@@ -76,6 +77,8 @@ $ ->
   initRanking()
   initFixedStart()
   #initKpi()
+  initKpi()
+  #initMlkcca()
   ParseBatch.repeat()
   initHatopoppo()
   initWhatis()
@@ -403,6 +406,16 @@ createWorkload = (params = {}, callback) ->
   
 start = () ->
   console.log 'start'
+
+  mlkcca = new MilkCocoa("https://io-ui2n0gy4p.mlkcca.com:443")
+  spartaDataStore = mlkcca.dataStore('sparta')
+  spartaDataStore.push({
+    userId: Parse.User.current().id
+  }, (data) ->
+    console.log data 
+  )
+
+
   $("#done").hide()
   $("#search").hide()
   $("input").hide()
@@ -1052,3 +1065,25 @@ initNextkakuhen = () ->
 happynewyear = () ->
  $('#nextkakuhen_title').hide()
  $('#nextkakuhen').html('あけましておめでとうございます！！')
+
+
+initMlkcca = () ->
+  if user = Parse.User.current()
+    $('#mlkcca').html("""
+    <textarea>
+    <script src="//cdn.mlkcca.com/v0.2.8/milkcocoa.js"></script>
+    <script>
+    var userId = '#{user.id}';
+    var milkcocoa = new MilkCocoa("https://io-ui2n0gy4p.mlkcca.com:443");
+    var spartaDataStore = milkcocoa.dataStore("sparta");
+    spartaDataStore.on("push",function(data){
+      if(data.value.userId == userId) {
+        alert('24分間頑張ってください！');
+      }
+    });
+    </script> 
+    </textarea>
+    """)
+    $('#mlkcca textarea').css('width', '500px')
+    $('#mlkcca textarea').css('height', '500px')
+
