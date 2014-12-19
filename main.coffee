@@ -58,7 +58,7 @@ initStart = () ->
   console.log 'initStart'
 
   if location.href.match(/sparta/)
-    start_unless_doing()
+    Util.countDown(1*60*1000, start_unless_doing)
 
   text = "24分やり直しでも大丈夫ですか？"
   Util.beforeunload(text, 'env.is_doing')
@@ -790,4 +790,4 @@ renderWorkloads = (dom) ->
 
 start_unless_doing = ()->
   unless @env.is_doing
-    Util.countDown(1*60*1000, start_hash)
+    start_hash()
