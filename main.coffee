@@ -752,10 +752,11 @@ getUnreadsCount = (room_id, total_count) ->
   })
 
 syncComment = (id, comment, is_countup=false) ->
+  console.log 'syncComment'
   @socket.push({
     type: 'comment'
     comment: comment
-    id: id
+    id2: id
     is_countup: is_countup
   })
 
