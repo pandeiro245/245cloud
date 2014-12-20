@@ -907,13 +907,13 @@ getUnreadsCount = (room_id, total_count) ->
     return total_count
 
 @syncWorkload = (type) ->
-  @socket.send({
+  @socket.push({
     type: type
     workload: @workload
   })
 
 syncComment = (id, comment, is_countup=false) ->
-  @socket.send({
+  @socket.push({
     type: 'comment'
     comment: comment
     id: id
@@ -1085,5 +1085,5 @@ initMlkcca = () ->
     </textarea>
     """)
     $('#mlkcca textarea').css('width', '500px')
-    $('#mlkcca textarea').css('height', '500px')
+    $('#mlkcca textarea').css('height', '250px')
 
