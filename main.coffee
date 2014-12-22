@@ -32,8 +32,8 @@ $ ->
     'kpi2'
     'kpi1_title'
     'kpi1'
-    'mlkcca_title'
-    'mlkcca'
+    #'mlkcca_title'
+    #'mlkcca'
     'footer'
   ])
   Util.realtime()
