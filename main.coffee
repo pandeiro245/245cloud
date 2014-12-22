@@ -712,8 +712,8 @@ ruffnote = (id, dom) ->
       ParseParse.fetch("user", comment, (ent, user) ->
         img = user.get('icon_url') || user.get('icon')._url
         $(".icon_#{user.id}").attr('src', img)
-        if user.get('facebook_id')
-          href = "https://facebook.com/#{user.get('facebook_id')}"
+        if user.get('facebook_id_str')
+          href = "https://facebook.com/#{user.get('facebook_id_str')}"
           $(".facebook_#{user.id}").attr('href', href)
         if name = user.get('name')
           $(".facebook_name_#{user.id}").html(name)
