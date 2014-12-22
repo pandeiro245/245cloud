@@ -32,6 +32,7 @@ $ ->
     'kpi2'
     'kpi1_title'
     'kpi1'
+    'mlkcca_title'
     'mlkcca'
     'footer'
   ])
@@ -846,6 +847,7 @@ start_unless_doing = ()->
 
 initMlkcca = () ->
   if user = Parse.User.current()
+    ruffnote(17651, 'mlkcca_title')
     $('#mlkcca').html("""
     <textarea>
     <script src="//cdn.mlkcca.com/v0.2.8/milkcocoa.js"></script>
