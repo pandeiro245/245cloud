@@ -37,7 +37,7 @@ $ ->
   Util.realtime()
 
   $('#header').removeClass('row')
-  ruffnote(13475, 'header')
+  ruffnote(13475, 'header', initStart)
   ruffnote(13477, 'footer')
 
   $('#otukare').hide()
@@ -48,7 +48,7 @@ $ ->
   initChatting()
   initDoing()
   initDone()
-  initStart()
+  # initStart()
   # initRanking()
   initFixedStart()
   initKpi()
@@ -56,6 +56,14 @@ $ ->
 
 initStart = () ->
   console.log 'initStart'
+  $( "#header img" ).css('height', '320px')
+  $( "#header img" ).animate({
+    #opacity: 0.25,
+    #left: "+=50",
+    height: "340px"
+  }, 5000, () ->
+    console.log 'Animation complete.'
+  )
 
   if location.href.match(/sparta/)
     Util.countDown(1*60*1000, start_unless_doing)
@@ -66,27 +74,23 @@ initStart = () ->
   if Parse.User.current()
     $('#contents').append("<div class='countdown' ></div>")
       
+    $('#contents').append("<br>")
+
+    $('#contents').append("<div class='fixedstart_artwork'></div>")
+    $('#contents').append("<div class='fixedstart_button'></div>")
+    $('#contents .fixedstart_button').hide()
+
+
+
     #text = '曲お任せで24分間集中する！'
     text = [
       'https://ruffnote.com/attachments/24331'
       'https://ruffnote.com/attachments/24332'
     ]
     tooltip = '現在はSoundcloudの人気曲からランダム再生ですが今後もっと賢くなっていくはず'
-    Util.addButton('start', $('#contents'), text, start_random, tooltip)
-    
-    #text = '無音で24分集中'
-    text = [
-      'https://ruffnote.com/attachments/24333'
-      'https://ruffnote.com/attachments/24334'
-    ]
-    tooltip = '無音ですが終了直前にはとぽっぽが鳴ります'
-    Util.addButton('start', $('#contents'), text, start_nomusic, tooltip)
+    Util.addButton('start', $('#contents .fixedstart_button'), text, start_random, tooltip)
+ 
 
-    $('#contents').append("<br>")
-
-    $('#contents').append("<div class='fixedstart_artwork'></div>")
-    $('#contents').append("<div class='fixedstart_button'></div>")
-    $('#contents .fixedstart_button').hide()
     #text = 'この曲で集中'
     text = [
       'https://ruffnote.com/attachments/24327'
@@ -122,6 +126,18 @@ initStart = () ->
         $('#contents .fixedstart_artwork').append(text)
       )
       $('#contents .fixedstart_button').fadeIn()
+
+
+   
+    #text = '無音で24分集中'
+    text = [
+      'https://ruffnote.com/attachments/24333'
+      'https://ruffnote.com/attachments/24334'
+    ]
+    tooltip = '無音ですが終了直前にはとぽっぽが鳴ります'
+    Util.addButton('start', $('#contents .fixedstart_button'), text, start_nomusic, tooltip)
+
+
 
   else
     text = 'facebookログイン'
@@ -190,7 +206,6 @@ initChatting = () ->
       continue unless workload.attributes.user
 
       @addChatting(workload)
-    initFixedStart()
     renderWorkloads('#chatting')
     renderWorkloads('#doing')
   )
@@ -214,7 +229,6 @@ initDoing = () ->
       unless user_keys[workload.attributes.user.id]
         @addDoing(workload)
         user_keys[workload.attributes.user.id] = true
-    initFixedStart()
     renderWorkloads('#doing')
   )
 
@@ -231,7 +245,6 @@ initDone = () ->
       continue unless workload.attributes.user
       disp = "#{Util.hourMin(workload.createdAt)}開始（#{workload.attributes.number}回目）"
       @addWorkload("#done", workload, disp)
-    initFixedStart()
   , null, 100)
  
 initKpi = () ->
@@ -629,13 +642,12 @@ initRanking = () ->
       href += "mixcloud:#{w.mc_id}"
     if w.et_id
       href += "8tracks:#{w.et_id}"
-    #fixed = "<a href=\"#{href}\" class='fixed_start btn btn-default'>再生</a><a href=\"#\" class='btn btn-default add_playlist'>追加</a>"
-    fixed = "<a href=\"#{href}\" class='fixed_start btn btn-default'>再生</a>"
+    fixed = "<a href=\"#{href}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24327' /></a>"
     jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<img src=\"https://ruffnote.com/attachments/24162\" />'}"
     title = w.title
   else
     title = '無音'
-    fixed = ""
+    fixed = "<a href=\"#\" class='fixed_start'><img src='https://ruffnote.com/attachments/24333' /></a>"
     jacket = "<img src=\"https://ruffnote.com/attachments/24163\" />"
   user_img = "<img class='icon icon_#{user_id} img-thumbnail' src='#{userIdToIconUrl(user_id)}' />"
 
@@ -651,9 +663,7 @@ initRanking = () ->
   unless dom == '#done'
     $("#chatting .user_#{user_id}").remove()
     $("#doing .user_#{user_id}").remove()
-
   if (dom == '#doing' or dom == '#chatting') and $("#{dom} .user_#{user_id}").length
-
     $("#{dom} .user_#{user_id}").html($item)
   else
     $workload = $('<div></div>')
@@ -676,22 +686,22 @@ initRanking = () ->
   $("#{dom}").fadeIn()
 
 initFixedStart = () ->
-  $('.fixed_start').click(() ->
+  $(document).on('click', '.fixed_start', () ->
     mixpanel.track("fixed_start")
     if Parse.User.current()
       hash = $(this).attr('href').replace(/^#/, '')
       location.hash = hash
-      window.play(hash)
+      start_hash()
     else
       alert 'Facebookログインをお願いします！'
   )
-  $('.add_playlist').click(() ->
+  $(document).on('click', '.add_playlist', () ->
     alert 'プレイリストに追加する機能は現在開発中です。。。'
   )
 
 
-ruffnote = (id, dom) ->
-  Ruffnote.fetch("pandeiro245/245cloud/#{id}", dom)
+ruffnote = (id, dom, callback=null) ->
+  Ruffnote.fetch("pandeiro245/245cloud/#{id}", dom, callback)
 
 @addComment = (id, comment, is_countup=false) ->
   $comments = $("#room_#{id} .comments")
@@ -789,10 +799,10 @@ searchMusics = () ->
   localStorage['search_music_title'] = q
 
   $tracks = $('#tracks')
-  Youtube.search(q, $tracks, initFixedStart)
-  Soundcloud.search(q, @env.sc_client_id, $tracks, initFixedStart)
-  Mixcloud.search(q, $tracks, initFixedStart)
-  #EightTracks.search(q, $tracks, initFixedStart)
+  Youtube.search(q, $tracks)
+  Soundcloud.search(q, @env.sc_client_id, $tracks)
+  Mixcloud.search(q, $tracks)
+  #EightTracks.search(q, $tracks)
 
 getOffset = (all_count) ->
   return 0 if all_count >= 5

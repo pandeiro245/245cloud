@@ -89,7 +89,6 @@ class Util
     )
 
   @addButton: (id, $dom, text, callback, tooltip=null) ->
-    console.log 'hoge', $dom
     $button = $('<input>')
     if typeof(text) == 'string'
       $button.attr('type', 'submit')

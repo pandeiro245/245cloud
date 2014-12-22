@@ -13,7 +13,7 @@ class @Mixcloud
       <iframe width="660" height="180" src="https://www.mixcloud.com/widget/iframe/?feed=http%3A%2F%2Fwww.mixcloud.com#{encodeURIComponent(mc_id)}&amp;embed_uuid=be4c7df5-5995-4985-97c7-0c64d5ebbefc&amp;replace=0&amp;hide_cover=1&amp;embed_type=widget_standard&amp;hide_tracklist=1&amp;autoplay=#{if is_autoplay then '1' else '0'}&start=#{start_sec}" frameborder="0"></iframe>
     """)
 
-  @search: (keyword, $dom, callback) ->
+  @search: (keyword, $dom, callback=null) ->
     url = "http://api.mixcloud.com/search/?q=#{keyword}&type=cloudcast"
     $.getJSON(url, (tracks) ->
       if tracks.data
@@ -32,7 +32,7 @@ class @Mixcloud
               <!--<a href=\"#\" class='add_playlist btn btn-default'>追加</a>-->
             </div>
           """)
-        callback()
+        callback() if callback
       else
         $dom.append("<div>「#{q}」MixCloudはで24分前後の曲はまだ出てないようです...。他のキーワードで探してみてください！</div>")
     )

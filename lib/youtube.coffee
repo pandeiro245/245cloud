@@ -12,7 +12,7 @@ class @Youtube
       <iframe width="560" height="315" src="//www.youtube.com/embed/#{youtube_key}?autoplay=#{if is_autoplay then '1' else '0'}&start=#{start_sec}" frameborder="0" allowfullscreen></iframe>
     """)
 
-  @search: (keyword, $dom, callback) ->
+  @search: (keyword, $dom, callback=null) ->
     url = "http://gdata.youtube.com/feeds/api/videos?q=#{keyword}&filter=long&alt=json"
     $.get(url, (tracks) ->
       tracks = tracks.feed.entry
@@ -41,7 +41,7 @@ class @Youtube
               <!--<a href=\"#\" class='add_playlist btn btn-default'>追加</a>-->
             </div>
           """)
-        callback()
+        callback() if callback
       else
         $dom.append("<div>「#{q}」YouTubeCloudにはで24分前後の曲はまだ出てないようです...。他のキーワードで探してみてください！</div>")
     )
