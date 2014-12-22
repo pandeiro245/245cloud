@@ -2,6 +2,15 @@ body {
   text-align: center;
 }
 
+h2.status {
+  background: repeat-x url('https://ruffnote.com/attachments/24317')
+}
+h2.status img {
+  margin-top: -12px;
+  background: #fff;
+  padding: 10px;
+}
+
 .table {
   width: 500px;
   margin: 0 auto;

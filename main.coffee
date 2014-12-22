@@ -148,7 +148,7 @@ initSearch = () ->
 
 initChatting = () ->
   console.log 'initChatting'
-  $("#chatting_title").html("<h2>NOW CHATTING</h2>")
+  $("#chatting_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24306' /></h2>")
 
   cond = [
     ["is_done", true]
@@ -170,7 +170,7 @@ initChatting = () ->
 
 initDoing = () ->
   console.log 'initDoing'
-  $("#doing_title").html("<h2>NOW DOING</h2>")
+  $("#doing_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24310' /></h2>")
   $("#doing_title").hide()
 
   cond = [
@@ -199,7 +199,7 @@ initDone = () ->
   ]
   ParseParse.where("Workload", cond, (workloads) ->
     return unless workloads.length > 0
-    $("#done").append("<h2>DONE</h2>")
+    $("#done").append("<h2 class='status'><img src='https://ruffnote.com/attachments/24305' /></h2>")
     for workload in workloads
       continue unless workload.attributes.user
       disp = "#{Util.hourMin(workload.createdAt)}開始（#{workload.attributes.number}回目）"
