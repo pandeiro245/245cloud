@@ -76,8 +76,8 @@ initStart = () ->
       
     $('#contents').append("<br>")
 
-    $('#contents').append("<div class='fixedstart_artwork'></div>")
-    $('#contents').append("<div class='fixedstart_button'></div>")
+    $('#contents').append("<div id='fixedstart_artwork'></div>")
+    $('#contents').append("<div id='start_buttons'></div>")
     $('#contents .fixedstart_button').hide()
 
 
@@ -88,8 +88,10 @@ initStart = () ->
       'https://ruffnote.com/attachments/24332'
     ]
     tooltip = '現在はSoundcloudの人気曲からランダム再生ですが今後もっと賢くなっていくはず'
-    Util.addButton('start', $('#contents .fixedstart_button'), text, start_random, tooltip)
+    Util.addButton('start', $('#contents #start_buttons'), text, start_random, tooltip)
  
+    $('#contents #start_buttons').append("<span id='fixedstart_button'></span>")
+    $('#fixedstart_button').hide()
 
     #text = 'この曲で集中'
     text = [
@@ -97,47 +99,43 @@ initStart = () ->
       'https://ruffnote.com/attachments/24328'
     ]
     #tooltip = '無音ですが終了直前にはとぽっぽが鳴ります'
-    Util.addButton('start', $('#contents .fixedstart_button'), text, start_hash)
+    Util.addButton('start', $('#fixedstart_button'), text, start_hash)
 
 
     id = location.hash.split(':')[1]
     if location.hash.match(/soundcloud/)
       Soundcloud.fetch(id, @env.sc_client_id, (track) ->
         text = "<img src='#{track['artwork_url']}'><br />#{track['title']}"
-        $('#contents .fixedstart_artwork').append(text)
+        $('#contents #fixedstart_artwork').append(text)
       )
-      $('#contents .fixedstart_button').fadeIn()
+      $('#contents #fixedstart_button').fadeIn()
     if location.hash.match(/youtube/)
       Youtube.fetch(id, (track) ->
         text = "<img src='#{track['entry']['media$group']['media$thumbnail'][3]['url']}'><br />#{track['entry']['title']['$t']}"
-        $('#contents .fixedstart_artwork').append(text)
+        $('#contents #fixedstart_artwork').append(text)
       )
-      $('#contents .fixedstart_button').fadeIn()
+      $('#contents #fixedstart_button').fadeIn()
     if location.hash.match(/mixcloud/)
       Mixcloud.fetch(id, (track) ->
         text = "<img src='#{track.pictures.medium}'><br />#{track.name}"
-        $('#contents .fixedstart_artwork').append(text)
+        $('#contents #fixedstart_artwork').append(text)
       )
-      $('#contents .fixedstart_button').fadeIn()
+      $('#contents #fixedstart_button').fadeIn()
     if location.hash.match(/8tracks/)
       EightTracks.fetch(id, @env.et_client_id, (track) ->
         text = "#{track.mix.name}"
         text = "<img src='#{track.mix.cover_urls.sq100}'><br />#{track.mix.name}"
-        $('#contents .fixedstart_artwork').append(text)
+        $('#contents #fixedstart_artwork').append(text)
       )
-      $('#contents .fixedstart_button').fadeIn()
+      $('#contents #fixedstart_button').fadeIn()
 
-
-   
     #text = '無音で24分集中'
     text = [
       'https://ruffnote.com/attachments/24333'
       'https://ruffnote.com/attachments/24334'
     ]
     tooltip = '無音ですが終了直前にはとぽっぽが鳴ります'
-    Util.addButton('start', $('#contents .fixedstart_button'), text, start_nomusic, tooltip)
-
-
+    Util.addButton('start', $('#contents #start_buttons'), text, start_nomusic, tooltip)
 
   else
     text = 'facebookログイン'
@@ -367,6 +365,8 @@ start = () ->
     'kpi2'
     'kpi1_title'
     'kpi1'
+    'start_buttons'
+    'fixedstart_artwork'
   ]
   for dom in doms
     $("##{dom}").hide()
