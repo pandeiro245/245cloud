@@ -89,9 +89,21 @@ class Util
     )
 
   @addButton: (id, $dom, text, callback, tooltip=null) ->
-    $button = $('<input>').attr('type', 'submit').attr('id', id)
-    $button.attr('value', text)
-    $button.attr('class', 'btn btn-default')
+    console.log 'hoge', $dom
+    $button = $('<input>')
+    if typeof(text) == 'string'
+      $button.attr('type', 'submit')
+      $button.attr('value', text)
+      $button.addClass('btn-default')
+    else
+      $button.attr('type', 'image')
+      $button.attr('src', text[0])
+      $button.css('border', 'none')
+      $button.attr('onmouseover', "this.src='#{text[1]}'") if text[1]
+      $button.attr('onmouseout', "this.src='#{text[0]}'")
+    $button.addClass('btn')
+
+    $button.attr('id', id)
     if tooltip
       $button.tooltip({title: tooltip})
     $dom.append($button)

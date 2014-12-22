@@ -66,35 +66,62 @@ initStart = () ->
   if Parse.User.current()
     $('#contents').append("<div class='countdown' ></div>")
       
-    text = '曲お任せで24分間集中する！'
+    #text = '曲お任せで24分間集中する！'
+    text = [
+      'https://ruffnote.com/attachments/24320'
+      'https://ruffnote.com/attachments/24318'
+    ]
     tooltip = '現在はSoundcloudの人気曲からランダム再生ですが今後もっと賢くなっていくはず'
     Util.addButton('start', $('#contents'), text, start_random, tooltip)
     
-    text = '無音で24分集中'
+    #text = '無音で24分集中'
+    text = [
+      'https://ruffnote.com/attachments/24321'
+      'https://ruffnote.com/attachments/24322'
+    ]
     tooltip = '無音ですが終了直前にはとぽっぽが鳴ります'
     Util.addButton('start', $('#contents'), text, start_nomusic, tooltip)
+
+    $('#contents').append("<br>")
+
+    $('#contents').append("<div class='fixedstart_artwork'></div>")
+    $('#contents').append("<div class='fixedstart_button'></div>")
+    $('#contents .fixedstart_button').hide()
+    #text = 'この曲で集中'
+    text = [
+      'https://ruffnote.com/attachments/24323'
+      'https://ruffnote.com/attachments/24324'
+    ]
+    #tooltip = '無音ですが終了直前にはとぽっぽが鳴ります'
+    Util.addButton('start', $('#contents .fixedstart_button'), text, start_hash)
+
 
     id = location.hash.split(':')[1]
     if location.hash.match(/soundcloud/)
       Soundcloud.fetch(id, @env.sc_client_id, (track) ->
-        text = "「#{track['title']}」で24分集中"
-        Util.addButton('start', $('#contents'), text, start_hash)
+        text = "<img src='#{track['artwork_url']}'><br />#{track['title']}"
+        $('#contents .fixedstart_artwork').append(text)
       )
+      $('#contents .fixedstart_button').fadeIn()
     if location.hash.match(/youtube/)
       Youtube.fetch(id, (track) ->
-        text = "「#{track['entry']['title']['$t']}」で24分集中"
-        Util.addButton('start', $('#contents'), text, start_hash)
+        text = "<img src='#{track['entry']['media$group']['media$thumbnail'][3]['url']}'><br />#{track['entry']['title']['$t']}"
+        $('#contents .fixedstart_artwork').append(text)
       )
+      $('#contents .fixedstart_button').fadeIn()
     if location.hash.match(/mixcloud/)
       Mixcloud.fetch(id, (track) ->
-        text = "「#{track.name}」で24分集中"
-        Util.addButton('start', $('#contents'), text, start_hash)
+        text = "<img src='#{track.pictures.medium}'><br />#{track.name}"
+        $('#contents .fixedstart_artwork').append(text)
       )
+      $('#contents .fixedstart_button').fadeIn()
     if location.hash.match(/8tracks/)
       EightTracks.fetch(id, @env.et_client_id, (track) ->
-        text = "「#{track.mix.name}」で24分集中"
-        Util.addButton('start', $('#contents'), text, start_hash)
+        text = "#{track.mix.name}"
+        text = "<img src='#{track.mix.cover_urls.sq100}'><br />#{track.mix.name}"
+        $('#contents .fixedstart_artwork').append(text)
       )
+      $('#contents .fixedstart_button').fadeIn()
 
   else
     text = 'facebookログイン'
