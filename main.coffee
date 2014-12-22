@@ -43,6 +43,7 @@ $ ->
     'kpi1_title'
     'kpi1'
     ['whatis', {is_row: false}]
+    'mlkcca_title'
     'mlkcca'
     'footer'
     ['otukare_services', {is_hide: true}]
@@ -1070,6 +1071,7 @@ happynewyear = () ->
 
 initMlkcca = () ->
   if user = Parse.User.current()
+    ruffnote(17651, 'mlkcca_title')
     $('#mlkcca').html("""
     <textarea>
     <script src="//cdn.mlkcca.com/v0.2.8/milkcocoa.js"></script>
