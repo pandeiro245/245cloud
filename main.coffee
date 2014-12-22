@@ -859,4 +859,3 @@ initMlkcca = () ->
     $('#mlkcca textarea').css('height', '250px')
 
 
-

@@ -1,4 +1,4 @@
-mlkcca = new MilkCocoa("https://io-ui2n0gy4p.mlkcca.com:443")
+mlkcca = new MilkCocoa("https://#{@env.milkcocoa}.mlkcca.com:443")
 
 @socket = mlkcca.dataStore('workload')
 
