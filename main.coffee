@@ -407,22 +407,12 @@ createWorkload = (params = {}, callback) ->
   
 start = () ->
   console.log 'start'
-
-  mlkcca = new MilkCocoa("https://io-ui2n0gy4p.mlkcca.com:443")
-  spartaDataStore = mlkcca.dataStore('sparta')
-  spartaDataStore.push({
-    userId: Parse.User.current().id
-  }, (data) ->
-    console.log data 
-  )
-
-
   $("#done").hide()
   $("#search").hide()
   $("input").hide()
   $(".fixed_start").hide()
   $("#music_ranking").hide()
-  doms = [ 
+  doms = [
     'kpi_title'
     'kpi3_title'
     'kpi3'
@@ -1078,9 +1068,11 @@ initMlkcca = () ->
     <script>
     var userId = '#{user.id}';
     var milkcocoa = new MilkCocoa("https://io-ui2n0gy4p.mlkcca.com:443");
-    var spartaDataStore = milkcocoa.dataStore("sparta");
-    spartaDataStore.on("push",function(data){
-      if(data.value.userId == userId) {
+    var spartaDataStore = milkcocoa.dataStore("workload");
+    spartaDataStore.on("push",function(params){
+      console.log('mlkcca', params)
+      params = params.value
+      if (params.type == 'doing' && parms.workload.user.objectId == userId) {
         alert('24分間頑張ってください！');
       }
     });
