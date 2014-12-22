@@ -43,8 +43,8 @@ $ ->
     'kpi1_title'
     'kpi1'
     ['whatis', {is_row: false}]
-    'mlkcca_title'
-    'mlkcca'
+    #'mlkcca_title'
+    #'mlkcca'
     'footer'
     ['otukare_services', {is_hide: true}]
     'hatopoppo'
