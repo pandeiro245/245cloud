@@ -19,6 +19,7 @@ $ ->
     'chatting'
     'done'
     'search'
+    '8tracks'
     'playing'
     'complete'
     'select_rooms'
@@ -45,6 +46,7 @@ $ ->
   #ruffnote(17314, 'music_ranking')
 
   initSearch()
+  init8tracks()
   initChatting()
   initDoing()
   initDone()
@@ -53,6 +55,11 @@ $ ->
   initFixedStart()
   initKpi()
   ParseBatch.repeat()
+
+init8tracks = () ->
+  $('#8tracks').html('<h2>attripさんmix</h2>')
+  EightTracks.attrip($('#8tracks'))
+
 
 initStart = () ->
   console.log 'initStart'
@@ -367,6 +374,7 @@ start = () ->
     'kpi1'
     'start_buttons'
     'fixedstart_artwork'
+    '8tracks'
   ]
   for dom in doms
     $("##{dom}").hide()

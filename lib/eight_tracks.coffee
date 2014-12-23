@@ -41,3 +41,26 @@ class @EightTracks
         $dom.append("<div>「#{q}」SoundCloudにはで24分前後の曲はまだ出てないようです...。他のキーワードで探してみてください！</div>")
     )
 
+  @attrip: ($dom) ->
+    url = "http://8tracks.com/users/60650/mixes.jsonapi_key=#{window.env.et_client_id}"
+    $.get(url, (tracks) ->
+      if tracks.mixes[0]
+        for track in tracks.mixes
+          artwork = "<img src=\"https://ruffnote.com/attachments/24162\" width='100px'/>"
+          if a = track.cover_urls
+            artwork = "<img src=\"#{a.sq100}\" width='100px'/>"
+          href = "8tracks:#{track.id}"
+          $dom.append("""
+            <div class='col-lg-2' style='min-height: 200px;'>
+              <a href='#{track.restful_url}' target='_blank'>#{track.name}</a>
+              (#{Util.time(track.duration * 1000)})<br />
+              <br />
+              #{artwork}
+              <a href=\"##{href}\" class='fixed_start btn btn-default'>再生</a>
+              <!--<a href=\"#\" class='add_playlist btn btn-default'>追加</a>-->
+            </div>
+          """)
+      else
+        $dom.append("<div>「#{q}」SoundCloudにはで24分前後の曲はまだ出てないようです...。他のキーワードで探してみてください！</div>")
+    )
+
