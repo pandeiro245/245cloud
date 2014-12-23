@@ -918,10 +918,24 @@ searchMusics = () ->
   localStorage['search_music_title'] = q
 
   $tracks = $('#tracks')
-  Youtube.search(q, $tracks)
-  Soundcloud.search(q, @env.sc_client_id, $tracks)
-  Mixcloud.search(q, $tracks)
-  #EightTracks.search(q, $tracks)
+  ParseMusic.search(q, (tracks) ->
+    for track in tracks
+      artwork = "<img src=\"https://ruffnote.com/attachments/24162\" width='100px'/>"
+      if track.picture
+        artwork = "<img src=\"#{track.picture}\" width='100px'/>"
+      href = "soundcloud:#{track.id}"
+      $tracks.append("""
+        <div class='col-sm-2' style='min-height: 200px;'>
+          <a href='#{track.url}' target='_blank'>#{track.title}</a>
+          (#{Util.time(track.duration)})<br />
+          <br />
+          #{artwork}
+          <br />
+          <a href=\"##{href}\" class='fixed_start btn btn-default'>再生</a>
+          <!--<a href=\"#\" class='add_playlist btn btn-default'>追加</a>-->
+        </div>
+      """)
+    )
 
 
 initHatopoppo = () ->
