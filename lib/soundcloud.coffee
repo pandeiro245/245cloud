@@ -25,7 +25,7 @@ class @Soundcloud
               (#{Util.time(track.duration)})<br />
               <br />
               #{artwork}
-              <a href=\"##{href}\" class='fixed_start btn btn-default'>再生</a>
+              <a href=\"##{href}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24353' /></a>
               <!--<a href=\"#\" class='add_playlist btn btn-default'>追加</a>-->
             </div>
           """)

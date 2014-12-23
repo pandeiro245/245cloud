@@ -91,8 +91,8 @@ initStart = () ->
 
     #text = '曲お任せで24分間集中する！'
     text = [
-      'https://ruffnote.com/attachments/24331'
-      'https://ruffnote.com/attachments/24332'
+      'https://ruffnote.com/attachments/24347'
+      'https://ruffnote.com/attachments/24348'
     ]
     tooltip = '現在はSoundcloudの人気曲からランダム再生ですが今後もっと賢くなっていくはず'
     Util.addButton('start', $('#contents #start_buttons'), text, start_random, tooltip)
@@ -102,8 +102,8 @@ initStart = () ->
 
     #text = 'この曲で集中'
     text = [
-      'https://ruffnote.com/attachments/24327'
-      'https://ruffnote.com/attachments/24328'
+      'https://ruffnote.com/attachments/24353'
+      'https://ruffnote.com/attachments/24354'
     ]
     #tooltip = '無音ですが終了直前にはとぽっぽが鳴ります'
     Util.addButton('start', $('#fixedstart_button'), text, start_hash)
@@ -138,8 +138,8 @@ initStart = () ->
 
     #text = '無音で24分集中'
     text = [
-      'https://ruffnote.com/attachments/24333'
-      'https://ruffnote.com/attachments/24334'
+      'https://ruffnote.com/attachments/24349'
+      'https://ruffnote.com/attachments/24350'
     ]
     tooltip = '無音ですが終了直前にはとぽっぽが鳴ります'
     Util.addButton('start', $('#contents #start_buttons'), text, start_nomusic, tooltip)
