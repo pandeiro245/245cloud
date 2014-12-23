@@ -32,6 +32,8 @@ $ ->
     'kpi2'
     'kpi1_title'
     'kpi1'
+    #'mlkcca_title'
+    #'mlkcca'
     'footer'
   ])
   Util.realtime()
@@ -52,6 +54,7 @@ $ ->
   # initRanking()
   initFixedStart()
   initKpi()
+  initMlkcca()
   ParseBatch.repeat()
 
 initStart = () ->
@@ -357,7 +360,7 @@ start = () ->
   $("input").hide()
   $(".fixed_start").hide()
   $("#music_ranking").hide()
-  doms = [ 
+  doms = [
     'kpi_title'
     'kpi3_title'
     'kpi3'
@@ -771,16 +774,17 @@ getUnreadsCount = (room_id, total_count) ->
     return total_count
 
 @syncWorkload = (type) ->
-  @socket.send({
+  @socket.push({
     type: type
     workload: @workload
   })
 
 syncComment = (id, comment, is_countup=false) ->
-  @socket.send({
+  console.log 'syncComment'
+  @socket.push({
     type: 'comment'
     comment: comment
-    id: id
+    id2: id
     is_countup: is_countup
   })
 
@@ -828,3 +832,30 @@ renderWorkloads = (dom) ->
 start_unless_doing = ()->
   unless @env.is_doing
     start_hash()
+
+
+
+initMlkcca = () ->
+  if user = Parse.User.current()
+    ruffnote(17651, 'mlkcca_title')
+    $('#mlkcca').html("""
+    <textarea>
+    <script src="//cdn.mlkcca.com/v0.2.8/milkcocoa.js"></script>
+    <script>
+    var userId = '#{user.id}';
+    var milkcocoa = new MilkCocoa("https://io-ui2n0gy4p.mlkcca.com:443");
+    var spartaDataStore = milkcocoa.dataStore("workload");
+    spartaDataStore.on("push",function(params){
+      console.log('mlkcca', params)
+      params = params.value
+      if (params.type == 'doing' && parms.workload.user.objectId == userId) {
+        alert('24分間頑張ってください！');
+      }
+    });
+    </script> 
+    </textarea>
+    """)
+    $('#mlkcca textarea').css('width', '500px')
+    $('#mlkcca textarea').css('height', '250px')
+
+
