@@ -651,7 +651,6 @@ initRanking = () ->
     fixed = "<a href=\"#\" class='fixed_start'><img src='https://ruffnote.com/attachments/24333' /></a>"
     jacket = "<img src=\"https://ruffnote.com/attachments/24163\" />"
   user_img = "<img class='icon icon_#{user_id} icon_loading img-thumbnail' />"
-  syncUserImg(workload)
 
   $item = $("""
    <h5>#{title} </h5>
@@ -761,7 +760,6 @@ ruffnote = (id, dom, callback=null) ->
       )
     else
       $comments.prepend(html)
-    syncUserImg(workload)
 
 getUnreadsCount = (room_id, total_count) ->
   return total_count unless Parse.User.current()
