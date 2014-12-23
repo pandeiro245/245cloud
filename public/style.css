@@ -71,8 +71,11 @@ li label input{
 }
 
 h5 {
-  max-height: 20px;
+  max-height: 15px;
   color: #ccc;
+  overflow: hidden;
+  width: 179px;
+  margin: 7px auto;
 }
 
 .img-thumbnail.doing {

@@ -108,30 +108,29 @@ initStart = () ->
     #tooltip = '無音ですが終了直前にはとぽっぽが鳴ります'
     Util.addButton('start', $('#fixedstart_button'), text, start_hash)
 
-
     id = location.hash.split(':')[1]
     if location.hash.match(/soundcloud/)
       Soundcloud.fetch(id, @env.sc_client_id, (track) ->
-        text = "<img src='#{track['artwork_url']}'><br />#{track['title']}"
+        text = "<h5>#{track['title']}</h5><img src='#{track['artwork_url']}'>"
         $('#contents #fixedstart_artwork').append(text)
       )
       $('#contents #fixedstart_button').fadeIn()
     if location.hash.match(/youtube/)
       Youtube.fetch(id, (track) ->
-        text = "<img src='#{track['entry']['media$group']['media$thumbnail'][3]['url']}'><br />#{track['entry']['title']['$t']}"
+        text = "<h5>#{track['entry']['title']['$t']}</h5><img src='#{track['entry']['media$group']['media$thumbnail'][3]['url']}'>"
         $('#contents #fixedstart_artwork').append(text)
       )
       $('#contents #fixedstart_button').fadeIn()
     if location.hash.match(/mixcloud/)
       Mixcloud.fetch(id, (track) ->
-        text = "<img src='#{track.pictures.medium}'><br />#{track.name}"
+        text = "<h5>#{track.name}</h5><img src='#{track.pictures.medium}'>"
         $('#contents #fixedstart_artwork').append(text)
       )
       $('#contents #fixedstart_button').fadeIn()
     if location.hash.match(/8tracks/)
       EightTracks.fetch(id, @env.et_client_id, (track) ->
         text = "#{track.mix.name}"
-        text = "<img src='#{track.mix.cover_urls.sq100}'><br />#{track.mix.name}"
+        text = "<h5>#{track.mix.name}</h5><img src='#{track.mix.cover_urls.sq100}'>"
         $('#contents #fixedstart_artwork').append(text)
       )
       $('#contents #fixedstart_button').fadeIn()
