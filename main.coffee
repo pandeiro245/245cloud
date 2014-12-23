@@ -1,12 +1,6 @@
 @env.is_doing = false
 
 $ ->
-  ParseParse.all("User", (users) ->
-    for user in users
-      img = user.get('icon_url')
-      localStorage["icon_#{user.id}"] = img if img
-      $(".icon_#{user.id}").attr('src', img)
-  )
   ParseParse.addAccesslog()
   Util.scaffolds([
     'header'
@@ -50,11 +44,11 @@ $ ->
   initChatting()
   initDoing()
   initDone()
-  # initStart()
+  initStart()
   # initRanking()
   initFixedStart()
-  initKpi()
-  ParseBatch.repeat()
+  #initKpi()
+  #ParseBatch.repeat()
 
 init8tracks = () ->
   $('#8tracks').html('<h2>attripさんmix</h2>')
@@ -656,7 +650,7 @@ initRanking = () ->
     title = '無音'
     fixed = "<a href=\"#\" class='fixed_start'><img src='https://ruffnote.com/attachments/24333' /></a>"
     jacket = "<img src=\"https://ruffnote.com/attachments/24163\" />"
-  user_img = "<img class='icon icon_#{user_id} img-thumbnail' src='#{userIdToIconUrl(user_id)}' />"
+  user_img = "<img class='icon icon_#{user_id} icon_loading img-thumbnail' />"
 
   $item = $("""
    <h5>#{title} </h5>
@@ -743,7 +737,7 @@ ruffnote = (id, dom, callback=null) ->
     <tr>
     <td>
     <a class='facebook_#{user.id}' target='_blank'>
-    <img class='icon icon_#{user.id}' src='#{userIdToIconUrl(c.user.objectId)}' />
+    <img class='icon icon_#{user.id} icon_loading' />
     <div class='facebook_name_#{user.id}'></div>
     </a>
     <td>
@@ -754,19 +748,18 @@ ruffnote = (id, dom, callback=null) ->
     if typeof(comment.attributes) != 'undefined'
       $comments.append(html)
       ParseParse.fetch("user", comment, (ent, user) ->
-        img = user.get('icon_url') || user.get('icon')._url
+        img = "https://graph.facebook.com/#{user.get('facebook_id_str')}/picture?type=square"
         $(".icon_#{user.id}").attr('src', img)
         if user.get('facebook_id_str')
           href = "https://facebook.com/#{user.get('facebook_id_str')}"
           $(".facebook_#{user.id}").attr('href', href)
         if name = user.get('name')
           $(".facebook_name_#{user.id}").html(name)
+        else
+          $(".facebook_name_#{user.id}").html("※利用者名取得中...")
       )
     else
       $comments.prepend(html)
-
-userIdToIconUrl = (userId) ->
-  localStorage["icon_#{userId}"] || ""
 
 getUnreadsCount = (room_id, total_count) ->
   return total_count unless Parse.User.current()
@@ -800,16 +793,36 @@ syncComment = (id, comment, is_countup=false) ->
     $("#doing_title").hide()
 
 searchMusics = () ->
+  console.log 'searchMusics'
   q = $('#track').val()
   return if q.length < 1
   $('#tracks').html('')
   localStorage['search_music_title'] = q
 
   $tracks = $('#tracks')
-  Youtube.search(q, $tracks)
-  Soundcloud.search(q, @env.sc_client_id, $tracks)
-  Mixcloud.search(q, $tracks)
-  #EightTracks.search(q, $tracks)
+  ParseMusic.search(q, (tracks) ->
+    for track in tracks
+      artwork = "<img src=\"https://ruffnote.com/attachments/24162\" width='100px'/>"
+      if track.picture
+        artwork = "<img src=\"#{track.picture}\" width='100px'/>"
+      href = "soundcloud:#{track.id}"
+      $tracks.append("""
+        <div class='col-sm-2' style='min-height: 200px;'>
+          <a href='#{track.url}' target='_blank'>#{track.title}</a>
+          (#{Util.time(track.duration)})<br />
+          <br />
+          #{artwork}
+          <br />
+          <a href=\"##{href}\" class='fixed_start btn btn-default'>再生</a>
+          <!--<a href=\"#\" class='add_playlist btn btn-default'>追加</a>-->
+        </div>
+      """)
+  )
+  
+  #Youtube.search(q, $tracks, initFixedStart)
+  #Soundcloud.search(q, @env.sc_client_id, $tracks, initFixedStart)
+  #Mixcloud.search(q, $tracks, initFixedStart)
+  #EightTracks.search(q, $tracks, initFixedStart)
 
 getOffset = (all_count) ->
   return 0 if all_count >= 5
@@ -835,3 +848,4 @@ renderWorkloads = (dom) ->
 start_unless_doing = ()->
   unless @env.is_doing
     start_hash()
+
