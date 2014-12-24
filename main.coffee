@@ -34,7 +34,7 @@ $ ->
     'kpi1_title'
     'kpi1'
     'footer'
-    'ingress'
+    'otukare_services'
   ])
   Util.realtime()
 
@@ -42,11 +42,20 @@ $ ->
   ruffnote(13475, 'header', initStart)
   ruffnote(13477, 'footer')
   $('#otukare').hide()
+  $('#otukare_services').hide()
 
   ruffnote(17498, 'otukare')
-  if location.href.match('ingress=')
-    $('#ingress').hide()
-    initIngress($('#ingress'))
+
+  window.services = [
+    ['ingress', 'https://www.ingress.com/intel']
+    ['togetter', 'http://togetter.com/']
+    ['newspicks', 'https://newspicks.com/top-news']
+    ['itoicom', 'http://www.1101.com/home.html']
+  ]
+
+  for service in window.services
+    if location.href.match("#{service[0]}=")
+      initService($('#otukare_services'), service[1])
 
   #ruffnote(17314, 'music_ranking')
 
@@ -454,7 +463,7 @@ complete = () ->
   Util.countDown(@env.chattime*60*1000, 'finish')
   $('#header').hide()
   $('#otukare').fadeIn()
-  $('#ingress').fadeIn()
+  $("#otukare_services").fadeIn()
   $("#playing").fadeOut()
   $("#search").fadeOut()
   $("#playing").html('') # for stopping
@@ -716,8 +725,8 @@ initFixedStart = () ->
 ruffnote = (id, dom, callback=null) ->
   Ruffnote.fetch("pandeiro245/245cloud/#{id}", dom, callback)
 
-initIngress = ($dom) ->
-  $dom.append("<iframe src='https://www.ingress.com/intel' width='100%' height='900px'></iframe>")
+initService = ($dom, url) ->
+  $dom.append("<iframe src='#{url}' width='85%' height='900px'></iframe>")
 
 @addComment = (id, comment, is_countup=false) ->
   $comments = $("#room_#{id} .comments")
