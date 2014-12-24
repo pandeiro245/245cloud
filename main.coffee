@@ -25,7 +25,7 @@ $ ->
     'select_rooms'
     'rooms'
     #'ranking'
-    #'music_ranking'
+    'music_ranking'
     'kpi_title'
     'kpi3_title'
     'kpi3'
@@ -57,7 +57,7 @@ $ ->
     if location.href.match("#{service[0]}=")
       initService($('#otukare_services'), service[1])
 
-  #ruffnote(17314, 'music_ranking')
+  ruffnote(17661, 'music_ranking')
 
   initSearch()
   init8tracks()
@@ -67,7 +67,7 @@ $ ->
   # initStart()
   # initRanking()
   initFixedStart()
-  initKpi()
+  #initKpi()
   ParseBatch.repeat()
 
 init8tracks = () ->
