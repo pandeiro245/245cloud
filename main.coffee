@@ -34,15 +34,20 @@ $ ->
     'kpi1_title'
     'kpi1'
     'footer'
+    'ingress'
   ])
   Util.realtime()
 
   $('#header').removeClass('row')
   ruffnote(13475, 'header', initStart)
   ruffnote(13477, 'footer')
-
   $('#otukare').hide()
+
   ruffnote(17498, 'otukare')
+  if location.href.match('ingress=')
+    $('#ingress').hide()
+    initIngress($('#ingress'))
+
   #ruffnote(17314, 'music_ranking')
 
   initSearch()
@@ -449,6 +454,7 @@ complete = () ->
   Util.countDown(@env.chattime*60*1000, 'finish')
   $('#header').hide()
   $('#otukare').fadeIn()
+  $('#ingress').fadeIn()
   $("#playing").fadeOut()
   $("#search").fadeOut()
   $("#playing").html('') # for stopping
@@ -709,6 +715,9 @@ initFixedStart = () ->
 
 ruffnote = (id, dom, callback=null) ->
   Ruffnote.fetch("pandeiro245/245cloud/#{id}", dom, callback)
+
+initIngress = ($dom) ->
+  $dom.append("<iframe src='https://www.ingress.com/intel' width='100%' height='900px'></iframe>")
 
 @addComment = (id, comment, is_countup=false) ->
   $comments = $("#room_#{id} .comments")
