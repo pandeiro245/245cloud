@@ -35,6 +35,7 @@ $ ->
     'kpi1'
     'footer'
     'otukare_services'
+    'hatopoppo'
   ])
   Util.realtime()
 
@@ -69,6 +70,7 @@ $ ->
   initFixedStart()
   #initKpi()
   ParseBatch.repeat()
+  initHatopoppo()
 
 init8tracks = () ->
   $('#8tracks').html('<h2>attripさんmix</h2>')
@@ -828,6 +830,15 @@ searchMusics = () ->
   Soundcloud.search(q, @env.sc_client_id, $tracks)
   Mixcloud.search(q, $tracks)
   #EightTracks.search(q, $tracks)
+
+
+initHatopoppo = () ->
+  $('#hatopoppo').css('width', '1px')
+  $audio = $('<audio></audio>')
+  $audio.attr('id', 'hato')
+  # thanks for http://musicisvfr.com/free/se/clock01.html
+  $audio.attr('src', '/audio/Zihou01-4.mp3')
+  $('#hatopoppo').append($audio)
 
 getOffset = (all_count) ->
   return 0 if all_count >= 5

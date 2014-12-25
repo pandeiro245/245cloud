@@ -51,12 +51,7 @@ class Util
       remain = duration-past
      
       if remain < 8 * 1000 && remain >= 7 * 1000
-        $audio = $('<audio></audio>')
-        $audio.attr('id', 'audio')
-        # thanks for http://musicisvfr.com/free/se/clock01.html
-        $audio.attr('src', '/audio/Zihou01-4.mp3')
-        $('body').append($audio)
-        audio = document.getElementById("audio")
+        audio = document.getElementById("hato")
         audio.play()
 
       remain2 = Util.time(remain)
