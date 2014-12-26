@@ -394,6 +394,8 @@ start = () ->
     'start_buttons'
     'fixedstart_artwork'
     '8tracks'
+    '8tracks_title'
+    'search_title'
   ]
   for dom in doms
     $("##{dom}").hide()
