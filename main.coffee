@@ -76,7 +76,6 @@ init8tracks = () ->
   $('#8tracks').html('<h2>attripさんmix</h2>')
   EightTracks.attrip($('#8tracks'))
 
-
 initStart = () ->
   console.log 'initStart'
   $( "#header img" ).css('height', '320px')
@@ -103,8 +102,6 @@ initStart = () ->
     $('#contents').append("<div id='start_buttons'></div>")
     $('#contents .fixedstart_button').hide()
 
-
-
     #text = '曲お任せで24分間集中する！'
     text = [
       'https://ruffnote.com/attachments/24347'
@@ -127,26 +124,29 @@ initStart = () ->
     id = location.hash.split(':')[1]
     if location.hash.match(/soundcloud/)
       Soundcloud.fetch(id, @env.sc_client_id, (track) ->
-        text = "<h5>#{track['title']}</h5><img src='#{track['artwork_url']}'>"
+        artwork_url = artworkUrlWithNoimage(track['artwork_url'])
+        text = "<h5>#{track['title']}</h5><img src='#{artwork_url}'>"
         $('#contents #fixedstart_artwork').append(text)
       )
       $('#contents #fixedstart_button').fadeIn()
     if location.hash.match(/youtube/)
       Youtube.fetch(id, (track) ->
-        text = "<h5>#{track['entry']['title']['$t']}</h5><img src='#{track['entry']['media$group']['media$thumbnail'][3]['url']}'>"
+        artwork_url = artworkUrlWithNoimage(track['entry']['media$group']['media$thumbnail'][3]['url'])
+        text = "<h5>#{track['entry']['title']['$t']}</h5><img src='#{artwork_url}'>"
         $('#contents #fixedstart_artwork').append(text)
       )
       $('#contents #fixedstart_button').fadeIn()
     if location.hash.match(/mixcloud/)
       Mixcloud.fetch(id, (track) ->
-        text = "<h5>#{track.name}</h5><img src='#{track.pictures.medium}'>"
+        artwork_url = artworkUrlWithNoimage(track.track.pictures.medium)
+        text = "<h5>#{track.name}</h5><img src='#{artwork_url}'>"
         $('#contents #fixedstart_artwork').append(text)
       )
       $('#contents #fixedstart_button').fadeIn()
     if location.hash.match(/8tracks/)
       EightTracks.fetch(id, @env.et_client_id, (track) ->
-        text = "#{track.mix.name}"
-        text = "<h5>#{track.mix.name}</h5><img src='#{track.mix.cover_urls.sq100}'>"
+        artwork_url = artworkUrlWithNoimage(track.mix.cover_urls.sq100)
+        text = "<h5>#{track.mix.name}</h5><img src='#{artwork_url}'>"
         $('#contents #fixedstart_artwork').append(text)
       )
       $('#contents #fixedstart_button').fadeIn()
@@ -864,3 +864,6 @@ renderWorkloads = (dom) ->
 start_unless_doing = ()->
   unless @env.is_doing
     start_hash()
+
+artworkUrlWithNoimage = (artwork_url) ->
+  artwork_url || 'https://ruffnote.com/attachments/24162'
