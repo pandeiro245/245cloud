@@ -18,6 +18,7 @@ $ ->
     'chatting_title'
     'chatting'
     'done'
+    'search_title'
     'search'
     '8tracks'
     'playing'
@@ -46,6 +47,7 @@ $ ->
   $('#otukare').hide()
   $('#otukare_services').hide()
 
+  ruffnote(17758, 'search_title')
   ruffnote(17498, 'otukare')
 
   window.services = [
@@ -173,7 +175,6 @@ initSearch = () ->
 
   $tracks = $("<div></div>").attr('id', 'tracks')
 
-  $('#search').append("<hr /><h3>好きなパワーソングを探す</h3>")
   $('#search').append($track)
   $('#search').append($tracks)
 
