@@ -22,6 +22,7 @@ $ ->
     'ranking'
     'search_title'
     'search'
+    '8tracks_title'
     '8tracks'
     'playing'
     'complete'
@@ -77,7 +78,7 @@ $ ->
   initWhatis()
 
 init8tracks = () ->
-  $('#8tracks').html('<h2>attripさんmix</h2>')
+  ruffnote(17763, '8tracks_title')
   EightTracks.attrip($('#8tracks'))
 
 initStart = () ->
