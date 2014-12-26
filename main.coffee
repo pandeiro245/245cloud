@@ -18,6 +18,8 @@ $ ->
     'chatting_title'
     'chatting'
     'done'
+    'ranking_title'
+    'ranking'
     'search_title'
     'search'
     '8tracks'
@@ -25,8 +27,6 @@ $ ->
     'complete'
     'select_rooms'
     'rooms'
-    #'ranking'
-    'music_ranking'
     'kpi_title'
     'kpi3_title'
     'kpi3'
@@ -48,6 +48,7 @@ $ ->
   $('#otukare_services').hide()
 
   ruffnote(17758, 'search_title')
+  ruffnote(17762, 'ranking_title')
   ruffnote(17498, 'otukare')
 
   window.services = [
@@ -68,8 +69,7 @@ $ ->
   initChatting()
   initDoing()
   initDone()
-  # initStart()
-  # initRanking()
+  initRanking()
   initFixedStart()
   #initKpi()
   ParseBatch.repeat()
@@ -170,8 +170,8 @@ initStart = () ->
 initSearch = () ->
   $track = $("<input />").attr('id', 'track').attr('placeholder', 'ここにアーティスト名や曲名を入れてね')
   localStorage['search_music_title'] = '作業BGM' unless localStorage['search_music_title']
-  if localStorage['search_music_title'].length > 1
-    $track.attr('value', localStorage['search_music_title'])
+  #if localStorage['search_music_title'].length > 1
+  #  $track.attr('value', localStorage['search_music_title'])
 
   $tracks = $("<div></div>").attr('id', 'tracks')
 
@@ -182,7 +182,7 @@ initSearch = () ->
     $(this).select()
   )
   $('#search input').focus()
-  searchMusics()
+  #searchMusics()
 
   $('#track').keypress((e) ->
     if e.which == 13 #enter
@@ -268,7 +268,7 @@ initDone = () ->
       continue unless workload.attributes.user
       disp = "#{Util.hourMin(workload.createdAt)}開始（#{workload.attributes.number}回目）"
       @addWorkload("#done", workload, disp)
-  , null, 100)
+  , null, 12)
  
 initKpi = () ->
   ruffnote(17548, 'kpi_title')
@@ -630,7 +630,7 @@ window.createComment = (room_id) ->
   )
 
 initRanking = () ->
-  $('#ranking').html('ここにランキング結果が入ります')
+  $('#ranking').html('ここにランキング結果が入る予定')
 
 @addDoing = (workload) ->
   $("#doing_title").show()

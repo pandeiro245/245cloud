@@ -81,3 +81,9 @@ h5 {
 .img-thumbnail.doing {
   background: #fc0;
 }
+
+input#track {
+  font-size: 50px;
+  font-weight: bold;
+  padding: 12px;
+}
