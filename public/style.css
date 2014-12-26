@@ -87,3 +87,7 @@ input#track {
   font-weight: bold;
   padding: 12px;
 }
+
+#memo textarea{
+  height: 230px;
+}

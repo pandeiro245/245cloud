@@ -13,6 +13,8 @@ $ ->
     'otukare'
     'ad'
     'contents'
+    'memo_title'
+    'memo'
     'doing_title'
     'doing'
     'chatting_title'
@@ -76,6 +78,7 @@ $ ->
   ParseBatch.repeat()
   initHatopoppo()
   initWhatis()
+  initMemo() if location.href.match(/memo=/)
 
 init8tracks = () ->
   ruffnote(17763, '8tracks_title')
@@ -920,4 +923,18 @@ initWhatis = () ->
   $kokuban.append($youbi)
   $('#whatis').css('text-align', 'center')
   $('#whatis').html($kokuban)
+
+initMemo = () ->
+  $('#memo_title').html("""
+    <h2>MEMO</h2>
+    ここに入力した内容は作者（西小倉宏信）も見れてしまうので機密情報は書かないようにしてください<br />
+    例：山田商事への提案書を作る→企画書を作る
+  """)
+  $textarea = $('<textarea></textarea>')
+  $textarea.html(localStorage['memo'])
+  $textarea.css('width', '500px')
+  $('#memo').html($textarea)
+  $(document).on('keypress', '#memo textarea', () ->
+    localStorage['memo'] = $('#memo textarea').val()
+  )
 
