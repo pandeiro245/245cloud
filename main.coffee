@@ -880,10 +880,11 @@ initWhatis = () ->
     i2 = 24371 + i
     numbers[i] = "https://ruffnote.com/attachments/#{i2}"
   youbis = {}
-  for i in [1..6]
+  for i in [1..5]
     i2 = 24358 + i
     youbis[i] = "https://ruffnote.com/attachments/#{i2}"
-  youbis[0] = "https://ruffnote.com/attachments/24370" #日曜日
+  youbis[0] = "https://ruffnote.com/attachments/24465" #日曜日
+  youbis[6] = "https://ruffnote.com/attachments/24464" #土曜日
 
   $kokuban = $('<div></div>')
   $kokuban.css('position', 'relative')
@@ -895,8 +896,8 @@ initWhatis = () ->
   $month = $('<img />')
   $month.attr('src', numbers[month])
   $month.css('position', 'absolute')
-  $month.css('right', '70px')
-  $month.css('top', '34px')
+  $month.css('right', '69px')
+  $month.css('top', '36px')
 
   $day = $('<img />')
   $day.attr('src', numbers[day])
