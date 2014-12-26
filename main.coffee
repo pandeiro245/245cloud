@@ -374,6 +374,11 @@ window.start_nomusic = () ->
 createWorkload = (params = {}, callback) ->
   params.host = location.host
 
+  if location.href.match('review')
+    memo = prompt("今から24分間集中するにあたって一言（公開されます）", '24分間頑張るぞ！')
+    params['review_before'] = memo
+
+
   ParseParse.create("Workload", params, (workload) ->
     @workload = workload
     callback()
@@ -531,7 +536,11 @@ complete = () ->
   ]
   ParseParse.where('Workload', cond, (workload, workloads3) ->
     workload.set('synchro_end', workloads3.length + 0)
-    workload.set('point', 3)
+    if location.href.match('review')
+      point = prompt("自己評価（1〜5）", '3')
+      workload.set('point', parseInt(point))
+      memo = prompt("終わってからの感想（公開されます）", 'あんまり集中できなかった')
+      workload.set('review_after', memo)
     workload.save()
   , workload, 9999)
 
