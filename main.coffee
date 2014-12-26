@@ -33,6 +33,7 @@ $ ->
     'kpi2'
     'kpi1_title'
     'kpi1'
+    ['whatis', {is_row: false}]
     'footer'
     'otukare_services'
     'hatopoppo'
@@ -71,6 +72,7 @@ $ ->
   #initKpi()
   ParseBatch.repeat()
   initHatopoppo()
+  initWhatis()
 
 init8tracks = () ->
   $('#8tracks').html('<h2>attripさんmix</h2>')
@@ -867,3 +869,50 @@ start_unless_doing = ()->
 
 artworkUrlWithNoimage = (artwork_url) ->
   artwork_url || 'https://ruffnote.com/attachments/24162'
+
+initWhatis = () ->
+  now = new Date()
+  month = now.getMonth() + 1
+  day = now.getDate()
+  youbi = now.getDay()
+  numbers = {}
+  for i in [1..31]
+    i2 = 24371 + i
+    numbers[i] = "https://ruffnote.com/attachments/#{i2}"
+  youbis = {}
+  for i in [1..6]
+    i2 = 24358 + i
+    youbis[i] = "https://ruffnote.com/attachments/#{i2}"
+  youbis[0] = "https://ruffnote.com/attachments/24370" #日曜日
+
+  $kokuban = $('<div></div>')
+  $kokuban.css('position', 'relative')
+  $kokuban.css('background', 'url(https://ruffnote.com/attachments/24501)')
+  $kokuban.css('width', '735px')
+  $kokuban.css('height', '483px')
+  $kokuban.css('margin', '0 auto')
+
+  $month = $('<img />')
+  $month.attr('src', numbers[month])
+  $month.css('position', 'absolute')
+  $month.css('right', '70px')
+  $month.css('top', '34px')
+
+  $day = $('<img />')
+  $day.attr('src', numbers[day])
+  $day.css('position', 'absolute')
+  $day.css('right', '70px')
+  $day.css('top', '88px')
+
+  $youbi = $('<img />')
+  $youbi.attr('src', youbis[youbi])
+  $youbi.css('position', 'absolute')
+  $youbi.css('right', '70px')
+  $youbi.css('top', '138px')
+
+  $kokuban.append($month)
+  $kokuban.append($day)
+  $kokuban.append($youbi)
+  $('#whatis').css('text-align', 'center')
+  $('#whatis').html($kokuban)
+

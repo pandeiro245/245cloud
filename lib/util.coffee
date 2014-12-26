@@ -3,13 +3,21 @@ class Util
     date = new Date() unless date
     new Date(date.getTime() - min*60*1000)
 
-  @scaffolds: (ids) ->
+  @scaffolds: (params) ->
     $body = $('#nc')
     $body.html('') # remove contents for SEO
-    for id in ids
+    for param in params
+      attr = null
+      if typeof(param) == 'object'
+        id = param[0]
+        attr = param[1]
+        console.log attr.is_row
+      else
+        id = param
       $item = $('<div></div>')
       $item.attr('id', id)
-      $item.addClass('row')
+      unless (attr && attr.is_row == false)
+        $item.addClass('row')
       $body.append($item)
 
   @time: (mtime) ->
