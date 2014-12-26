@@ -531,6 +531,7 @@ complete = () ->
   ]
   ParseParse.where('Workload', cond, (workload, workloads3) ->
     workload.set('synchro_end', workloads3.length + 0)
+    workload.set('point', 3)
     workload.save()
   , workload, 9999)
 
