@@ -493,6 +493,7 @@ window.play_repeat = (key, duration) ->
 complete = () ->
   console.log 'complete'
   @syncWorkload('chatting')
+  console.log 'aaa'
   Util.countDown(@env.chattime*60*1000, 'finish')
   $('#header').hide()
   $('#otukare').fadeIn()
@@ -563,16 +564,22 @@ complete = () ->
   initComments()
 
 window.initReview = () ->
-  #TODO
-  #point = prompt("自己評価（1〜5）を選択してください", '3')
-  #workload.set('point', parseInt(point))
-
   attrs = {
-    id: 'input_review_after'
-    style: 'margin:0 auto; width: 100%;'
+    id: 'input_review_point'
+    style: 'margin:0 auto;'
   }
-  $after = Util.tag('input', '終わってからの感想（公開されます） 例：あんまり集中できなかった', attrs)
-  $review = Util.tag('div', $after, {style: 'text-align: center;'})
+  titles = {
+    1: '全然集中できなかった'
+    2: '集中できなかった'
+    3: '普通に集中できた'
+    4: '結構集中できた'
+    5: 'かなり集中できた'
+  }
+  options = '<option value="">自己評価（1〜5）を選択してください</option>'
+  for i in [1..5]
+    options += "<option value=\"#{i}\">#{titles[i]}</option>"
+  $point = Util.tag('select', options, attrs)
+  $review = Util.tag('div', $point, {style: 'text-align: center;'})
   $('#review').append($review)
 
   attrs = {
@@ -585,13 +592,20 @@ window.initReview = () ->
 
   attrs = {
     id: 'input_review_submit'
-    style: 'margin:0 auto; width: 100%;'
+    style: 'margin:0 auto;'
     type: 'submit'
+    value: 'レビューを保存'
   }
   $submit = Util.tag('input', null, attrs)
   $review = Util.tag('div', $submit, {style: 'text-align: center;'})
   $('#review').append($review)
 
+  $(document).on('click', '#input_review_submit', () ->
+    workload.set('point', parseInt($('#input_review_point').val()))
+    workload.set('review_after', $('#input_review_after').val())
+    workload.save()
+    alert 'レビューを保存しました'
+  )
 
 window.initComments = () ->
   initRoom()
