@@ -22,10 +22,10 @@ $ ->
     'done'
     'ranking_title'
     'ranking'
-    'search_title'
-    'search'
     '8tracks_title'
     '8tracks'
+    'search_title'
+    'search'
     'playing'
     'complete'
     'select_rooms'
@@ -404,6 +404,10 @@ start = () ->
     '8tracks'
     '8tracks_title'
     'search_title'
+    'ranking_title'
+    'ranking'
+    'whatis'
+
   ]
   for dom in doms
     $("##{dom}").hide()
