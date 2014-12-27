@@ -1,7 +1,19 @@
 Parse.initialize(@env.parse_app_id, @env.parse_key)
 
 class @ParseParse
-  @find: (model_name, id, callback) ->
+  @find: (model_name, id, callback, instance=null) ->
+    Model = Parse.Object.extend(model_name)
+    query = new Parse.Query(Model)
+    query.get(id, {
+      success: (data) ->
+        if instance
+          callback(instance, data)
+        else
+          callback(data)
+      , error: (object, error) ->
+        console.log error
+        #alert 'error...'
+    })
 
   @fetch: (model_name, child, callback) ->
     child.get(model_name).fetch({
