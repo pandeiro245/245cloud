@@ -62,9 +62,9 @@ li label input{
   display: inline;
 }
 
-.tag{
-  color: #fff;
-  background: #ccc;
+.review{
+  color: #666;
+  /* background: #eee; */
   border-radius: 3px;
   padding: 2px;
   margin: 2px;

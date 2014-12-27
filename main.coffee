@@ -674,10 +674,21 @@ initRanking = () ->
     w = workload
     user_id = w.user.objectId
 
-  rooms = ""
-  if w.rooms
-    for room in w.rooms
-      rooms += "<span class=\"tag\">#{room.split(':')[1]}</span>"
+
+  review = ""
+  stars = ""
+
+  if location.href.match('review=')
+    if w.review_before
+      review += "<div class=\"review\">【前】#{w.review_before}</div>"
+    if w.review_after
+      review += "<div class=\"review\">【後】#{w.review_after}</div>"
+    
+    if w.point
+      for i in [1..(5-w.point)]
+        stars += "☆"
+      for i in [1..w.point]
+        stars += "★"
 
   if w.title
     href = '#'
@@ -703,8 +714,9 @@ initRanking = () ->
    <div>#{jacket}</div>
    <div style='margin: 8px 0 5px;'>#{user_img}</div>
    <div>#{disp}</div>
-   <div>#{rooms}</div>
-   #{fixed}<br />
+   <div>#{fixed}</div>
+   <div>#{stars}</div>
+   <div>#{review}</div>
   """)
 
   unless dom == '#done'
