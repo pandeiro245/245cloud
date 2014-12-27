@@ -741,8 +741,9 @@ initRanking = () ->
       review += "<div class=\"review\">【後】#{w.review_after}</div>"
     
     if w.point
-      for i in [1..(5-w.point)]
-        stars += "☆"
+      if w.point < 5
+        for i in [1..(5-w.point)]
+          stars += "☆"
       for i in [1..w.point]
         stars += "★"
 
