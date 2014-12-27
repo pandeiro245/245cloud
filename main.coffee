@@ -149,7 +149,7 @@ initStart = () ->
       $('#contents #fixedstart_button').fadeIn()
     if location.hash.match(/mixcloud/)
       Mixcloud.fetch(id, (track) ->
-        artwork_url = artworkUrlWithNoimage(track.track.pictures.medium)
+        artwork_url = artworkUrlWithNoimage(track.pictures.medium)
         text = "<h5>#{track.name}</h5><img src='#{artwork_url}'>"
         $('#contents #fixedstart_artwork').append(text)
       )
