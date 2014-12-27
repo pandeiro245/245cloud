@@ -12,6 +12,7 @@ $ ->
     'header'
     'otukare'
     'ad'
+    'review'
     'contents'
     'memo_title'
     'memo'
@@ -168,6 +169,16 @@ initStart = () ->
     ]
     tooltip = '無音ですが終了直前にはとぽっぽが鳴ります'
     Util.addButton('start', $('#contents #start_buttons'), text, start_nomusic, tooltip)
+
+    if location.href.match('review=')
+      attrs = {
+        id: 'input_review_before'
+        style: 'margin:0 auto; width: 100%;'
+      }
+      $before = Util.tag('input', "今から24分間集中するにあたって一言（公開されます） 例：24分で企画書のたたき台を作る！", attrs)
+      console.log 'before', $before
+      $review = Util.tag('div', $before, {style: 'text-align: center;'})
+      $('#contents').append($review)
 
   else
     text = 'facebookログイン'
@@ -376,10 +387,14 @@ window.start_nomusic = () ->
 createWorkload = (params = {}, callback) ->
   params.host = location.host
 
-  if location.href.match('review')
-    memo = prompt("今から24分間集中するにあたって一言（公開されます）", '24分間頑張るぞ！')
-    params['review_before'] = memo
+  if location.href.match('review=')
+    if location.href.match('sparta=')
+      memo = prompt("今から24分間集中するにあたって一言（公開されます）", '24分間頑張るぞ！')
+    else
+      memo = $('#input_review_before').val()
 
+    if memo.length
+      params['review_before'] = memo
 
   ParseParse.create("Workload", params, (workload) ->
     @workload = workload
@@ -482,6 +497,7 @@ window.play_repeat = (key, duration) ->
 complete = () ->
   console.log 'complete'
   @syncWorkload('chatting')
+  console.log 'aaa'
   Util.countDown(@env.chattime*60*1000, 'finish')
   $('#header').hide()
   $('#otukare').fadeIn()
@@ -542,19 +558,58 @@ complete = () ->
   ]
   ParseParse.where('Workload', cond, (workload, workloads3) ->
     workload.set('synchro_end', workloads3.length + 0)
-    if location.href.match('review')
-      point = prompt("自己評価（1〜5）", '3')
-      workload.set('point', parseInt(point))
-      memo = prompt("終わってからの感想（公開されます）", 'あんまり集中できなかった')
-      workload.set('review_after', memo)
     workload.save()
   , workload, 9999)
 
   $complete = $('#complete')
   $complete.html('24分おつかれさまでした！5分間交換ノートが見られます')
 
+  initReview() if location.href.match('review=')
   initComments()
 
+window.initReview = () ->
+  attrs = {
+    id: 'input_review_point'
+    style: 'margin:0 auto;'
+  }
+  titles = {
+    1: '全然集中できなかった'
+    2: '集中できなかった'
+    3: '普通に集中できた'
+    4: '結構集中できた'
+    5: 'かなり集中できた'
+  }
+  options = '<option value="">自己評価（1〜5）を選択してください</option>'
+  for i in [1..5]
+    options += "<option value=\"#{i}\">#{titles[i]}</option>"
+  $point = Util.tag('select', options, attrs)
+  $review = Util.tag('div', $point, {style: 'text-align: center;'})
+  $('#review').append($review)
+
+  attrs = {
+    id: 'input_review_after'
+    style: 'margin:0 auto; width: 100%;'
+  }
+  $after = Util.tag('input', '終わってからの感想（公開されます） 例：あんまり集中できなかった', attrs)
+  $review = Util.tag('div', $after, {style: 'text-align: center;'})
+  $('#review').append($review)
+
+  attrs = {
+    id: 'input_review_submit'
+    style: 'margin:0 auto;'
+    type: 'submit'
+    value: 'レビューを保存'
+  }
+  $submit = Util.tag('input', null, attrs)
+  $review = Util.tag('div', $submit, {style: 'text-align: center;'})
+  $('#review').append($review)
+
+  $(document).on('click', '#input_review_submit', () ->
+    workload.set('point', parseInt($('#input_review_point').val()))
+    workload.set('review_after', $('#input_review_after').val())
+    workload.save()
+    alert 'レビューを保存しました'
+  )
 
 window.initComments = () ->
   initRoom()
@@ -675,7 +730,6 @@ initRanking = () ->
   else
     w = workload
     user_id = w.user.objectId
-
 
   review = ""
   stars = ""

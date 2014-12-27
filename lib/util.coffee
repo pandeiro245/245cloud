@@ -121,15 +121,19 @@ class Util
   @tag: (tagname, val=null, attrs=null) ->
     if tagname == 'img'
       $tag = $("<#{tagname} />")
-      if val
-        $tag.attr('src', val)
+      $tag.attr('src', val) if val
+    else if tagname == 'input'
+      $tag = $("<#{tagname} />")
+      $tag.attr('placeholder', val) if val
     else
       $tag = $("<#{tagname}></#{tagname}>")
       if val
         $tag.html(val)
-      if attrs
-        for attr of attrs
-          $tag.attr(attr, attrs[attr])
+
+    if attrs
+      for attr of attrs
+        $tag.attr(attr, attrs[attr])
+
     return $tag
 
 window.Util = window.Util || Util
