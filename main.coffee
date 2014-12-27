@@ -20,6 +20,7 @@ $ ->
     'chatting_title'
     'chatting'
     'done'
+    'you'
     'ranking_title'
     'ranking'
     '8tracks_title'
@@ -79,6 +80,7 @@ $ ->
   initHatopoppo()
   initWhatis()
   initMemo() if location.href.match(/memo=/)
+  initYou()
 
 init8tracks = () ->
   ruffnote(17763, '8tracks_title')
@@ -407,7 +409,7 @@ start = () ->
     'ranking_title'
     'ranking'
     'whatis'
-
+    'you'
   ]
   for dom in doms
     $("##{dom}").hide()
@@ -951,4 +953,20 @@ initMemo = () ->
   $(document).on('keypress', '#memo textarea', () ->
     localStorage['memo'] = $('#memo textarea').val()
   )
+
+initYou = () ->
+  return unless Parse.User.current()
+  $h2 = Util.tag('h2', 'YOU', {class: 'status'})
+  $('#you').html($h2)
+  cond = [
+    ["user", Parse.User.current()]
+    ["is_done", true]
+    ["createdAt", '<', Util.minAgo(@env.pomotime + @env.chattime)]
+  ]
+  ParseParse.where('Workload', cond, (workloads) ->
+    for workload in workloads
+      continue unless workload.attributes.user
+      disp = "#{Util.hourMin(workload.createdAt)}開始（#{workload.attributes.number}回目）"
+      addWorkload("#you", workload, disp)
+  null, 24)
 

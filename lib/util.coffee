@@ -118,4 +118,18 @@ class Util
         return text
     )
 
+  @tag: (tagname, val=null, attrs=null) ->
+    if tagname == 'img'
+      $tag = $("<#{tagname} />")
+      if val
+        $tag.attr('src', val)
+    else
+      $tag = $("<#{tagname}></#{tagname}>")
+      if val
+        $tag.html(val)
+      if attrs
+        for attr of attrs
+          $tag.attr(attr, attrs[attr])
+    return $tag
+
 window.Util = window.Util || Util
