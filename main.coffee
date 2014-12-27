@@ -12,6 +12,7 @@ $ ->
     'header'
     'otukare'
     'ad'
+    'review'
     'contents'
     'memo_title'
     'memo'
@@ -172,13 +173,12 @@ initStart = () ->
     if location.href.match('review=')
       attrs = {
         id: 'input_review_before'
-        value: '24分間頑張るぞ！'
+        style: 'margin:0 auto; width: 100%;'
       }
-      $before = Util.tag('input', "今から24分間集中するにあたって一言（公開されます）", attrs)
-      $review = Util.tag('div', $before)
+      $before = Util.tag('input', "今から24分間集中するにあたって一言（公開されます） 例：24分で企画書のたたき台を作る！", attrs)
+      console.log 'before', $before
+      $review = Util.tag('div', $before, {style: 'text-align: center;'})
       $('#contents').append($review)
-
-
 
   else
     text = 'facebookログイン'
@@ -388,9 +388,9 @@ createWorkload = (params = {}, callback) ->
   params.host = location.host
 
   if location.href.match('review')
-    memo = prompt("今から24分間集中するにあたって一言（公開されます）", '24分間頑張るぞ！')
-    params['review_before'] = memo
-
+    memo = $('#input_review_before').val()
+    if memo.length
+      params['review_before'] = memo
 
   ParseParse.create("Workload", params, (workload) ->
     @workload = workload
@@ -553,18 +553,44 @@ complete = () ->
   ]
   ParseParse.where('Workload', cond, (workload, workloads3) ->
     workload.set('synchro_end', workloads3.length + 0)
-    if location.href.match('review')
-      point = prompt("自己評価（1〜5）", '3')
-      workload.set('point', parseInt(point))
-      memo = prompt("終わってからの感想（公開されます）", 'あんまり集中できなかった')
-      workload.set('review_after', memo)
     workload.save()
   , workload, 9999)
 
   $complete = $('#complete')
   $complete.html('24分おつかれさまでした！5分間交換ノートが見られます')
 
+  initReview() if location.href.match('review=')
   initComments()
+
+window.initReview = () ->
+  #TODO
+  #point = prompt("自己評価（1〜5）を選択してください", '3')
+  #workload.set('point', parseInt(point))
+
+  attrs = {
+    id: 'input_review_after'
+    style: 'margin:0 auto; width: 100%;'
+  }
+  $after = Util.tag('input', '終わってからの感想（公開されます） 例：あんまり集中できなかった', attrs)
+  $review = Util.tag('div', $after, {style: 'text-align: center;'})
+  $('#review').append($review)
+
+  attrs = {
+    id: 'input_review_after'
+    style: 'margin:0 auto; width: 100%;'
+  }
+  $after = Util.tag('input', '終わってからの感想（公開されます） 例：あんまり集中できなかった', attrs)
+  $review = Util.tag('div', $after, {style: 'text-align: center;'})
+  $('#review').append($review)
+
+  attrs = {
+    id: 'input_review_submit'
+    style: 'margin:0 auto; width: 100%;'
+    type: 'submit'
+  }
+  $submit = Util.tag('input', null, attrs)
+  $review = Util.tag('div', $submit, {style: 'text-align: center;'})
+  $('#review').append($review)
 
 
 window.initComments = () ->
@@ -686,7 +712,6 @@ initRanking = () ->
   else
     w = workload
     user_id = w.user.objectId
-
 
   review = ""
   stars = ""

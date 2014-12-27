@@ -129,9 +129,11 @@ class Util
       $tag = $("<#{tagname}></#{tagname}>")
       if val
         $tag.html(val)
-      if attrs
-        for attr of attrs
-          $tag.attr(attr, attrs[attr])
+
+    if attrs
+      for attr of attrs
+        $tag.attr(attr, attrs[attr])
+
     return $tag
 
 window.Util = window.Util || Util
