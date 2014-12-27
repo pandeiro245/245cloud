@@ -169,6 +169,17 @@ initStart = () ->
     tooltip = '無音ですが終了直前にはとぽっぽが鳴ります'
     Util.addButton('start', $('#contents #start_buttons'), text, start_nomusic, tooltip)
 
+    if location.href.match('review=')
+      attrs = {
+        id: 'input_review_before'
+        value: '24分間頑張るぞ！'
+      }
+      $before = Util.tag('input', "今から24分間集中するにあたって一言（公開されます）", attrs)
+      $review = Util.tag('div', $before)
+      $('#contents').append($review)
+
+
+
   else
     text = 'facebookログイン'
     Util.addButton('login', $('#contents'), text, login)

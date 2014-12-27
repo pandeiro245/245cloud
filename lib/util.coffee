@@ -121,8 +121,10 @@ class Util
   @tag: (tagname, val=null, attrs=null) ->
     if tagname == 'img'
       $tag = $("<#{tagname} />")
-      if val
-        $tag.attr('src', val)
+      $tag.attr('src', val) if val
+    else if tagname == 'input'
+      $tag = $("<#{tagname} />")
+      $tag.attr('placeholder', val) if val
     else
       $tag = $("<#{tagname}></#{tagname}>")
       if val
