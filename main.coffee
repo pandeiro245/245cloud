@@ -387,8 +387,12 @@ window.start_nomusic = () ->
 createWorkload = (params = {}, callback) ->
   params.host = location.host
 
-  if location.href.match('review')
-    memo = $('#input_review_before').val()
+  if location.href.match('review=')
+    if location.href.match('sparta=')
+      memo = prompt("今から24分間集中するにあたって一言（公開されます）", '24分間頑張るぞ！')
+    else
+      memo = $('#input_review_before').val()
+
     if memo.length
       params['review_before'] = memo
 
