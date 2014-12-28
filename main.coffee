@@ -21,6 +21,7 @@ $ ->
     'chatting_title'
     'chatting'
     'done'
+    'you_title'
     'you'
     'ranking_title'
     'ranking'
@@ -424,6 +425,7 @@ start = () ->
     'ranking_title'
     'ranking'
     'whatis'
+    'you_title'
     'you'
   ]
   for dom in doms
@@ -1023,8 +1025,7 @@ initMemo = () ->
 
 initYou = () ->
   return unless Parse.User.current()
-  $h2 = Util.tag('h2', 'YOU', {class: 'status'})
-  $('#you').html($h2)
+  ruffnote(17769, 'you_title')
   cond = [
     ["user", Parse.User.current()]
     ["is_done", true]
