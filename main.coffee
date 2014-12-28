@@ -9,8 +9,8 @@ $ ->
   )
   ParseParse.addAccesslog()
   Util.scaffolds([
-    'header'
-    'otukare'
+    ['header', {is_row: false}]
+    ['otukare', {is_hide: true}]
     'ad'
     'review'
     'contents'
@@ -42,17 +42,13 @@ $ ->
     'kpi1'
     ['whatis', {is_row: false}]
     'footer'
-    'otukare_services'
+    ['otukare_services', {is_hide: true}]
     'hatopoppo'
   ])
   Util.realtime()
 
-  $('#header').removeClass('row')
   ruffnote(13475, 'header', initStart)
   ruffnote(13477, 'footer')
-  $('#otukare').hide()
-  $('#otukare_services').hide()
-
   ruffnote(17758, 'search_title')
   ruffnote(17762, 'ranking_title')
   ruffnote(17498, 'otukare')

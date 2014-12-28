@@ -18,6 +18,8 @@ class Util
       $item.attr('id', id)
       unless (attr && attr.is_row == false)
         $item.addClass('row')
+      if attr && attr.is_hide == true
+        $item.hide()
       $body.append($item)
 
   @time: (mtime) ->
