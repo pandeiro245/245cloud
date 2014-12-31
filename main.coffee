@@ -230,7 +230,11 @@ initSearch = () ->
     $img.addClass('col-sm-2 room_icon')
     $img.addClass('on')
     $img.css('cursor', 'pointer')
+    $img.attr('data-on', "#{on2}")
+    $img.attr('data-off', "#{off2}")
     $('#select_rooms .imgs').append($img)
+
+    $('.modal-body').html('')
 
     # DB部屋
     for room in rooms
@@ -243,15 +247,15 @@ initSearch = () ->
         off2= 'https://ruffnote.com/attachments/24677'
         $img = Util.tag('img', off2)
         $img.attr('data-values', "#{room_id}:#{r.title}")
-        $img.tooltip({title: "未読数：#{unread_count}/投稿数：#{total_count}"})
+        $img.tooltip({title: "未読数：#{unread_count} / 投稿数：#{total_count}"})
         $img.addClass('col-sm-2 room_icon')
         $img.css('cursor', 'pointer')
-        $img.attr('onmouseover', "this.src='#{on2}'")
-        $img.attr('onmouseout', "this.src='#{off2}'")
+        $img.attr('data-on', "#{on2}")
+        $img.attr('data-off', "#{off2}")
         $('#select_rooms .imgs').append($img)
       else
-        $('#select_rooms select').append(
-          "<option value=\"#{room.id}:#{room.attributes.title}\">#{room.attributes.title} (#{unread_count}/#{total_count})</option>"
+        $('.modal-body').append(
+          "<a class='room_icon' style='cursor: pointer; display:block;'  data-values=\"#{room.id}:#{room.attributes.title}\">#{room.attributes.title} (#{unread_count}/#{total_count})</option>"
         )
       
     #  その他
@@ -262,11 +266,10 @@ initSearch = () ->
     $img.addClass('col-sm-2')
     $img.addClass('sonota')
     $img.css('cursor', 'pointer')
-    $img.attr('onmouseover', "this.src='#{on2}'")
-    $img.attr('onmouseout', "this.src='#{off2}'")
-
     $img.attr('data-toggle', 'modal')
     $img.attr('data-target', '#selectRoomModal')
+    $img.attr('data-on', "#{on2}")
+    $img.attr('data-off', "#{off2}")
 
     $('#select_rooms .imgs').append($img)
 
@@ -274,19 +277,35 @@ initSearch = () ->
       vals = $(this).val().split(':')
       initRoom(vals[0], vals[1])
     )
-    $(document).on('click', "#select_rooms .imgs img.room_icon", () ->
-      console.log $(this)
-      console.log $(this).attr('data-values')
-      vals = $(this).attr('data-values').split(':')
+    $(document).on('click', ".room_icon", () ->
+      for i in $('.on')
+        $(i).attr('src', $(i).attr('data-off'))
+        $(i).removeClass('on')
+      $self = $(this)
+      $self.addClass('on')
+      $self.attr('src', $self.attr('data-on'))
+      vals = $self.attr('data-values').split(':')
       initRoom(vals[0], vals[1])
+      $('.modal-header .close').click()
     )
 
-    $(document).on('click', "#select_rooms .imgs img.sonota", () ->
+    $(document).on('mouseover', ".room_icon, .sonota", () ->
+      $self = $(this)
+      $self.attr('src', $self.attr('data-on'))
+    )
+
+    $(document).on('mouseout', ".room_icon, .sonota", () ->
+      $self = $(this)
+      console.log $self
+      console.log $self.hasClass('on')
+      console.log $self.attr('data-off')
+      unless $self.hasClass('on')
+        $self.attr('src', $self.attr('data-off'))
+    )
+
+    $(document).on('click', "img.sonota", () ->
       $('#selectRoomButton').click()
     )
-
-
-
   )
 
 initChatting = () ->
@@ -1113,7 +1132,6 @@ initNextkakuhen = () ->
 happynewyear = () ->
  $('#nextkakuhen_title').hide()
  $('#nextkakuhen').html('あけましておめでとうございます！！')
-
 
 initMlkcca = () ->
   if user = Parse.User.current()
