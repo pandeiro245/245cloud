@@ -73,10 +73,10 @@ class Util
         audio.play()
 
       remain2 = Util.time(remain)
-      $('title').html(remain2)
       if dom = params.dom
         $dom = $(dom)
       else
+        $('title').html(remain2)
         $dom = $('.countdown')
       $dom.html("あと#{remain2}")
       if callback == 'reload'
