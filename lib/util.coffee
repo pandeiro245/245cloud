@@ -98,7 +98,7 @@ class Util
       $(dom).html(disp)
 
   @parseHttp: (str) ->
-    str.replace(/https?:\/\/[\w?=&.\/-;#~%-+]+(?![\w\s?&.\/;#~%"=-]*>)/g, (http) ->
+    str.replace(/https?:\/\/[\w?=&.\/-;#~%\-+]+(?![\w\s?&.\/;#~%"=\-]*>)/g, (http) ->
       text = http
       text = text.substring(0, 21) + "..." if text.length > 20
 
