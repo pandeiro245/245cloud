@@ -211,25 +211,82 @@ initSearch = () ->
 
 @initSelectRooms = () ->
   console.log 'initSelectRooms'
-  $('#select_rooms').html("<select></select>")
+
+  $('#select_rooms').html(Util.tag('div', null, {class: 'imgs'}))
+  $('#select_rooms').append(Util.tag('select', null, {class: 'col-sm-12'}))
+
+  $('#select_rooms select').html('')
+  $('#select_rooms select').css('display', 'block')
 
   ParseParse.all("Room", (rooms) ->
-    $('#select_rooms select').html('')
-    $('#select_rooms select').append(
-      "<option value=\"default:いつもの部屋\">いつもの部屋</option>"
-    )
+    $('#select_rooms .imgs').html('')
+
+    # いつも部屋
+    on2= 'https://ruffnote.com/attachments/24678'
+    off2= 'https://ruffnote.com/attachments/24677'
+    $img = Util.tag('img', on2)
+    $img.attr('data-values', "default:いつもの部屋")
+    $img.tooltip({title: 'いつもの部屋だけは未読数を管理してないよｗ'})
+    $img.addClass('col-sm-2 room_icon')
+    $img.addClass('on')
+    $img.css('cursor', 'pointer')
+    $('#select_rooms .imgs').append($img)
+
+    # DB部屋
     for room in rooms
-      total_count = room.attributes.comments_count
+      r = room.attributes
+      room_id = room.id
+      total_count = r.comments_count
       unread_count = getUnreadsCount(room.id, total_count)
-      style = ""
-      user = Parse.User.current()
-      $('#select_rooms select').append(
-        "<option value=\"#{room.id}:#{room.attributes.title}\">#{room.attributes.title} (#{unread_count}/#{total_count})</option>"
-      )
-    $("#select_rooms select").change(() ->
+      if r.img_on
+        on2= r.img_on
+        off2= 'https://ruffnote.com/attachments/24677'
+        $img = Util.tag('img', off2)
+        $img.attr('data-values', "#{room_id}:#{r.title}")
+        $img.tooltip({title: "未読数：#{unread_count}/投稿数：#{total_count}"})
+        $img.addClass('col-sm-2 room_icon')
+        $img.css('cursor', 'pointer')
+        $img.attr('onmouseover', "this.src='#{on2}'")
+        $img.attr('onmouseout', "this.src='#{off2}'")
+        $('#select_rooms .imgs').append($img)
+      else
+        $('#select_rooms select').append(
+          "<option value=\"#{room.id}:#{room.attributes.title}\">#{room.attributes.title} (#{unread_count}/#{total_count})</option>"
+        )
+      
+    #  その他
+    on2= 'https://ruffnote.com/attachments/24678'
+    off2= 'https://ruffnote.com/attachments/24677'
+    $img = Util.tag('img', off2)
+    $img.tooltip({title: 'その他の部屋を見たい場合はここをクリックしてね'})
+    $img.addClass('col-sm-2')
+    $img.addClass('sonota')
+    $img.css('cursor', 'pointer')
+    $img.attr('onmouseover', "this.src='#{on2}'")
+    $img.attr('onmouseout', "this.src='#{off2}'")
+
+    $img.attr('data-toggle', 'modal')
+    $img.attr('data-target', '#selectRoomModal')
+
+    $('#select_rooms .imgs').append($img)
+
+    $(document).on('change', "#select_rooms select", () ->
       vals = $(this).val().split(':')
       initRoom(vals[0], vals[1])
     )
+    $(document).on('click', "#select_rooms .imgs img.room_icon", () ->
+      console.log $(this)
+      console.log $(this).attr('data-values')
+      vals = $(this).attr('data-values').split(':')
+      initRoom(vals[0], vals[1])
+    )
+
+    $(document).on('click', "#select_rooms .imgs img.sonota", () ->
+      $('#selectRoomButton').click()
+    )
+
+
+
   )
 
 initChatting = () ->
