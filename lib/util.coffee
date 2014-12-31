@@ -26,8 +26,16 @@ class Util
     if mtime < 24 * 3600 * 1000
       time = parseInt(mtime/1000)
       min = parseInt(time/60)
-      sec = time - min*60
-      "#{Util.zero(min)}:#{Util.zero(sec)}"
+      if min > 60
+        hour = parseInt(min/60)
+        min = min - hour*60
+        sec = time - hour*60*60 - min*60
+      else
+        sec = time - min*60
+      if hour
+        "#{Util.zero(hour)}:#{Util.zero(min)}:#{Util.zero(sec)}"
+      else
+        "#{Util.zero(min)}:#{Util.zero(sec)}"
     else
       time = new Date(mtime * 1000)
       month = time.getMonth() + 1
@@ -52,7 +60,7 @@ class Util
     return "00" if i < 0
     if i < 10 then "0#{i}" else "#{i}"
 
-  @countDown: (duration, callback='reload', started=null) ->
+  @countDown: (duration, callback='reload', started=null, params={}) ->
     unless started
       started = (new Date()).getTime()
     past = (new Date()).getTime() - started
@@ -66,11 +74,15 @@ class Util
 
       remain2 = Util.time(remain)
       $('title').html(remain2)
-      $('.countdown').html("あと#{remain2}")
-      if callback == 'reload'
-        setTimeout("Util.countDown(#{duration}, null, #{started})", 1000)
+      if dom = params.dom
+        $dom = $(dom)
       else
-        setTimeout("Util.countDown(#{duration}, #{callback}, #{started})", 1000)
+        $dom = $('.countdown')
+      $dom.html("あと#{remain2}")
+      if callback == 'reload'
+        setTimeout("Util.countDown(#{duration}, null, #{started}, #{JSON.stringify(params)})", 1000)
+      else
+        setTimeout("Util.countDown(#{duration}, #{callback}, #{started}, #{JSON.stringify(params)})", 1000)
     else # end
       if callback == 'reload'
         location.reload()

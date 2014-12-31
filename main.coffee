@@ -20,6 +20,8 @@ $ ->
     'doing'
     'chatting_title'
     'chatting'
+    'nextkakuhen_title'
+    'nextkakuhen'
     'done'
     'you_title'
     'you'
@@ -79,6 +81,7 @@ $ ->
   initWhatis()
   initMemo() if location.href.match(/memo=/)
   initYou()
+  initNextkakuhen()
 
 init8tracks = () ->
   ruffnote(17763, '8tracks_title')
@@ -1034,3 +1037,14 @@ initYou = () ->
       addWorkload("#you", workload, disp)
   null, 24)
 
+
+initNextkakuhen = () ->
+ ruffnote(17782, 'nextkakuhen_title') 
+ $('#nextkakuhen').css('font-size', '50px')
+ time = (new Date("2015/1/1").getTime()) - (new Date().getTime())
+ if time > 0
+  Util.countDown(time, happynewyear, null, {dom: '#nextkakuhen'})
+
+happynewyear = () ->
+ $('#nextkakuhen_title').hide()
+ $('#nextkakuhen').html('あけましておめでとうございます！！')
