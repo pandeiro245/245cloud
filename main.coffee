@@ -933,8 +933,8 @@ initHatopoppo = () ->
   $audio = $('<audio></audio>')
   $audio.attr('id', 'hato')
   # thanks for http://musicisvfr.com/free/se/clock01.html
-  #$audio.attr('src', '/audio/Zihou01-4.mp3')
-  $audio.attr('src', '/audio/20141231_shion_poppo.m4a')
+  $audio.attr('src', '/audio/Zihou01-4.mp3')
+  #$audio.attr('src', '/audio/20141231_shion_poppo.m4a')
   $('#hatopoppo').append($audio)
 
 getOffset = (all_count) ->
