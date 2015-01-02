@@ -78,7 +78,6 @@ $ ->
   initRanking()
   initFixedStart()
   #initKpi()
-  initKpi()
   #initMlkcca()
   ParseBatch.repeat()
   initHatopoppo()
