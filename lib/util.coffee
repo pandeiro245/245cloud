@@ -70,7 +70,8 @@ class Util
      
       if remain < 8 * 1000 && remain >= 7 * 1000
         audio = document.getElementById("hato")
-        audio.play()
+        if audio.length
+          audio.play()
 
       remain2 = Util.time(remain)
       if dom = params.dom
