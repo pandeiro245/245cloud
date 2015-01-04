@@ -64,6 +64,8 @@ $ ->
     ['itoicom', 'http://www.1101.com/home.html']
   ]
 
+  $('#selectRoomButton').hide()
+
   for service in window.services
     if location.href.match("#{service[0]}=")
       initService($('#otukare_services'), service[1])
