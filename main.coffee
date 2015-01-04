@@ -222,11 +222,11 @@ initSearch = () ->
     $('#select_rooms .imgs').html('')
 
     # いつも部屋
-    on2= 'https://ruffnote.com/attachments/24678'
-    off2= 'https://ruffnote.com/attachments/24677'
+    on2= 'https://ruffnote.com/attachments/24831'
+    off2= 'https://ruffnote.com/attachments/24832'
     $img = Util.tag('img', on2)
     $img.attr('data-values', "default:いつもの部屋")
-    $img.tooltip({title: 'いつもの部屋だけは未読数を管理してないよｗ'})
+    $img.tooltip({title: 'いつもの部屋はログが流れやすいよ'})
     $img.addClass('col-sm-2 room_icon')
     $img.addClass('on')
     $img.css('cursor', 'pointer')
@@ -244,7 +244,7 @@ initSearch = () ->
       unread_count = getUnreadsCount(room.id, total_count)
       if r.img_on
         on2= r.img_on
-        off2= 'https://ruffnote.com/attachments/24677'
+        off2= r.img_off
         $img = Util.tag('img', off2)
         $img.attr('data-values', "#{room_id}:#{r.title}")
         $img.tooltip({title: "未読数：#{unread_count} / 投稿数：#{total_count}"})
@@ -259,8 +259,8 @@ initSearch = () ->
         )
       
     #  その他
-    on2= 'https://ruffnote.com/attachments/24678'
-    off2= 'https://ruffnote.com/attachments/24677'
+    on2= 'https://ruffnote.com/attachments/24855'
+    off2= 'https://ruffnote.com/attachments/24854'
     $img = Util.tag('img', off2)
     $img.tooltip({title: 'その他の部屋を見たい場合はここをクリックしてね'})
     $img.addClass('col-sm-2')
