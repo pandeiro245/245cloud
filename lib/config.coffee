@@ -17,6 +17,6 @@ else
   env.facebook_app_id = '322004764668180' # localhost:3001
   env.milkcocoa = 'io-fi3zt6p3l'
 
-env.is_kakuhen = true
+env.is_kakuhen = false
 
 @env = env
