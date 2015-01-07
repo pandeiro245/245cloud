@@ -513,9 +513,10 @@ start = () ->
 
   @env.is_doing = true
   @syncWorkload('doing')
-
-  #initComments()
-  #@initSelectRooms()
+  
+  if @env.is_kakuhen
+    initComments()
+    @initSelectRooms()
 
   Util.countDown(@env.pomotime*60*1000, complete)
 
@@ -590,7 +591,8 @@ complete = () ->
   $("#playing").fadeOut()
   $("#search").fadeOut()
   $("#playing").html('') # for stopping
-  @initSelectRooms()
+  unless @env.is_kakuhen
+    @initSelectRooms()
 
   alert '24分間お疲れ様でした！5分間交換日記ができます☆' if location.href.match('alert') unless @env.is_done
 
