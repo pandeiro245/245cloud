@@ -45,10 +45,11 @@ class @ParseParse
         console.log error
     })
 
-  @all: (model_name, callback) ->
+  @all: (model_name, callback, params={}) ->
     Model = Parse.Object.extend(model_name)
     query = new Parse.Query(Model)
     query.limit(999999)
+    query.descending("createdAt")
     query.find({
       success: (data) ->
         callback(data)
