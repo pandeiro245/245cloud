@@ -25,6 +25,8 @@ $ ->
     'done'
     'you_title'
     'you'
+    'calendar_title'
+    'calendar'
     'ranking_title'
     'ranking'
     '8tracks_title'
@@ -87,6 +89,19 @@ $ ->
   initMemo() if location.href.match(/memo=/)
   initYou()
   initNextkakuhen()
+  initCalendar()
+
+initCalendar = () ->
+  $('#calendar_title').html("<h2 class=\"status\">カレンダー</h2>")
+  $('#calendar').html("""
+<div>
+<span onClick='Util.calendar(1)'><B>&lt;&lt;</B></span>
+<span id=\"dValue\" style=\"visibility:hidden\"></span>
+<span onClick='Util.calendar(2)'><B>&gt;&gt;</B></span>
+</div>
+<DIV id='carenda'></DIV>
+  """)
+  Util.calendar(0)
 
 init8tracks = () ->
   ruffnote(17763, '8tracks_title')
