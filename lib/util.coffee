@@ -11,7 +11,6 @@ class Util
       if typeof(param) == 'object'
         id = param[0]
         attr = param[1]
-        console.log attr.is_row
       else
         id = param
       $item = $('<div></div>')
@@ -151,14 +150,14 @@ class Util
 
     return $tag
 
-  @calendar: (num) ->
+  @calendar: (key) ->
     now = new Date()
-    switch parseInt(num)
-      when 0
+    switch key
+      when 'thismonth'
         year = now.getFullYear()
         month = now.getMonth() + 1
         date = now.getDate()
-      when 1
+      when 'previous'
         backMDate = new Date(@dValue - 24 * 60 * 60 * 1000 * 1)
         if backMDate.getMonth() is now.getMonth() and backMDate.getFullYear() is now.getFullYear()
           year = now.getFullYear()
@@ -168,7 +167,7 @@ class Util
           year = backMDate.getFullYear()
           month = backMDate.getMonth() + 1
           date = -1
-      when 2
+      when 'next'
         nextMDate = new Date(@dValue + 24 * 60 * 60 * 1000 * 31)
         if nextMDate.getMonth() is now.getMonth() and nextMDate.getFullYear() is now.getFullYear()
           year = now.getFullYear()
@@ -182,9 +181,11 @@ class Util
     last_date = new Array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
     editMsg = undefined
     last_date[1] = 29  unless (year % 100 is 0) and (year % 400 isnt 0)  if year % 4 is 0  if month is 2
-    editMsg = ""
-    editMsg += "<TABLE class='table table-borderd' style='width:100%;'><TR><TD colspan='7' align='center'><B><U><FONT size='-1'>" + year + "年" + month + "月</FONT></B></U></TD></TR>\n"
-    editMsg += "<TR>" + defTD("日", "red") + defTD("月", "black") + defTD("火", "black") + defTD("水", "black") + defTD("木", "black") + defTD("金", "black") + defTD("土", "blue") + "</TR>\n"
+
+    $('.thismonth').html("#{year}年#{month}月")
+
+    editMsg = "<TABLE class='table table-borderd' style='width:100%;'>"
+    editMsg += "<TR>" + defTD("日", "red") + defTD("月", "black") + defTD("火", "black") + defTD("水", "black") + defTD("木", "black") + defTD("金", "black") + defTD("土", "blue") + "</TR>"
     editMsg += "<TR>"
     dayIndex = 0
     while dayIndex < (new Date(year, month - 1, 1)).getDay()
