@@ -83,7 +83,7 @@ $ ->
   initFixedStart()
   #initKpi()
   #initMlkcca()
-  ParseBatch.repeat()
+  #ParseBatch.repeat()
   initHatopoppo()
   initWhatis()
   initMemo() if location.href.match(/memo=/)
@@ -94,11 +94,12 @@ $ ->
 initCalendar = () ->
   $('#calendar_title').html("<h2 class=\"status\">歴代の最多ポモラー</h2>")
   $('#calendar').html("""
-<span onClick='Util.calendar(1)'><B>&lt;&lt;</B></span>
-<span onClick='Util.calendar(2)'><B>&gt;&gt;</B></span>
+<span onClick=\"Util.calendar('previous')\"><B>&lt;&lt;</B></span>
+<span onClick=\"Util.calendar('thismonth')\" class='thismonth'></span>
+<span onClick=\"Util.calendar('next')\"><B>&gt;&gt;</B></span>
 <DIV id='carenda'></DIV>
   """)
-  Util.calendar(0)
+  Util.calendar('thismonth')
 
 init8tracks = () ->
   ruffnote(17763, '8tracks_title')
