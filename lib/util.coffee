@@ -153,17 +153,13 @@ class Util
 
   @calendar: (num) ->
     now = new Date()
-    year = undefined
-    month = undefined
-    date = undefined
-    dValue = document.getElementById("dValue")
     switch parseInt(num)
       when 0
         year = now.getFullYear()
         month = now.getMonth() + 1
         date = now.getDate()
       when 1
-        backMDate = new Date(parseInt(dValue.innerHTML) - 24 * 60 * 60 * 1000 * 1)
+        backMDate = new Date(@dValue - 24 * 60 * 60 * 1000 * 1)
         if backMDate.getMonth() is now.getMonth() and backMDate.getFullYear() is now.getFullYear()
           year = now.getFullYear()
           month = now.getMonth() + 1
@@ -173,7 +169,7 @@ class Util
           month = backMDate.getMonth() + 1
           date = -1
       when 2
-        nextMDate = new Date(parseInt(dValue.innerHTML) + 24 * 60 * 60 * 1000 * 31)
+        nextMDate = new Date(@dValue + 24 * 60 * 60 * 1000 * 31)
         if nextMDate.getMonth() is now.getMonth() and nextMDate.getFullYear() is now.getFullYear()
           year = now.getFullYear()
           month = now.getMonth() + 1
@@ -182,7 +178,7 @@ class Util
           year = nextMDate.getFullYear()
           month = nextMDate.getMonth() + 1
           date = -1
-    dValue.innerHTML = (new Date(year, month - 1, 1)).getTime()
+    @dValue = (new Date(year, month - 1, 1)).getTime()
     last_date = new Array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
     editMsg = undefined
     last_date[1] = 29  unless (year % 100 is 0) and (year % 400 isnt 0)  if year % 4 is 0  if month is 2
