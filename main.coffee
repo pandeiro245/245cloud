@@ -89,10 +89,15 @@ $ ->
   initMemo() if location.href.match(/memo=/)
   initYou()
   initNextkakuhen()
-  initCalendar()
+  
+  if user = Parse.User.current()
+    ParseParse.find('User', user.id, (user)->
+      window.current_user = user
+      initCalendar()
+    )
 
 initCalendar = () ->
-  $('#calendar_title').html("<h2 class=\"status\">歴代の最多ポモラー</h2>")
+  $('#calendar_title').html("<h2 class=\"status\">カレンダー</h2>")
   $('#calendar').html("""
 <span onClick=\"Util.calendar('previous')\"><B>&lt;&lt;</B></span>
 <span onClick=\"Util.calendar('thismonth')\" class='thismonth'></span>

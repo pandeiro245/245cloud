@@ -199,11 +199,11 @@ class Util
       else
         switch dayIndex
           when 0
-            editMsg += defTD(i, "red")
+            editMsg += defTD(i, "red", @dValue)
           when 6
-            editMsg += defTD(i, "blue")
+            editMsg += defTD(i, "blue", @dValue)
           else
-            editMsg += defTD(i, "black")
+            editMsg += defTD(i, "black", @dValue)
       editMsg += "</TR>\n"  if dayIndex is 6
       dayIndex++
       dayIndex %= 7
@@ -212,10 +212,20 @@ class Util
     editMsg += "</TABLE>\n"
     document.getElementById("carenda").innerHTML = editMsg
 
-defTD = (str, iro) ->
+defTD = (str, iro, dvalue) ->
   res = "<TD align='center'><span style='color:#{iro};'>#{str}</span>"
   if parseInt(str) > 0
-    res +="<br /><img class=\"icon icon_eAYx93GzJ8 img-thumbnail\" src=\"https://fbcdn-profile-a.akamaihd.net/hprofile-ak-xpa1/v/t1.0-1/c32.32.401.401/s50x50/148782_450079083380_6432972_n.jpg?oh=3325de845f373c56010954c6a8962e15&amp;oe=5529C090&amp;__gda__=1428309205_0d4bc0390bbbd9ae026d0ca3ae1bc5b7\">"
+    res +="<br /><img class=\"icon icon_eAYx93GzJ8 img-thumbnail\" src=\"#{window.current_user.get('icon_url')}\">"
+
+    target = new Date(dvalue)
+    year = target.getFullYear()
+    month = target.getMonth() + 1
+    key = "#{year}-#{Util.zero(month)}-#{Util.zero(str)}"
+    console.log key
+    if val = window.current_user.get('daily_workloads')[key]
+      res += "<br />(#{val})"
+    else
+      res += "<br />(0)"
   res += "</TD>"
   return res
 
