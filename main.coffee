@@ -382,7 +382,7 @@ initDone = () ->
     $("#done").append("<h2 class='status'><img src='https://ruffnote.com/attachments/24305' /></h2>")
     for workload in workloads
       continue unless workload.attributes.user
-      disp = "#{Util.hourMin(workload.createdAt)}開始（#{workload.attributes.number}回目）"
+      disp = "#{Util.hourMin(workload.createdAt)}開始<br />（#{workload.attributes.number}回目）"
       @addWorkload("#done", workload, disp)
   , null, 12)
  
@@ -818,14 +818,14 @@ initRanking = () ->
   $("#doing_title").show()
   t = new Date(workload.createdAt)
   end_time = @env.pomotime*60*1000 + t.getTime()
-  disp = "#{Util.hourMin(workload.createdAt)}開始（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
+  disp = "#{Util.hourMin(workload.createdAt)}開始<br />（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
   @addWorkload("#doing", workload, disp)
 
 @addChatting = (workload) ->
   $("#chatting_title").show()
   t = new Date(workload.createdAt)
   end_time = @env.pomotime*60*1000 + @env.chattime*60*1000 + t.getTime()
-  disp = "#{Util.hourMin(workload.createdAt)}開始（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
+  disp = "#{Util.hourMin(workload.createdAt)}開始<br />（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
   @addWorkload("#chatting", workload, disp)
 
 @addWorkload = (dom, workload, disp) ->
@@ -872,13 +872,15 @@ initRanking = () ->
   user_img = "<img class='icon icon_#{user_id} img-thumbnail' src='#{userIdToIconUrl(user_id)}' />"
 
   $item = $("""
+   <div class='row'>
    <h5>#{title} </h5>
-   <div>#{jacket}</div>
-   <div style='margin: 8px 0 5px;'>#{user_img}</div>
-   <div>#{disp}</div>
+   <div class='col-sm-5'>#{jacket}</div>
+   <div class='col-sm-7'>#{user_img}</div>
+   <div class='col-sm-7'>#{disp}</div>
    <div>#{fixed}</div>
    <div>#{stars}</div>
    <div>#{review}</div>
+   </div>
   """)
 
   unless dom == '#done'
@@ -891,7 +893,7 @@ initRanking = () ->
     $workload.addClass("user_#{user_id}")
     $workload.addClass("workload")
     $workload.addClass("col-sm-2")
-    $workload.css("min-height", '280px')
+    $workload.css("min-height", '180px')
     $workload.html($item)
     if workload.attributes # init
       $("#{dom}").append($workload)
@@ -1139,7 +1141,7 @@ initYou = () ->
   ParseParse.where('Workload', cond, (workloads) ->
     for workload in workloads
       continue unless workload.attributes.user
-      disp = "#{Util.hourMin(workload.createdAt)}開始（#{workload.attributes.number}回目）"
+      disp = "#{Util.hourMin(workload.createdAt)}開始<br />（#{workload.attributes.number}回目）"
       addWorkload("#you", workload, disp)
   null, 24)
 
