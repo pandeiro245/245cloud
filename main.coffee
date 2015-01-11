@@ -120,8 +120,8 @@ initStart = () ->
 
     #text = '曲お任せで24分間集中する！'
     text = [
-      'https://ruffnote.com/attachments/24347'
-      'https://ruffnote.com/attachments/24348'
+      'https://ruffnote.com/attachments/24898'
+      'https://ruffnote.com/attachments/24899'
     ]
     tooltip = '現在はSoundcloudの人気曲からランダム再生ですが今後もっと賢くなっていくはず'
     Util.addButton('start', $('#contents #start_buttons'), text, start_random, tooltip)
@@ -131,8 +131,8 @@ initStart = () ->
 
     #text = 'この曲で集中'
     text = [
-      'https://ruffnote.com/attachments/24353'
-      'https://ruffnote.com/attachments/24354'
+      'https://ruffnote.com/attachments/24900'
+      'https://ruffnote.com/attachments/24901'
     ]
     #tooltip = '無音ですが終了直前にはとぽっぽが鳴ります'
     Util.addButton('start', $('#fixedstart_button'), text, start_hash)
@@ -169,8 +169,8 @@ initStart = () ->
 
     #text = '無音で24分集中'
     text = [
-      'https://ruffnote.com/attachments/24349'
-      'https://ruffnote.com/attachments/24350'
+      'https://ruffnote.com/attachments/24904'
+      'https://ruffnote.com/attachments/24905'
     ]
     tooltip = '無音ですが終了直前にはとぽっぽが鳴ります'
     Util.addButton('start', $('#contents #start_buttons'), text, start_nomusic, tooltip)
@@ -844,13 +844,13 @@ initRanking = () ->
       href += "mixcloud:#{w.mc_id}"
     if w.et_id
       href += "8tracks:#{w.et_id}"
-    fixed = "<a href=\"#{href}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24327' /></a>"
+    fixed = "<a href=\"#{href}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24900' /></a>"
     jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<img src=\"https://ruffnote.com/attachments/24162\" />'}"
     title = w.title
   else
     title = '無音'
-    fixed = "<a href=\"#\" class='fixed_start'><img src='https://ruffnote.com/attachments/24333' /></a>"
-    jacket = "<img src=\"https://ruffnote.com/attachments/24163\" />"
+    fixed = "<a href=\"#\" class='fixed_start'><img src='https://ruffnote.com/attachments/24904' /></a>"
+    jacket = "<img src=\"https://ruffnote.com/attachments/24897\" />"
   user_img = "<img class='icon icon_#{user_id} img-thumbnail' src='#{userIdToIconUrl(user_id)}' />"
 
   $item = $("""
