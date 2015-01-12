@@ -20,11 +20,18 @@ h2.status img {
   text-align: center;
 }
 
+/* PC */
 @media (min-width: 657px) {
   #header img {
     /* width: 657px; */
   }
+  .inborder {
+    width: 200px;
+    margin: 0 auto;
+  }
 }
+
+/* SmartPhone */
 @media (max-width: 657px) {
   #header img {
     width: 100%;
@@ -71,11 +78,11 @@ li label input{
 }
 
 h5 {
-  max-height: 15px;
-  color: #ccc;
+  max-height: 13px;
+  color: #6d4922;
   overflow: hidden;
   width: 179px;
-  margin: 7px auto;
+  margin: 7px auto 4px;
 }
 
 .img-thumbnail.doing {
@@ -90,4 +97,20 @@ input#track {
 
 #memo textarea{
   height: 230px;
+}
+
+.disp {
+  padding: -3px 3px 6px;
+}
+
+.jacket {
+  width: 95px;
+  height: 95px;
+  border: solid 3px #fff;
+  border-radius: 7px;
+  margin: 2px;
+}
+
+.inborder .fixed_start img {
+  margin-top: 3px;
 }

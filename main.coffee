@@ -44,6 +44,7 @@ $ ->
     'kpi2'
     'kpi1_title'
     'kpi1'
+    'whatis_title'
     ['whatis', {is_row: false}]
     #'mlkcca_title'
     #'mlkcca'
@@ -93,11 +94,11 @@ $ ->
   if user = Parse.User.current()
     ParseParse.find('User', user.id, (user)->
       window.current_user = user
-      initCalendar()
+      #initCalendar()
     )
 
 initCalendar = () ->
-  $('#calendar_title').html("<h2 class=\"status\">カレンダー</h2>")
+  $("#calendar_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24895' /></h2>")
   $('#calendar').html("""
 <span onClick=\"Util.calendar('previous')\"><B>&lt;&lt;</B></span>
 <span onClick=\"Util.calendar('thismonth')\" class='thismonth'></span>
@@ -136,10 +137,10 @@ initStart = () ->
     $('#contents').append("<div id='start_buttons'></div>")
     $('#contents .fixedstart_button').hide()
 
-    #text = '曲お任せで24分間集中する！'
+    #text = '曲おまかせで24分間集中する！'
     text = [
-      'https://ruffnote.com/attachments/24898'
-      'https://ruffnote.com/attachments/24899'
+      'https://ruffnote.com/attachments/24919'
+      'https://ruffnote.com/attachments/24920'
     ]
     tooltip = '現在はSoundcloudの人気曲からランダム再生ですが今後もっと賢くなっていくはず'
     Util.addButton('start', $('#contents #start_buttons'), text, start_random, tooltip)
@@ -149,8 +150,8 @@ initStart = () ->
 
     #text = 'この曲で集中'
     text = [
-      'https://ruffnote.com/attachments/24900'
-      'https://ruffnote.com/attachments/24901'
+      'https://ruffnote.com/attachments/24921'
+      'https://ruffnote.com/attachments/24922'
     ]
     #tooltip = '無音ですが終了直前にはとぽっぽが鳴ります'
     Util.addButton('start', $('#fixedstart_button'), text, start_hash)
@@ -187,8 +188,8 @@ initStart = () ->
 
     #text = '無音で24分集中'
     text = [
-      'https://ruffnote.com/attachments/24904'
-      'https://ruffnote.com/attachments/24905'
+      'https://ruffnote.com/attachments/24926'
+      'https://ruffnote.com/attachments/24927'
     ]
     tooltip = '無音ですが終了直前にはとぽっぽが鳴ります'
     Util.addButton('start', $('#contents #start_buttons'), text, start_nomusic, tooltip)
@@ -235,9 +236,6 @@ initSearch = () ->
   $('#select_rooms').html(Util.tag('div', null, {class: 'imgs'}))
   $('#select_rooms').append(Util.tag('select', null, {class: 'col-sm-12'}))
 
-  $('#select_rooms select').html('')
-  $('#select_rooms select').css('display', 'block')
-
   ParseParse.all("Room", (rooms) ->
     $('#select_rooms .imgs').html('')
 
@@ -247,7 +245,7 @@ initSearch = () ->
     $img = Util.tag('img', on2)
     $img.attr('data-values', "default:いつもの部屋")
     $img.tooltip({title: 'いつもの部屋はログが流れやすいよ'})
-    $img.addClass('col-sm-2 room_icon')
+    $img.addClass('col-sm-2 room_icon room_link')
     $img.addClass('on')
     $img.css('cursor', 'pointer')
     $img.attr('data-on', "#{on2}")
@@ -268,14 +266,14 @@ initSearch = () ->
         $img = Util.tag('img', off2)
         $img.attr('data-values', "#{room_id}:#{r.title}")
         $img.tooltip({title: "未読数：#{unread_count} / 投稿数：#{total_count}"})
-        $img.addClass('col-sm-2 room_icon')
+        $img.addClass('col-sm-2 room_icon room_link')
         $img.css('cursor', 'pointer')
         $img.attr('data-on', "#{on2}")
         $img.attr('data-off', "#{off2}")
         $('#select_rooms .imgs').append($img)
       else
         $('.modal-body').append(
-          "<a class='room_icon' style='cursor: pointer; display:block;'  data-values=\"#{room.id}:#{room.attributes.title}\">#{room.attributes.title} (#{unread_count}/#{total_count})</option>"
+          "<a class='room_link' style='cursor: pointer; display:block;'  data-values=\"#{room.id}:#{room.attributes.title}\">#{room.attributes.title} (#{unread_count}/#{total_count})</option>"
         )
       
     #  その他
@@ -284,7 +282,7 @@ initSearch = () ->
     $img = Util.tag('img', off2)
     $img.tooltip({title: 'その他の部屋を見たい場合はここをクリックしてね'})
     $img.addClass('col-sm-2')
-    $img.addClass('sonota')
+    $img.addClass('room_icon sonota room_link')
     $img.css('cursor', 'pointer')
     $img.attr('data-toggle', 'modal')
     $img.attr('data-target', '#selectRoomModal')
@@ -293,38 +291,35 @@ initSearch = () ->
 
     $('#select_rooms .imgs').append($img)
 
-    $(document).on('change', "#select_rooms select", () ->
-      vals = $(this).val().split(':')
-      initRoom(vals[0], vals[1])
-    )
-    $(document).on('click', ".room_icon", () ->
-      for i in $('.on')
-        $(i).attr('src', $(i).attr('data-off'))
-        $(i).removeClass('on')
+    $(document).on('click', ".room_link", () ->
       $self = $(this)
-      $self.addClass('on')
-      $self.attr('src', $self.attr('data-on'))
-      vals = $self.attr('data-values').split(':')
-      initRoom(vals[0], vals[1])
+      if $self.hasClass('room_icon')
+        for i in $('.on')
+          $(i).attr('src', $(i).attr('data-off'))
+          $(i).removeClass('on')
+        $self.addClass('on')
+        $self.attr('src', $self.attr('data-on'))
+      if $self.hasClass('sonota')
+        $('#selectRoomButton').click()
+      else
+        vals = $self.attr('data-values').split(':')
+        initRoom(vals[0], vals[1])
       $('.modal-header .close').click()
     )
 
-    $(document).on('mouseover', ".room_icon, .sonota", () ->
+    $(document).on('click', ".room_link", () ->
+
+    )
+
+    $(document).on('mouseover', ".room_icon", () ->
       $self = $(this)
       $self.attr('src', $self.attr('data-on'))
     )
 
-    $(document).on('mouseout', ".room_icon, .sonota", () ->
+    $(document).on('mouseout', ".room_icon", () ->
       $self = $(this)
-      console.log $self
-      console.log $self.hasClass('on')
-      console.log $self.attr('data-off')
       unless $self.hasClass('on')
         $self.attr('src', $self.attr('data-off'))
-    )
-
-    $(document).on('click', "img.sonota", () ->
-      $('#selectRoomButton').click()
     )
   )
 
@@ -382,7 +377,7 @@ initDone = () ->
     $("#done").append("<h2 class='status'><img src='https://ruffnote.com/attachments/24305' /></h2>")
     for workload in workloads
       continue unless workload.attributes.user
-      disp = "#{Util.hourMin(workload.createdAt)}開始<br />（#{workload.attributes.number}回目）"
+      disp = "#{Util.hourMin(workload.createdAt)}開始（#{workload.attributes.number}回目）"
       @addWorkload("#done", workload, disp)
   , null, 12)
  
@@ -522,6 +517,7 @@ start = () ->
     'search_title'
     'ranking_title'
     'ranking'
+    'whatis_title'
     'whatis'
     'you_title'
     'you'
@@ -818,14 +814,14 @@ initRanking = () ->
   $("#doing_title").show()
   t = new Date(workload.createdAt)
   end_time = @env.pomotime*60*1000 + t.getTime()
-  disp = "#{Util.hourMin(workload.createdAt)}開始<br />（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
+  disp = "#{Util.hourMin(workload.createdAt)}開始（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
   @addWorkload("#doing", workload, disp)
 
 @addChatting = (workload) ->
   $("#chatting_title").show()
   t = new Date(workload.createdAt)
   end_time = @env.pomotime*60*1000 + @env.chattime*60*1000 + t.getTime()
-  disp = "#{Util.hourMin(workload.createdAt)}開始<br />（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
+  disp = "#{Util.hourMin(workload.createdAt)}開始（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
   @addWorkload("#chatting", workload, disp)
 
 @addWorkload = (dom, workload, disp) ->
@@ -862,25 +858,31 @@ initRanking = () ->
       href += "mixcloud:#{w.mc_id}"
     if w.et_id
       href += "8tracks:#{w.et_id}"
-    fixed = "<a href=\"#{href}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24900' /></a>"
-    jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" />' else '<img src=\"https://ruffnote.com/attachments/24162\" />'}"
+    fixed = "<a href=\"#{href}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24921' /></a>"
+    jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" class=\"jacket\" />' else '<img src=\"https://ruffnote.com/attachments/24162\" class=\"jacket\" />'}"
     title = w.title
   else
     title = '無音'
-    fixed = "<a href=\"#\" class='fixed_start'><img src='https://ruffnote.com/attachments/24904' /></a>"
-    jacket = "<img src=\"https://ruffnote.com/attachments/24897\" />"
+    fixed = "<a href=\"#\" class='fixed_start'><img src='https://ruffnote.com/attachments/24926' /></a>"
+    jacket = "<img src=\"https://ruffnote.com/attachments/24897\" class='jacket'/>"
   user_img = "<img class='icon icon_#{user_id} img-thumbnail' src='#{userIdToIconUrl(user_id)}' />"
 
-  $item = $("""
-   <div class='row'>
+  $item = Util.tag('div', null, {class: 'inborder'})
+  $item.css("border", '4px solid #eadba0')
+  $item.css("border-radius", '18px')
+  $item.css("background", '#fff')
+  $item.css("margin", '10px 5px 3px')
+  $item.css("padding", '0 0 6px')
+  $item.css("color", '#b2b2b2')
+
+  $item.html("""
    <h5>#{title} </h5>
-   <div class='col-sm-5'>#{jacket}</div>
-   <div class='col-sm-7'>#{user_img}</div>
-   <div class='col-sm-7'>#{disp}</div>
+   <span>#{jacket}</span>
+   <span>#{user_img}</span>
+   <div class='disp'>#{disp}</div>
    <div>#{fixed}</div>
    <div>#{stars}</div>
    <div>#{review}</div>
-   </div>
   """)
 
   unless dom == '#done'
@@ -1070,6 +1072,7 @@ artworkUrlWithNoimage = (artwork_url) ->
   artwork_url || 'https://ruffnote.com/attachments/24162'
 
 initWhatis = () ->
+  $("#whatis_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24896' /></h2>")
   now = new Date()
   month = now.getMonth() + 1
   day = now.getDate()
@@ -1141,7 +1144,7 @@ initYou = () ->
   ParseParse.where('Workload', cond, (workloads) ->
     for workload in workloads
       continue unless workload.attributes.user
-      disp = "#{Util.hourMin(workload.createdAt)}開始<br />（#{workload.attributes.number}回目）"
+      disp = "#{Util.hourMin(workload.createdAt)}開始（#{workload.attributes.number}回目）"
       addWorkload("#you", workload, disp)
   null, 24)
 
