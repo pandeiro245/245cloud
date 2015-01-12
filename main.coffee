@@ -244,7 +244,7 @@ initSearch = () ->
     off2= 'https://ruffnote.com/attachments/24832'
     $img = Util.tag('img', on2)
     $img.attr('data-values', "default:いつもの部屋")
-    $img.tooltip({title: 'いつもの部屋はログが流れやすいよ'})
+    $img.tooltip({title: 'いつもの部屋はログが流れやすいよ', placement: 'bottom'})
     $img.addClass('col-sm-2 room_icon room_link')
     $img.addClass('on')
     $img.css('cursor', 'pointer')
@@ -265,7 +265,7 @@ initSearch = () ->
         off2= r.img_off
         $img = Util.tag('img', off2)
         $img.attr('data-values', "#{room_id}:#{r.title}")
-        $img.tooltip({title: "未読数：#{unread_count} / 投稿数：#{total_count}"})
+        $img.tooltip({title: "未読数：#{unread_count} / 投稿数：#{total_count}", placement: 'bottom'})
         $img.addClass('col-sm-2 room_icon room_link')
         $img.css('cursor', 'pointer')
         $img.attr('data-on', "#{on2}")
@@ -280,7 +280,7 @@ initSearch = () ->
     on2= 'https://ruffnote.com/attachments/24855'
     off2= 'https://ruffnote.com/attachments/24854'
     $img = Util.tag('img', off2)
-    $img.tooltip({title: 'その他の部屋を見たい場合はここをクリックしてね'})
+    $img.tooltip({title: 'その他の部屋を見たい場合はここをクリックしてね', placement: 'bottom'})
     $img.addClass('col-sm-2')
     $img.addClass('room_icon sonota room_link')
     $img.css('cursor', 'pointer')

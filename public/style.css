@@ -114,3 +114,6 @@ input#track {
 .inborder .fixed_start img {
   margin-top: 3px;
 }
+
+.tooltip-inner {background-color: #6d4922;}
+.tooltip.bottom .tooltip-arrow {border-bottom-color: #6d4922;}
