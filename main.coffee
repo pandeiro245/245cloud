@@ -98,7 +98,7 @@ $ ->
     )
 
 initCalendar = () ->
-  $("#calendar_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24895' /></h2>")
+  $("#calendar_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24936' /></h2>")
   $('#calendar').html("""
 <span onClick=\"Util.calendar('previous')\"><B>&lt;&lt;</B></span>
 <span onClick=\"Util.calendar('thismonth')\" class='thismonth'></span>
@@ -325,7 +325,7 @@ initSearch = () ->
 
 initChatting = () ->
   console.log 'initChatting'
-  $("#chatting_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24306' /></h2>")
+  $("#chatting_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24938' /></h2>")
 
   cond = [
     ["is_done", true]
@@ -346,7 +346,7 @@ initChatting = () ->
 
 initDoing = () ->
   console.log 'initDoing'
-  $("#doing_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24310' /></h2>")
+  $("#doing_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24939' /></h2>")
   $("#doing_title").hide()
 
   cond = [
@@ -374,7 +374,7 @@ initDone = () ->
   ]
   ParseParse.where("Workload", cond, (workloads) ->
     return unless workloads.length > 0
-    $("#done").append("<h2 class='status'><img src='https://ruffnote.com/attachments/24305' /></h2>")
+    $("#done").append("<h2 class='status'><img src='https://ruffnote.com/attachments/24937' /></h2>")
     for workload in workloads
       continue unless workload.attributes.user
       disp = "#{Util.hourMin(workload.createdAt)}開始（#{workload.attributes.number}回目）"
@@ -1072,7 +1072,7 @@ artworkUrlWithNoimage = (artwork_url) ->
   artwork_url || 'https://ruffnote.com/attachments/24162'
 
 initWhatis = () ->
-  $("#whatis_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24896' /></h2>")
+  $("#whatis_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24942' /></h2>")
   now = new Date()
   month = now.getMonth() + 1
   day = now.getDate()
