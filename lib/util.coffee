@@ -11,7 +11,6 @@ class Util
       if typeof(param) == 'object'
         id = param[0]
         attr = param[1]
-        console.log attr.is_row
       else
         id = param
       $item = $('<div></div>')
@@ -150,5 +149,84 @@ class Util
         $tag.attr(attr, attrs[attr])
 
     return $tag
+
+  @calendar: (key) ->
+    now = new Date()
+    switch key
+      when 'thismonth'
+        year = now.getFullYear()
+        month = now.getMonth() + 1
+        date = now.getDate()
+      when 'previous'
+        backMDate = new Date(@dValue - 24 * 60 * 60 * 1000 * 1)
+        if backMDate.getMonth() is now.getMonth() and backMDate.getFullYear() is now.getFullYear()
+          year = now.getFullYear()
+          month = now.getMonth() + 1
+          date = now.getDate()
+        else
+          year = backMDate.getFullYear()
+          month = backMDate.getMonth() + 1
+          date = -1
+      when 'next'
+        nextMDate = new Date(@dValue + 24 * 60 * 60 * 1000 * 31)
+        if nextMDate.getMonth() is now.getMonth() and nextMDate.getFullYear() is now.getFullYear()
+          year = now.getFullYear()
+          month = now.getMonth() + 1
+          date = now.getDate()
+        else
+          year = nextMDate.getFullYear()
+          month = nextMDate.getMonth() + 1
+          date = -1
+    @dValue = (new Date(year, month - 1, 1)).getTime()
+    last_date = new Array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+    editMsg = undefined
+    last_date[1] = 29  unless (year % 100 is 0) and (year % 400 isnt 0)  if year % 4 is 0  if month is 2
+
+    $('.thismonth').html("#{year}年#{month}月")
+
+    editMsg = "<TABLE class='table table-borderd' style='width:100%;'>"
+    editMsg += "<TR>" + defTD("日", "red") + defTD("月", "black") + defTD("火", "black") + defTD("水", "black") + defTD("木", "black") + defTD("金", "black") + defTD("土", "blue") + "</TR>"
+    editMsg += "<TR>"
+    dayIndex = 0
+    while dayIndex < (new Date(year, month - 1, 1)).getDay()
+      editMsg += defTD("&nbsp;", "white")
+      dayIndex++
+    i = 1
+    while i <= last_date[month - 1]
+      editMsg += "<TR>"  if i isnt 1 and dayIndex is 0
+      if i is date
+        editMsg += defTD(i, "orange")
+      else
+        switch dayIndex
+          when 0
+            editMsg += defTD(i, "red", @dValue)
+          when 6
+            editMsg += defTD(i, "blue", @dValue)
+          else
+            editMsg += defTD(i, "black", @dValue)
+      editMsg += "</TR>\n"  if dayIndex is 6
+      dayIndex++
+      dayIndex %= 7
+      i++
+    editMsg += "</TR>\n"  unless dayIndex is 7
+    editMsg += "</TABLE>\n"
+    document.getElementById("carenda").innerHTML = editMsg
+
+defTD = (str, iro, dvalue) ->
+  res = "<TD align='center'><span style='color:#{iro};'>#{str}</span>"
+  if parseInt(str) > 0
+    res +="<br /><img class=\"icon icon_eAYx93GzJ8 img-thumbnail\" src=\"#{window.current_user.get('icon_url')}\">"
+
+    target = new Date(dvalue)
+    year = target.getFullYear()
+    month = target.getMonth() + 1
+    key = "#{year}-#{Util.zero(month)}-#{Util.zero(str)}"
+    console.log key
+    if val = window.current_user.get('daily_workloads')[key]
+      res += "<br />(#{val})"
+    else
+      res += "<br />(0)"
+  res += "</TD>"
+  return res
 
 window.Util = window.Util || Util

@@ -25,6 +25,8 @@ $ ->
     'done'
     'you_title'
     'you'
+    'calendar_title'
+    'calendar'
     'ranking_title'
     'ranking'
     '8tracks_title'
@@ -81,12 +83,28 @@ $ ->
   initFixedStart()
   #initKpi()
   #initMlkcca()
-  ParseBatch.repeat()
+  #ParseBatch.repeat()
   initHatopoppo()
   initWhatis()
   initMemo() if location.href.match(/memo=/)
   initYou()
   initNextkakuhen()
+  
+  if user = Parse.User.current()
+    ParseParse.find('User', user.id, (user)->
+      window.current_user = user
+      initCalendar()
+    )
+
+initCalendar = () ->
+  $('#calendar_title').html("<h2 class=\"status\">カレンダー</h2>")
+  $('#calendar').html("""
+<span onClick=\"Util.calendar('previous')\"><B>&lt;&lt;</B></span>
+<span onClick=\"Util.calendar('thismonth')\" class='thismonth'></span>
+<span onClick=\"Util.calendar('next')\"><B>&gt;&gt;</B></span>
+<DIV id='carenda'></DIV>
+  """)
+  Util.calendar('thismonth')
 
 init8tracks = () ->
   ruffnote(17763, '8tracks_title')
