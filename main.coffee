@@ -36,6 +36,7 @@ $ ->
     'playing'
     'complete'
     'select_rooms'
+    'rooms_title'
     'rooms'
     'kpi_title'
     'kpi3_title'
@@ -236,9 +237,9 @@ initSearch = () ->
 
 @initSelectRooms = () ->
   console.log 'initSelectRooms'
-
-  $('#select_rooms').html(Util.tag('div', null, {class: 'imgs'}))
-  $('#select_rooms').append(Util.tag('select', null, {class: 'col-sm-12'}))
+  $('#rooms_title').html(Util.tag('h2', Util.tag('img', 'https://ruffnote.com/attachments/24968'), {class: 'status'}))
+  $('#select_rooms').html(Util.tag('h2', Util.tag('img', 'https://ruffnote.com/attachments/24967'), {class: 'status'}))
+  $('#select_rooms').append(Util.tag('div', null, {class: 'imgs'}))
 
   ParseParse.all("Room", (rooms) ->
     $('#select_rooms .imgs').html('')
@@ -667,7 +668,7 @@ complete = () ->
   , workload, 9999)
 
   $complete = $('#complete')
-  $complete.html('24分おつかれさまでした！5分間交換ノートが見られます')
+  $complete.html('')
 
   initReview() if location.href.match('review=')
   initComments()

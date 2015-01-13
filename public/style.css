@@ -2,9 +2,17 @@ body {
   text-align: center;
 }
 
-h2.status {
+h2.status, hr.status {
   background: repeat-x url('https://ruffnote.com/attachments/24944')
 }
+
+hr.status{
+  border: none;
+  height: 50px;
+  margin-top: 50px;
+  width: 100%;
+}
+
 h2.status img {
   margin-top: -12px;
   background: #fff;
