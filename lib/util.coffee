@@ -92,10 +92,10 @@ class Util
     if duration > past # yet end
       remain = duration-past
      
-      if remain < 8 * 1000 && remain >= 7 * 1000
+      if remain < 8 * 1000 && !window.is_hato
         audio = document.getElementById("hato")
-        if audio
-          audio.play()
+        audio.play()
+        window.is_hato = true
 
       remain2 = Util.time(remain)
       remain2_img = Util.timeImg(remain)
