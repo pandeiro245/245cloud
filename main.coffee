@@ -129,7 +129,11 @@ initStart = () ->
   Util.beforeunload(text, 'env.is_doing')
   
   if Parse.User.current()
-    $('#contents').append("<div class='countdown' ></div>")
+    $('#contents').append("""
+      <div class='countdown2' >
+      <div class='countdown' ></div>
+      </div>
+    """)
       
     $('#contents').append("<br>")
 

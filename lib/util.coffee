@@ -43,6 +43,29 @@ class Util
       min  = time.getMinutes()
       "#{Util.zero(month)}/#{Util.zero(day)} #{Util.zero(hour)}:#{Util.zero(min)}"
 
+  @timeImg: (mtime) ->
+    @time(mtime).split(':').map((str) ->
+      str.split('').map((num) ->
+        Util.int2img(num)
+      ).join('')
+    ).join('<img src="https://ruffnote.com/attachments/24965" />')
+
+  @int2img: (int) ->
+    int = parseInt(int)
+    num = {
+      0:  24953
+      1:  24954
+      2:  24955
+      3:  24956
+      4:  24958
+      5:  24959
+      6:  24960
+      7:  24961
+      8:  24962
+      9:  24963
+    }[int]
+    return "<img src=\"https://ruffnote.com/attachments/#{num}\" />"
+
   @monthDay: (time) ->
     date = new Date(time)
     month = date.getMonth() + 1
@@ -64,6 +87,8 @@ class Util
       started = (new Date()).getTime()
     past = (new Date()).getTime() - started
 
+    $('.countdown2').show()
+
     if duration > past # yet end
       remain = duration-past
      
@@ -73,12 +98,15 @@ class Util
           audio.play()
 
       remain2 = Util.time(remain)
+      remain2_img = Util.timeImg(remain)
       if dom = params.dom
         $dom = $(dom)
       else
         $('title').html(remain2)
         $dom = $('.countdown')
-      $dom.html("あと#{remain2}")
+      #$dom.html("あと#{remain2}")
+      $dom.html("<img src='https://ruffnote.com/attachments/24966' />#{remain2_img}")
+
       if callback == 'reload'
         setTimeout("Util.countDown(#{duration}, null, #{started}, #{JSON.stringify(params)})", 1000)
       else

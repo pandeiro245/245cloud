@@ -117,3 +117,21 @@ input#track {
 
 .tooltip-inner {background-color: #6d4922;}
 .tooltip.bottom .tooltip-arrow {border-bottom-color: #6d4922;}
+
+.countdown2 {
+  display: none;
+  background: #ff9c9c;
+  padding: 3px;
+  border-radius: 35px;
+  width: 246px;
+  margin: 0 auto;
+}
+
+.countdown {
+  background: #ff9c9c;
+  height: 68px;
+  width: 240px;
+  border-radius: 35px;
+  border: solid 2px #fff;
+  padding: 9px 10px;
+}
