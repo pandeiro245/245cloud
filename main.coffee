@@ -161,35 +161,12 @@ initStart = () ->
     #tooltip = '無音ですが終了直前にはとぽっぽが鳴ります'
     Util.addButton('start', $('#fixedstart_button'), text, start_hash)
 
-    id = location.hash.split(':')[1]
-    if location.hash.match(/soundcloud/)
-      Soundcloud.fetch(id, @env.sc_client_id, (track) ->
-        artwork_url = artworkUrlWithNoimage(track['artwork_url'])
-        text = "<h5>#{track['title']}</h5><img src='#{artwork_url}'>"
-        $('#contents #fixedstart_artwork').append(text)
-      )
+    ParseMusic.fetch(location.hash, (track) ->
+      picture = artworkUrlWithNoimage(track.picture)
+      text = "<h5>#{track['title']}</h5><img src='#{picture}'>"
+      $('#contents #fixedstart_artwork').append(text)
       $('#contents #fixedstart_button').fadeIn()
-    if location.hash.match(/youtube/)
-      Youtube.fetch(id, (track) ->
-        artwork_url = artworkUrlWithNoimage(track['entry']['media$group']['media$thumbnail'][3]['url'])
-        text = "<h5>#{track['entry']['title']['$t']}</h5><img src='#{artwork_url}'>"
-        $('#contents #fixedstart_artwork').append(text)
-      )
-      $('#contents #fixedstart_button').fadeIn()
-    if location.hash.match(/mixcloud/)
-      Mixcloud.fetch(id, (track) ->
-        artwork_url = artworkUrlWithNoimage(track.pictures.medium)
-        text = "<h5>#{track.name}</h5><img src='#{artwork_url}'>"
-        $('#contents #fixedstart_artwork').append(text)
-      )
-      $('#contents #fixedstart_button').fadeIn()
-    if location.hash.match(/8tracks/)
-      EightTracks.fetch(id, @env.et_client_id, (track) ->
-        artwork_url = artworkUrlWithNoimage(track.mix.cover_urls.sq100)
-        text = "<h5>#{track.mix.name}</h5><img src='#{artwork_url}'>"
-        $('#contents #fixedstart_artwork').append(text)
-      )
-      $('#contents #fixedstart_button').fadeIn()
+    )
 
     #text = '無音で24分集中'
     text = [
@@ -1033,10 +1010,24 @@ searchMusics = () ->
   localStorage['search_music_title'] = q
 
   $tracks = $('#tracks')
-  Youtube.search(q, $tracks)
-  Soundcloud.search(q, @env.sc_client_id, $tracks)
-  Mixcloud.search(q, $tracks)
-  #EightTracks.search(q, $tracks)
+  ParseMusic.search(q, (tracks) ->
+    for track in tracks
+      artwork = "<img src=\"https://ruffnote.com/attachments/24162\" width='100px'/>"
+      if track.picture
+        artwork = "<img src=\"#{track.picture}\" width='100px'/>"
+      href = "soundcloud:#{track.id}"
+      $tracks.append("""
+        <div class='col-sm-2' style='min-height: 200px;'>
+          <a href='#{track.url}' target='_blank'>#{track.title}</a>
+          (#{Util.time(track.duration)})<br />
+          <br />
+          #{artwork}
+          <br />
+          <a href=\"##{href}\" class='fixed_start btn btn-default'>再生</a>
+          <!--<a href=\"#\" class='add_playlist btn btn-default'>追加</a>-->
+        </div>
+      """)
+    )
 
 
 initHatopoppo = () ->
