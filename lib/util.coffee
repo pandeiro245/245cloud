@@ -72,12 +72,17 @@ class Util
     day  = date.getDate()
     "#{Util.zero(month)}月#{Util.zero(day)}日"
 
-  @hourMin: (time) ->
+  @hourMin: (time, suffix='') ->
+    now = new Date()
     date = new Date(time)
-    hour = date.getHours()
-    min  = date.getMinutes()
-    "#{Util.zero(hour)}:#{Util.zero(min)}"
-
+    if now.getDate() == date.getDate() # today
+      hour = date.getHours()
+      min  = date.getMinutes()
+      "#{Util.zero(hour)}:#{Util.zero(min)}#{suffix}"
+    else
+      month = date.getMonth() + 1
+      day  = date.getDate()
+      "#{month}/#{day}"
   @zero: (i) ->
     return "00" if i < 0
     if i < 10 then "0#{i}" else "#{i}"

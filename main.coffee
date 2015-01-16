@@ -382,7 +382,7 @@ initDone = () ->
     $("#done").append("<h2 class='status'><img src='https://ruffnote.com/attachments/24937' /></h2>")
     for workload in workloads
       continue unless workload.attributes.user
-      disp = "#{Util.hourMin(workload.createdAt)}開始（#{workload.attributes.number}回目）"
+      disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.attributes.number}回目）"
       @addWorkload("#done", workload, disp)
   , null, 12)
  
@@ -819,14 +819,14 @@ initRanking = () ->
   $("#doing_title").show()
   t = new Date(workload.createdAt)
   end_time = @env.pomotime*60*1000 + t.getTime()
-  disp = "#{Util.hourMin(workload.createdAt)}開始（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
+  disp = "#{Util.hourMin(workload.createdAt, '開始')}（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
   @addWorkload("#doing", workload, disp)
 
 @addChatting = (workload) ->
   $("#chatting_title").show()
   t = new Date(workload.createdAt)
   end_time = @env.pomotime*60*1000 + @env.chattime*60*1000 + t.getTime()
-  disp = "#{Util.hourMin(workload.createdAt)}開始（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
+  disp = "#{Util.hourMin(workload.createdAt, '開始')}（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
   @addWorkload("#chatting", workload, disp)
 
 @addWorkload = (dom, workload, disp) ->
@@ -944,7 +944,7 @@ initService = ($dom, url) ->
     c = comment
   user = c.user
 
-  t = new Date(comment.createdAt)
+  t = new Date()
   hour = t.getHours()
   min = t.getMinutes()
 
@@ -974,7 +974,7 @@ initService = ($dom, url) ->
     </a>
     <td>
     <td>#{Util.parseHttp(c.body)}#{file}</td>
-    <td>#{hour}時#{min}分</td>
+    <td>#{Util.hourMin(comment.createdAt)}</td>
     </tr>
     """
     if typeof(comment.attributes) != 'undefined'
@@ -1149,7 +1149,7 @@ initYou = () ->
   ParseParse.where('Workload', cond, (workloads) ->
     for workload in workloads
       continue unless workload.attributes.user
-      disp = "#{Util.hourMin(workload.createdAt)}開始（#{workload.attributes.number}回目）"
+      disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.attributes.number}回目）"
       addWorkload("#you", workload, disp)
   null, 24)
 
