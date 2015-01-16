@@ -144,6 +144,11 @@ input#track {
   padding: 9px 10px;
 }
 
+.socialbutton {
+  position: absolute;
+  right: 0;
+}
+
 #twitter-widget-0 {
   position: relative;
   top: 5px; 
