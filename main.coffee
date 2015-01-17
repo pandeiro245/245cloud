@@ -10,6 +10,7 @@ $ ->
   ParseParse.addAccesslog()
   Util.scaffolds([
     ['header', {is_row: false}]
+    'news'
     ['otukare', {is_hide: true}]
     'ad'
     'review'
@@ -56,6 +57,7 @@ $ ->
   Util.realtime()
 
   ruffnote(13475, 'header', initStart)
+  ruffnote(18004, 'news')
   ruffnote(13477, 'footer')
   ruffnote(17758, 'search_title')
   ruffnote(17762, 'ranking_title')
@@ -526,6 +528,8 @@ start = () ->
     'whatis'
     'you_title'
     'you'
+    'news'
+    'footer'
   ]
   for dom in doms
     $("##{dom}").hide()
