@@ -153,3 +153,18 @@ input#track {
   position: relative;
   top: 5px; 
 }
+
+#start_buttons {
+  width: 100%;
+  text-align: center;
+}
+
+#start_buttons .wrapper{
+  text-align: center;
+}
+
+#start_buttons .wrapper div{
+  display: inline;
+  width: 150px;
+}
+

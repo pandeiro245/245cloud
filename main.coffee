@@ -1,5 +1,7 @@
 @env.is_doing = false
 
+@nomusic_url = 'https://ruffnote.com/attachments/24985'
+
 $ ->
   ParseParse.all("User", (users) ->
     for user in users
@@ -15,6 +17,7 @@ $ ->
     'ad'
     'review'
     'contents'
+    'start_buttons'
     'memo_title'
     'memo'
     'doing_title'
@@ -140,9 +143,11 @@ initStart = () ->
       
     $('#contents').append("<br>")
 
-    $('#contents').append("<div id='fixedstart_artwork'></div>")
-    $('#contents').append("<div id='start_buttons'></div>")
-    $('#contents .fixedstart_button').hide()
+    $('#start_buttons').html("""
+      <div id='random' class='col-sm-2'></div>
+      <div id='fixedstart' class='col-sm-2'></div>
+      <div id='nomusic' class='col-sm-2'></div>
+    """)
 
     #text = '曲おまかせで24分間集中する！'
     text = [
@@ -150,48 +155,69 @@ initStart = () ->
       'https://ruffnote.com/attachments/24920'
     ]
     tooltip = '現在はSoundcloudの人気曲からランダム再生ですが今後もっと賢くなっていくはず'
-    Util.addButton('start', $('#contents #start_buttons'), text, start_random, tooltip)
+    $random = $('#start_buttons #random')
+    $random.html("""<h5>おまかせ</h5>
+      <img src="\https://ruffnote.com/attachments/24982\" class='jacket'/>
+    """)
+    #Util.addButton('start', $random, text, start_random, tooltip)
+    Util.addButton('start', $random, text, start_random)
+    $random.addClass("col-sm-offset-#{getOffset(2)}")
  
-    $('#contents #start_buttons').append("<span id='fixedstart_button'></span>")
-    $('#fixedstart_button').hide()
-
     #text = 'この曲で集中'
-    text = [
+    $('#fixedstart').hide()
+    fixed_text = [
       'https://ruffnote.com/attachments/24921'
       'https://ruffnote.com/attachments/24922'
     ]
-    #tooltip = '無音ですが終了直前にはとぽっぽが鳴ります'
-    Util.addButton('start', $('#fixedstart_button'), text, start_hash)
-
     id = location.hash.split(':')[1]
     if location.hash.match(/soundcloud/)
       Soundcloud.fetch(id, @env.sc_client_id, (track) ->
         artwork_url = artworkUrlWithNoimage(track['artwork_url'])
-        text = "<h5>#{track['title']}</h5><img src='#{artwork_url}'>"
-        $('#contents #fixedstart_artwork').append(text)
+        txt = "<h5>#{track['title']}</h5>"
+        $('#fixedstart').append(txt)
+        txt = "<img src='#{artwork_url}' class='jacket'>"
+        $('#fixedstart').append(txt)
+        Util.addButton('start', $('#fixedstart'), fixed_text, start_hash)
+        $('#fixedstart').fadeIn()
+        $('#random').removeClass("col-sm-offset-#{getOffset(2)}")
+        $('#random').addClass("col-sm-offset-#{getOffset(3)}")
       )
-      $('#contents #fixedstart_button').fadeIn()
     if location.hash.match(/youtube/)
       Youtube.fetch(id, (track) ->
         artwork_url = artworkUrlWithNoimage(track['entry']['media$group']['media$thumbnail'][3]['url'])
-        text = "<h5>#{track['entry']['title']['$t']}</h5><img src='#{artwork_url}'>"
-        $('#contents #fixedstart_artwork').append(text)
+        txt = "<h5>#{track['entry']['title']['$t']}</h5>"
+        $('#fixedstart_title').append(txt)
+        txt = "<img src='#{artwork_url}' class='jacket'>"
+        $('#fixedstart').append(txt)
+        Util.addButton('start', $('#fixedstart'), fixed_text, start_hash)
+        $('#fixedstart').fadeIn()
+        $('#random').removeClass("col-sm-offset-#{getOffset(2)}")
+        $('#random').addClass("col-sm-offset-#{getOffset(3)}")
       )
-      $('#contents #fixedstart_button').fadeIn()
     if location.hash.match(/mixcloud/)
       Mixcloud.fetch(id, (track) ->
         artwork_url = artworkUrlWithNoimage(track.pictures.medium)
-        text = "<h5>#{track.name}</h5><img src='#{artwork_url}'>"
-        $('#contents #fixedstart_artwork').append(text)
+        txt = "<h5>#{track.name}</h5>"
+        $('#fixedstart_title').append(txt)
+        txt = "<img src='#{artwork_url}' class='jacket'>"
+        $('#fixedstart').append(txt)
+        Util.addButton('start', $('#fixedstart'), fixed_text, start_hash)
+        $('#fixedstart').fadeIn()
+        $('#random').removeClass("col-sm-offset-#{getOffset(2)}")
+        $('#random').addClass("col-sm-offset-#{getOffset(3)}")
       )
-      $('#contents #fixedstart_button').fadeIn()
     if location.hash.match(/8tracks/)
       EightTracks.fetch(id, @env.et_client_id, (track) ->
         artwork_url = artworkUrlWithNoimage(track.mix.cover_urls.sq100)
-        text = "<h5>#{track.mix.name}</h5><img src='#{artwork_url}'>"
-        $('#contents #fixedstart_artwork').append(text)
+        txt = "<h5>#{track.mix.name}</h5>"
+        $('#fixedstart_title').append(txt)
+        txt = "<img src='#{artwork_url}' class='jacket'>"
+        $('#fixedstart').append(txt)
+        Util.addButton('start', $('#fixedstart'), fixed_text, start_hash)
+        $('#fixedstart').fadeIn()
+        $('#random').removeClass("col-sm-offset-#{getOffset(2)}")
+        $('#random').addClass("col-sm-offset-#{getOffset(3)}")
       )
-      $('#contents #fixedstart_button').fadeIn()
 
     #text = '無音で24分集中'
     text = [
@@ -199,7 +225,12 @@ initStart = () ->
       'https://ruffnote.com/attachments/24927'
     ]
     tooltip = '無音ですが終了直前にはとぽっぽが鳴ります'
-    Util.addButton('start', $('#contents #start_buttons'), text, start_nomusic, tooltip)
+    $nomusic = $('#start_buttons #nomusic')
+
+    $nomusic.html('<h5>無音</h5>')
+    $nomusic.append(Util.tag('img', 'https://ruffnote.com/attachments/24981', {class: 'jacket'}))
+    #Util.addButton('start', $nomusic, text, start_nomusic, tooltip)
+    Util.addButton('start', $nomusic, text, start_nomusic)
 
     if location.href.match('review=')
       attrs = {
@@ -868,12 +899,12 @@ initRanking = () ->
     if w.et_id
       href += "8tracks:#{w.et_id}"
     fixed = "<a href=\"#{href}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24921' /></a>"
-    jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" class=\"jacket\" />' else '<img src=\"https://ruffnote.com/attachments/24162\" class=\"jacket\" />'}"
+    jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" class=\"jacket\" />' else "<img src=\"#{@nomusic_url}\" class=\"jacket\" />"}"
     title = w.title
   else
     title = '無音'
     fixed = "<a href=\"#\" class='fixed_start'><img src='https://ruffnote.com/attachments/24926' /></a>"
-    jacket = "<img src=\"https://ruffnote.com/attachments/24897\" class='jacket'/>"
+    jacket = "<img src=\"https://ruffnote.com/attachments/24981\" class='jacket'/>"
   user_img = "<img class='icon icon_#{user_id} img-thumbnail' src='#{userIdToIconUrl(user_id)}' />"
 
   $item = Util.tag('div', null, {class: 'inborder'})
@@ -1078,7 +1109,7 @@ start_unless_doing = ()->
     start_hash()
 
 artworkUrlWithNoimage = (artwork_url) ->
-  artwork_url || 'https://ruffnote.com/attachments/24162'
+  artwork_url || @nomusic_url
 
 initWhatis = () ->
   $("#whatis_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24942' /></h2>")
@@ -1156,7 +1187,6 @@ initYou = () ->
       disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.attributes.number}回目）"
       addWorkload("#you", workload, disp)
   null, 24)
-
 
 initNextkakuhen = () ->
  ruffnote(17782, 'nextkakuhen_title') 
