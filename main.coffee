@@ -186,7 +186,7 @@ initStart = () ->
       Youtube.fetch(id, (track) ->
         artwork_url = artworkUrlWithNoimage(track['entry']['media$group']['media$thumbnail'][3]['url'])
         txt = "<h5>#{track['entry']['title']['$t']}</h5>"
-        $('#fixedstart_title').append(txt)
+        $('#fixedstart').append(txt)
         txt = "<img src='#{artwork_url}' class='jacket'>"
         $('#fixedstart').append(txt)
         Util.addButton('start', $('#fixedstart'), fixed_text, start_hash)
@@ -198,7 +198,7 @@ initStart = () ->
       Mixcloud.fetch(id, (track) ->
         artwork_url = artworkUrlWithNoimage(track.pictures.medium)
         txt = "<h5>#{track.name}</h5>"
-        $('#fixedstart_title').append(txt)
+        $('#fixedstart').append(txt)
         txt = "<img src='#{artwork_url}' class='jacket'>"
         $('#fixedstart').append(txt)
         Util.addButton('start', $('#fixedstart'), fixed_text, start_hash)
@@ -210,7 +210,7 @@ initStart = () ->
       EightTracks.fetch(id, @env.et_client_id, (track) ->
         artwork_url = artworkUrlWithNoimage(track.mix.cover_urls.sq100)
         txt = "<h5>#{track.mix.name}</h5>"
-        $('#fixedstart_title').append(txt)
+        $('#fixedstart').append(txt)
         txt = "<img src='#{artwork_url}' class='jacket'>"
         $('#fixedstart').append(txt)
         Util.addButton('start', $('#fixedstart'), fixed_text, start_hash)
