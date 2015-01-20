@@ -637,7 +637,7 @@ window.play_repeat = (key, duration) ->
 complete = () ->
   console.log 'complete'
   @syncWorkload('chatting')
-  console.log 'aaa'
+  window.is_hato = false
   Util.countDown(@env.chattime*60*1000, 'finish')
   $('#header').hide()
   $('#otukare').fadeIn()
