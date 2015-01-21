@@ -30,6 +30,7 @@ window.fbAsyncInit = () ->
               (response) ->
                 if response && !response.error
                   user.set('name', response.name)
+                  user.set('facebook_id_str', response.id)
                   user.save()
                   location.reload()
             )

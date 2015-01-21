@@ -2,28 +2,44 @@ body {
   text-align: center;
 }
 
+h2.status, hr.status {
+  background: repeat-x url('https://ruffnote.com/attachments/24944')
+}
+
+hr.status{
+  border: none;
+  height: 50px;
+  margin-top: 50px;
+  width: 100%;
+}
+
+h2.status img {
+  margin-top: -12px;
+  background: #fff;
+  padding: 10px;
+}
+
 .table {
   width: 500px;
   margin: 0 auto;
-}
-
-.noimage {
-  display: inline;
-  border: 1px solid #000;
-  padding: 20px;
-  text-align: center;
-  vertical-align: middle;
 }
 
 #contents, #search{
   text-align: center;
 }
 
+/* PC */
 @media (min-width: 657px) {
   #header img {
-    width: 657px;
+    /* width: 657px; */
+  }
+  .inborder {
+    width: 200px;
+    margin: 0 auto;
   }
 }
+
+/* SmartPhone */
 @media (max-width: 657px) {
   #header img {
     width: 100%;
@@ -35,21 +51,13 @@ input {
   text-align: center;
 }
 
-#comment , #file{
+.create_comment , #file{
   margin: 0 auto;
   width: 80%;
 }
 
 .icon {
   width: 60px;
-}
-
-.noimage {
-  display:inline;
-  border: 1px solid #000;
-  padding: 20px;
-  text-align:center;
-  vertical-align:middle;
 }
 
 .countdown {
@@ -60,3 +68,103 @@ input {
   width: 100%;
   text-align: center;
 }
+
+li{
+  list-style: none;
+}
+
+li label input{
+  display: inline;
+}
+
+.review{
+  color: #666;
+  /* background: #eee; */
+  border-radius: 3px;
+  padding: 2px;
+  margin: 2px;
+}
+
+h5 {
+  max-height: 15px;
+  color: #6d4922;
+  overflow: hidden;
+  width: 179px;
+  margin: 7px auto 4px;
+}
+
+.img-thumbnail.doing {
+  background: #fc0;
+}
+
+input#track {
+  font-size: 50px;
+  font-weight: bold;
+  padding: 12px;
+}
+
+#memo textarea{
+  height: 230px;
+}
+
+.disp {
+  padding: -3px 3px 6px;
+}
+
+.jacket {
+  width: 95px;
+  height: 95px;
+  border: solid 3px #fff;
+  border-radius: 7px;
+  margin: 2px;
+}
+
+.inborder .fixed_start img {
+  margin-top: 3px;
+}
+
+.tooltip-inner {background-color: #6d4922;}
+.tooltip.bottom .tooltip-arrow {border-bottom-color: #6d4922;}
+
+.countdown2 {
+  display: none;
+  background: #ff9c9c;
+  padding: 3px;
+  border-radius: 35px;
+  width: 246px;
+  margin: 0 auto;
+}
+
+.countdown {
+  background: #ff9c9c;
+  height: 68px;
+  width: 240px;
+  border-radius: 35px;
+  border: solid 2px #fff;
+  padding: 9px 10px;
+}
+
+.socialbutton {
+  position: absolute;
+  right: 0;
+}
+
+#twitter-widget-0 {
+  position: relative;
+  top: 5px; 
+}
+
+#start_buttons {
+  width: 100%;
+  text-align: center;
+}
+
+#start_buttons .wrapper{
+  text-align: center;
+}
+
+#start_buttons .wrapper div{
+  display: inline;
+  width: 150px;
+}
+

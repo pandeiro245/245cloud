@@ -1,7 +1,19 @@
 Parse.initialize(@env.parse_app_id, @env.parse_key)
 
 class @ParseParse
-  @find: (model_name, id, callback) ->
+  @find: (model_name, id, callback, instance=null) ->
+    Model = Parse.Object.extend(model_name)
+    query = new Parse.Query(Model)
+    query.get(id, {
+      success: (data) ->
+        if instance
+          callback(instance, data)
+        else
+          callback(data)
+      , error: (object, error) ->
+        console.log error
+        #alert 'error...'
+    })
 
   @fetch: (model_name, child, callback) ->
     child.get(model_name).fetch({
@@ -9,9 +21,10 @@ class @ParseParse
         callback(child, parent)
     })
 
-  @where: (model_name, cond, callback, instance=null) ->
+  @where: (model_name, cond, callback, instance=null, limit=100) ->
     Model = Parse.Object.extend(model_name)
     query = new Parse.Query(Model)
+    query.limit(limit)
     for c in cond
       if c[2]
         if c[1] == '<'
@@ -32,9 +45,11 @@ class @ParseParse
         console.log error
     })
 
-  @all: (model_name, callback) ->
+  @all: (model_name, callback, params={}) ->
     Model = Parse.Object.extend(model_name)
     query = new Parse.Query(Model)
+    query.limit(999999)
+    query.descending("createdAt")
     query.find({
       success: (data) ->
         callback(data)
