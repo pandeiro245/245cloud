@@ -1,0 +1,11 @@
+<application xsi:schemaLocation="http://www.zeroturnaround.com/alderaan/rebel-2_0.xsd" xmlns="http://www.zeroturnaround.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <classpath>
+              <dir name="/home/ubuntu/tmp/nishikocloud/target/scala-2.11/classes"/>
+              <dir name="/home/ubuntu/tmp/nishikocloud/target/scala-2.11/test-classes"></dir>
+            </classpath>
+            <web>
+              <link>
+                <dir name="/home/ubuntu/tmp/nishikocloud/src/main/webapp"/>
+              </link>
+            </web>
+          </application>

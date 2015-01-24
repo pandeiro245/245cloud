@@ -1,9 +1,12 @@
-# Install
+# nishikocloud #
 
-```
-$ npm install
-$ node app.js
+## Build & Run ##
+
+```sh
+$ cd nishikocloud
+$ ./sbt
+> container:start
+> browse
 ```
 
-# see also  
-https://ruffnote.com/pandeiro245/245cloud
+If `browse` doesn't launch your browser, manually open [http://localhost:8080/](http://localhost:8080/) in your browser.

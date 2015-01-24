@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ivy-report.xsl"?>
+<ivy-report version="1.0">
+	<info
+		organisation="com.nishiko"
+		module="nishikocloud_2.11"
+		revision="0.1.0-SNAPSHOT"
+		conf="compile-internal"
+		confs="compile, runtime, test, provided, optional, compile-internal, runtime-internal, test-internal, plugin, sources, docs, pom, scala-tool, container, scalate"
+		date="20150121143619"/>
+	<dependencies>
+		<module organisation="org.scalatra" name="scalatra-scalate_2.11">
+			<revision name="2.3.0" status="release" pubdate="20140611032837" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.scalatra.org/" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="12">
+				<license name="BSD" url="http://github.com/scalatra/scalatra/raw/HEAD/LICENSE"/>
+				<metadata-artifact status="no" details="" size="2836" time="0" location="/home/ubuntu/.ivy2/cache/org.scalatra/scalatra-scalate_2.11/ivy-2.3.0.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/org/scalatra/scalatra-scalate_2.11/2.3.0/scalatra-scalate_2.11-2.3.0.pom"/>
+				<caller organisation="com.nishiko" name="nishikocloud_2.11" conf="optional, compile, provided, compile-internal" rev="2.3.0" rev-constraint-default="2.3.0" rev-constraint-dynamic="2.3.0" callerrev="0.1.0-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="scalatra-scalate_2.11" type="jar" ext="jar" status="no" details="" size="50155" time="0" location="/home/ubuntu/.ivy2/cache/org.scalatra/scalatra-scalate_2.11/jars/scalatra-scalate_2.11-2.3.0.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/scalatra/scalatra-scalate_2.11/2.3.0/scalatra-scalate_2.11-2.3.0.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.scalatra.scalate" name="scalate-core_2.11">
+			<revision name="1.7.0" status="release" pubdate="20140503051642" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="13">
+				<metadata-artifact status="no" details="" size="10905" time="0" location="/home/ubuntu/.ivy2/cache/org.scalatra.scalate/scalate-core_2.11/ivy-1.7.0.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/org/scalatra/scalate/scalate-core_2.11/1.7.0/scalate-core_2.11-1.7.0.pom"/>
+				<caller organisation="org.scalatra" name="scalatra-scalate_2.11" conf="default, compile, runtime, master" rev="1.7.0" rev-constraint-default="1.7.0" rev-constraint-dynamic="1.7.0" callerrev="2.3.0"/>
+				<artifacts>
+					<artifact name="scalate-core_2.11" type="bundle" ext="jar" status="no" details="" size="1965484" time="0" location="/home/ubuntu/.ivy2/cache/org.scalatra.scalate/scalate-core_2.11/bundles/scalate-core_2.11-1.7.0.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/scalatra/scalate/scalate-core_2.11/1.7.0/scalate-core_2.11-1.7.0.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.scalatra.scalate" name="scalate-util_2.11">
+			<revision name="1.7.0" status="release" pubdate="20140503051549" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="14">
+				<metadata-artifact status="no" details="" size="10250" time="0" location="/home/ubuntu/.ivy2/cache/org.scalatra.scalate/scalate-util_2.11/ivy-1.7.0.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/org/scalatra/scalate/scalate-util_2.11/1.7.0/scalate-util_2.11-1.7.0.pom"/>
+				<caller organisation="org.scalatra.scalate" name="scalate-core_2.11" conf="compile, runtime" rev="1.7.0" rev-constraint-default="1.7.0" rev-constraint-dynamic="1.7.0" callerrev="1.7.0"/>
+				<artifacts>
+					<artifact name="scalate-util_2.11" type="bundle" ext="jar" status="no" details="" size="303890" time="0" location="/home/ubuntu/.ivy2/cache/org.scalatra.scalate/scalate-util_2.11/bundles/scalate-util_2.11-1.7.0.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/scalatra/scalate/scalate-util_2.11/1.7.0/scalate-util_2.11-1.7.0.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.scala-lang.modules" name="scala-xml_2.11">
+			<revision name="1.0.1" status="release" pubdate="20140416092108" resolver="sbt-chain" artresolver="sbt-chain" evicted="latest-revision" evicted-reason="" homepage="http://www.scala-lang.org/" downloaded="false" searched="false" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="-1">
+				<license name="BSD 3-clause" url="http://opensource.org/licenses/BSD-3-Clause"/>
+				<metadata-artifact status="no" details="" size="2987" time="0" location="/home/ubuntu/.ivy2/cache/org.scala-lang.modules/scala-xml_2.11/ivy-1.0.1.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/org/scala-lang/modules/scala-xml_2.11/1.0.1/scala-xml_2.11-1.0.1.pom"/>
+				<evicted-by rev="1.0.2"/>
+				<caller organisation="org.scalatra.scalate" name="scalate-util_2.11" conf="compile, runtime" rev="1.0.1" rev-constraint-default="1.0.1" rev-constraint-dynamic="1.0.1" callerrev="1.7.0"/>
+				<caller organisation="org.scala-lang" name="scala-compiler" conf="compile, runtime" rev="1.0.1" rev-constraint-default="1.0.1" rev-constraint-dynamic="1.0.1" callerrev="2.11.0"/>
+				<artifacts>
+				</artifacts>
+			</revision>
+			<revision name="1.0.2" status="release" pubdate="20140520081040" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.scala-lang.org/" downloaded="false" searched="false" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="11">
+				<license name="BSD 3-clause" url="http://opensource.org/licenses/BSD-3-Clause"/>
+				<metadata-artifact status="no" details="" size="2987" time="0" location="/home/ubuntu/.ivy2/cache/org.scala-lang.modules/scala-xml_2.11/ivy-1.0.2.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/org/scala-lang/modules/scala-xml_2.11/1.0.2/scala-xml_2.11-1.0.2.pom"/>
+				<caller organisation="org.scalatra.scalate" name="scalate-util_2.11" conf="compile, runtime" rev="1.0.1" rev-constraint-default="1.0.1" rev-constraint-dynamic="1.0.1" callerrev="1.7.0"/>
+				<caller organisation="org.scala-lang" name="scala-compiler" conf="compile, runtime" rev="1.0.1" rev-constraint-default="1.0.1" rev-constraint-dynamic="1.0.1" callerrev="2.11.0"/>
+				<caller organisation="org.scalatra" name="scalatra_2.11" conf="default, compile, runtime, master" rev="1.0.2" rev-constraint-default="1.0.2" rev-constraint-dynamic="1.0.2" callerrev="2.3.0"/>
+				<artifacts>
+					<artifact name="scala-xml_2.11" type="bundle" ext="jar" status="no" details="" size="648678" time="0" location="/home/ubuntu/.ivy2/cache/org.scala-lang.modules/scala-xml_2.11/bundles/scala-xml_2.11-1.0.2.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/scala-lang/modules/scala-xml_2.11/1.0.2/scala-xml_2.11-1.0.2.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.scala-lang" name="scala-compiler">
+			<revision name="2.11.0" status="release" pubdate="20140416091405" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.scala-lang.org/" downloaded="false" searched="false" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="15">
+				<license name="BSD 3-Clause" url="http://www.scala-lang.org/license.html"/>
+				<metadata-artifact status="no" details="" size="3101" time="0" location="/home/ubuntu/.ivy2/cache/org.scala-lang/scala-compiler/ivy-2.11.0.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.11.0/scala-compiler-2.11.0.pom"/>
+				<caller organisation="org.scalatra.scalate" name="scalate-core_2.11" conf="compile, runtime" rev="2.11.0" rev-constraint-default="2.11.0" rev-constraint-dynamic="2.11.0" callerrev="1.7.0"/>
+				<artifacts>
+					<artifact name="scala-compiler" type="jar" ext="jar" status="no" details="" size="13655547" time="0" location="/home/ubuntu/.ivy2/cache/org.scala-lang/scala-compiler/jars/scala-compiler-2.11.0.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.11.0/scala-compiler-2.11.0.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.scala-lang" name="scala-reflect">
+			<revision name="2.11.0" status="release" pubdate="20140416091350" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.scala-lang.org/" extra-info.apiURL="http://www.scala-lang.org/api/2.11.0/" downloaded="false" searched="false" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="16">
+				<license name="BSD 3-Clause" url="http://www.scala-lang.org/license.html"/>
+				<metadata-artifact status="no" details="" size="2819" time="0" location="/home/ubuntu/.ivy2/cache/org.scala-lang/scala-reflect/ivy-2.11.0.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.11.0/scala-reflect-2.11.0.pom"/>
+				<caller organisation="org.scala-lang" name="scala-compiler" conf="compile, runtime" rev="2.11.0" rev-constraint-default="2.11.0" rev-constraint-dynamic="2.11.0" callerrev="2.11.0"/>
+				<artifacts>
+					<artifact name="scala-reflect" type="jar" ext="jar" status="no" details="" size="4422519" time="0" location="/home/ubuntu/.ivy2/cache/org.scala-lang/scala-reflect/jars/scala-reflect-2.11.0.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.11.0/scala-reflect-2.11.0.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.slf4j" name="slf4j-api">
+			<revision name="1.6.1" status="release" pubdate="20100705202924" resolver="sbt-chain" artresolver="sbt-chain" evicted="latest-revision" evicted-reason="" homepage="http://www.slf4j.org" downloaded="false" searched="false" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="-1">
+				<metadata-artifact status="no" details="" size="4133" time="0" location="/home/ubuntu/.ivy2/cache/org.slf4j/slf4j-api/ivy-1.6.1.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.pom"/>
+				<evicted-by rev="1.7.7"/>
+				<caller organisation="org.scalatra.scalate" name="scalate-util_2.11" conf="compile, runtime" rev="1.6.1" rev-constraint-default="1.6.1" rev-constraint-dynamic="1.6.1" callerrev="1.7.0"/>
+				<caller organisation="org.scalatra.scalate" name="scalate-core_2.11" conf="compile, runtime" rev="1.6.1" rev-constraint-default="1.6.1" rev-constraint-dynamic="1.6.1" callerrev="1.7.0"/>
+				<artifacts>
+				</artifacts>
+			</revision>
+			<revision name="1.7.7" status="release" pubdate="20140404111248" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.slf4j.org" downloaded="false" searched="false" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="3">
+				<metadata-artifact status="no" details="" size="4567" time="0" location="/home/ubuntu/.ivy2/cache/org.slf4j/slf4j-api/ivy-1.7.7.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.7.7/slf4j-api-1.7.7.pom"/>
+				<caller organisation="org.clapper" name="grizzled-slf4j_2.11" conf="compile, runtime" rev="1.7.7" rev-constraint-default="1.7.7" rev-constraint-dynamic="1.7.7" callerrev="1.0.2"/>
+				<caller organisation="org.scalatra.scalate" name="scalate-util_2.11" conf="compile, runtime" rev="1.6.1" rev-constraint-default="1.6.1" rev-constraint-dynamic="1.6.1" callerrev="1.7.0"/>
+				<caller organisation="org.scalatra" name="scalatra_2.11" conf="default, compile, runtime, master" rev="1.7.7" rev-constraint-default="1.7.7" rev-constraint-dynamic="1.7.7" callerrev="2.3.0"/>
+				<caller organisation="org.scalatra.scalate" name="scalate-core_2.11" conf="compile, runtime" rev="1.6.1" rev-constraint-default="1.6.1" rev-constraint-dynamic="1.6.1" callerrev="1.7.0"/>
+				<caller organisation="eu.medsea.mimeutil" name="mime-util" conf="compile, runtime" rev="1.5.6" rev-constraint-default="1.5.6" rev-constraint-dynamic="1.5.6" callerrev="2.1.3"/>
+				<artifacts>
+					<artifact name="slf4j-api" type="jar" ext="jar" status="no" details="" size="29257" time="0" location="/home/ubuntu/.ivy2/cache/org.slf4j/slf4j-api/jars/slf4j-api-1.7.7.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.7.7/slf4j-api-1.7.7.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+			<revision name="1.5.6" evicted="latest-revision" evicted-reason="" downloaded="false" searched="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="-1">
+				<evicted-by rev="1.7.7"/>
+				<caller organisation="eu.medsea.mimeutil" name="mime-util" conf="compile, runtime" rev="1.5.6" rev-constraint-default="1.5.6" rev-constraint-dynamic="1.5.6" callerrev="2.1.3"/>
+				<artifacts>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.scalatra" name="scalatra_2.11">
+			<revision name="2.3.0" status="release" pubdate="20140611032847" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.scalatra.org/" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, master(*), compile(*), runtime, runtime(*), master" position="1">
+				<license name="BSD" url="http://github.com/scalatra/scalatra/raw/HEAD/LICENSE"/>
+				<metadata-artifact status="no" details="" size="4778" time="0" location="/home/ubuntu/.ivy2/cache/org.scalatra/scalatra_2.11/ivy-2.3.0.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/org/scalatra/scalatra_2.11/2.3.0/scalatra_2.11-2.3.0.pom"/>
+				<caller organisation="org.scalatra" name="scalatra-scalate_2.11" conf="default, compile, runtime, master" rev="2.3.0" rev-constraint-default="2.3.0" rev-constraint-dynamic="2.3.0" callerrev="2.3.0"/>
+				<caller organisation="com.nishiko" name="nishikocloud_2.11" conf="optional, compile, provided, compile-internal" rev="2.3.0" rev-constraint-default="2.3.0" rev-constraint-dynamic="2.3.0" callerrev="0.1.0-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="scalatra_2.11" type="jar" ext="jar" status="no" details="" size="1193853" time="0" location="/home/ubuntu/.ivy2/cache/org.scalatra/scalatra_2.11/jars/scalatra_2.11-2.3.0.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/scalatra/scalatra_2.11/2.3.0/scalatra_2.11-2.3.0.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.scala-lang.modules" name="scala-parser-combinators_2.11">
+			<revision name="1.0.1" status="release" pubdate="20140416092222" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.scala-lang.org/" downloaded="false" searched="false" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="10">
+				<license name="BSD 3-clause" url="http://opensource.org/licenses/BSD-3-Clause"/>
+				<metadata-artifact status="no" details="" size="2785" time="0" location="/home/ubuntu/.ivy2/cache/org.scala-lang.modules/scala-parser-combinators_2.11/ivy-1.0.1.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.11/1.0.1/scala-parser-combinators_2.11-1.0.1.pom"/>
+				<caller organisation="org.scalatra.scalate" name="scalate-util_2.11" conf="compile, runtime" rev="1.0.1" rev-constraint-default="1.0.1" rev-constraint-dynamic="1.0.1" callerrev="1.7.0"/>
+				<caller organisation="org.scala-lang" name="scala-compiler" conf="compile, runtime" rev="1.0.1" rev-constraint-default="1.0.1" rev-constraint-dynamic="1.0.1" callerrev="2.11.0"/>
+				<caller organisation="org.scalatra" name="scalatra_2.11" conf="default, compile, runtime, master" rev="1.0.1" rev-constraint-default="1.0.1" rev-constraint-dynamic="1.0.1" callerrev="2.3.0"/>
+				<artifacts>
+					<artifact name="scala-parser-combinators_2.11" type="bundle" ext="jar" status="no" details="" size="419701" time="0" location="/home/ubuntu/.ivy2/cache/org.scala-lang.modules/scala-parser-combinators_2.11/bundles/scala-parser-combinators_2.11-1.0.1.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.11/1.0.1/scala-parser-combinators_2.11-1.0.1.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.joda" name="joda-convert">
+			<revision name="1.6" status="release" pubdate="20140127183743" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.joda.org/joda-convert/" downloaded="false" searched="false" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="9">
+				<license name="Apache 2" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="6116" time="0" location="/home/ubuntu/.ivy2/cache/org.joda/joda-convert/ivy-1.6.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/org/joda/joda-convert/1.6/joda-convert-1.6.pom"/>
+				<caller organisation="org.scalatra" name="scalatra_2.11" conf="default, compile, runtime, master" rev="1.6" rev-constraint-default="1.6" rev-constraint-dynamic="1.6" callerrev="2.3.0"/>
+				<artifacts>
+					<artifact name="joda-convert" type="jar" ext="jar" status="no" details="" size="98818" time="0" location="/home/ubuntu/.ivy2/cache/org.joda/joda-convert/jars/joda-convert-1.6.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/joda/joda-convert/1.6/joda-convert-1.6.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="joda-time" name="joda-time">
+			<revision name="2.3" status="release" pubdate="20130816173125" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.joda.org/joda-time/" downloaded="false" searched="false" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="8">
+				<license name="Apache 2" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="6364" time="0" location="/home/ubuntu/.ivy2/cache/joda-time/joda-time/ivy-2.3.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/joda-time/joda-time/2.3/joda-time-2.3.pom"/>
+				<caller organisation="org.scalatra" name="scalatra_2.11" conf="default, compile, runtime, master" rev="2.3" rev-constraint-default="2.3" rev-constraint-dynamic="2.3" callerrev="2.3.0"/>
+				<artifacts>
+					<artifact name="joda-time" type="jar" ext="jar" status="no" details="" size="581571" time="0" location="/home/ubuntu/.ivy2/cache/joda-time/joda-time/jars/joda-time-2.3.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/joda-time/joda-time/2.3/joda-time-2.3.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="eu.medsea.mimeutil" name="mime-util">
+			<revision name="2.1.3" status="release" pubdate="20100105082400" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.medsea.eu/mime-util/" downloaded="false" searched="false" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="7">
+				<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="3431" time="0" location="/home/ubuntu/.ivy2/cache/eu.medsea.mimeutil/mime-util/ivy-2.1.3.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/eu/medsea/mimeutil/mime-util/2.1.3/mime-util-2.1.3.pom"/>
+				<caller organisation="org.scalatra" name="scalatra_2.11" conf="default, compile, runtime, master" rev="2.1.3" rev-constraint-default="2.1.3" rev-constraint-dynamic="2.1.3" callerrev="2.3.0"/>
+				<artifacts>
+					<artifact name="mime-util" type="bundle" ext="jar" status="no" details="" size="119180" time="0" location="/home/ubuntu/.ivy2/cache/eu.medsea.mimeutil/mime-util/bundles/mime-util-2.1.3.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/eu/medsea/mimeutil/mime-util/2.1.3/mime-util-2.1.3.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="com.googlecode.juniversalchardet" name="juniversalchardet">
+			<revision name="1.0.3" status="release" pubdate="20110919173824" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://juniversalchardet.googlecode.com/" downloaded="false" searched="false" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="6">
+				<license name="Mozilla Public License 1.1 (MPL 1.1)" url="http://www.mozilla.org/MPL/MPL-1.1.html"/>
+				<metadata-artifact status="no" details="" size="2590" time="0" location="/home/ubuntu/.ivy2/cache/com.googlecode.juniversalchardet/juniversalchardet/ivy-1.0.3.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/com/googlecode/juniversalchardet/juniversalchardet/1.0.3/juniversalchardet-1.0.3.pom"/>
+				<caller organisation="org.scalatra" name="scalatra_2.11" conf="default, compile, runtime, master" rev="1.0.3" rev-constraint-default="1.0.3" rev-constraint-dynamic="1.0.3" callerrev="2.3.0"/>
+				<artifacts>
+					<artifact name="juniversalchardet" type="jar" ext="jar" status="no" details="" size="220813" time="0" location="/home/ubuntu/.ivy2/cache/com.googlecode.juniversalchardet/juniversalchardet/jars/juniversalchardet-1.0.3.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/com/googlecode/juniversalchardet/juniversalchardet/1.0.3/juniversalchardet-1.0.3.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.scalatra.rl" name="rl_2.11">
+			<revision name="0.4.10" status="release" pubdate="20140421222834" resolver="sbt-chain" artresolver="sbt-chain" homepage="https://backchat.io" downloaded="false" searched="false" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="5">
+				<license name="MIT" url="http://github.com/mojolly/rl/raw/HEAD/LICENSE"/>
+				<metadata-artifact status="no" details="" size="2724" time="0" location="/home/ubuntu/.ivy2/cache/org.scalatra.rl/rl_2.11/ivy-0.4.10.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/org/scalatra/rl/rl_2.11/0.4.10/rl_2.11-0.4.10.pom"/>
+				<caller organisation="org.scalatra" name="scalatra_2.11" conf="default, compile, runtime, master" rev="0.4.10" rev-constraint-default="0.4.10" rev-constraint-dynamic="0.4.10" callerrev="2.3.0"/>
+				<artifacts>
+					<artifact name="rl_2.11" type="jar" ext="jar" status="no" details="" size="225603" time="0" location="/home/ubuntu/.ivy2/cache/org.scalatra.rl/rl_2.11/jars/rl_2.11-0.4.10.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/scalatra/rl/rl_2.11/0.4.10/rl_2.11-0.4.10.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.clapper" name="grizzled-slf4j_2.11">
+			<revision name="1.0.2" status="release" pubdate="20140427142710" resolver="sbt-chain" artresolver="sbt-chain" homepage="https://github.com/bmc/grizzled-slf4j/#readme" downloaded="false" searched="false" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="4">
+				<license name="BSD" url="http://software.clapper.org/grizzled-slf4j/license.html"/>
+				<metadata-artifact status="no" details="" size="2838" time="0" location="/home/ubuntu/.ivy2/cache/org.clapper/grizzled-slf4j_2.11/ivy-1.0.2.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/org/clapper/grizzled-slf4j_2.11/1.0.2/grizzled-slf4j_2.11-1.0.2.pom"/>
+				<caller organisation="org.scalatra" name="scalatra_2.11" conf="default, compile, runtime, master" rev="1.0.2" rev-constraint-default="1.0.2" rev-constraint-dynamic="1.0.2" callerrev="2.3.0"/>
+				<artifacts>
+					<artifact name="grizzled-slf4j_2.11" type="jar" ext="jar" status="no" details="" size="6427" time="0" location="/home/ubuntu/.ivy2/cache/org.clapper/grizzled-slf4j_2.11/jars/grizzled-slf4j_2.11-1.0.2.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/clapper/grizzled-slf4j_2.11/1.0.2/grizzled-slf4j_2.11-1.0.2.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.scala-lang" name="scala-library">
+			<revision name="2.11.0" status="release" pubdate="20140416091332" resolver="sbt-chain" artresolver="sbt-chain" evicted="latest-revision" evicted-reason="" homepage="http://www.scala-lang.org/" extra-info.apiURL="http://www.scala-lang.org/api/2.11.0/" downloaded="false" searched="false" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="-1">
+				<license name="BSD 3-Clause" url="http://www.scala-lang.org/license.html"/>
+				<metadata-artifact status="no" details="" size="2653" time="0" location="/home/ubuntu/.ivy2/cache/org.scala-lang/scala-library/ivy-2.11.0.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.11.0/scala-library-2.11.0.pom"/>
+				<evicted-by rev="2.11.1"/>
+				<caller organisation="org.clapper" name="grizzled-slf4j_2.11" conf="compile, runtime" rev="2.11.0" rev-constraint-default="2.11.0" rev-constraint-dynamic="2.11.0" callerrev="1.0.2"/>
+				<caller organisation="org.scala-lang" name="scala-reflect" conf="compile, runtime" rev="2.11.0" rev-constraint-default="2.11.0" rev-constraint-dynamic="2.11.0" callerrev="2.11.0"/>
+				<caller organisation="org.scalatra.rl" name="rl_2.11" conf="compile, runtime" rev="2.11.0" rev-constraint-default="2.11.0" rev-constraint-dynamic="2.11.0" callerrev="0.4.10"/>
+				<caller organisation="org.scalatra.scalate" name="scalate-util_2.11" conf="compile, runtime" rev="2.11.0" rev-constraint-default="2.11.0" rev-constraint-dynamic="2.11.0" callerrev="1.7.0"/>
+				<caller organisation="org.scala-lang" name="scala-compiler" conf="compile, runtime" rev="2.11.0" rev-constraint-default="2.11.0" rev-constraint-dynamic="2.11.0" callerrev="2.11.0"/>
+				<caller organisation="org.scala-lang.modules" name="scala-parser-combinators_2.11" conf="compile, runtime" rev="2.11.0" rev-constraint-default="2.11.0" rev-constraint-dynamic="2.11.0" callerrev="1.0.1"/>
+				<artifacts>
+				</artifacts>
+			</revision>
+			<revision name="2.11.1" status="release" pubdate="20140520080221" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.scala-lang.org/" extra-info.apiURL="http://www.scala-lang.org/api/2.11.1/" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, master(*), compile(*), runtime, runtime(*), master" position="0">
+				<license name="BSD 3-Clause" url="http://www.scala-lang.org/license.html"/>
+				<metadata-artifact status="no" details="" size="2653" time="0" location="/home/ubuntu/.ivy2/cache/org.scala-lang/scala-library/ivy-2.11.1.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.11.1/scala-library-2.11.1.pom"/>
+				<caller organisation="org.clapper" name="grizzled-slf4j_2.11" conf="compile, runtime" rev="2.11.0" rev-constraint-default="2.11.0" rev-constraint-dynamic="2.11.0" callerrev="1.0.2"/>
+				<caller organisation="org.scala-lang" name="scala-reflect" conf="compile, runtime" rev="2.11.0" rev-constraint-default="2.11.0" rev-constraint-dynamic="2.11.0" callerrev="2.11.0"/>
+				<caller organisation="org.scalatra.rl" name="rl_2.11" conf="compile, runtime" rev="2.11.0" rev-constraint-default="2.11.0" rev-constraint-dynamic="2.11.0" callerrev="0.4.10"/>
+				<caller organisation="org.scalatra.scalate" name="scalate-util_2.11" conf="compile, runtime" rev="2.11.0" rev-constraint-default="2.11.0" rev-constraint-dynamic="2.11.0" callerrev="1.7.0"/>
+				<caller organisation="org.scalatra" name="scalatra-scalate_2.11" conf="default, compile, runtime, master" rev="2.11.1" rev-constraint-default="2.11.1" rev-constraint-dynamic="2.11.1" callerrev="2.3.0"/>
+				<caller organisation="org.scala-lang" name="scala-compiler" conf="compile, runtime" rev="2.11.0" rev-constraint-default="2.11.0" rev-constraint-dynamic="2.11.0" callerrev="2.11.0"/>
+				<caller organisation="org.scala-lang.modules" name="scala-xml_2.11" conf="compile, runtime" rev="2.11.1" rev-constraint-default="2.11.1" rev-constraint-dynamic="2.11.1" callerrev="1.0.2"/>
+				<caller organisation="org.scalatra" name="scalatra_2.11" conf="default, compile, runtime, master" rev="2.11.1" rev-constraint-default="2.11.1" rev-constraint-dynamic="2.11.1" callerrev="2.3.0"/>
+				<caller organisation="org.scala-lang.modules" name="scala-parser-combinators_2.11" conf="compile, runtime" rev="2.11.0" rev-constraint-default="2.11.0" rev-constraint-dynamic="2.11.0" callerrev="1.0.1"/>
+				<caller organisation="org.scalatra" name="scalatra-common_2.11" conf="compile, runtime" rev="2.11.1" rev-constraint-default="2.11.1" rev-constraint-dynamic="2.11.1" callerrev="2.3.0"/>
+				<caller organisation="com.nishiko" name="nishikocloud_2.11" conf="optional, compile, provided, compile-internal" rev="2.11.1" rev-constraint-default="2.11.1" rev-constraint-dynamic="2.11.1" callerrev="0.1.0-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="scala-library" type="jar" ext="jar" status="no" details="" size="5538130" time="0" location="/home/ubuntu/.ivy2/cache/org.scala-lang/scala-library/jars/scala-library-2.11.1.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.11.1/scala-library-2.11.1.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.scalatra" name="scalatra-common_2.11">
+			<revision name="2.3.0" status="release" pubdate="20140611032830" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.scalatra.org/" downloaded="false" searched="false" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="2">
+				<license name="BSD" url="http://github.com/scalatra/scalatra/raw/HEAD/LICENSE"/>
+				<metadata-artifact status="no" details="" size="2648" time="0" location="/home/ubuntu/.ivy2/cache/org.scalatra/scalatra-common_2.11/ivy-2.3.0.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/org/scalatra/scalatra-common_2.11/2.3.0/scalatra-common_2.11-2.3.0.pom"/>
+				<caller organisation="org.scalatra" name="scalatra_2.11" conf="default, compile, runtime, master" rev="2.3.0" rev-constraint-default="2.3.0" rev-constraint-dynamic="2.3.0" callerrev="2.3.0"/>
+				<artifacts>
+					<artifact name="scalatra-common_2.11" type="jar" ext="jar" status="no" details="" size="22801" time="0" location="/home/ubuntu/.ivy2/cache/org.scalatra/scalatra-common_2.11/jars/scalatra-common_2.11-2.3.0.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/scalatra/scalatra-common_2.11/2.3.0/scalatra-common_2.11-2.3.0.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="javax.servlet" name="javax.servlet-api">
+			<revision name="3.1.0" status="release" pubdate="20130425235239" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://servlet-spec.java.net" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="17">
+				<license name="CDDL + GPLv2 with classpath exception" url="https://glassfish.dev.java.net/nonav/public/CDDL+GPL.html"/>
+				<metadata-artifact status="no" details="" size="4150" time="0" location="/home/ubuntu/.ivy2/cache/javax.servlet/javax.servlet-api/ivy-3.1.0.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/javax/servlet/javax.servlet-api/3.1.0/javax.servlet-api-3.1.0.pom"/>
+				<caller organisation="com.nishiko" name="nishikocloud_2.11" conf="optional, compile, provided, compile-internal" rev="3.1.0" rev-constraint-default="3.1.0" rev-constraint-dynamic="3.1.0" callerrev="0.1.0-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="javax.servlet-api" type="jar" ext="jar" status="no" details="" size="95806" time="0" location="/home/ubuntu/.ivy2/cache/javax.servlet/javax.servlet-api/jars/javax.servlet-api-3.1.0.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/javax/servlet/javax.servlet-api/3.1.0/javax.servlet-api-3.1.0.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+	</dependencies>
+</ivy-report>
