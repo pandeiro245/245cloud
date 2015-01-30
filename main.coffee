@@ -58,8 +58,7 @@ $ ->
     'hatopoppo'
   ])
   Util.realtime()
-
-  ruffnote(13475, 'header', initStart)
+  ruffnote(13475, 'header')
   ruffnote(18004, 'news')
   ruffnote(13477, 'footer')
   ruffnote(17758, 'search_title')
@@ -84,12 +83,12 @@ $ ->
   initSearch()
   init8tracks()
   initChatting()
+  initStart()
   initDoing()
   initDone()
   initRanking()
   initFixedStart()
   #initKpi()
-  #initMlkcca()
   #ParseBatch.repeat()
   initHatopoppo()
   initWhatis()
@@ -118,16 +117,6 @@ init8tracks = () ->
   EightTracks.attrip($('#8tracks'))
 
 initStart = () ->
-  console.log 'initStart'
-  $( "#header img" ).css('height', '320px')
-  $( "#header img" ).animate({
-    #opacity: 0.25,
-    #left: "+=50",
-    height: "340px"
-  }, 5000, () ->
-    console.log 'Animation complete.'
-  )
-
   if location.href.match(/sparta/)
     Util.countDown(1*60*1000, start_unless_doing)
 
@@ -959,6 +948,7 @@ initFixedStart = () ->
       start_hash()
     else
       alert 'Facebookログインをお願いします！'
+      window.fbAsyncInit()
   )
   $(document).on('click', '.add_playlist', () ->
     alert 'プレイリストに追加する機能は現在開発中です。。。'
@@ -1198,27 +1188,4 @@ initNextkakuhen = () ->
 happynewyear = () ->
  $('#nextkakuhen_title').hide()
  $('#nextkakuhen').html('あけましておめでとうございます！！')
-
-initMlkcca = () ->
-  if user = Parse.User.current()
-    ruffnote(17651, 'mlkcca_title')
-    $('#mlkcca').html("""
-    <textarea>
-    <script src="//cdn.mlkcca.com/v0.2.8/milkcocoa.js"></script>
-    <script>
-    var userId = '#{user.id}';
-    var milkcocoa = new MilkCocoa("https://io-ui2n0gy4p.mlkcca.com:443");
-    var spartaDataStore = milkcocoa.dataStore("workload");
-    spartaDataStore.on("push",function(params){
-      console.log('mlkcca', params)
-      params = params.value
-      if (params.type == 'doing' && parms.workload.user.objectId == userId) {
-        alert('24分間頑張ってください！');
-      }
-    });
-    </script> 
-    </textarea>
-    """)
-    $('#mlkcca textarea').css('width', '500px')
-    $('#mlkcca textarea').css('height', '250px')
 
