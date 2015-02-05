@@ -406,7 +406,7 @@ initDone = () ->
       continue unless workload.attributes.user
       disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.attributes.number}回目）"
       @addWorkload("#done", workload, disp)
-  , null, 12)
+  , null, 24)
  
 initKpi = () ->
   ruffnote(17548, 'kpi_title')
