@@ -1,4 +1,5 @@
 @env.is_doing = false
+@env.is_done = false
 
 @nomusic_url = 'https://ruffnote.com/attachments/24985'
 
@@ -18,14 +19,10 @@ $ ->
     'review'
     'contents'
     'start_buttons'
-    'memo_title'
-    'memo'
     'doing_title'
     'doing'
     'chatting_title'
     'chatting'
-    'nextkakuhen_title'
-    'nextkakuhen'
     'done'
     'you_title'
     'you'
@@ -92,9 +89,7 @@ $ ->
   #ParseBatch.repeat()
   initHatopoppo()
   initWhatis()
-  initMemo() if location.href.match(/memo=/)
   initYou()
-  initNextkakuhen()
   
   if user = Parse.User.current()
     ParseParse.find('User', user.id, (user)->
@@ -510,12 +505,12 @@ createWorkload = (params = {}, callback) ->
 
   if location.href.match('review=')
     if location.href.match('sparta=')
-      memo = prompt("今から24分間集中するにあたって一言（公開されます）", '24分間頑張るぞ！')
+      review = prompt("今から24分間集中するにあたって一言（公開されます）", '24分間頑張るぞ！')
     else
-      memo = $('#input_review_before').val()
+      review = $('#input_review_before').val()
 
-    if memo.length
-      params['review_before'] = memo
+    if review.length
+      params['review_before'] = review
 
   ParseParse.create("Workload", params, (workload) ->
     @workload = workload
@@ -745,7 +740,7 @@ window.initComments = () ->
   initRoom()
 
 window.initRoom = (id = 'default', title='いつもの部屋') ->
-  console.log 'initRoom'
+  console.log "initRoom: #{id}, #{title}"
 
   $(".room").hide()
 
@@ -765,12 +760,8 @@ window.initRoom = (id = 'default', title='いつもの部屋') ->
 
     $('#rooms').append($room)
     
-    if id == 'default'
-      search_id = null
-      limit = 100
-    else
-      search_id = id
-      limit = 10000
+    search_id = if id == 'default' then null else id
+    limit = if id == 'default' then 100 else 10000
 
     ParseParse.where("Comment", [['room_id', search_id]], (comments) ->
       $("#room_#{id} .create_comment").keypress((e) ->
@@ -779,12 +770,15 @@ window.initRoom = (id = 'default', title='いつもの部屋') ->
       )
       for comment in comments
         @addComment(id, comment)
-      unreads = Parse.User.current().get("unreads")
-      unreads = {} unless unreads
-      unreads[search_id] = comments.length
-      Parse.User.current().set("unreads", unreads)
-      Parse.User.current().save()
+      window.updateUnreads(search_id, comments.length)
     , null, limit)
+
+window.updateUnreads = (room_id, count) ->
+  unreads = Parse.User.current().get("unreads")
+  unreads = {} unless unreads
+  unreads[room_id] = count
+  Parse.User.current().set("unreads", unreads)
+  Parse.User.current().save()
 
 window.finish = () ->
   console.log 'finish'
@@ -833,6 +827,7 @@ window.createComment = (room_id) ->
     )
   ###
   ParseParse.create('Comment', params, (comment)->
+    updateRoomCommentsCount(room_id)
     syncComment(room_id, comment, true)
   )
 
@@ -933,7 +928,7 @@ initRanking = () ->
       renderWorkloads('#doing')
       renderWorkloads('#chatting')
 
-  if @env.is_doing
+  if @env.is_doing || @env.is_done
     $(".fixed_start").hide()
 
   $("#{dom}").hide()
@@ -974,17 +969,6 @@ initService = ($dom, url) ->
   min = t.getMinutes()
 
   if user && c.body
-
-    # FIXME
-    if @env.is_done 
-      unreads = Parse.User.current().get("unreads")
-      unless unreads
-        unreads = {}
-        unreads[id] = 0
-      unreads[id] += 1
-      Parse.User.current().set("unreads", unreads)
-      Parse.User.current().save()
-
     if c.file
       console.log c.file
       file = "<img src=\"#{c.file._url}\" style='max-width: 500px;'/>"
@@ -1027,6 +1011,16 @@ getUnreadsCount = (room_id, total_count) ->
     if res < 0 then 0  else res
   else
     return total_count
+
+updateRoomCommentsCount = (room_id) ->
+  console.log "updateRoomCommentsCount room_id is #{room_id}"
+  ParseParse.find('Room', room_id, (room) ->
+    ParseParse.where('Comment', [['room_id', room_id]], (room, comments)->
+      room.set('comments_count', comments.length)
+      room.save()
+      window.updateUnreads(room_id, comments.length)
+    , room)
+  )
 
 @syncWorkload = (type) ->
   @socket.push({
@@ -1095,7 +1089,7 @@ renderWorkloads = (dom) ->
   $first.addClass("col-sm-offset-#{getOffset($items.length)}")
 
 start_unless_doing = ()->
-  unless @env.is_doing
+  unless ( @env.is_doing or @env.is_done)
     start_hash()
 
 artworkUrlWithNoimage = (artwork_url) ->
@@ -1149,20 +1143,6 @@ initWhatis = () ->
   $('#whatis').css('text-align', 'center')
   $('#whatis').html($kokuban)
 
-initMemo = () ->
-  $('#memo_title').html("""
-    <h2>MEMO</h2>
-    ここに入力した内容は作者（西小倉宏信）も見れてしまうので機密情報は書かないようにしてください<br />
-    例：山田商事への提案書を作る→企画書を作る
-  """)
-  $textarea = $('<textarea></textarea>')
-  $textarea.html(localStorage['memo'])
-  $textarea.css('width', '500px')
-  $('#memo').html($textarea)
-  $(document).on('keypress', '#memo textarea', () ->
-    localStorage['memo'] = $('#memo textarea').val()
-  )
-
 initYou = () ->
   return unless Parse.User.current()
   ruffnote(17769, 'you_title')
@@ -1178,14 +1158,4 @@ initYou = () ->
       addWorkload("#you", workload, disp)
   null, 24)
 
-initNextkakuhen = () ->
- ruffnote(17782, 'nextkakuhen_title') 
- $('#nextkakuhen').css('font-size', '50px')
- time = (new Date("2015/1/1").getTime()) - (new Date().getTime())
- if time > 0
-  Util.countDown(time, happynewyear, null, {dom: '#nextkakuhen'})
-
-happynewyear = () ->
- $('#nextkakuhen_title').hide()
- $('#nextkakuhen').html('あけましておめでとうございます！！')
 
