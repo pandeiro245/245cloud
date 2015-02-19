@@ -3,7 +3,6 @@ env = {
   et_client_id: '534872bc1c3389f658f335e241a25efd219fd144'
 }
 env.pomotime =  if localStorage['dev_pomo'] then parseFloat(localStorage['dev_pomo']) else 24
-env.pomotime = 0.1 if location.host == 'nishikocloud-mlkcca.herokuapp.com'
 env.chattime =  if localStorage['dev_chat'] then parseFloat(localStorage['dev_chat']) else 5
 
 if location.href.match(/245cloud.com/)
