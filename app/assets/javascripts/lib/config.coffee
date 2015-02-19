@@ -13,7 +13,8 @@ if location.href.match(/245cloud.com/)
 else
   env.parse_app_id = '8QzCMkUbx7TyEApZjDRlhpLQ2OUj0sQWTnkEExod'
   env.parse_key = 'gzlnFfIOoLFQzQ08bU4mxkhAHcSqEok3rox0PBOM'
-  env.facebook_app_id = '322004764668180' # localhost:3001
+  #env.facebook_app_id = '322004764668180' # localhost:3001
+  env.facebook_app_id = '363848477150475' # 245cloud.dev
   env.milkcocoa = 'io-fi3zt6p3l'
 
 env.is_kakuhen = false
