@@ -936,7 +936,6 @@ initRanking = () ->
 
 initFixedStart = () ->
   $(document).on('click', '.fixed_start', () ->
-    mixpanel.track("fixed_start")
     if Parse.User.current()
       hash = $(this).attr('href').replace(/^#/, '')
       location.hash = hash
