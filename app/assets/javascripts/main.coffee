@@ -361,7 +361,6 @@ initChatting = () ->
     $("#chatting_title").show()
     for workload, i in workloads
       continue unless workload.attributes.user
-
       @addChatting(workload)
     renderWorkloads('#chatting')
     renderWorkloads('#doing')
