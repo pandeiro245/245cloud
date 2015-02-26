@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  devise_for :users, controllers: {
+    omniauth_callbacks: "users/omniauth_callbacks"
+  }
   root 'welcome#index'
   resources :nicoinfo, only: [:show], constraints: {id: /sm[0-9]+/}
   get '/pitch' => 'welcome#pitch'
@@ -6,4 +9,5 @@ Rails.application.routes.draw do
   get '/timecrowd/recents' => 'timecrowd#recents'
   post '/timecrowd/start' => 'timecrowd#start'
   get '/timecrowd/stop' => 'timecrowd#stop'
+  resources :users, :workloads, :musics
 end

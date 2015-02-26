@@ -41,3 +41,9 @@ gem 'omniauth-facebook'
 gem 'omniauth-timecrowd', github: 'pandeiro245/omniauth-timecrowd', branch: 'issue-1'
 
 gem 'rb-readline'
+gem 'devise'
+gem 'omniauth'
+gem 'omniauth-facebook'
+gem 'omniauth-twitter'
+gem 'omniauth-google-oauth2'
+
