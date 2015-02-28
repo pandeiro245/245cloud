@@ -2,10 +2,10 @@ class @Nicovideo
   @fetch: (sm_id, callback) ->
     console.log 'nicovideo', sm_id # sm_id: 'smXXXXXXX'
 
+    url = "./nicovideo/#{sm_id}"
+
     # see http://allow-any-origin.appspot.com/
-    # ToDo: use your proxy
-    #       see https://gist.github.com/DanielG/899973
-    url = "http://allow-any-origin.appspot.com/http://ext.nicovideo.jp/api/getthumbinfo/#{sm_id}"
+    # url = "http://allow-any-origin.appspot.com/http://ext.nicovideo.jp/api/getthumbinfo/#{sm_id}"
 
     $.get(url, (xml) ->
       if $(xml).find('nicovideo_thumb_response').attr('status') == 'fail'

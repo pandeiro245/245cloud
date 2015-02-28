@@ -1,5 +1,6 @@
 var express = require('express');
 var app = express();
+var http = require('http');
 var coffeeMiddleware = require('coffee-middleware');
 
 app.use(express.static(__dirname + '/public'));
@@ -23,6 +24,23 @@ app.get("/:filename.js", function (req, res) {
 
 app.get("/main.js", function (req, res) { 
   res.render('main');
+});
+
+app.get('/nicovideo/:id(sm\\d+)', function (req, res) {
+  var sm_id = req.param('id');
+  var url = 'http://ext.nicovideo.jp/api/getthumbinfo/' + sm_id;
+  http.get(url, function (nicoRes) {
+    var body = '';
+    nicoRes.setEncoding('utf8');
+    nicoRes.on('data', function (chunk) {
+      body += chunk;
+    });
+    nicoRes.on('end', function () {
+      res.send(body);
+    });
+  }).on('error', function (e) {
+    res.send(e.message);
+  });
 });
 
 var server = app.listen(process.env.PORT || 3001, function () {
