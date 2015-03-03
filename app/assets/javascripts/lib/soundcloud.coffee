@@ -4,11 +4,27 @@ class @Soundcloud
     $.get(url, (track) ->
       callback(track)
     )
-    
+
   @play: (sc_id, client_id, $dom, is_autoplay=true) ->
-    $dom.html("""
-      <iframe width="100%" height="400" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?visual=true&url=http%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F#{sc_id}&show_artwork=true&client_id=#{client_id}&auto_play=#{if is_autoplay then 'true' else 'false'}&t=3000"></iframe>
+    container = $dom.html("""
+    <div>
+       <label>
+          Volume <input type="range" min=0 max=100 value=100>
+       </label>
+       <iframe width="100%" height="400" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?visual=true&url=http%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F#{sc_id}&show_artwork=true&client_id=#{client_id}&auto_play=#{if is_autoplay then 'true' else 'false'}&t=3000"></iframe>
+    </div>
     """)
+
+    widget = SC.Widget($('iframe', container)[0])
+    $("input", container).on("change", ->
+      widget.setVolume($(this).val() / 100)
+    )
+
+    widget.getVolume((volume) ->
+      $("input", container).val(volume * 100)
+    )
+
+    container
 
   @search: (keyword, client_id, $dom, callback=null) ->
     url = "http://api.soundcloud.com/tracks.json?client_id=#{window.env.sc_client_id}&q=#{keyword}&duration[from]=#{24*60*1000}"
