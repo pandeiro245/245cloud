@@ -787,6 +787,7 @@ window.finish = () ->
   location.reload()
 
 window.createComment = (room_id) ->
+  console.log 'createComment'
   $createComment = $("#room_#{room_id} .create_comment")
   
   body = $createComment.val()
