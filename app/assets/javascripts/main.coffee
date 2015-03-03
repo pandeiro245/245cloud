@@ -315,22 +315,24 @@ initSearch = () ->
 
     $(document).on('click', ".room_link", () ->
       $self = $(this)
+
+      # 画像部屋を押したらその部屋だけ開くようにする
       if $self.hasClass('room_icon')
         for i in $('.on')
           $(i).attr('src', $(i).attr('data-off'))
           $(i).removeClass('on')
         $self.addClass('on')
         $self.attr('src', $self.attr('data-on'))
+
+      # 押したのがその他だったらモーダルを開く
       if $self.hasClass('sonota')
-        $('#selectRoomButton').click()
+        if $('#selectRoomModal').attr('style').match(/hidden/)
+          $('#selectRoomButton').click()
+      # そうでなければその部屋を開いてモーダルを閉じる
       else
         vals = $self.attr('data-values').split(':')
         initRoom(vals[0], vals[1])
-      $('.modal-header .close').click()
-    )
-
-    $(document).on('click', ".room_link", () ->
-
+        $('.modal-header .close').click()
     )
 
     $(document).on('mouseover', ".room_icon", () ->
@@ -936,7 +938,6 @@ initRanking = () ->
 
 initFixedStart = () ->
   $(document).on('click', '.fixed_start', () ->
-    mixpanel.track("fixed_start")
     if Parse.User.current()
       hash = $(this).attr('href').replace(/^#/, '')
       location.hash = hash
