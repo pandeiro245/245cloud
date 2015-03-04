@@ -10,4 +10,7 @@ Rails.application.routes.draw do
   post '/timecrowd/start' => 'timecrowd#start'
   get '/timecrowd/stop' => 'timecrowd#stop'
   resources :users, :workloads, :musics
+
+  match '/auth/:provider/callback' => 'sessions#callback', via: [:get, :post]
+  match '/auth/failure' => 'sessions#failure', via: [:get, :post]
 end

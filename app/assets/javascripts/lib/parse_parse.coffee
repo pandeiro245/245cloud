@@ -32,7 +32,9 @@ class @ParseParse
           console.log '>'
           # query.greaterThan(c[0], c[2])
       else
-        url += "&where[#{c[0]}]=#{c[1]}"
+        key = c[0]
+        val = c[1]
+        url += "&where[#{key}]=#{val}"
 
     $.get(url, (data) ->
       if instance
