@@ -22,38 +22,63 @@ class @ParseParse
     })
 
   @where: (model_name, cond, callback, instance=null, limit=100) ->
-    Model = Parse.Object.extend(model_name)
-    query = new Parse.Query(Model)
-    query.limit(limit)
+    url = "#{model_name.toLowerCase()}s.json?limit=#{limit}"
     for c in cond
       if c[2]
         if c[1] == '<'
-          query.lessThan(c[0], c[2])
+          console.log '<'
+          # query.lessThan(c[0], c[2])
         else if c[1] == '>'
-          query.greaterThan(c[0], c[2])
+          console.log '>'
+          # query.greaterThan(c[0], c[2])
       else
-        query.equalTo(c[0], c[1])
+        key = c[0]
+        val = c[1]
+        url += "&where[#{key}]=#{val}"
 
-    query.descending("createdAt")
-    query.find({
-      success: (data) ->
-        if instance
-          callback(instance, data)
-        else
-          callback(data)
-      error: (error) ->
-        console.log error
-    })
+    $.get(url, (data) ->
+      if instance
+        callback(instance, data)
+      else
+        callback(data)
+    )
+
+    #Model = Parse.Object.extend(model_name)
+    #query = new Parse.Query(Model)
+    #query.limit(limit)
+    #for c in cond
+    #  if c[2]
+    #    if c[1] == '<'
+    #      query.lessThan(c[0], c[2])
+    #    else if c[1] == '>'
+    #      query.greaterThan(c[0], c[2])
+    #  else
+    #    query.equalTo(c[0], c[1])
+
+    #query.descending("createdAt")
+    #query.find({
+    #  success: (data) ->
+    #    if instance
+    #      callback(instance, data)
+    #    else
+    #      callback(data)
+    #  error: (error) ->
+    #    console.log error
+    #})
 
   @all: (model_name, callback, params={}) ->
-    Model = Parse.Object.extend(model_name)
-    query = new Parse.Query(Model)
-    query.limit(999999)
-    query.descending("createdAt")
-    query.find({
-      success: (data) ->
-        callback(data)
-    })
+    #Model = Parse.Object.extend(model_name)
+    #query = new Parse.Query(Model)
+    #query.limit(999999)
+    #query.descending("createdAt")
+    #query.find({
+    #  success: (data) ->
+    #    callback(data)
+    #})
+    url = "#{model_name.toLowerCase()}s.json"
+    $.get(url, (data) ->
+      callback(data)
+    )
 
   @find_or_create: (model_name, key_params, params, callback) ->
 
