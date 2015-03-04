@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
-  devise_for :users, controllers: {
-    omniauth_callbacks: "users/omniauth_callbacks"
-  }
-  root 'welcome#index'
   resources :users, :workloads, :musics
+  root 'welcome#index'
+
+  match '/auth/:provider/callback' => 'sessions#callback', via: [:get, :post]
+  match '/auth/failure' => 'sessions#failure', via: [:get, :post]
 end
