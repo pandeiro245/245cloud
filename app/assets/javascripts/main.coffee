@@ -222,7 +222,6 @@ initStart = () ->
         style: 'margin:0 auto; width: 100%;'
       }
       $before = Util.tag('input', "今から24分間集中するにあたって一言（公開されます） 例：24分で企画書のたたき台を作る！", attrs)
-      console.log 'before', $before
       $review = Util.tag('div', $before, {style: 'text-align: center;'})
       $('#contents').append($review)
 
@@ -789,10 +788,7 @@ window.finish = () ->
 
 window.createComment = (room_id) ->
   console.log 'createComment'
-  console.log 'room_id', room_id
   $createComment = $("#room_#{room_id} .create_comment")
-  
-  #$file = $("#file")
   
   body = $createComment.val()
 
@@ -804,32 +800,13 @@ window.createComment = (room_id) ->
 
   if room_id != 'default'
     params.room_id = room_id
-
-  ###
-  fileUploadControl = $file[0]
-  if fileUploadControl.files.length > 0
-    file = fileUploadControl.files[0]
-    #FIXME
-    filename = 'commentfile' + file.name.split(/./).pop()
-
-    parseFile = new Parse.File(filename, file)
-    parseFile.save((file) ->
-      console.log file
-      params['file'] = file
-      ParseParse.create('Comment', params, (comment)->
-        $file.val(null)
-        syncComment(room_id, comment)
-      )
-    , (error) ->
-      # error handling
-    )
-  else
-    ParseParse.create('Comment', params, (comment)->
-      syncComment(room_id, comment)
-    )
-  ###
   ParseParse.create('Comment', params, (comment)->
     updateRoomCommentsCount(room_id)
+
+    # 自分の投稿を自分の画面に
+    @addComment(room_id, comment, true, true)
+
+    # 自分の投稿を他人の画面に
     syncComment(room_id, comment, true)
   )
 
@@ -957,24 +934,21 @@ ruffnote = (id, dom, callback=null) ->
 initService = ($dom, url) ->
   $dom.append("<iframe src='#{url}' width='85%' height='900px'></iframe>")
 
-@addComment = (id, comment, is_countup=false) ->
-  $comments = $("#room_#{id} .comments")
+@addComment = (room_id, comment, is_countup=false, is_prepend=false) ->
+  $comments = $("#room_#{room_id} .comments")
   if typeof(comment.attributes) != 'undefined'
     c = comment.attributes
   else
     c = comment
   user = c.user
 
+
+
   t = new Date()
   hour = t.getHours()
   min = t.getMinutes()
 
   if user && c.body
-    if c.file
-      console.log c.file
-      file = "<img src=\"#{c.file._url}\" style='max-width: 500px;'/>"
-    else
-      file = ""
     html = """
     <tr>
     <td>
@@ -983,12 +957,16 @@ initService = ($dom, url) ->
     <div class='facebook_name_#{user.id}'></div>
     </a>
     <td>
-    <td>#{Util.parseHttp(c.body)}#{file}</td>
+    <td>#{Util.parseHttp(c.body)}</td>
     <td>#{Util.hourMin(comment.createdAt)}</td>
     </tr>
     """
+
     if typeof(comment.attributes) != 'undefined'
-      $comments.append(html)
+      if is_prepend
+        $comments.prepend(html)
+      else
+        $comments.append(html)
       ParseParse.fetch("user", comment, (ent, user) ->
         img = user.get('icon_url') || user.get('icon')._url
         $(".icon_#{user.id}").attr('src', img)
@@ -1029,12 +1007,12 @@ updateRoomCommentsCount = (room_id) ->
     workload: @workload
   })
 
-syncComment = (id, comment, is_countup=false) ->
+syncComment = (room_id, comment, is_countup=false) ->
   console.log 'syncComment'
   @socket.push({
     type: 'comment'
     comment: comment
-    id2: id
+    room_id: room_id
     is_countup: is_countup
   })
 
