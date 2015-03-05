@@ -8,7 +8,6 @@
 .*.sw*
 /config/database.yml
 /config/initializers/secret_token.rb
-/config/initializers/00_constants.rb
 /config/environments/production.rb
 /coverage
 /public/uploads

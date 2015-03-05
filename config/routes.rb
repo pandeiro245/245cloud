@@ -11,6 +11,8 @@ Rails.application.routes.draw do
   get '/timecrowd/stop' => 'timecrowd#stop'
   resources :users, :workloads, :musics
 
+  # omniauth
   match '/auth/:provider/callback' => 'sessions#callback', via: [:get, :post]
   match '/auth/failure' => 'sessions#failure', via: [:get, :post]
+  root 'welcome#index'
 end
