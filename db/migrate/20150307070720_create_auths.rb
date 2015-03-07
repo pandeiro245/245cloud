@@ -3,7 +3,7 @@ class CreateAuths < ActiveRecord::Migration
     create_table :auths do |t|
       t.integer :user_id
       t.string :provider
-      t.string :id
+      t.string :uid
       t.string :name
       t.string :nickname
       t.string :image
