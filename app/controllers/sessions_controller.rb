@@ -4,7 +4,18 @@ class SessionsController < ApplicationController
 
   def callback
     data = request.env['omniauth.auth']
-    raise data.inspect
+    auth = Auth.find_by(
+      provider: data['provider'],
+      uid:      data['uid']
+    ).presence || Auth.create_with_omniauth(data)
+
+    if user_signed_in?
+      #TODO: UserとAuthを紐づける
+    else
+      #TODO: 新規Userとして登録
+      auth.register! unless auth.user.present?
+    end
+    redirect_to root_path, notice: 'ログインが完了しました'
   end
 
   def failure
