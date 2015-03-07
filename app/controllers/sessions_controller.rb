@@ -1,20 +1,8 @@
 class SessionsController < ApplicationController
-  skip_before_action :authenticate_user!
-  skip_before_action :verify_authenticity_token
-
   def callback
     data = request.env['omniauth.auth']
-    auth = Auth.find_by(
-      provider: data['provider'],
-      uid:      data['uid']
-    ).presence || Auth.create_with_omniauth(data)
-
-    if user_signed_in?
-      #TODO: UserとAuthを紐づける
-    else
-      #TODO: 新規Userとして登録
-      auth.register! unless auth.user.present?
-    end
+    auth = Auth.find_or_create_with_omniauth(data)
+    auth.register!
     redirect_to root_path, notice: 'ログインが完了しました'
   end
 
