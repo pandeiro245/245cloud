@@ -5,12 +5,6 @@
 
 $ ->
   return unless $('#nc').length
-  ParseParse.all("User", (users) ->
-    for user in users
-      img = "https://graph.facebook.com/#{user.get('facebook_id_str')}/picture?height=40&width=40"
-      localStorage["icon_#{user.id}"] = img if img
-      $(".icon_#{user.id}").attr('src', img)
-  )
   ParseParse.addAccesslog()
   Util.scaffolds([
     ['header', {is_row: false}]
@@ -78,11 +72,6 @@ $ ->
   initWhatis()
   initYou()
   
-  if user = Parse.User.current()
-    ParseParse.find('User', user.id, (user)->
-      window.current_user = user
-    )
-
 initHeatmap = () ->
   return unless Parse.User.current()
   cal = new CalHeatMap()
@@ -170,7 +159,6 @@ entryItem = (entry) ->
       </label>
     </tr>
   """
-
 
 init8tracks = () ->
   ruffnote(17763, '8tracks_title')
@@ -447,7 +435,7 @@ initDone = () ->
  
 login = () ->
   console.log 'login'
-  window.fbAsyncInit()
+  location.href = '/auth/facebook'
 
 start_random = () ->
   console.log 'start_random'
