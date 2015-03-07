@@ -17,8 +17,6 @@ $ ->
     'news'
     ['otukare', {is_hide: true}]
     'ad'
-    'livechat'
-    'review'
     'contents'
     'timecrowd'
     'heatmap'
@@ -30,8 +28,6 @@ $ ->
     'done'
     'you_title'
     'you'
-    'calendar_title'
-    'calendar'
     'search_title'
     'search'
     'ranking_title'
@@ -49,11 +45,8 @@ $ ->
     'rooms'
     'whatis_title'
     ['whatis', {is_row: false}]
-    #'mlkcca_title'
-    #'mlkcca'
     'wantedly'
     'footer'
-    ['otukare_services', {is_hide: true}]
     'hatopoppo'
   ])
   Util.realtime()
@@ -65,18 +58,7 @@ $ ->
   #ruffnote(17762, 'ranking_title')
   ruffnote(17498, 'otukare')
 
-  window.services = [
-    ['ingress', 'https://www.ingress.com/intel']
-    ['togetter', 'http://togetter.com/']
-    ['newspicks', 'https://newspicks.com/top-news']
-    ['itoicom', 'http://www.1101.com/home.html']
-  ]
-
   $('#selectRoomButton').hide()
-
-  for service in window.services
-    if location.href.match("#{service[0]}=")
-      initService($('#otukare_services'), service[1])
 
   ruffnote(17661, 'music_ranking')
 
@@ -92,7 +74,6 @@ $ ->
   initDone()
   initRanking()
   initFixedStart()
-  #ParseBatch.repeat()
   initHatopoppo()
   initWhatis()
   initYou()
@@ -100,7 +81,6 @@ $ ->
   if user = Parse.User.current()
     ParseParse.find('User', user.id, (user)->
       window.current_user = user
-      #initCalendar()
     )
 
 initHeatmap = () ->
@@ -286,15 +266,6 @@ initStart = () ->
     $nomusic.append(Util.tag('img', 'https://ruffnote.com/attachments/24981', {class: 'jacket'}))
     #Util.addButton('start', $nomusic, text, start_nomusic, tooltip)
     Util.addButton('start', $nomusic, text, start_nomusic)
-
-    if location.href.match('review=')
-      attrs = {
-        id: 'input_review_before'
-        style: 'margin:0 auto; width: 100%;'
-      }
-      $before = Util.tag('input', "今から24分間集中するにあたって一言（公開されます） 例：24分で企画書のたたき台を作る！", attrs)
-      $review = Util.tag('div', $before, {style: 'text-align: center;'})
-      $('#contents').append($review)
 
   else
     text = 'facebookログイン'
@@ -503,16 +474,6 @@ window.start_nomusic = () ->
 
 createWorkload = (params = {}, callback) ->
   params.host = location.host
-
-  if location.href.match('review=')
-    if location.href.match('sparta=')
-      review = prompt("今から24分間集中するにあたって一言（公開されます）", '24分間頑張るぞ！')
-    else
-      review = $('#input_review_before').val()
-
-    if review.length
-      params['review_before'] = review
-
   ParseParse.create("Workload", params, (workload) ->
     @workload = workload
     callback()
@@ -659,7 +620,6 @@ complete = () ->
   Util.countDown(@env.chattime*60*1000, 'finish')
   $('#header').hide()
   $('#otukare').fadeIn()
-  $("#otukare_services").fadeIn()
   $("#playing").fadeOut()
   $("#search").fadeOut()
   $("#playing").html('') # for stopping
@@ -927,22 +887,6 @@ initRanking = () ->
     w = workload
     user_id = w.user.objectId
 
-  review = ""
-  stars = ""
-
-  if location.href.match('review=')
-    if w.review_before
-      review += "<div class=\"review\">【前】#{w.review_before}</div>"
-    if w.review_after
-      review += "<div class=\"review\">【後】#{w.review_after}</div>"
-    
-    if w.point
-      if w.point < 5
-        for i in [1..(5-w.point)]
-          stars += "☆"
-      for i in [1..w.point]
-        stars += "★"
-
   if w.title
     href = '#'
     if w.sc_id
@@ -979,7 +923,6 @@ initRanking = () ->
    <div class='disp'>#{disp}</div>
    <div>#{fixed}</div>
    <div>#{stars}</div>
-   <div>#{review}</div>
   """)
   $('[data-toggle="tooltip"]').tooltip()
 
@@ -1025,9 +968,6 @@ initFixedStart = () ->
 
 window.ruffnote = (id, dom, callback=null) ->
   Ruffnote.fetch("pandeiro245/245cloud/#{id}", dom, callback)
-
-initService = ($dom, url) ->
-  $dom.append("<iframe src='#{url}' width='85%' height='900px'></iframe>")
 
 @addComment = (room_id, comment, is_countup=false, is_prepend=false) ->
   $comments = $("#room_#{room_id} .comments")
@@ -1249,8 +1189,4 @@ renderFixedStart = (title, icon) ->
   $('#random').removeClass("col-sm-offset-#{getOffset(2)}")
   $('#random').addClass("col-sm-offset-#{getOffset(3)}")
   $('[data-toggle="tooltip"]').tooltip()
-
-
-
-
 
