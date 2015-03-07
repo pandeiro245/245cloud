@@ -1,14 +1,13 @@
 class Auth < ActiveRecord::Base
   belongs_to :user
-  scope :facebook, -> { where(provider: 'facebook') }
 
-  def self.create_with_omniauth(data)
-    auth = Auth.find_or_initialize_by(
+  def self.find_or_create_with_omniauth(data)
+    auth = Auth.find_or_create_by(
       provider: data['provider'],
       uid:      data['uid']
     )
     auth.set_info(data)
-    auth.save
+    auth.save!
     auth
   end
   
@@ -18,8 +17,6 @@ class Auth < ActiveRecord::Base
       self.nickname = data['info']['nickname']
       self.image = data['info']['image']
     end
-    self.token = data.try(:[], 'credentials').try(:[], 'token')
-    self.credentials = data.try(:[], 'credentials')
   end
 
   def register!
