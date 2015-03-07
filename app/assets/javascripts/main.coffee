@@ -4,12 +4,6 @@
 @nomusic_url = 'https://ruffnote.com/attachments/24985'
 
 $ ->
-  ParseParse.all("User", (users) ->
-    for user in users
-      img = user.get('icon_url')
-      localStorage["icon_#{user.id}"] = img if img
-      $(".icon_#{user.id}").attr('src', img)
-  )
   ParseParse.addAccesslog()
   Util.scaffolds([
     ['header', {is_row: false}]
@@ -65,11 +59,6 @@ $ ->
   initWhatis()
   initYou()
   
-  if user = Parse.User.current()
-    ParseParse.find('User', user.id, (user)->
-      window.current_user = user
-    )
-
 init8tracks = () ->
   ruffnote(17763, '8tracks_title')
   EightTracks.attrip($('#8tracks'))
@@ -357,10 +346,9 @@ initDone = () ->
       @addWorkload("#done", workload, disp)
   , null, 24)
  
-
 login = () ->
   console.log 'login'
-  window.fbAsyncInit()
+  location.href = '/auth/facebook'
 
 start_random = () ->
   console.log 'start_random'
