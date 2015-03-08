@@ -6,10 +6,11 @@ class @Ruffnote
         callback()
     else
       is_callback = true
-    url = "https://ruffnote.com/#{path}/download.json?callback=?"
-    $.getJSON(url, (data) ->
-      localStorage["ruffnote_#{name}"] = data.content
-      $("##{name}").html(data.content)
-      if is_calback?
-        callback()
-    )
+    unless location.href.match(/offline=/)
+      url = "https://ruffnote.com/#{path}/download.json?callback=?"
+      $.getJSON(url, (data) ->
+        localStorage["ruffnote_#{name}"] = data.content
+        $("##{name}").html(data.content)
+        if is_calback?
+          callback()
+      )

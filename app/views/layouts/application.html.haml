@@ -5,7 +5,8 @@
       PullRequest絶賛募集中！！
       https://github.com/pandeiro245/245cloud
     %title 245cloud（ニシコクラウド）
-    %script{:src => "//cdn.mlkcca.com/v0.2.8/milkcocoa.js"}
+    - unless params[:offline]
+      %script{:src => "//cdn.mlkcca.com/v0.2.8/milkcocoa.js"}
     
     = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true
     = javascript_include_tag 'application'
@@ -19,7 +20,8 @@
     %link{:href => "/icon.png", :rel => "apple-touch-icon-precomposed"}
     %meta{:content => "https://ruffnote.com/attachments/24009", :property => "og:image"}
   %body
-    = render 'shared/button_tweet'
+    - unless params[:offline]
+      = render 'shared/button_tweet'
     #nc
       %h1 245cloud（ニシコクラウド）で24分間集中しましょう
     #fb-root

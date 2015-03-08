@@ -4,7 +4,7 @@
 @nomusic_url = 'https://ruffnote.com/attachments/24985'
 
 $ ->
-  ParseParse.addAccesslog()
+  # ParseParse.addAccesslog()
   Util.scaffolds([
     ['header', {is_row: false}]
     'news'
