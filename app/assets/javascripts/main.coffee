@@ -171,8 +171,6 @@ initNaotake = () ->
   Mixcloud.search('/naotake/', $('#naotake'))
 
 initStart = () ->
-  if location.href.match(/sparta/)
-    Util.countDown(1*60*1000, start_unless_doing)
   if location.href.match(/auto_start=/)
     start_unless_doing()
 
