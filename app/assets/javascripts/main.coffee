@@ -4,8 +4,6 @@
 @nomusic_url = 'https://ruffnote.com/attachments/24985'
 
 $ ->
-  return unless $('#nc').length
-  ParseParse.addAccesslog()
   Util.scaffolds([
     ['header', {is_row: false}]
     'news'
