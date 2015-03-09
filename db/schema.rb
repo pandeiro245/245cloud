@@ -64,6 +64,7 @@ ActiveRecord::Schema.define(version: 20150308080930) do
     t.datetime "updated_at"
     t.text     "key",        limit: 65535
     t.integer  "music_id",   limit: 4
+    t.integer  "number",     limit: 4
   end
 
 end
