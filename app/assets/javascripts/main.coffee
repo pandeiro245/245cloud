@@ -49,15 +49,15 @@ $ ->
 
   initSearch()
   init8tracks()
-  initChatting()
+  #initChatting()
   initStart()
-  initDoing()
+  #initDoing()
   initDone()
   initRanking()
   initFixedStart()
   initHatopoppo()
   initWhatis()
-  initYou()
+  #initYou()
   
 init8tracks = () ->
   ruffnote(17763, '8tracks_title')
@@ -67,7 +67,7 @@ initStart = () ->
   text = "24分やり直しでも大丈夫ですか？"
   Util.beforeunload(text, 'env.is_doing')
   
-  if Parse.User.current()
+  if true # loginend user
     $('#contents').append("""
       <div class='countdown2' >
       <div class='countdown' ></div>
@@ -291,7 +291,7 @@ initChatting = () ->
   $("#chatting_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24938' /></h2>")
 
   $("#chatting_title").hide()
-  $.get('/workloads/chatting.json', (workloads) ->
+  $.get('/workloads/chattings.json', (workloads) ->
     return unless workloads.length > 0
     $("#chatting_title").show()
     for workload, i in workloads
@@ -323,12 +323,18 @@ initDone = () ->
   console.log 'initDone'
   $.get('/workloads/dones.json', (workloads) ->
     return unless workloads.length > 0
-    $("#done").append("<h2 class='status'><img src='https://ruffnote.com/attachments/24937' /></h2>")
+    $("#done").append("""
+      <h2 class='status'>
+      <img src='https://ruffnote.com/attachments/24937' />
+      </h2>
+    """)
     for workload in workloads
-      continue unless workload.attributes.user
-      disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.attributes.number}回目）"
-      @addWorkload("#done", workload, disp)
-  , null, 24)
+      disp = "#{Util.hourMin(workload.created_at, '開始')}（#{workload.number}回目）"
+      #@addWorkload("#done", workload, disp)
+      addWorkload("#done", workload, disp)
+    return
+  )
+  return
  
 login = () ->
   console.log 'login'
@@ -358,7 +364,7 @@ window.start_nomusic = () ->
 
 createWorkload = (params = {}, callback) ->
   params.host = location.host
-  ParseParse.create("Workload", params, (workload) ->
+  $.post('/workloads.json', params, (workload) ->
     @workload = workload
     callback()
   )
@@ -557,8 +563,6 @@ window.createComment = (room_id) ->
   if room_id != 'default'
     params.room_id = room_id
   ParseParse.create('Comment', params, (comment)->
-    updateRoomCommentsCount(room_id)
-
     # 自分の投稿を自分の画面に
     @addComment(room_id, comment, true, true)
 
@@ -584,13 +588,7 @@ initRanking = () ->
   @addWorkload("#chatting", workload, disp)
 
 @addWorkload = (dom, workload, disp) ->
-  if workload.attributes
-    w = workload.attributes
-    user_id = w.user.id
-  else
-    w = workload
-    user_id = w.user.objectId
-
+  w = workload
   if w.title
     href = '#'
     if w.sc_id
@@ -608,7 +606,7 @@ initRanking = () ->
     title = '無音'
     fixed = "<a href=\"#\" class='fixed_start'><img src='https://ruffnote.com/attachments/24926' /></a>"
     jacket = "<img src=\"https://ruffnote.com/attachments/24981\" class='jacket'/>"
-  user_img = "<img class='icon icon_#{user_id} img-thumbnail' src='#{userIdToIconUrl(user_id)}' />"
+  user_img = "<img class='icon img-thumbnail' src='#{workload.icon_url}' />"
 
   $item = Util.tag('div', null, {class: 'inborder'})
   $item.css("border", '4px solid #eadba0')
@@ -624,7 +622,6 @@ initRanking = () ->
    <span>#{user_img}</span>
    <div class='disp'>#{disp}</div>
    <div>#{fixed}</div>
-   <div>#{stars}</div>
   """)
 
   unless dom == '#done'
@@ -634,17 +631,13 @@ initRanking = () ->
     $("#{dom} .user_#{user_id}").html($item)
   else
     $workload = $('<div></div>')
-    $workload.addClass("user_#{user_id}")
     $workload.addClass("workload")
     $workload.addClass("col-sm-2")
     $workload.css("min-height", '180px')
     $workload.html($item)
-    if workload.attributes # init
-      $("#{dom}").append($workload)
-    else # with PubNub
-      $("#{dom}").prepend($workload)
-      renderWorkloads('#doing')
-      renderWorkloads('#chatting')
+    $("#{dom}").append($workload)
+    renderWorkloads('#doing')
+    renderWorkloads('#chatting')
 
   if @env.is_doing || @env.is_done
     $(".fixed_start").hide()
@@ -703,39 +696,11 @@ ruffnote = (id, dom, callback=null) ->
         $comments.prepend(html)
       else
         $comments.append(html)
-      ParseParse.fetch("user", comment, (ent, user) ->
-        img = user.get('icon_url') || user.get('icon')._url
-        $(".icon_#{user.id}").attr('src', img)
-        if user.get('facebook_id_str')
-          href = "https://facebook.com/#{user.get('facebook_id_str')}"
-          $(".facebook_#{user.id}").attr('href', href)
-        if name = user.get('name')
-          $(".facebook_name_#{user.id}").html(name)
-      )
     else
       $comments.prepend(html)
 
 userIdToIconUrl = (userId) ->
   localStorage["icon_#{userId}"] || ""
-
-getUnreadsCount = (room_id, total_count) ->
-  return total_count unless Parse.User.current()
-  return total_count unless Parse.User.current().get("unreads")
-  if count = Parse.User.current().get("unreads")[room_id]
-    res = total_count - count
-    if res < 0 then 0  else res
-  else
-    return total_count
-
-updateRoomCommentsCount = (room_id) ->
-  console.log "updateRoomCommentsCount room_id is #{room_id}"
-  ParseParse.find('Room', room_id, (room) ->
-    ParseParse.where('Comment', [['room_id', room_id]], (room, comments)->
-      room.set('comments_count', comments.length)
-      room.save()
-      window.updateUnreads(room_id, comments.length)
-    , room)
-  )
 
 @syncWorkload = (type) ->
   @socket.push({
