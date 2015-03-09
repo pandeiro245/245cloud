@@ -197,7 +197,7 @@ initSearch = () ->
   $('#select_rooms').html(Util.tag('h2', Util.tag('img', 'https://ruffnote.com/attachments/24967'), {class: 'status'}))
   $('#select_rooms').append(Util.tag('div', null, {class: 'imgs'}))
 
-  ParseParse.all("Room", (rooms) ->
+  $.get('/rooms.json', (rooms) ->
     $('#select_rooms .imgs').html('')
 
     # いつも部屋
@@ -290,13 +290,8 @@ initChatting = () ->
   console.log 'initChatting'
   $("#chatting_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24938' /></h2>")
 
-  cond = [
-    ["is_done", true]
-    ["createdAt", '>', Util.minAgo(@env.pomotime + @env.chattime)]
-    ["createdAt", '<', Util.minAgo(@env.pomotime)]
-  ]
   $("#chatting_title").hide()
-  ParseParse.where("Workload", cond, (workloads) ->
+  $.get('/workloads/chatting.json', (workloads) ->
     return unless workloads.length > 0
     $("#chatting_title").show()
     for workload, i in workloads
@@ -311,11 +306,7 @@ initDoing = () ->
   $("#doing_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24939' /></h2>")
   $("#doing_title").hide()
 
-  cond = [
-    ["is_done", null]
-    ["createdAt", '>', Util.minAgo(@env.pomotime)]
-  ]
-  ParseParse.where("Workload", cond, (workloads) ->
+  $.get('/workloads/doings.json', (workloads) ->
     return unless workloads.length > 0
     $("#doing_title").show()
     user_keys = {}
@@ -330,11 +321,7 @@ initDoing = () ->
 
 initDone = () ->
   console.log 'initDone'
-  cond = [
-    ["is_done", true]
-    ["createdAt", '<', Util.minAgo(@env.pomotime + @env.chattime)]
-  ]
-  ParseParse.where("Workload", cond, (workloads) ->
+  $.get('/workloads/dones.json', (workloads) ->
     return unless workloads.length > 0
     $("#done").append("<h2 class='status'><img src='https://ruffnote.com/attachments/24937' /></h2>")
     for workload in workloads
@@ -349,9 +336,8 @@ login = () ->
 
 start_random = () ->
   console.log 'start_random'
-  ParseParse.all("Music", (musics) ->
-    n = Math.floor(Math.random() * musics.length)
-    sc_id = musics[n].attributes.sc_id
+  $.get('/musics/random.json', (music) ->
+    sc_id = musics.sc_id
     location.hash = "soundcloud:#{sc_id}"
     window.play("soundcloud:#{sc_id}")
   )
@@ -490,9 +476,7 @@ complete = () ->
   @env.is_done = true
 
   if location.href.match("ad=") and !$('#ad iframe').length
-    ParseParse.all("Ad", (ads) ->
-      n = Math.floor(Math.random() * ads.length)
-      ad = ads[n].attributes
+    $.get('/ads/random.json', (ad) ->
       $('#ad').html(
         """
         <h2><a href=\"#{ad.click_url}?from=245cloud.com\" target=\"_blank\">#{ad.name}</a></h2>
@@ -512,31 +496,6 @@ complete = () ->
     ["createdAt", '<', workload.createdAt]
     ["createdAt", '>', first]
   ]
-  ParseParse.where("Workload", cond, (workload, data) ->
-    workload.set('number', data.length + 1)
-    workload.set('is_done', true)
-    workload.save()
-  , workload)
-
-  # 開始29分前〜開始時間
-  cond = [
-    ['createdAt', '>', Util.minAgo(@env.pomotime, workload.createdAt)]
-    ['createdAt', '<', workload.createdAt]
-  ]
-  ParseParse.where('Workload', cond, (workload, workloads2) ->
-    workload.set('synchro_start', workloads2.length + 1)
-    workload.save()
-  , workload, 99999)
-
-  # 終了29分前〜終了時間
-  cond = [
-    ['createdAt', '>', workload.createdAt]
-    ['createdAt', '<', Util.minAgo(-1 * @env.pomotime, workload.createdAt)]
-  ]
-  ParseParse.where('Workload', cond, (workload, workloads3) ->
-    workload.set('synchro_end', workloads3.length + 0)
-    workload.save()
-  , workload, 9999)
 
   $complete = $('#complete')
   $complete.html('')
@@ -569,22 +528,14 @@ window.initRoom = (id = 'default', title='いつもの部屋') ->
     search_id = if id == 'default' then null else id
     limit = if id == 'default' then 100 else 10000
 
-    ParseParse.where("Comment", [['room_id', search_id]], (comments) ->
-      $("#room_#{id} .create_comment").keypress((e) ->
+    $.get("/rooms/#{search_id}/comments.json", (comments) ->
+      $(document).on('keypress', "#room_#{id} .create_comment", (e) ->
         if e.which == 13 #enter
           window.createComment(id)
       )
       for comment in comments
         @addComment(id, comment)
-      window.updateUnreads(search_id, comments.length)
-    , null, limit)
-
-window.updateUnreads = (room_id, count) ->
-  unreads = Parse.User.current().get("unreads")
-  unreads = {} unless unreads
-  unreads[room_id] = count
-  Parse.User.current().set("unreads", unreads)
-  Parse.User.current().save()
+    )
 
 window.finish = () ->
   console.log 'finish'
