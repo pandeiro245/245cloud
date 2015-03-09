@@ -18,6 +18,7 @@ class AddWorkloadAndMusic < ActiveRecord::Migration
       t.datetime "updated_at"
       t.text     "key"
       t.integer  "music_id"
+      t.integer  "number"
     end
   end
 end
