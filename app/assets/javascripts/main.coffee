@@ -60,7 +60,7 @@ $ ->
   initHeatmap()
   #initChatting()
   initStart()
-  #initDoing()
+  initDoing()
   initDone()
   initRanking()
   initFixedStart()
@@ -407,11 +407,16 @@ initDone = () ->
   console.log 'initDone'
   $.get('/workloads/dones.json', (workloads) ->
     return unless workloads.length > 0
-    $("#done").append("""
-      <h2 class='status'>
-      <img src='https://ruffnote.com/attachments/24937' />
-      </h2>
-    """)
+    if location.href.match(/offline=/)
+      $("#done").append("""
+        <h2 class='status'>DONE</h2>
+      """)
+    else
+      $("#done").append("""
+        <h2 class='status'>
+        <img src='https://ruffnote.com/attachments/24937' />
+        </h2>
+      """)
     for workload in workloads
       disp = "#{Util.hourMin(workload.created_at, '開始')}（#{workload.number}回目）"
       #@addWorkload("#done", workload, disp)
@@ -835,7 +840,10 @@ initRanking = () ->
     title = w.title
   else
     title = '無音'
-    fixed = "<a href=\"#\" class='fixed_start'><img src='https://ruffnote.com/attachments/24926' /></a>"
+    if location.href.match(/offline=/)
+      fixed = "<a href=\"#\" class='fixed_start'>無音で集中</a>"
+    else
+      fixed = "<a href=\"#\" class='fixed_start'><img src='https://ruffnote.com/attachments/24926' /></a>"
     jacket = "<img src=\"https://ruffnote.com/attachments/24981\" class='jacket'/>"
   user_img = "<img class='icon img-thumbnail' src='#{workload.icon_url}' />"
 
@@ -879,7 +887,7 @@ initRanking = () ->
 
 initFixedStart = () ->
   $(document).on('click', '.fixed_start', () ->
-    if Parse.User.current()
+    if true
       hash = $(this).attr('href').replace(/^#/, '')
       location.hash = hash
       start_hash()
