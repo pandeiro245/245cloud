@@ -788,7 +788,7 @@ getOffset = (all_count) ->
   data[all_count]
 
 renderWorkloads = (dom) ->
-  console.log 'renderWorkloads'
+  #console.log 'renderWorkloads'
   $dom = $("#{dom}")
   $items = $("#{dom} .workload")
   $first = $("#{dom} .workload:first")

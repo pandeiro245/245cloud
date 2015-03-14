@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150308080930) do
+ActiveRecord::Schema.define(version: 20150314135307) do
 
   create_table "auths", force: :cascade do |t|
     t.integer  "user_id",     limit: 4
@@ -28,6 +28,14 @@ ActiveRecord::Schema.define(version: 20150308080930) do
     t.datetime "updated_at",                null: false
   end
 
+  create_table "comments", force: :cascade do |t|
+    t.integer  "user_id",    limit: 4
+    t.text     "content",    limit: 65535
+    t.integer  "room_id",    limit: 4
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+  end
+
   create_table "musics", force: :cascade do |t|
     t.string   "title",       limit: 255
     t.boolean  "is_fixed",    limit: 1
@@ -36,6 +44,15 @@ ActiveRecord::Schema.define(version: 20150308080930) do
     t.integer  "total_count", limit: 4
     t.text     "key",         limit: 65535
     t.text     "user_counts", limit: 65535
+  end
+
+  create_table "rooms", force: :cascade do |t|
+    t.string   "title",          limit: 255
+    t.string   "image_on",       limit: 255
+    t.string   "image_off",      limit: 255
+    t.integer  "comments_count", limit: 4
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
   end
 
   create_table "users", force: :cascade do |t|
