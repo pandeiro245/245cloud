@@ -31,7 +31,11 @@ class WorkloadsController < ApplicationController
     render json: workload
   end
 
-  def update
+  def complete
+    @workload = Workload.find(params[:id])
+    @workload.is_done = true
+    @workload.save!
+    render json: "id: #{@workload.id} is completed."
     #TODO
     # is_doneをtrueにする
     # number（その日何回目のポモか）を保存
