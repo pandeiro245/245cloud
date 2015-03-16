@@ -1,5 +1,6 @@
 @env.is_doing = false
 @env.is_done = false
+window.workload = null
 
 @nomusic_url = 'https://ruffnote.com/attachments/24985'
 
@@ -301,7 +302,7 @@ initSearch = () ->
 
     # DB部屋
     for room in rooms
-      r = room.attributes
+      r = room
       room_id = room.id
       total_count = r.comments_count
       unread_count = getUnreadsCount(room.id, total_count)
@@ -318,7 +319,7 @@ initSearch = () ->
         $('#select_rooms .imgs').append($img)
       else
         $('.modal-body').append(
-          "<a class='room_link' style='cursor: pointer; display:block;'  data-values=\"#{room.id}:#{room.attributes.title}\">#{room.attributes.title} (#{unread_count}/#{total_count})</option>"
+          "<a class='room_link' style='cursor: pointer; display:block;'  data-values=\"#{room.id}:#{room.title}\">#{room.title} (#{unread_count}/#{total_count})</option>"
         )
       
     #  その他
@@ -379,7 +380,6 @@ initChatting = () ->
     return unless workloads.length > 0
     $("#chatting_title").show()
     for workload, i in workloads
-      continue unless workload.attributes.user
       @addChatting(workload)
     renderWorkloads('#chatting')
     renderWorkloads('#doing')
@@ -393,13 +393,9 @@ initDoing = () ->
   $.get('/workloads/doings.json', (workloads) ->
     return unless workloads.length > 0
     $("#doing_title").show()
-    user_keys = {}
     user_count = 0
     for workload, i in workloads
-      continue unless workload.attributes.user
-      unless user_keys[workload.attributes.user.id]
-        @addDoing(workload)
-        user_keys[workload.attributes.user.id] = true
+      @addDoing(workload)
     renderWorkloads('#doing')
   )
 
@@ -454,7 +450,7 @@ window.start_nomusic = () ->
 createWorkload = (params = {}, callback) ->
   params.host = location.host
   $.post('/workloads.json', params, (workload) ->
-    @workload = workload
+    window.workload = workload
     callback()
   )
   
@@ -630,17 +626,10 @@ complete = () ->
       )
     )
 
-  workload = @workload
-  w = workload.attributes
-  first = new Date(workload.createdAt)
-  first = first.getTime() - first.getHours()*60*60*1000 - first.getMinutes()*60*1000 - first.getSeconds() * 1000
-  first = new Date(first)
-  cond = [
-    ["is_done", true]
-    ['user', w.user]
-    ["createdAt", '<', workload.createdAt]
-    ["createdAt", '>', first]
-  ]
+  $.ajax({
+    type: 'PUT',
+    url: "/workloads/#{window.workload.id}/complete"
+  })
 
   $complete = $('#complete')
   $complete.html('')
@@ -809,16 +798,16 @@ initRanking = () ->
 
 @addDoing = (workload) ->
   $("#doing_title").show()
-  t = new Date(workload.createdAt)
+  t = new Date(workload.created_at)
   end_time = @env.pomotime*60*1000 + t.getTime()
-  disp = "#{Util.hourMin(workload.createdAt, '開始')}（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
+  disp = "#{Util.hourMin(workload.created_at, '開始')}（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
   @addWorkload("#doing", workload, disp)
 
 @addChatting = (workload) ->
   $("#chatting_title").show()
-  t = new Date(workload.createdAt)
+  t = new Date(workload.created_at)
   end_time = @env.pomotime*60*1000 + @env.chattime*60*1000 + t.getTime()
-  disp = "#{Util.hourMin(workload.createdAt, '開始')}（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
+  disp = "#{Util.hourMin(workload.created_at, '開始')}（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
   @addWorkload("#chatting", workload, disp)
 
 @addWorkload = (dom, workload, disp) ->
@@ -927,7 +916,7 @@ window.ruffnote = (id, dom, callback=null) ->
     </a>
     <td>
     <td>#{Util.parseHttp(c.body)}</td>
-    <td>#{Util.hourMin(comment.createdAt)}</td>
+    <td>#{Util.hourMin(comment.created_at)}</td>
     </tr>
     """
 
@@ -943,9 +932,10 @@ userIdToIconUrl = (userId) ->
   localStorage["icon_#{userId}"] || ""
 
 @syncWorkload = (type) ->
+  return if location.href.match(/offline=/)
   @socket.push({
     type: type
-    workload: @workload
+    workload: window.workload
   })
 
 syncComment = (room_id, comment, is_countup=false) ->
@@ -1065,19 +1055,12 @@ initWhatis = () ->
   $('#whatis').html($kokuban)
 
 initYou = () ->
-  return unless Parse.User.current()
   ruffnote(17769, 'you_title')
-  cond = [
-    ["user", Parse.User.current()]
-    ["is_done", true]
-    ["createdAt", '<', Util.minAgo(@env.pomotime + @env.chattime)]
-  ]
-  ParseParse.where('Workload', cond, (workloads) ->
+  $.get('/workloads/you.json', (workloads) ->
     for workload in workloads
-      continue unless workload.attributes.user
-      disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.attributes.number}回目）"
+      disp = "#{Util.hourMin(workload.created_at, '開始')}（#{workload.number}回目）"
       addWorkload("#you", workload, disp)
-  null, 24)
+  )
 
 renderFixedStart = (title, icon) ->
   fixed_text = [
