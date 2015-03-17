@@ -3,15 +3,15 @@ class CommentsController < ApplicationController
   def index
     # TODO このAPIのデータを返したら未読数をアップデートする
     room_id = params[:room_id].to_i
-    room_id = nil if room_id == 0
     @comments = Comment.where(room_id: room_id)
     render json: @comments
   end
 
   def create
     @comment = Comment.new(comment_params)
+    @comment.room_id = params[:room_id].to_i
     if @comment.save
-      render json: 'ok'
+      render json: @comment
     else
       render json: 'ng...'
     end

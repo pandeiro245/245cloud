@@ -393,7 +393,6 @@ initDoing = () ->
   $.get('/workloads/doings.json', (workloads) ->
     return unless workloads.length > 0
     $("#doing_title").show()
-    user_count = 0
     for workload, i in workloads
       @addDoing(workload)
     renderWorkloads('#doing')
@@ -724,10 +723,9 @@ window.initRoom = (id = 0, title='いつもの部屋') ->
 
     $('#rooms').append($room)
     
-    search_id = if id == 0 then null else id
     limit = if id == 0 then 100 else 10000
 
-    $.get("/rooms/#{search_id}/comments.json", (comments) ->
+    $.get("/rooms/#{id}/comments.json", (comments) ->
       $(document).on('keypress', "#room_#{id} .create_comment", (e) ->
         if e.which == 13 #enter
           window.createComment(id)
@@ -758,10 +756,11 @@ window.createComment = (room_id) ->
 
   params = {content: content}
 
-  if room_id != 0
-    params.room_id = room_id
+  params.room_id = room_id
 
-  $.post("/rooms/#{room_id}/comments.json", params, (comment) ->
+  #$.post("/rooms/#{room_id}/comments.json", params, (comment) ->
+  $.post("/rooms/#{room_id}/comments.json", params, () -> # レスポンスに関係なくレンダリングとsync
+    comment = params
     # 自分の投稿を自分の画面に
     window.addComment(room_id, comment, true, true)
 
@@ -890,8 +889,8 @@ initFixedStart = () ->
 window.ruffnote = (id, dom, callback=null) ->
   Ruffnote.fetch("pandeiro245/245cloud/#{id}", dom, callback)
 
-window.addComment = (room_id, comment, is_countup=false, is_prepend=false) ->
-  $comments = $('.comments')
+window.addComment = (room_id, comment, is_countup=false, is_prepend=true) ->
+  $comments = $("#room_#{room_id} .comments")
   c = comment
   t = new Date()
   hour = t.getHours()
