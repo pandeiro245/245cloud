@@ -289,7 +289,7 @@ initSearch = () ->
     on2= 'https://ruffnote.com/attachments/24831'
     off2= 'https://ruffnote.com/attachments/24832'
     $img = Util.tag('img', on2)
-    $img.attr('data-values', "default:いつもの部屋")
+    $img.attr('data-values', "0:いつもの部屋")
     $img.tooltip({title: 'いつもの部屋はログが流れやすいよ', placement: 'bottom'})
     $img.addClass('col-sm-2 room_icon room_link')
     $img.addClass('on')
@@ -301,11 +301,11 @@ initSearch = () ->
     $('.modal-body').html('')
 
     # DB部屋
+    unread_count = 0 #TODO
     for room in rooms
       r = room
       room_id = room.id
       total_count = r.comments_count
-      unread_count = getUnreadsCount(room.id, total_count)
       if r.img_on
         on2= r.img_on
         off2= r.img_off
@@ -703,7 +703,7 @@ window.initWantedly = () ->
 window.initComments = () ->
   initRoom()
 
-window.initRoom = (id = 'default', title='いつもの部屋') ->
+window.initRoom = (id = 0, title='いつもの部屋') ->
   console.log "initRoom: #{id}, #{title}"
 
   $(".room").hide()
@@ -724,8 +724,8 @@ window.initRoom = (id = 'default', title='いつもの部屋') ->
 
     $('#rooms').append($room)
     
-    search_id = if id == 'default' then null else id
-    limit = if id == 'default' then 100 else 10000
+    search_id = if id == 0 then null else id
+    limit = if id == 0 then 100 else 10000
 
     $.get("/rooms/#{search_id}/comments.json", (comments) ->
       $(document).on('keypress', "#room_#{id} .create_comment", (e) ->
@@ -733,7 +733,8 @@ window.initRoom = (id = 'default', title='いつもの部屋') ->
           window.createComment(id)
       )
       for comment in comments
-        @addComment(id, comment)
+        window.addComment(id, comment)
+      return
     )
 
 window.finish = () ->
@@ -749,19 +750,20 @@ window.createComment = (room_id) ->
   console.log 'createComment'
   $createComment = $("#room_#{room_id} .create_comment")
   
-  body = $createComment.val()
+  content = $createComment.val()
 
   $createComment.val('')
   
-  return if body.length < 1
+  return if content.length < 1
 
-  params = {body: body}
+  params = {content: content}
 
-  if room_id != 'default'
+  if room_id != 0
     params.room_id = room_id
-  ParseParse.create('Comment', params, (comment)->
+
+  $.post("/rooms/#{room_id}/comments.json", params, (comment) ->
     # 自分の投稿を自分の画面に
-    @addComment(room_id, comment, true, true)
+    window.addComment(room_id, comment, true, true)
 
     # 自分の投稿を他人の画面に
     syncComment(room_id, comment, true)
@@ -884,50 +886,33 @@ initFixedStart = () ->
       alert 'Facebookログインをお願いします！'
       window.fbAsyncInit()
   )
-  $(document).on('click', '.add_playlist', () ->
-    alert 'プレイリストに追加する機能は現在開発中です。。。'
-  )
-
 
 window.ruffnote = (id, dom, callback=null) ->
   Ruffnote.fetch("pandeiro245/245cloud/#{id}", dom, callback)
 
-@addComment = (room_id, comment, is_countup=false, is_prepend=false) ->
-  $comments = $("#room_#{room_id} .comments")
-  if typeof(comment.attributes) != 'undefined'
-    c = comment.attributes
-  else
-    c = comment
-  user = c.user
-
-
-
+window.addComment = (room_id, comment, is_countup=false, is_prepend=false) ->
+  $comments = $('.comments')
+  c = comment
   t = new Date()
   hour = t.getHours()
   min = t.getMinutes()
 
-  if user && c.body
-    html = """
-    <tr>
-    <td>
-    <a class='facebook_#{user.id}' target='_blank'>
-    <img class='icon icon_#{user.id}' src='#{userIdToIconUrl(c.user.objectId)}' />
-    <!--<div class='facebook_name_#{user.id}'></div>-->
-    </a>
-    <td>
-    <td>#{Util.parseHttp(c.body)}</td>
-    <td>#{Util.hourMin(comment.created_at)}</td>
-    </tr>
-    """
-
-    if typeof(comment.attributes) != 'undefined'
-      if is_prepend
-        $comments.prepend(html)
-      else
-        $comments.append(html)
-    else
-      $comments.prepend(html)
-
+  html = """
+  <tr>
+  <td>
+  <a target='_blank'>
+  <img src='#{c.user_img}' />
+  <div class='facebook_name_#{c.user_id}'></div>
+  </a>
+  <td>
+  <td>#{Util.parseHttp(c.content)}</td>
+  <td>#{Util.hourMin(c.created_at)}</td>
+  </tr>
+  """
+  if is_prepend
+    $comments.prepend(html)
+  else
+    $comments.append(html)
 userIdToIconUrl = (userId) ->
   localStorage["icon_#{userId}"] || ""
 
@@ -973,9 +958,7 @@ initHatopoppo = () ->
   $('#hatopoppo').css('width', '1px')
   $audio = $('<audio></audio>')
   $audio.attr('id', 'hato')
-  # thanks for http://musicisvfr.com/free/se/clock01.html
   $audio.attr('src', '/audio/Zihou01-4.mp3')
-  #$audio.attr('src', '/audio/20141231_shion_poppo.m4a')
   $('#hatopoppo').append($audio)
 
 getOffset = (all_count) ->
