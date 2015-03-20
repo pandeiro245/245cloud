@@ -79,7 +79,10 @@ class Util
 
   @hourMin: (time, suffix='') ->
     now = new Date()
-    date = new Date(time)
+    if time
+      date = new Date(time)
+    else
+      date = new Date()
     if now.getDate() == date.getDate() # today
       hour = date.getHours()
       min  = date.getMinutes()
