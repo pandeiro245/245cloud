@@ -24,6 +24,8 @@ Rails.application.routes.draw do
   #  omniauth_callbacks: "users/omniauth_callbacks"
   #}
 
+  get '/:id' => 'users#show'
+  get '/musics/:id' => 'musics#show'
   root 'welcome#index'
 end
 
