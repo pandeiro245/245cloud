@@ -1,5 +1,6 @@
 class Parsecom
   def self.import
+    MusicsUser.delete_all
 
 
     user_hashs = {}
@@ -48,11 +49,21 @@ class Parsecom
           key: "#{key}:#{id}"
         )
         music.title = workload['title']
+        music.icon = workload['artwork_url']
         music.save!
       end
      
       next unless workload['user']
       user = user_hashs[workload['user']['objectId']]
+
+      if music 
+        msuic_user = MusicsUser.find_or_create_by(
+          music_id: music.id,
+          user_id: user.id,
+        )
+        msuic_user.total += 1
+        msuic_user.save!
+      end
 
       workload2 = Workload.find_or_create_by(
         user_id: user.id,
