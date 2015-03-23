@@ -362,7 +362,7 @@ window.start_nomusic = () ->
   console.log 'start_nomusic'
   createWorkload({}, start)
 
-createWorkload = (params = {}, callback) ->
+createWorkload = (params, callback) ->
   params.host = location.host
   $.post('/workloads.json', params, (workload) ->
     window.workload = workload

@@ -5,7 +5,7 @@ env = {
 env.pomotime =  if localStorage['dev_pomo'] then parseFloat(localStorage['dev_pomo']) else 24
 env.chattime =  if localStorage['dev_chat'] then parseFloat(localStorage['dev_chat']) else 5
 
-#env.is_kakuhen = false
-env.is_kakuhen = true
+env.is_kakuhen = false
+#env.is_kakuhen = true
 
 @env = env
