@@ -1,9 +1,17 @@
 class Music < ActiveRecord::Base
   has_many :workloads
-  def self.import
-    path = '/Users/nishiko/Downloads/b72cfac2-f5d8-4fd3-a305-ffb486c4d9da_1427114248_export/Music.json'
-    f = JSON.parse(File.open(path).read)['results']
-    return f
+  attr_accessor :total
+
+  def users
+    MusicsUser.limit(100).order(
+      'total desc'
+    ).where(
+      music_id: self.id
+    ).map{|mu| user = mu.user; user.total = mu.total; user}
+  end
+
+  def icon2
+    icon ? icon : 'https://ruffnote.com/attachments/24162'
   end
 end
 

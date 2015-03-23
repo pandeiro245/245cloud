@@ -3,15 +3,22 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable, :omniauthable
 
   has_many :workloads
+  attr_accessor :total
 
-  def recent_musics
-    Workload.limit(100).order(
-      'id desc'
+  def icon
+    "https://graph.facebook.com/#{facebook_id}/picture?height=80&width=80"
+  end
+
+  def facebook_id
+    email.split('@').first
+  end
+
+  def musics
+    MusicsUser.limit(100).order(
+      'total desc'
     ).where(
       user_id: self.id
-    ).where(
-      'music_id is not null'
-    ).map{|w| w.music}.uniq!
+    ).map{|mu| music = mu.music; music.total = mu.total; music}
   end
 end
 
