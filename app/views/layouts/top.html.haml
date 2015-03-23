@@ -8,8 +8,8 @@
     - unless params[:offline]
       %script{:src => "//cdn.mlkcca.com/v0.2.8/milkcocoa.js"}
     
-    = #stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true
-    = #javascript_include_tag 'application'
+    = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true
+    = javascript_include_tag 'application'
     = csrf_meta_tags
 
     %meta{:content => "245cloud（ニシコクラウド）は24分間のパワーソングを聞きながら作業に集中できるWebサービスです", :name => "description"}
@@ -20,6 +20,10 @@
     %link{:href => "/icon.png", :rel => "apple-touch-icon-precomposed"}
     %meta{:content => "https://ruffnote.com/attachments/24009", :property => "og:image"}
   %body
-    = link_to '245cloud', root_path
-    %hr
-    = yield
+    - unless params[:offline]
+      = render 'shared/button_tweet'
+    #nc
+      %h1 245cloud（ニシコクラウド）で24分間集中しましょう
+    #fb-root
+    = render 'shared/modal'
+
