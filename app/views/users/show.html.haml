@@ -1,0 +1,8 @@
+hi
+
+%h1 最近の音楽
+%ul
+  - @user.recent_musics.each do |music|
+    %li
+      = link_to music.title, "/musics/#{music.id}"
+

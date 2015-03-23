@@ -4,6 +4,7 @@ class WelcomeController < ApplicationController
   end
 
   def pitch
+    render layout: 'top'
   end
 end
 
