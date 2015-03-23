@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150323134535) do
+ActiveRecord::Schema.define(version: 20150323174511) do
 
   create_table "auths", force: :cascade do |t|
     t.integer  "user_id",     limit: 4
@@ -44,7 +44,19 @@ ActiveRecord::Schema.define(version: 20150323134535) do
     t.integer  "total_count", limit: 4
     t.text     "key",         limit: 65535
     t.text     "user_counts", limit: 65535
+    t.text     "icon",        limit: 65535
   end
+
+  create_table "musics_users", force: :cascade do |t|
+    t.integer  "music_id",   limit: 4
+    t.integer  "user_id",    limit: 4
+    t.integer  "total",      limit: 4, default: 0
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+  end
+
+  add_index "musics_users", ["music_id"], name: "index_musics_users_on_music_id", using: :btree
+  add_index "musics_users", ["user_id"], name: "index_musics_users_on_user_id", using: :btree
 
   create_table "rooms", force: :cascade do |t|
     t.string   "title",          limit: 255
@@ -84,4 +96,6 @@ ActiveRecord::Schema.define(version: 20150323134535) do
     t.integer  "user_id",    limit: 4
   end
 
+  add_foreign_key "musics_users", "musics"
+  add_foreign_key "musics_users", "users"
 end
