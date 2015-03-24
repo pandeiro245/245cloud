@@ -1,18 +1,11 @@
-.socialbutton
-  %a.twitter-share-button{"data-text" => "音楽を聞きながら24分集中して5分休む「ニシコクラウド」", "data-url" => "http://245cloud.com", :href => "https://twitter.com/share"} Tweet
-  :javascript
-    !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
-#nc
-  %h1 245cloud（ニシコクラウド）で24分間集中しましょう
-#fb-root
-#selectRoomModal.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "selectRoomModalLabel", :role => "dialog", :tabindex => "-1"}
-  .modal-dialog
-    .modal-content
-      .modal-header
-        %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
-          %span{"aria-hidden" => "true"} &times;
-        %h4#selectRoomModalLabel.modal-title その他の部屋選択
-      .modal-body
-      .modal-footer
-        %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} キャンセル
-%button#selectRoomButton.btn.btn-primary.btn-lg{"data-target" => "#selectRoomModal", "data-toggle" => "modal", :style => "display:hidden; ", :type => "button"}
+%h1 245cloudヘビーローテーションランキング
+%hr
+-@musics_users.each do |mu|
+  - music = mu.music
+  - user = mu.user
+  = link_to image_tag(music.icon2), "/musics/#{music.id}"
+  ='=>'
+  = link_to image_tag(user.icon), "/#{user.id}"
+  %hr
+
+%hr
