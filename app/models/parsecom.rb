@@ -46,7 +46,7 @@ class Parsecom
       end
       if id
         music = Music.find_or_create_by(
-          key: "#{key}:#{id}"
+          key: "#{key}:#{id.to_i}"
         )
         music.title = workload['title']
         music.icon = workload['artwork_url']

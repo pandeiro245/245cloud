@@ -13,5 +13,19 @@ class Music < ActiveRecord::Base
   def icon2
     icon ? icon : 'https://ruffnote.com/attachments/24162'
   end
+
+  def key_old
+    key.gsub(
+      /^sc:/, 'soundcloud:'
+    ).gsub(
+      /^mc:/, 'mixcloud:'
+    ).gsub(
+      /^yt:/, 'youtube:'
+    ).gsub(
+      /^et:/, '8tracks:'
+    ).gsub(
+      /.0$/, ''
+    )
+  end
 end
 
