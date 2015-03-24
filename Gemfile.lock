@@ -115,7 +115,6 @@ GEM
       oauth2 (~> 1.0)
       omniauth (~> 1.2)
     orm_adapter (0.5.0)
-    pg (0.18.1)
     rack (1.6.0)
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -196,7 +195,6 @@ DEPENDENCIES
   jquery-rails
   mysql2
   omniauth-facebook (~> 1.6.0)
-  pg
   rails (= 4.2.0)
   sass-rails (~> 5.0)
   sdoc (~> 0.4.0)
