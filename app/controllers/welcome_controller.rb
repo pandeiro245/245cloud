@@ -1,6 +1,7 @@
 class WelcomeController < ApplicationController
   def index
-    render layout: 'top'
+    @musics_users = MusicsUser.limit(200).order('total desc')
+    #render layout: 'top'
   end
 end
 
