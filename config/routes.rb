@@ -20,10 +20,6 @@ Rails.application.routes.draw do
   match '/auth/:provider/callback' => 'sessions#callback', via: [:get, :post]
   match '/auth/failure' => 'sessions#failure', via: [:get, :post]
 
-  #devise_for :users, controllers: {
-  #  omniauth_callbacks: "users/omniauth_callbacks"
-  #}
-
   get '/:id' => 'users#show'
   get '/musics/:id' => 'musics#show'
   root 'welcome#index'
