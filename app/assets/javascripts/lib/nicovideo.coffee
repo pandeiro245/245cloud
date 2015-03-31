@@ -18,9 +18,11 @@ class @Nicovideo
 
   @play: (sm_id, $dom) ->
     console.log 'sm_id', sm_id
+    unless confirm('この曲はニコニコ動画経由なので自分で再生ボタンを押すまで再生されなかったり最新のFLASHプレイヤーが必要だったり、ニコニコ動画にログインしていないと読み込みが遅かったりしますが大丈夫でしょうか？（対応策模索中）')
+      location.reload()
 
     # see http://mementoo.info/archives/1557
-    document._write = document.write;
+    document._write = document.write
     document.write = (msg) ->
       $dom.html(msg)
       document.write = document._write
