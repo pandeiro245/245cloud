@@ -190,6 +190,18 @@ initStart = () ->
         $('#random').removeClass("col-sm-offset-#{getOffset(2)}")
         $('#random').addClass("col-sm-offset-#{getOffset(3)}")
       )
+    if location.hash.match(/nicovideo/)
+      Nicovideo.fetch(id, (track) ->
+        artwork_url = artworkUrlWithNoimage(track.artwork_url)
+        txt = "<h5>#{track.title}</h5>"
+        $('#fixedstart').append(txt)
+        txt = "<img src='#{artwork_url}' class='jacket'>"
+        $('#fixedstart').append(txt)
+        Util.addButton('start', $('#fixedstart'), fixed_text, start_hash)
+        $('#fixedstart').fadeIn()
+        $('#random').removeClass("col-sm-offset-#{getOffset(2)}")
+        $('#random').addClass("col-sm-offset-#{getOffset(3)}")
+      )
     if location.hash.match(/8tracks/)
       EightTracks.fetch(id, @env.et_client_id, (track) ->
         artwork_url = artworkUrlWithNoimage(track.mix.cover_urls.sq100)
@@ -596,6 +608,11 @@ window.play = (key) ->
       else
         window.play_repeat(key, track.audio_length * 1000)
     )
+  else if key.match(/^nicovideo/)
+    Nicovideo.fetch(id, (track) ->
+      createWorkload(track, start)
+    )
+    Nicovideo.play(id, $("#playing"))
   if key.match(/^8tracks/)
     EightTracks.fetch(id, @env.et_client_id, (track) ->
       params['et_id'] = parseInt(id)
@@ -617,6 +634,8 @@ window.play_repeat = (key, duration) ->
     Mixcloud.play(id, $("#playing"),)
   else if key.match(/^8tracks/)
     EightTracks.play(id, $("#playing"))
+  else if key.match(/^nicovideo/)
+    Nicovideo.play(id, $("#playing"))
   setTimeout("play_repeat\(\"#{key}\"\, #{duration})", duration)
 
 complete = () ->
@@ -861,6 +880,8 @@ initRanking = () ->
       href += "mixcloud:#{w.mc_id}"
     if w.et_id
       href += "8tracks:#{w.et_id}"
+    if w.sm_id
+      href += "nicovideo:#{w.sm_id}"
     fixed = "<a href=\"#{href}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24921' /></a>"
     jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" class=\"jacket\" />' else "<img src=\"#{@nomusic_url}\" class=\"jacket\" />"}"
     title = w.title
@@ -1032,6 +1053,7 @@ searchMusics = () ->
 
   $tracks = $('#tracks')
   Youtube.search(q, $tracks)
+  Nicovideo.search(q, $tracks)
   Soundcloud.search(q, @env.sc_client_id, $tracks)
   Mixcloud.search(q, $tracks)
   #EightTracks.search(q, $tracks)
