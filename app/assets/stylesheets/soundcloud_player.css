@@ -1,0 +1,75 @@
+.player-container{
+    width: 600px;
+    margin: 30px auto;
+}
+
+.player{
+    position: relative;
+    z-index: 30;
+}
+
+.volume-container{
+    color: #333;
+    position: relative;
+    padding: 15px 30px;
+    line-height: 30px;
+    box-shadow: 0px 0px 0px 1px rgba(255, 255, 255, 0.5) inset;
+    background-color: #F5F5F5;
+    border: 1px solid #E5E5E5;
+    height: 40px;
+    width: 140px;
+    float: right;
+    overflow: hidden;
+    z-index: 1;
+    border-radius: 0 0 3px 3px;
+    margin-top: -7px;
+    margin-right: 5px;
+    transition: .5s .5s;
+
+    margin-top: -40px;
+}
+
+.player:hover + .volume-container{
+    margin-top: -7px;
+    transition: .5s;
+}
+
+.volume-container:hover{
+    margin-top: -7px;
+    transition: .5s;
+}
+
+.volume-slider{
+    height: 10px;
+    width: 100%;
+    border-radius: 5px;
+    position: relative;
+    cursor: pointer;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #333;
+    background-color: #404040;
+}
+.volume-button{
+    position: absolute;
+    background-color: orange;
+    width: 8px;
+    height: 8px;
+    left: 4px;
+    border-radius: 4px;
+    cursor: pointer;
+    background: #ff7826;
+    background: linear-gradient(#ff7826,#ff600d,#ff4d00,#ff3d00,#d4320a);
+    transition: box-shadow .2s ease-in-out;
+    transform: translateX(-4px);
+}
+.volume-icon-left{
+    position: absolute;
+    top: 11px;
+    left: 11px;
+}
+.volume-icon-right{
+    position: absolute;
+    top: 11px;
+    right: 10px;
+}
