@@ -20,7 +20,7 @@ class WorkloadsController < ApplicationController
       is_done: true 
     ).order('id desc').limit(48).map do |workload| 
       w = JSON.parse(workload.to_json)
-      w['icon_url'] = workload.icon_url
+      w['icon_url'] = workload.icon
       w
     end
     render json: @workloads.to_json

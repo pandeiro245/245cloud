@@ -1,12 +1,15 @@
 class Parsecom
   def self.import
-    MusicsUser.delete_all
+    # setting
+    workload_path = 'tmp/parsecom/Workload.json'
+    user_path = 'tmp/parsecom/_User.json'
 
+    # execute
+    MusicsUser.delete_all
 
     user_hashs = {}
 
-    path = 'tmp/parsecom/_User.json'
-    users = JSON.parse(File.open(path).read)['results']
+    users = JSON.parse(File.open(user_path).read)['results']
     users = users.sort!{|a, b| 
       a['createdAt'].to_time <=> b['createdAt'].to_time
     }
@@ -19,14 +22,13 @@ class Parsecom
       unless user
         user = User.create!(
           email: email,
-          password: Devise.friendly_token[0, 20]
+          #password: Devise.friendly_token[0, 20]
         )
       end
       user_hashs[u['objectId']] = user
     end
 
-    path = 'tmp/parsecom/Workload.json'
-    workloads = JSON.parse(File.open(path).read)['results']
+    workloads = JSON.parse(File.open(workload_path).read)['results']
 
     puts 'start to sort Workload'
     #workloads = workloads.sort!{|a, b| a['createdAt'].to_time <=> b['createdAt'].to_time}
@@ -43,6 +45,8 @@ class Parsecom
         key = 'yt'
       elsif id = workload['et_id']
         key = 'et'
+      elsif id = workload['sm_id']
+        key = 'sm'
       end
       if id
         music = Music.find_or_create_by(
