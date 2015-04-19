@@ -638,7 +638,7 @@ initRanking = () ->
   $item.html("""
    <h5>#{title} </h5>
    <span>#{jacket}</span>
-   <span>#{user_img}</span>
+   <span><a href='/#{workload.user_id}'>#{user_img}</a></span>
    <div class='disp'>#{disp}</div>
    <div>#{fixed}</div>
   """)
