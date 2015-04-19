@@ -31,7 +31,7 @@ class Parsecom
     workloads = JSON.parse(File.open(workload_path).read)['results']
 
     puts 'start to sort Workload'
-    #workloads = workloads.sort!{|a, b| a['createdAt'].to_time <=> b['createdAt'].to_time}
+    workloads = workloads.sort!{|a, b| a['createdAt'].to_time <=> b['createdAt'].to_time}
     puts 'end to sort Workload'
 
     workloads.each do |workload|
