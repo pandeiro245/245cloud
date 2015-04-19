@@ -25,6 +25,8 @@ class Music < ActiveRecord::Base
     ).gsub(
       /^et:/, '8tracks:'
     ).gsub(
+      /^sm:/, 'nicovideo:'
+    ).gsub(
       /.0$/, ''
     )
   end
