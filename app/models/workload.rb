@@ -27,5 +27,10 @@ class Workload < ActiveRecord::Base
     end
     puts 'done'
   end
+
+  def key
+    return nil unless music
+    music.key_old
+  end
 end
 
