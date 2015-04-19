@@ -24,6 +24,7 @@ class WorkloadsController < ApplicationController
       if workload.music
         w['artwork_url'] = workload.music.icon
         w['title']       = workload.music.title
+        w['key']       = workload.key
       end
       w
     end

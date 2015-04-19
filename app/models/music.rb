@@ -15,6 +15,7 @@ class Music < ActiveRecord::Base
   end
 
   def key_old
+    return nil unless key
     key.gsub(
       /^sc:/, 'soundcloud:'
     ).gsub(

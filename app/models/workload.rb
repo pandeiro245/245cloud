@@ -5,5 +5,10 @@ class Workload < ActiveRecord::Base
   def icon
     user.icon
   end
+
+  def key
+    return nil unless music
+    music.key_old
+  end
 end
 
