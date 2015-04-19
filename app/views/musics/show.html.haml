@@ -1,0 +1,10 @@
+= pagination(@music, 'musics')
+
+%hr
+%h1=@music.title
+%h1=link_to 'この曲で集中する！', "http://245cloud.com/##{@music.key_old}", target: '_blank'
+%ul
+  - @music.users.each do |user|
+    = link_to image_tag(user.icon), "/#{user.id}"
+    = "(#{user.total})"
+

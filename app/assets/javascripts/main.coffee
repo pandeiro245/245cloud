@@ -1,22 +1,16 @@
 @env.is_doing = false
 @env.is_done = false
+window.workload = null
 
 @nomusic_url = 'https://ruffnote.com/attachments/24985'
 
 $ ->
-  ParseParse.all("User", (users) ->
-    for user in users
-      img = user.get('icon_url')
-      localStorage["icon_#{user.id}"] = img if img
-      $(".icon_#{user.id}").attr('src', img)
-  )
-  ParseParse.addAccesslog()
+  # ParseParse.addAccesslog()
   Util.scaffolds([
     ['header', {is_row: false}]
     'news'
     ['otukare', {is_hide: true}]
     'ad'
-    'review'
     'contents'
     'start_buttons'
     'doing_title'
@@ -26,8 +20,6 @@ $ ->
     'done'
     'you_title'
     'you'
-    'calendar_title'
-    'calendar'
     'ranking_title'
     'ranking'
     '8tracks_title'
@@ -39,19 +31,9 @@ $ ->
     'select_rooms'
     'rooms_title'
     'rooms'
-    'kpi_title'
-    'kpi3_title'
-    'kpi3'
-    'kpi2_title'
-    'kpi2'
-    'kpi1_title'
-    'kpi1'
     'whatis_title'
     ['whatis', {is_row: false}]
-    #'mlkcca_title'
-    #'mlkcca'
     'footer'
-    ['otukare_services', {is_hide: true}]
     'hatopoppo'
   ])
   Util.realtime()
@@ -62,63 +44,31 @@ $ ->
   ruffnote(17762, 'ranking_title')
   ruffnote(17498, 'otukare')
 
-  window.services = [
-    ['ingress', 'https://www.ingress.com/intel']
-    ['togetter', 'http://togetter.com/']
-    ['newspicks', 'https://newspicks.com/top-news']
-    ['itoicom', 'http://www.1101.com/home.html']
-  ]
-
   $('#selectRoomButton').hide()
-
-  for service in window.services
-    if location.href.match("#{service[0]}=")
-      initService($('#otukare_services'), service[1])
 
   ruffnote(17661, 'music_ranking')
 
   initSearch()
   init8tracks()
-  initChatting()
+  #initChatting()
   initStart()
   initDoing()
   initDone()
   initRanking()
   initFixedStart()
-  #initKpi()
-  #ParseBatch.repeat()
   initHatopoppo()
   initWhatis()
-  initYou()
+  #initYou()
   
-  if user = Parse.User.current()
-    ParseParse.find('User', user.id, (user)->
-      window.current_user = user
-      #initCalendar()
-    )
-
-initCalendar = () ->
-  $("#calendar_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24936' /></h2>")
-  $('#calendar').html("""
-<span onClick=\"Util.calendar('previous')\"><B>&lt;&lt;</B></span>
-<span onClick=\"Util.calendar('thismonth')\" class='thismonth'></span>
-<span onClick=\"Util.calendar('next')\"><B>&gt;&gt;</B></span>
-<DIV id='carenda'></DIV>
-  """)
-  Util.calendar('thismonth')
-
 init8tracks = () ->
   ruffnote(17763, '8tracks_title')
   EightTracks.attrip($('#8tracks'))
 
 initStart = () ->
-  if location.href.match(/sparta/)
-    Util.countDown(1*60*1000, start_unless_doing)
-
   text = "24分やり直しでも大丈夫ですか？"
   Util.beforeunload(text, 'env.is_doing')
   
-  if Parse.User.current()
+  if true # loginend user
     $('#contents').append("""
       <div class='countdown2' >
       <div class='countdown' ></div>
@@ -228,15 +178,6 @@ initStart = () ->
     #Util.addButton('start', $nomusic, text, start_nomusic, tooltip)
     Util.addButton('start', $nomusic, text, start_nomusic)
 
-    if location.href.match('review=')
-      attrs = {
-        id: 'input_review_before'
-        style: 'margin:0 auto; width: 100%;'
-      }
-      $before = Util.tag('input', "今から24分間集中するにあたって一言（公開されます） 例：24分で企画書のたたき台を作る！", attrs)
-      $review = Util.tag('div', $before, {style: 'text-align: center;'})
-      $('#contents').append($review)
-
   else
     text = 'facebookログイン'
     Util.addButton('login', $('#contents'), text, login)
@@ -269,14 +210,14 @@ initSearch = () ->
   $('#select_rooms').html(Util.tag('h2', Util.tag('img', 'https://ruffnote.com/attachments/24967'), {class: 'status'}))
   $('#select_rooms').append(Util.tag('div', null, {class: 'imgs'}))
 
-  ParseParse.all("Room", (rooms) ->
+  $.get('/rooms.json', (rooms) ->
     $('#select_rooms .imgs').html('')
 
     # いつも部屋
     on2= 'https://ruffnote.com/attachments/24831'
     off2= 'https://ruffnote.com/attachments/24832'
     $img = Util.tag('img', on2)
-    $img.attr('data-values', "default:いつもの部屋")
+    $img.attr('data-values', "0:いつもの部屋")
     $img.tooltip({title: 'いつもの部屋はログが流れやすいよ', placement: 'bottom'})
     $img.addClass('col-sm-2 room_icon room_link')
     $img.addClass('on')
@@ -288,11 +229,11 @@ initSearch = () ->
     $('.modal-body').html('')
 
     # DB部屋
+    unread_count = 0 #TODO
     for room in rooms
-      r = room.attributes
+      r = room
       room_id = room.id
       total_count = r.comments_count
-      unread_count = getUnreadsCount(room.id, total_count)
       if r.img_on
         on2= r.img_on
         off2= r.img_off
@@ -306,7 +247,7 @@ initSearch = () ->
         $('#select_rooms .imgs').append($img)
       else
         $('.modal-body').append(
-          "<a class='room_link' style='cursor: pointer; display:block;'  data-values=\"#{room.id}:#{room.attributes.title}\">#{room.attributes.title} (#{unread_count}/#{total_count})</option>"
+          "<a class='room_link' style='cursor: pointer; display:block;'  data-values=\"#{room.id}:#{room.title}\">#{room.title} (#{unread_count}/#{total_count})</option>"
         )
       
     #  その他
@@ -362,18 +303,11 @@ initChatting = () ->
   console.log 'initChatting'
   $("#chatting_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24938' /></h2>")
 
-  cond = [
-    ["is_done", true]
-    ["createdAt", '>', Util.minAgo(@env.pomotime + @env.chattime)]
-    ["createdAt", '<', Util.minAgo(@env.pomotime)]
-  ]
   $("#chatting_title").hide()
-  ParseParse.where("Workload", cond, (workloads) ->
+  $.get('/workloads/chattings.json', (workloads) ->
     return unless workloads.length > 0
     $("#chatting_title").show()
     for workload, i in workloads
-      continue unless workload.attributes.user
-
       @addChatting(workload)
     renderWorkloads('#chatting')
     renderWorkloads('#doing')
@@ -384,117 +318,44 @@ initDoing = () ->
   $("#doing_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24939' /></h2>")
   $("#doing_title").hide()
 
-  cond = [
-    ["is_done", null]
-    ["createdAt", '>', Util.minAgo(@env.pomotime)]
-  ]
-  ParseParse.where("Workload", cond, (workloads) ->
+  $.get('/workloads/doings.json', (workloads) ->
     return unless workloads.length > 0
     $("#doing_title").show()
-    user_keys = {}
-    user_count = 0
     for workload, i in workloads
-      continue unless workload.attributes.user
-      unless user_keys[workload.attributes.user.id]
-        @addDoing(workload)
-        user_keys[workload.attributes.user.id] = true
+      @addDoing(workload)
     renderWorkloads('#doing')
   )
 
 initDone = () ->
   console.log 'initDone'
-  cond = [
-    ["is_done", true]
-    ["createdAt", '<', Util.minAgo(@env.pomotime + @env.chattime)]
-  ]
-  ParseParse.where("Workload", cond, (workloads) ->
+  $.get('/workloads/dones.json', (workloads) ->
     return unless workloads.length > 0
-    $("#done").append("<h2 class='status'><img src='https://ruffnote.com/attachments/24937' /></h2>")
+    if location.href.match(/offline=/)
+      $("#done").append("""
+        <h2 class='status'>DONE</h2>
+      """)
+    else
+      $("#done").append("""
+        <h2 class='status'>
+        <img src='https://ruffnote.com/attachments/24937' />
+        </h2>
+      """)
     for workload in workloads
-      continue unless workload.attributes.user
-      disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.attributes.number}回目）"
-      @addWorkload("#done", workload, disp)
-  , null, 24 * 4)
+      disp = "#{Util.hourMin(workload.created_at, '開始')}（#{workload.number}回目）"
+      #@addWorkload("#done", workload, disp)
+      addWorkload("#done", workload, disp)
+    return
+  )
+  return
  
-initKpi = () ->
-  ruffnote(17548, 'kpi_title')
-  $('#kpi3').css('height', '300px')
-  $('#kpi2').css('height', '300px')
-  $('#kpi1').css('height', '300px')
-  $('#kpi3_title').html('<h2>直近50回分</h2>')
-  $('#kpi2_title').html('<h2>直近300回分</h2>')
-  $('#kpi1_title').html("<h2 style='margin-top: 30px;'>直近1000回分</h2>")
-
-  cond = [
-    ['is_done', true]
-  ]
-  ParseParse.where('Workload', cond, (workloads) ->
-    chart1 = {}
-    chart_viewer1 = {}
-    chart2 = {}
-    chart_viewer2 = {}
-    chart3 = {}
-    chart_viewer3 = {}
-    for workload, i in workloads
-      continue unless workload.get('synchro_start')
-      key_start = workload.createdAt
-      val_start = workload.get('synchro_start')
-      key_end = Util.minAgo(-1 * @env.pomotime, workload.createdAt)
-      val_end = workload.get('synchro_end')
-
-      # kPI1: 1000
-      if workload.get('user') && Parse.User.current() && workload.get('user').id == Parse.User.current().id
-        chart_viewer1[key_start] = val_start
-        chart_viewer1[key_end] = val_end
-      chart1[key_start] = val_start
-      chart1[key_end] = val_end
-
-      continue if i > 300
-
-      # KPI2: 300
-      if workload.get('user') && Parse.User.current() && workload.get('user').id == Parse.User.current().id
-        chart_viewer2[key_start] = val_start
-        chart_viewer2[key_end] = val_end
-      chart2[key_start] = val_start
-      chart2[key_end] = val_end
-
-      continue if i > 50
-
-      # KPI3: 50
-      if workload.get('user') && Parse.User.current() && workload.get('user').id == Parse.User.current().id
-        chart_viewer3[key_start] = val_start
-        chart_viewer3[key_end] = val_end
-      chart3[key_start] = val_start
-      chart3[key_end] = val_end
- 
-    data1 = [
-      {name: '全体', data: chart1},
-      {name: 'あなた', data: chart_viewer1}
-    ]
-    new Chartkick.LineChart("kpi1", data1)
- 
-    data2 = [
-      {name: '全体', data: chart2},
-      {name: 'あなた', data: chart_viewer2}
-    ]
-    new Chartkick.LineChart("kpi2", data2)
-   
-    data3 = [
-      {name: '全体', data: chart3},
-      {name: 'あなた', data: chart_viewer3}
-    ]
-    new Chartkick.LineChart("kpi3", data3)
-  , null, 1000)
-
 login = () ->
   console.log 'login'
-  window.fbAsyncInit()
+  location.href = '/auth/facebook'
 
 start_random = () ->
   console.log 'start_random'
-  ParseParse.all("Music", (musics) ->
-    n = Math.floor(Math.random() * musics.length)
-    sc_id = musics[n].attributes.sc_id
+  $.get('/musics/random.json', (music) ->
+    sc_id = musics.sc_id
     location.hash = "soundcloud:#{sc_id}"
     window.play("soundcloud:#{sc_id}")
   )
@@ -513,20 +374,10 @@ window.start_nomusic = () ->
   console.log 'start_nomusic'
   createWorkload({}, start)
 
-createWorkload = (params = {}, callback) ->
+createWorkload = (params, callback) ->
   params.host = location.host
-
-  if location.href.match('review=')
-    if location.href.match('sparta=')
-      review = prompt("今から24分間集中するにあたって一言（公開されます）", '24分間頑張るぞ！')
-    else
-      review = $('#input_review_before').val()
-
-    if review.length
-      params['review_before'] = review
-
-  ParseParse.create("Workload", params, (workload) ->
-    @workload = workload
+  $.post('/workloads.json', params, (workload) ->
+    window.workload = workload
     callback()
   )
   
@@ -538,13 +389,6 @@ start = () ->
   $(".fixed_start").hide()
   $("#music_ranking").hide()
   doms = [
-    'kpi_title'
-    'kpi3_title'
-    'kpi3'
-    'kpi2_title'
-    'kpi2'
-    'kpi1_title'
-    'kpi1'
     'start_buttons'
     'fixedstart_artwork'
     '8tracks'
@@ -645,7 +489,6 @@ complete = () ->
   Util.countDown(@env.chattime*60*1000, 'finish')
   $('#header').hide()
   $('#otukare').fadeIn()
-  $("#otukare_services").fadeIn()
   $("#playing").fadeOut()
   $("#search").fadeOut()
   $("#playing").html('') # for stopping
@@ -658,9 +501,7 @@ complete = () ->
   @env.is_done = true
 
   if location.href.match("ad=") and !$('#ad iframe').length
-    ParseParse.all("Ad", (ads) ->
-      n = Math.floor(Math.random() * ads.length)
-      ad = ads[n].attributes
+    $.get('/ads/random.json', (ad) ->
       $('#ad').html(
         """
         <h2><a href=\"#{ad.click_url}?from=245cloud.com\" target=\"_blank\">#{ad.name}</a></h2>
@@ -669,97 +510,19 @@ complete = () ->
       )
     )
 
-  workload = @workload
-  w = workload.attributes
-  first = new Date(workload.createdAt)
-  first = first.getTime() - first.getHours()*60*60*1000 - first.getMinutes()*60*1000 - first.getSeconds() * 1000
-  first = new Date(first)
-  cond = [
-    ["is_done", true]
-    ['user', w.user]
-    ["createdAt", '<', workload.createdAt]
-    ["createdAt", '>', first]
-  ]
-  ParseParse.where("Workload", cond, (workload, data) ->
-    workload.set('number', data.length + 1)
-    workload.set('is_done', true)
-    workload.save()
-  , workload)
-
-  # 開始29分前〜開始時間
-  cond = [
-    ['createdAt', '>', Util.minAgo(@env.pomotime, workload.createdAt)]
-    ['createdAt', '<', workload.createdAt]
-  ]
-  ParseParse.where('Workload', cond, (workload, workloads2) ->
-    workload.set('synchro_start', workloads2.length + 1)
-    workload.save()
-  , workload, 99999)
-
-  # 終了29分前〜終了時間
-  cond = [
-    ['createdAt', '>', workload.createdAt]
-    ['createdAt', '<', Util.minAgo(-1 * @env.pomotime, workload.createdAt)]
-  ]
-  ParseParse.where('Workload', cond, (workload, workloads3) ->
-    workload.set('synchro_end', workloads3.length + 0)
-    workload.save()
-  , workload, 9999)
+  $.ajax({
+    type: 'PUT',
+    url: "/workloads/#{window.workload.id}/complete"
+  })
 
   $complete = $('#complete')
   $complete.html('')
-
-  initReview() if location.href.match('review=')
   initComments()
-
-window.initReview = () ->
-  attrs = {
-    id: 'input_review_point'
-    style: 'margin:0 auto;'
-  }
-  titles = {
-    1: '全然集中できなかった'
-    2: '集中できなかった'
-    3: '普通に集中できた'
-    4: '結構集中できた'
-    5: 'かなり集中できた'
-  }
-  options = '<option value="">自己評価（1〜5）を選択してください</option>'
-  for i in [1..5]
-    options += "<option value=\"#{i}\">#{titles[i]}</option>"
-  $point = Util.tag('select', options, attrs)
-  $review = Util.tag('div', $point, {style: 'text-align: center;'})
-  $('#review').append($review)
-
-  attrs = {
-    id: 'input_review_after'
-    style: 'margin:0 auto; width: 100%;'
-  }
-  $after = Util.tag('input', '終わってからの感想（公開されます） 例：あんまり集中できなかった', attrs)
-  $review = Util.tag('div', $after, {style: 'text-align: center;'})
-  $('#review').append($review)
-
-  attrs = {
-    id: 'input_review_submit'
-    style: 'margin:0 auto;'
-    type: 'submit'
-    value: 'レビューを保存'
-  }
-  $submit = Util.tag('input', null, attrs)
-  $review = Util.tag('div', $submit, {style: 'text-align: center;'})
-  $('#review').append($review)
-
-  $(document).on('click', '#input_review_submit', () ->
-    workload.set('point', parseInt($('#input_review_point').val()))
-    workload.set('review_after', $('#input_review_after').val())
-    workload.save()
-    alert 'レビューを保存しました'
-  )
 
 window.initComments = () ->
   initRoom()
 
-window.initRoom = (id = 'default', title='いつもの部屋') ->
+window.initRoom = (id = 0, title='いつもの部屋') ->
   console.log "initRoom: #{id}, #{title}"
 
   $(".room").hide()
@@ -780,25 +543,17 @@ window.initRoom = (id = 'default', title='いつもの部屋') ->
 
     $('#rooms').append($room)
     
-    search_id = if id == 'default' then null else id
-    limit = if id == 'default' then 100 else 10000
+    limit = if id == 0 then 100 else 10000
 
-    ParseParse.where("Comment", [['room_id', search_id]], (comments) ->
-      $("#room_#{id} .create_comment").keypress((e) ->
+    $.get("/rooms/#{id}/comments.json", (comments) ->
+      $(document).on('keypress', "#room_#{id} .create_comment", (e) ->
         if e.which == 13 #enter
           window.createComment(id)
       )
       for comment in comments
-        @addComment(id, comment)
-      window.updateUnreads(search_id, comments.length)
-    , null, limit)
-
-window.updateUnreads = (room_id, count) ->
-  unreads = Parse.User.current().get("unreads")
-  unreads = {} unless unreads
-  unreads[room_id] = count
-  Parse.User.current().set("unreads", unreads)
-  Parse.User.current().save()
+        window.addComment(id, comment)
+      return
+    )
 
 window.finish = () ->
   console.log 'finish'
@@ -809,21 +564,21 @@ window.createComment = (room_id) ->
   console.log 'createComment'
   $createComment = $("#room_#{room_id} .create_comment")
   
-  body = $createComment.val()
+  content = $createComment.val()
 
   $createComment.val('')
   
-  return if body.length < 1
+  return if content.length < 1
 
-  params = {body: body}
+  params = {content: content}
 
-  if room_id != 'default'
-    params.room_id = room_id
-  ParseParse.create('Comment', params, (comment)->
-    updateRoomCommentsCount(room_id)
+  params.room_id = room_id
 
+  #$.post("/rooms/#{room_id}/comments.json", params, (comment) ->
+  $.post("/rooms/#{room_id}/comments.json", params, () -> # レスポンスに関係なくレンダリングとsync
+    comment = params
     # 自分の投稿を自分の画面に
-    @addComment(room_id, comment, true, true)
+    window.addComment(room_id, comment, true, true)
 
     # 自分の投稿を他人の画面に
     syncComment(room_id, comment, true)
@@ -834,42 +589,20 @@ initRanking = () ->
 
 @addDoing = (workload) ->
   $("#doing_title").show()
-  t = new Date(workload.createdAt)
+  t = new Date(workload.created_at)
   end_time = @env.pomotime*60*1000 + t.getTime()
-  disp = "#{Util.hourMin(workload.createdAt, '開始')}（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
+  disp = "#{Util.hourMin(workload.created_at, '開始')}（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
   @addWorkload("#doing", workload, disp)
 
 @addChatting = (workload) ->
   $("#chatting_title").show()
-  t = new Date(workload.createdAt)
+  t = new Date(workload.created_at)
   end_time = @env.pomotime*60*1000 + @env.chattime*60*1000 + t.getTime()
-  disp = "#{Util.hourMin(workload.createdAt, '開始')}（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
+  disp = "#{Util.hourMin(workload.created_at, '開始')}（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
   @addWorkload("#chatting", workload, disp)
 
 @addWorkload = (dom, workload, disp) ->
-  if workload.attributes
-    w = workload.attributes
-    user_id = w.user.id
-  else
-    w = workload
-    user_id = w.user.objectId
-
-  review = ""
-  stars = ""
-
-  if location.href.match('review=')
-    if w.review_before
-      review += "<div class=\"review\">【前】#{w.review_before}</div>"
-    if w.review_after
-      review += "<div class=\"review\">【後】#{w.review_after}</div>"
-    
-    if w.point
-      if w.point < 5
-        for i in [1..(5-w.point)]
-          stars += "☆"
-      for i in [1..w.point]
-        stars += "★"
-
+  w = workload
   if w.title
     href = '#'
     if w.sc_id
@@ -887,9 +620,12 @@ initRanking = () ->
     title = w.title
   else
     title = '無音'
-    fixed = "<a href=\"#\" class='fixed_start'><img src='https://ruffnote.com/attachments/24926' /></a>"
+    if location.href.match(/offline=/)
+      fixed = "<a href=\"#\" class='fixed_start'>無音で集中</a>"
+    else
+      fixed = "<a href=\"#\" class='fixed_start'><img src='https://ruffnote.com/attachments/24926' /></a>"
     jacket = "<img src=\"https://ruffnote.com/attachments/24981\" class='jacket'/>"
-  user_img = "<img class='icon icon_#{user_id} img-thumbnail' src='#{userIdToIconUrl(user_id)}' />"
+  user_img = "<img class='icon img-thumbnail' src='#{workload.icon_url}' />"
 
   $item = Util.tag('div', null, {class: 'inborder'})
   $item.css("border", '4px solid #eadba0')
@@ -902,11 +638,9 @@ initRanking = () ->
   $item.html("""
    <h5>#{title} </h5>
    <span>#{jacket}</span>
-   <span>#{user_img}</span>
+   <span><a href='/#{workload.user_id}'>#{user_img}</a></span>
    <div class='disp'>#{disp}</div>
    <div>#{fixed}</div>
-   <div>#{stars}</div>
-   <div>#{review}</div>
   """)
 
   unless dom == '#done'
@@ -916,17 +650,13 @@ initRanking = () ->
     $("#{dom} .user_#{user_id}").html($item)
   else
     $workload = $('<div></div>')
-    $workload.addClass("user_#{user_id}")
     $workload.addClass("workload")
     $workload.addClass("col-sm-2")
     $workload.css("min-height", '180px')
     $workload.html($item)
-    if workload.attributes # init
-      $("#{dom}").append($workload)
-    else # with PubNub
-      $("#{dom}").prepend($workload)
-      renderWorkloads('#doing')
-      renderWorkloads('#chatting')
+    $("#{dom}").append($workload)
+    renderWorkloads('#doing')
+    renderWorkloads('#chatting')
 
   if @env.is_doing || @env.is_done
     $(".fixed_start").hide()
@@ -936,7 +666,7 @@ initRanking = () ->
 
 initFixedStart = () ->
   $(document).on('click', '.fixed_start', () ->
-    if Parse.User.current()
+    if true
       hash = $(this).attr('href').replace(/^#/, '')
       location.hash = hash
       start_hash()
@@ -944,88 +674,42 @@ initFixedStart = () ->
       alert 'Facebookログインをお願いします！'
       window.fbAsyncInit()
   )
-  $(document).on('click', '.add_playlist', () ->
-    alert 'プレイリストに追加する機能は現在開発中です。。。'
-  )
-
 
 ruffnote = (id, dom, callback=null) ->
   Ruffnote.fetch("pandeiro245/245cloud/#{id}", dom, callback)
 
-initService = ($dom, url) ->
-  $dom.append("<iframe src='#{url}' width='85%' height='900px'></iframe>")
-
-@addComment = (room_id, comment, is_countup=false, is_prepend=false) ->
+window.addComment = (room_id, comment, is_countup=false, is_prepend=true) ->
   $comments = $("#room_#{room_id} .comments")
-  if typeof(comment.attributes) != 'undefined'
-    c = comment.attributes
-  else
-    c = comment
-  user = c.user
-
-
-
+  c = comment
   t = new Date()
   hour = t.getHours()
   min = t.getMinutes()
 
-  if user && c.body
-    html = """
-    <tr>
-    <td>
-    <a class='facebook_#{user.id}' target='_blank'>
-    <img class='icon icon_#{user.id}' src='#{userIdToIconUrl(c.user.objectId)}' />
-    <div class='facebook_name_#{user.id}'></div>
-    </a>
-    <td>
-    <td>#{Util.parseHttp(c.body)}</td>
-    <td>#{Util.hourMin(comment.createdAt)}</td>
-    </tr>
-    """
-
-    if typeof(comment.attributes) != 'undefined'
-      if is_prepend
-        $comments.prepend(html)
-      else
-        $comments.append(html)
-      ParseParse.fetch("user", comment, (ent, user) ->
-        img = user.get('icon_url') || user.get('icon')._url
-        $(".icon_#{user.id}").attr('src', img)
-        if user.get('facebook_id_str')
-          href = "https://facebook.com/#{user.get('facebook_id_str')}"
-          $(".facebook_#{user.id}").attr('href', href)
-        if name = user.get('name')
-          $(".facebook_name_#{user.id}").html(name)
-      )
-    else
-      $comments.prepend(html)
+  html = """
+  <tr>
+  <td>
+  <a target='_blank'>
+  <img src='#{c.user_img}' />
+  <div class='facebook_name_#{c.user_id}'></div>
+  </a>
+  <td>
+  <td>#{Util.parseHttp(c.content)}</td>
+  <td>#{Util.hourMin(c.created_at)}</td>
+  </tr>
+  """
+  if is_prepend
+    $comments.prepend(html)
+  else
+    $comments.append(html)
 
 userIdToIconUrl = (userId) ->
   localStorage["icon_#{userId}"] || ""
 
-getUnreadsCount = (room_id, total_count) ->
-  return total_count unless Parse.User.current()
-  return total_count unless Parse.User.current().get("unreads")
-  if count = Parse.User.current().get("unreads")[room_id]
-    res = total_count - count
-    if res < 0 then 0  else res
-  else
-    return total_count
-
-updateRoomCommentsCount = (room_id) ->
-  console.log "updateRoomCommentsCount room_id is #{room_id}"
-  ParseParse.find('Room', room_id, (room) ->
-    ParseParse.where('Comment', [['room_id', room_id]], (room, comments)->
-      room.set('comments_count', comments.length)
-      room.save()
-      window.updateUnreads(room_id, comments.length)
-    , room)
-  )
-
 @syncWorkload = (type) ->
+  return if location.href.match(/offline=/)
   @socket.push({
     type: type
-    workload: @workload
+    workload: window.workload
   })
 
 syncComment = (room_id, comment, is_countup=false) ->
@@ -1063,9 +747,7 @@ initHatopoppo = () ->
   $('#hatopoppo').css('width', '1px')
   $audio = $('<audio></audio>')
   $audio.attr('id', 'hato')
-  # thanks for http://musicisvfr.com/free/se/clock01.html
   $audio.attr('src', '/audio/Zihou01-4.mp3')
-  #$audio.attr('src', '/audio/20141231_shion_poppo.m4a')
   $('#hatopoppo').append($audio)
 
 getOffset = (all_count) ->
@@ -1079,7 +761,7 @@ getOffset = (all_count) ->
   data[all_count]
 
 renderWorkloads = (dom) ->
-  console.log 'renderWorkloads'
+  #console.log 'renderWorkloads'
   $dom = $("#{dom}")
   $items = $("#{dom} .workload")
   $first = $("#{dom} .workload:first")
@@ -1145,18 +827,10 @@ initWhatis = () ->
   $('#whatis').html($kokuban)
 
 initYou = () ->
-  return unless Parse.User.current()
   ruffnote(17769, 'you_title')
-  cond = [
-    ["user", Parse.User.current()]
-    ["is_done", true]
-    ["createdAt", '<', Util.minAgo(@env.pomotime + @env.chattime)]
-  ]
-  ParseParse.where('Workload', cond, (workloads) ->
+  $.get('/workloads/you.json', (workloads) ->
     for workload in workloads
-      continue unless workload.attributes.user
-      disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.attributes.number}回目）"
+      disp = "#{Util.hourMin(workload.created_at, '開始')}（#{workload.number}回目）"
       addWorkload("#you", workload, disp)
-  null, 24)
-
+  )
 

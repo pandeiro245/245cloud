@@ -1,0 +1,11 @@
+= pagination(@user)
+
+%hr
+
+= image_tag @user.icon
+
+%ul
+  - @user.musics.each do |music|
+    = link_to image_tag(music.icon2), "/musics/#{music.id}"
+    = "(#{music.total})"
+

@@ -1,0 +1,23 @@
+development:
+  adapter: mysql2
+  database: 245cloud_development
+  host: localhost
+  username: root
+  password: ""
+  encoding: utf8
+
+production:
+  adapter: mysql2
+  database: 245cloud
+  host: localhost
+  username: root
+  password: ""
+  encoding: utf8
+
+test:
+  adapter: mysql2
+  database: 245cloud_test
+  host: localhost
+  username: root
+  password: ""
+  encoding: utf8
