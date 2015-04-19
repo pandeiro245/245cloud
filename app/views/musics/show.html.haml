@@ -1,6 +1,7 @@
 = pagination(@music, 'musics')
 
 %hr
+= image_tag @music.icon2
 %h1=@music.title
 %h1=link_to 'この曲で集中する！', "http://245cloud.com/##{@music.key_old}", target: '_blank'
 %ul

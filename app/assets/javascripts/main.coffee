@@ -605,18 +605,10 @@ initRanking = () ->
   w = workload
   if w.title
     href = '#'
-    if w.sc_id
-      href += "soundcloud:#{w.sc_id}"
-    if w.yt_id
-      href += "youtube:#{w.yt_id}"
-    if w.mc_id
-      href += "mixcloud:#{w.mc_id}"
-    if w.et_id
-      href += "8tracks:#{w.et_id}"
-    if w.sm_id
-      href += "nicovideo:#{w.sm_id}"
+    if w.key
+      href += w.key
     fixed = "<a href=\"#{href}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24921' /></a>"
-    jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" class=\"jacket\" />' else "<img src=\"#{@nomusic_url}\" class=\"jacket\" />"}"
+    jacket = "<a href=\"/musics/#{w.music_id}\">#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" class=\"jacket\" />' else "<img src=\"#{@nomusic_url}\" class=\"jacket\" />"}</a>"
     title = w.title
   else
     title = '無音'
