@@ -21,6 +21,10 @@ class WorkloadsController < ApplicationController
     ).order('id desc').limit(48).map do |workload| 
       w = JSON.parse(workload.to_json)
       w['icon_url'] = workload.icon
+      if workload.music
+        w['artwork_url'] = workload.music.icon
+        w['title']       = workload.music.title
+      end
       w
     end
     render json: @workloads.to_json
