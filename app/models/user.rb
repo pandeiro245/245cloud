@@ -3,7 +3,7 @@ class User < ActiveRecord::Base
   attr_accessor :total
 
   def icon
-    "https://graph.facebook.com/#{facebook_id}/picture?height=80&width=80"
+    "https://ruffnote.com/attachments/24311"
   end
 
   def facebook_id
