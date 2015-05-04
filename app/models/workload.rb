@@ -4,7 +4,7 @@ class Workload < ActiveRecord::Base
   scope :dones, -> { where(is_done: true) }
 
   def icon
-    user.icon
+    user.present? ? user.icon : "https://ruffnote.com/attachments/24311"
   end
 
   def self.refresh_numbers

@@ -32,7 +32,7 @@ class WorkloadsController < ApplicationController
   end
 
   def create
-    workload = Workload.create!
+    workload = Workload.create! # user_id is nilを許容
     render json: workload
   end
 
