@@ -9,11 +9,11 @@ if location.href.match(/245cloud.com/)
   env.parse_app_id = 'jemiGIUHsvNeVQojqiUaXxFJZvzFDxFbUsfjPr78'
   env.parse_key = 'ZoyMZflFV5H2VoASJv505vJ2wWd9zqa2ZW5MU780'
   env.facebook_app_id = '275431199325537'
-  env.milkcocoa = 'io-ui2n0gy4p'
+  env.milkcocoa = 'iceiabmz2nv'
 else
   env.parse_app_id = '8QzCMkUbx7TyEApZjDRlhpLQ2OUj0sQWTnkEExod'
   env.parse_key = 'gzlnFfIOoLFQzQ08bU4mxkhAHcSqEok3rox0PBOM'
-  env.milkcocoa = 'io-fi3zt6p3l'
+  env.milkcocoa = 'hotiabmydrw'
   
   if location.href.match(/localhost:3001/)
     env.facebook_app_id = '322004764668180'
