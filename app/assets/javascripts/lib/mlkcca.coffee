@@ -1,5 +1,5 @@
 unless location.href.match(/offline=/)
-  mlkcca = new MilkCocoa("https://#{@env.milkcocoa}.mlkcca.com:443")
+  mlkcca = new MilkCocoa("#{@env.milkcocoa}.mlkcca.com")
   @socket = mlkcca.dataStore('workload')
 
   @socket.on( 'push', (params) ->
