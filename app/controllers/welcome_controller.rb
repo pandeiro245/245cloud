@@ -8,5 +8,10 @@ class WelcomeController < ApplicationController
   def pitch
     render layout: 'top'
   end
+
+  def logout
+    session[:user_id] = nil
+    redirect_to root_path
+  end
 end
 
