@@ -4,12 +4,15 @@
     %div{:style => "background: #231809; width: 100%;"}
       %img{:src => "https://ruffnote.com/attachments/24932"}/
     %br/
-  #news.row
-    %a{:href => "#whatis"} 245cloudとは？（はじめての方はこちら
+
+  #login
     - if session[:user_id]
-      = link_to 'ログアウト', '#'
+      = link_to 'ログアウト', '/logout'
     - else
       = link_to 'ログイン', '/auth/facebook'
+
+  #news.row
+    %a{:href => "#whatis"} 245cloudとは？（はじめての方はこちら
     %br/
   #otukare.row{:style => "display: none;"}
     %div{:style => "background: #c9e9f4; width: 100%;"}

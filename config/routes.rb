@@ -19,6 +19,7 @@ Rails.application.routes.draw do
 
   match '/auth/:provider/callback' => 'sessions#callback', via: [:get, :post]
   match '/auth/failure' => 'sessions#failure', via: [:get, :post]
+  get '/logout' => 'welcome#logout' #TODO deleteメソッドでログアウトさせる
 
   get '/:id' => 'users#show'
   get '/musics/:id' => 'musics#show'

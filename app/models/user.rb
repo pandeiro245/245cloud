@@ -3,7 +3,7 @@ class User < ActiveRecord::Base
   attr_accessor :total
 
   def self.login data
-    auth = Auth.find_or_create_with_omniahth(data)
+    auth = Auth.find_or_create_with_omniauth(data)
     auth.user
   end
 
