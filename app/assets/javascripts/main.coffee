@@ -5,37 +5,6 @@ window.workload = null
 @nomusic_url = 'https://ruffnote.com/attachments/24985'
 
 $ ->
-  # ParseParse.addAccesslog()
-  Util.scaffolds([
-    ['header', {is_row: false}]
-    'news'
-    ['otukare', {is_hide: true}]
-    'ad'
-    'contents'
-    'start_buttons'
-    'doing_title'
-    'doing'
-    'chatting_title'
-    'chatting'
-    'done'
-    'you_title'
-    'you'
-    'ranking_title'
-    'ranking'
-    '8tracks_title'
-    '8tracks'
-    'search_title'
-    'search'
-    'playing'
-    'complete'
-    'select_rooms'
-    'rooms_title'
-    'rooms'
-    'whatis_title'
-    ['whatis', {is_row: false}]
-    'footer'
-    'hatopoppo'
-  ])
   Util.realtime()
   ruffnote(13475, 'header')
   ruffnote(18004, 'news')
@@ -44,21 +13,14 @@ $ ->
   ruffnote(17762, 'ranking_title')
   ruffnote(17498, 'otukare')
 
-  $('#selectRoomButton').hide()
-
-  ruffnote(17661, 'music_ranking')
-
   initSearch()
   init8tracks()
-  #initChatting()
   initStart()
-  initDoing()
-  initDone()
-  initRanking()
   initFixedStart()
   initHatopoppo()
-  initWhatis()
   #initYou()
+ 
+  $('#selectRoomButton').hide()
   
 init8tracks = () ->
   ruffnote(17763, '8tracks_title')
@@ -183,22 +145,6 @@ initStart = () ->
     Util.addButton('login', $('#contents'), text, login)
 
 initSearch = () ->
-  $track = $("<input />").attr('id', 'track').attr('placeholder', 'ここにアーティスト名や曲名を入れてね')
-  localStorage['search_music_title'] = '作業BGM' unless localStorage['search_music_title']
-  #if localStorage['search_music_title'].length > 1
-  #  $track.attr('value', localStorage['search_music_title'])
-
-  $tracks = $("<div></div>").attr('id', 'tracks')
-
-  $('#search').append($track)
-  $('#search').append($tracks)
-
-  $('#search input').focus(() ->
-    $(this).select()
-  )
-  $('#search input').focus()
-  #searchMusics()
-
   $('#track').keypress((e) ->
     if e.which == 13 #enter
       searchMusics()
@@ -298,55 +244,6 @@ initSearch = () ->
         $self.attr('src', $self.attr('data-off'))
     )
   )
-
-initChatting = () ->
-  console.log 'initChatting'
-  $("#chatting_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24938' /></h2>")
-
-  $("#chatting_title").hide()
-  $.get('/workloads/chattings.json', (workloads) ->
-    return unless workloads.length > 0
-    $("#chatting_title").show()
-    for workload, i in workloads
-      @addChatting(workload)
-    renderWorkloads('#chatting')
-    renderWorkloads('#doing')
-  )
-
-initDoing = () ->
-  console.log 'initDoing'
-  $("#doing_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24939' /></h2>")
-  $("#doing_title").hide()
-
-  $.get('/workloads/doings.json', (workloads) ->
-    return unless workloads.length > 0
-    $("#doing_title").show()
-    for workload, i in workloads
-      @addDoing(workload)
-    renderWorkloads('#doing')
-  )
-
-initDone = () ->
-  console.log 'initDone'
-  $.get('/workloads/dones.json', (workloads) ->
-    return unless workloads.length > 0
-    if location.href.match(/offline=/)
-      $("#done").append("""
-        <h2 class='status'>DONE</h2>
-      """)
-    else
-      $("#done").append("""
-        <h2 class='status'>
-        <img src='https://ruffnote.com/attachments/24937' />
-        </h2>
-      """)
-    for workload in workloads
-      disp = "#{Util.hourMin(workload.created_at, '開始')}（#{workload.number}回目）"
-      #@addWorkload("#done", workload, disp)
-      addWorkload("#done", workload, disp)
-    return
-  )
-  return
  
 login = () ->
   console.log 'login'
@@ -383,29 +280,6 @@ createWorkload = (params, callback) ->
   
 start = () ->
   console.log 'start'
-  $("#done").hide()
-  $("#search").hide()
-  $("input").hide()
-  $(".fixed_start").hide()
-  $("#music_ranking").hide()
-  doms = [
-    'start_buttons'
-    'fixedstart_artwork'
-    '8tracks'
-    '8tracks_title'
-    'search_title'
-    'ranking_title'
-    'ranking'
-    'whatis_title'
-    'whatis'
-    'you_title'
-    'you'
-    'news'
-    'footer'
-  ]
-  for dom in doms
-    $("##{dom}").hide()
-
   @env.is_doing = true
   @syncWorkload('doing')
   
@@ -584,8 +458,6 @@ window.createComment = (room_id) ->
     syncComment(room_id, comment, true)
   )
 
-initRanking = () ->
-  $('#ranking').html('ここにランキング結果が入る予定')
 
 @addDoing = (workload) ->
   $("#doing_title").show()
@@ -769,60 +641,4 @@ start_unless_doing = ()->
 
 artworkUrlWithNoimage = (artwork_url) ->
   artwork_url || @nomusic_url
-
-initWhatis = () ->
-  $("#whatis_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24942' /></h2>")
-  now = new Date()
-  month = now.getMonth() + 1
-  day = now.getDate()
-  youbi = now.getDay()
-  numbers = {}
-  for i in [1..31]
-    i2 = 24371 + i
-    numbers[i] = "https://ruffnote.com/attachments/#{i2}"
-  youbis = {}
-  for i in [1..5]
-    i2 = 24358 + i
-    youbis[i] = "https://ruffnote.com/attachments/#{i2}"
-  youbis[0] = "https://ruffnote.com/attachments/24465" #日曜日
-  youbis[6] = "https://ruffnote.com/attachments/24464" #土曜日
-
-  $kokuban = $('<div></div>')
-  $kokuban.css('position', 'relative')
-  $kokuban.css('background', 'url(https://ruffnote.com/attachments/24501)')
-  $kokuban.css('width', '735px')
-  $kokuban.css('height', '483px')
-  $kokuban.css('margin', '0 auto')
-
-  $month = $('<img />')
-  $month.attr('src', numbers[month])
-  $month.css('position', 'absolute')
-  $month.css('right', '69px')
-  $month.css('top', '36px')
-
-  $day = $('<img />')
-  $day.attr('src', numbers[day])
-  $day.css('position', 'absolute')
-  $day.css('right', '70px')
-  $day.css('top', '88px')
-
-  $youbi = $('<img />')
-  $youbi.attr('src', youbis[youbi])
-  $youbi.css('position', 'absolute')
-  $youbi.css('right', '70px')
-  $youbi.css('top', '138px')
-
-  $kokuban.append($month)
-  $kokuban.append($day)
-  $kokuban.append($youbi)
-  $('#whatis').css('text-align', 'center')
-  $('#whatis').html($kokuban)
-
-initYou = () ->
-  ruffnote(17769, 'you_title')
-  $.get('/workloads/you.json', (workloads) ->
-    for workload in workloads
-      disp = "#{Util.hourMin(workload.created_at, '開始')}（#{workload.number}回目）"
-      addWorkload("#you", workload, disp)
-  )
 

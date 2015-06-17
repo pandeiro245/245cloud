@@ -2,6 +2,11 @@ class User < ActiveRecord::Base
   has_many :workloads
   attr_accessor :total
 
+  def self.login data
+    auth = Auth.find_or_create_with_omniahth(data)
+    auth.user
+  end
+
   def icon
     "https://ruffnote.com/attachments/24311"
   end

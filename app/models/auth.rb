@@ -8,6 +8,11 @@ class Auth < ActiveRecord::Base
     )
     auth.set_info(data)
     auth.save!
+    unless auth.user_id
+      user = User.create!
+      auth.user_id = user.id
+      auth.save!
+    end
     auth
   end
   
@@ -23,14 +28,8 @@ class Auth < ActiveRecord::Base
     ActiveRecord::Base.transaction do
       user = User.new(
         email: "#{self.provider}-#{self.uid}@245cloud.com", # 個人サービスなのでメールアドレスは取得しない
-        password: Devise.friendly_token[0, 20]
       )
-      user.skip_confirmation!
-      user.skip_confirmation_notification!
       user.save!
-
-      self.user = user
-      save!
     end
   end
 end
