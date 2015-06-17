@@ -30,6 +30,6 @@ group :development do
 end
 
 gem 'haml'
-gem 'omniauth-facebook', '~> 1.6.0'
+gem 'omniauth-facebook'
 gem 'dotenv-rails'
 
