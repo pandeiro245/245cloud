@@ -5,7 +5,9 @@
 
 #login
   - if session[:user_id]
-    = link_to 'ログアウト', '/logout'
+    - label = 'ログアウト'
+    - label += "(user_id: #{session[:user_id]})" if Rails.env.development?
+    = link_to label, '/logout'
   - else
     = link_to 'ログイン', '/auth/facebook'
 

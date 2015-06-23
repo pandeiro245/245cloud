@@ -2,6 +2,12 @@ class User < ActiveRecord::Base
   has_many :workloads
   attr_accessor :total
 
+  def playing?
+    Workload.playings.where(
+      user_id: self.id
+    ).present?
+  end
+
   def self.login data
     auth = Auth.find_or_create_with_omniauth(data)
     auth.user

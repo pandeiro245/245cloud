@@ -1,7 +1,11 @@
 class WelcomeController < ApplicationController
   def index
-    @dones = Workload.dones
-    @musics_users = MusicsUser.limit(3).order('total desc')
+    if current_user && current_user.playing?
+      render text: 'ポモり中'
+    else
+      @dones = Workload.dones
+      @musics_users = MusicsUser.limit(3).order('total desc')
+    end
   end
 
   def logout
