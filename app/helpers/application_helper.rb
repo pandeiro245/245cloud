@@ -1,4 +1,20 @@
 module ApplicationHelper
+
+  def timestamp workload
+    start = workload.created_at
+    "#{start.month + 1}/#{start.day}（#{workload.number}回目）"
+  end
+
+  def start_button workload
+    base = 'https://ruffnote.com/attachments/'
+    if workload.music.present?
+      url = "#{base}24921"
+    else 
+      url = "#{base}24926"
+    end
+    image_tag url
+  end
+
   def pagination(instance, dir=nil)
     id = instance.id 
     first_id = instance.class.first.id
