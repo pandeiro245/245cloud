@@ -8,7 +8,8 @@ class User < ActiveRecord::Base
   end
 
   def icon
-    "https://ruffnote.com/attachments/24311"
+    #"https://ruffnote.com/attachments/24311"
+    "https://graph.facebook.com/#{facebook_id}/picture?type=square"
   end
 
   def facebook_id
