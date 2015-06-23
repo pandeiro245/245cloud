@@ -7,6 +7,11 @@ class Workload < ActiveRecord::Base
   belongs_to :music
   scope :dones, -> { where(status: 1) }
 
+  def self.pomotime
+    Settings.pomotime
+    24
+  end
+
   def complete!
     self.status = 1
     self.save!
@@ -44,15 +49,14 @@ class Workload < ActiveRecord::Base
   end
 
   def complete!
-    @workload.status = 1
-    @workload.number = Workload.where(user_id: self.user_id, status: 1).count + 1
-    @workload.save!
-    @workload
+    self.status = 1
+    self.number = Workload.where(user_id: self.user_id, status: 1).count + 1
+    self.save!
   end
 
   def self.playings
     Workload.where(
-      created_at: (Time.now - 24.minutes)..Time.now
+      created_at: (Time.now - Workload.pomotime.minutes)..Time.now
     ).where(
       status: 0
     ).order('id desc')

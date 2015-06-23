@@ -1,7 +1,14 @@
 class WorkloadsController < ApplicationController
   def show
     @workload = Workload.find(params[:id])
-    @remain = (@workload.created_at + 24.minutes - Time.now).to_i
+    @remain = (@workload.created_at + Workload.pomotime.minutes - Time.now).to_i
+
+    if @remain < 0 # 24分以上経過
+      if @remain > - 60 * 6 # 経過時間30分未満
+        current_user.workload.complete!
+      end
+      redirect_to '/'
+    end
   end
 
   def new
@@ -15,11 +22,6 @@ class WorkloadsController < ApplicationController
 
   def cancel
     current_user.workload.cancel!
-    redirect_to '/'
-  end
-
-  def complete
-    current_user.workload.complete!
     redirect_to '/'
   end
 end

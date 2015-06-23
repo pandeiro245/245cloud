@@ -3,7 +3,13 @@ class User < ActiveRecord::Base
   attr_accessor :total
 
   def workload
-    workloads = Workload.playings.where(user: self)
+    workloads = Workload.where(
+      created_at: (Time.now - Workload.pomotime.minutes - 6.minutes)..(Time.now)
+    ).where(
+      status: 0,
+      user: self
+    )
+
     workloads.present? ? workloads.first : nil
   end
 

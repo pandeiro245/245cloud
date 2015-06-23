@@ -18,4 +18,4 @@ end
 gem 'haml'
 gem 'omniauth-facebook'
 gem 'dotenv-rails'
-
+gem 'settingslogic'
