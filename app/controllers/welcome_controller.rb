@@ -1,5 +1,7 @@
 class WelcomeController < ApplicationController
   def index
+    @dones = Workload.dones
+
     @musics_users = MusicsUser.limit(3).order('total desc')
   end
 
