@@ -8,11 +8,11 @@ class Auth < ActiveRecord::Base
     )
     auth.set_info(data)
     auth.save!
-    unless auth.user_id
-      user = User.create!
-      auth.user_id = user.id
-      auth.save!
-    end
+    user = auth.user || User.new
+    user.email = data['email'] || "#{data['uid']}@245cloud.com"
+    user.save!
+    auth.user_id = user.id
+    auth.save!
     auth
   end
   

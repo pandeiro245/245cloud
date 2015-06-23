@@ -168,10 +168,6 @@ start = () ->
   console.log 'start'
   @env.is_doing = true
   @syncWorkload('doing')
-  
-  if @env.is_kakuhen
-    initComments()
-    @initSelectRooms()
 
   Util.countDown(@env.pomotime*60*1000, complete)
 
