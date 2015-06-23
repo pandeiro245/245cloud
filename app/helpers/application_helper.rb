@@ -2,7 +2,8 @@ module ApplicationHelper
 
   def timestamp workload
     start = workload.created_at
-    "#{start.month + 1}/#{start.day}（#{workload.number}回目）"
+    type = start.to_date == Date.today ? "%H:%M" : "%m/%d"
+    "#{start.localtime.strftime(type)}（#{workload.number}回目）"
   end
 
   def start_button workload
