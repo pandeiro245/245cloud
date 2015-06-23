@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   resources :users, only: [:index]
-  resources :workloads, only: [:show, :index, :create, :update] do
+  resources :workloads, only: [:index, :show, :new, :create, :update] do
     collection do
       get :doings
       get :chattings

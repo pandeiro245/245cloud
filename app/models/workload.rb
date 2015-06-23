@@ -36,20 +36,14 @@ class Workload < ActiveRecord::Base
     @workload
   end
 
-  def self.doings
+  def self.playings
     Workload.where(
-      "created_at > '#{(Time.now - 24.minutes).to_s}'"
-    ).order('id desc').limit(96).map do |workload| 
-      w = JSON.parse(workload.to_json)
-      w['icon_url'] = workload.icon_url
-      w
-    end
+      created_at: (Time.now - 24.minutes)..Time.now
+    ).order('id desc')
   end
 
   def self.dones limit = 48
     Workload.where(
-      "created_at < '#{(Time.now - 24.minutes).to_s}'" # 不要？
-    ).where(
       is_done: true 
     ).order('id desc').limit(limit)
   end

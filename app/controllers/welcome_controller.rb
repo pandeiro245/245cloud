@@ -4,6 +4,12 @@ class WelcomeController < ApplicationController
     @dones = Workload.dones
     @musics_users = MusicsUser.limit(3).order('total desc')
     render layout: 'top'
+    if current_user && current_user.playing?
+      render text: 'ポモり中'
+    else
+      @dones = Workload.dones
+      @musics_users = MusicsUser.limit(3).order('total desc')
+    end
   end
 
   def pitch
