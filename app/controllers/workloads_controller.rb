@@ -1,4 +1,9 @@
 class WorkloadsController < ApplicationController
+  def show
+    @workload = Workload.find(params[:id])
+    @remain = (@workload.created_at + 24.minutes - Time.now).to_i
+  end
+
   def new
     if current_user.playing?
       redirect_to '/'
