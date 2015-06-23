@@ -2,6 +2,11 @@ class User < ActiveRecord::Base
   has_many :workloads
   attr_accessor :total
 
+  def workload
+    workloads = Workload.playings.where(user: self)
+    workloads.present? ? workloads.first : nil
+  end
+
   def playing?
     Workload.playings.where(
       user_id: self.id

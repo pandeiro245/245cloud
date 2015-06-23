@@ -75,7 +75,7 @@ class Parsecom
         created_at: workload['createdAt'].to_time
       )
 
-      workload2.is_done = workload['is_done']
+      workload2.done = workload['is_done'] || 0
       workload2.music_id = music.id if music
       workload2.save!
     end

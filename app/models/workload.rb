@@ -1,7 +1,21 @@
 class Workload < ActiveRecord::Base
+  # status 
+  # 0: created (playing or expired)
+  # 1: done
+  # 2: canceled
   belongs_to :user
   belongs_to :music
-  scope :dones, -> { where(is_done: true) }
+  scope :dones, -> { where(status: 1) }
+
+  def complete!
+    self.status = 1
+    self.save!
+  end
+
+  def cancel!
+    self.status = 2
+    self.save!
+  end
 
   def icon
     user.present? ? user.icon : "https://ruffnote.com/attachments/24311"
@@ -30,8 +44,8 @@ class Workload < ActiveRecord::Base
   end
 
   def complete!
-    @workload.is_done = true
-    @workload.number = Workload.where(is_done: true).count + 1 # FIXME
+    @workload.status = 1
+    @workload.number = Workload.where(user_id: self.user_id, status: 1).count + 1
     @workload.save!
     @workload
   end
@@ -39,12 +53,14 @@ class Workload < ActiveRecord::Base
   def self.playings
     Workload.where(
       created_at: (Time.now - 24.minutes)..Time.now
+    ).where(
+      status: 0
     ).order('id desc')
   end
 
   def self.dones limit = 48
     Workload.where(
-      is_done: true 
+      status: 1
     ).order('id desc').limit(limit)
   end
 

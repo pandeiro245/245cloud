@@ -5,7 +5,7 @@ class WelcomeController < ApplicationController
     @musics_users = MusicsUser.limit(3).order('total desc')
     render layout: 'top'
     if current_user && current_user.playing?
-      render text: 'ポモり中'
+      redirect_to current_user.workload
     else
       @dones = Workload.dones
       @musics_users = MusicsUser.limit(3).order('total desc')
