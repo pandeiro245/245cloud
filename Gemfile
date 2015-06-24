@@ -16,6 +16,8 @@ group :development, :test do
   gem 'web-console', '~> 2.0'
   gem 'spring'
 end
+gem 'therubyracer', :platforms => :ruby
+gem 'unicorn'
 
 group :development do
   gem 'capistrano'
