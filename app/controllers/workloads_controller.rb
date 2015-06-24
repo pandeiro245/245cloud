@@ -15,7 +15,9 @@ class WorkloadsController < ApplicationController
     if current_user.playing?
       redirect_to '/'
     else
-      workload = Workload.create!(user: current_user)
+      workload = Workload.new(user: current_user)
+      workload.music_id = params[:music_id] if params[:music_id]
+      workload.save!
       redirect_to workload
     end
   end

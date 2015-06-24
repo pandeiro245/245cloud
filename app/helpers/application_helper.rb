@@ -26,6 +26,8 @@ module ApplicationHelper
     res += '　'
     res += link_to '<', "#{dir}#{id - 1}" if id > first_id
     res += '　'
+    res += link_to 'HOME', root_path
+    res += '　'
     res += link_to '>', "#{dir}#{id + 1}" if id < last_id
     res += '　'
     res += link_to '>>', "#{dir}#{last_id}" if id < last_id - 1

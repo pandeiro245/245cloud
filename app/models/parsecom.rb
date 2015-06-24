@@ -75,10 +75,11 @@ class Parsecom
         created_at: workload['createdAt'].to_time
       )
 
-      workload2.done = workload['is_done'] || 0
+      workload2.status = workload['is_done'] || 0
       workload2.music_id = music.id if music
       workload2.save!
     end
+    Music.all.each{|m| m.total_count = MusicsUser.where(music_id: m.id).count; m.save!}
     puts 'done'
   end
 end
