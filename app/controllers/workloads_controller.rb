@@ -5,7 +5,7 @@ class WorkloadsController < ApplicationController
 
     if @remain < 0 # 24分以上経過
       if @remain > - 60 * 6 # 経過時間30分未満
-        current_user.workload.complete!
+        current_user.workload.complete! if current_user.workload
       end
       redirect_to '/'
     end
@@ -25,6 +25,11 @@ class WorkloadsController < ApplicationController
   def cancel
     current_user.workload.cancel!
     redirect_to '/'
+  end
+
+  def chatting
+    @workload = Workload.find(params[:id])
+    @remain = (@workload.created_at + Workload.pomotime.minutes + 5.minutes- Time.now).to_i
   end
 end
 

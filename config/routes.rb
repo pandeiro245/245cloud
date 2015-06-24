@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   resources :workloads, only: [:index, :show, :new, :create, :update] do
     collection do
       get :cancel
+      get :chatting
     end
 
     member do
@@ -18,6 +19,7 @@ Rails.application.routes.draw do
   match '/auth/:provider/callback' => 'sessions#callback', via: [:get, :post]
   match '/auth/failure' => 'sessions#failure', via: [:get, :post]
   get '/logout' => 'welcome#logout' #TODO deleteメソッドでログアウトさせる
+  get '/chatting' => 'welcome#chatting'
 
   get '/:id' => 'users#show'
   get '/musics/random' => 'musics#random'
