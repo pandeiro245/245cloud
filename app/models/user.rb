@@ -25,6 +25,12 @@ class User < ActiveRecord::Base
     ).present?
   end
 
+  def chatting_workload
+    Workload.chattings.where(
+      user_id: self.id
+    ).first
+  end
+
   def self.login data
     auth = Auth.find_or_create_with_omniauth(data)
     auth.user
