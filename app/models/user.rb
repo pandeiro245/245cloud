@@ -9,8 +9,14 @@ class User < ActiveRecord::Base
       status: 0,
       user: self
     )
-
     workloads.present? ? workloads.first : nil
+  end
+
+  def workloads
+    Workload.where(
+      status: 1,
+      user: self
+    ).order('created_at desc').limit(24)
   end
 
   def playing?

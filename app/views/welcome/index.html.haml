@@ -1,147 +1,130 @@
 = render 'shared/button_tweet'
 = render 'header'
-#nc
-  #doing_title.row
-    %h2.status
-      %img{:src => "https://ruffnote.com/attachments/24939"}/
-  #doing.row
-  #chatting_title.row
-  #chatting.row
-  #done.row{:style => "display: block;"}
-    %h2.status
-      %img{:src => "https://ruffnote.com/attachments/24937"}/
-    - @dones.each do |workload|
-      .workload.col-sm-2{:style => "min-height: 180px;"}
-        .inborder{:style => "border: 4px solid rgb(234, 219, 160); border-radius: 18px; margin: 10px 5px 3px; padding: 0px 0px 6px; color: rgb(178, 178, 178); background: rgb(255, 255, 255);"}
-          %h5=workload.title
-          %span
-            = link_to_if workload.music_id, image_tag(workload.music_icon, class: 'jacket'), "/musics/#{workload.music_id}"
-              
-          %span
-            = link_to_if workload.user_id, image_tag(workload.icon, class: 'icon img-thumbnail'), "/#{workload.user_id}"
-          .disp=timestamp(workload)
-          %div
-            %a.fixed_start{:href => "/workloads/new"}
-              = start_button workload
-  #you_title.row
-  #you.row
-  #ranking_title.row
-    %h2.status
-      %img{:src => "https://ruffnote.com/attachments/24940"}/
-  #ranking.row
-    -@musics_users.each do |mu|
-      %h2=mu.total
-      - music = mu.music
-      - user = mu.user
-      = link_to image_tag(user.icon), "/#{user.id}"
-      ="=>"
-      = link_to image_tag(music.icon2), "/musics/#{music.id}"
-      %hr
+#doing_title.row
+  %h2.status
+    %img{:src => "https://ruffnote.com/attachments/24939"}/
+#doing.row
+#chatting_title.row
+#chatting.row
+= render 'done'  
+= render 'you'
+#ranking_title.row
+  %h2.status
+    %img{:src => "https://ruffnote.com/attachments/24940"}/
+#ranking.row
+  -@musics_users.each do |mu|
+    %h2=mu.total
+    - music = mu.music
+    - user = mu.user
+    = link_to image_tag(user.icon), "/#{user.id}"
+    ="=>"
+    = link_to image_tag(music.icon2), "/musics/#{music.id}"
     %hr
+  %hr
 
-  #8tracks_title.row
-    %h2.status
-      %img{:src => "https://ruffnote.com/attachments/24935"}/
-  #8tracks.row
-    .col-lg-2{:style => "min-height: 200px;"}
-      %a{:href => "http://8tracks.com/mixes/5302932", :target => "_blank"} ゆったりした音楽
-      (00:00)
+#8tracks_title.row
+  %h2.status
+    %img{:src => "https://ruffnote.com/attachments/24935"}/
+#8tracks.row
+  .col-lg-2{:style => "min-height: 200px;"}
+    %a{:href => "http://8tracks.com/mixes/5302932", :target => "_blank"} ゆったりした音楽
+    (00:00)
+    %br/
+    %br/
+    %img{:src => "http://images.8tracks.com/cover/i/002/853/428/IMG_8363-8151.jpg?rect=256,0,1536,1536&q=98&fm=jpg&fit=max&w=100&h=100", :width => "100px"}/
+    %a.fixed_start{:href => "#8tracks:5302932"}
+      %img{:src => "https://ruffnote.com/attachments/24353"}/
+    / <a href="#" class='add_playlist btn btn-default'>追加</a>
+  .col-lg-2{:style => "min-height: 200px;"}
+    %a{:href => "http://8tracks.com/mixes/5014459", :target => "_blank"} attrip週末リミックス
+    (36:40)
+    %br/
+    %br/
+    %img{:src => "http://images.8tracks.com/cover/i/002/706/010/tumblr_nbepr0cS4f1rx1zuco1_1280-4711.jpg?rect=0,90,540,540&q=98&fm=jpg&fit=max&w=100&h=100", :width => "100px"}/
+    %a.fixed_start{:href => "#8tracks:5014459"}
+      %img{:src => "https://ruffnote.com/attachments/24353"}/
+    / <a href="#" class='add_playlist btn btn-default'>追加</a>
+  .col-lg-2{:style => "min-height: 200px;"}
+    %a{:href => "http://8tracks.com/mixes/93096", :target => "_blank"} attrip's  2010 mix　HIPHOP
+    (17:28)
+    %br/
+    %br/
+    %img{:src => "http://images.8tracks.com/cover/i/000/865/472/26656.original-9322.jpg?rect=0,35,450,450&q=98&fm=jpg&fit=max&w=100&h=100", :width => "100px"}/
+    %a.fixed_start{:href => "#8tracks:93096"}
+      %img{:src => "https://ruffnote.com/attachments/24353"}/
+    / <a href="#" class='add_playlist btn btn-default'>追加</a>
+#search_title.row
+  %h2.status
+    %img{:src => "https://ruffnote.com/attachments/24941"}/
+#search.row
+  %input#track{:placeholder => "ここにアーティスト名や曲名を入れてね"}/
+  #tracks
+#playing.row
+#complete.row
+#select_rooms.row
+#rooms_title.row
+#rooms.row
+#whatis_title.row
+  %h2.status
+    %img{:src => "https://ruffnote.com/attachments/24942"}/
+#whatis{:style => "text-align: center;"}
+  %div{:style => "position: relative; width: 735px; height: 483px; margin: 0px auto; background: url(https://ruffnote.com/attachments/24501);"}
+    %img{:src => "https://ruffnote.com/attachments/24377", :style => "position: absolute; right: 69px; top: 36px;"}/
+    %img{:src => "https://ruffnote.com/attachments/24388", :style => "position: absolute; right: 70px; top: 88px;"}/
+    %img{:src => "https://ruffnote.com/attachments/24361", :style => "position: absolute; right: 70px; top: 138px;"}/
+#footer.row
+  %a{:href => "#header"} ▲トップへ戻る
+  %a{:href => "http://245cloud.com/?alert=true"}
+    %br/
+    %hr/
+    = succeed "\u{7d42}\u{4e86}\u{6642}\u{306b}\u{5f37}\u{5236}\u{7684}\u{306b}245cloud\u{3092}\u{8868}\u{793a}\u{3055}\u{305b}\u{308b}\u{30e2}\u{30fc}\u{30c9}\u{ff08}\u{3b2}\u{ff09}" do
+      %br/
+    %br/
+  %a{:href => "http://245cloud.com/?ad=true"} 【感想聞きたい】休憩中に広告動画が流れるバージョン
+  %br/
+  %br/
+  %br/
+  %a{:href => "http://tech.blog.hisaju.org/2014/12/12/tool/"} 【嬉しい】スタートアップチラ見せ♡ナイトで紹介してもらいました☆
+  %br/
+  %a{:href => "https://gist.github.com/ytone/6fd15b40405fb79248aa", :target => "_blank"} 【Webエンジニア向け】ブックマークレット
+  %br/
+  %br/
+  %a{:href => "http://blog.j-caw.co.jp/147"} 「ポモドーロ・テクニック」について
+  %br/
+  %a{:href => "https://ruffnote.com/pandeiro245/245cloud/13478", :target => "_blank"} プロジェクト協力者募集中！
+  %br/
+  %a{:href => "http://attrip.jp/138267/", :target => "_blank"} 200万PVあるattrip掲載
+  %br/
+  %a{:href => "https://www.facebook.com/groups/1507907746131907/", :target => "_blank"} facebookグループ
+  %br/
+  %br/
+  = succeed "---\u{2606}SPECIAL" do
+    %a{:href => "https://ruffnote.com/pandeiro245/245cloud/issues/new", :target => "_blank"}
+      ご要望
       %br/
       %br/
-      %img{:src => "http://images.8tracks.com/cover/i/002/853/428/IMG_8363-8151.jpg?rect=256,0,1536,1536&q=98&fm=jpg&fit=max&w=100&h=100", :width => "100px"}/
-      %a.fixed_start{:href => "#8tracks:5302932"}
-        %img{:src => "https://ruffnote.com/attachments/24353"}/
-      / <a href="#" class='add_playlist btn btn-default'>追加</a>
-    .col-lg-2{:style => "min-height: 200px;"}
-      %a{:href => "http://8tracks.com/mixes/5014459", :target => "_blank"} attrip週末リミックス
-      (36:40)
-      %br/
-      %br/
-      %img{:src => "http://images.8tracks.com/cover/i/002/706/010/tumblr_nbepr0cS4f1rx1zuco1_1280-4711.jpg?rect=0,90,540,540&q=98&fm=jpg&fit=max&w=100&h=100", :width => "100px"}/
-      %a.fixed_start{:href => "#8tracks:5014459"}
-        %img{:src => "https://ruffnote.com/attachments/24353"}/
-      / <a href="#" class='add_playlist btn btn-default'>追加</a>
-    .col-lg-2{:style => "min-height: 200px;"}
-      %a{:href => "http://8tracks.com/mixes/93096", :target => "_blank"} attrip's  2010 mix　HIPHOP
-      (17:28)
-      %br/
-      %br/
-      %img{:src => "http://images.8tracks.com/cover/i/000/865/472/26656.original-9322.jpg?rect=0,35,450,450&q=98&fm=jpg&fit=max&w=100&h=100", :width => "100px"}/
-      %a.fixed_start{:href => "#8tracks:93096"}
-        %img{:src => "https://ruffnote.com/attachments/24353"}/
-      / <a href="#" class='add_playlist btn btn-default'>追加</a>
-  #search_title.row
-    %h2.status
-      %img{:src => "https://ruffnote.com/attachments/24941"}/
-  #search.row
-    %input#track{:placeholder => "ここにアーティスト名や曲名を入れてね"}/
-    #tracks
-  #playing.row
-  #complete.row
-  #select_rooms.row
-  #rooms_title.row
-  #rooms.row
-  #whatis_title.row
-    %h2.status
-      %img{:src => "https://ruffnote.com/attachments/24942"}/
-  #whatis{:style => "text-align: center;"}
-    %div{:style => "position: relative; width: 735px; height: 483px; margin: 0px auto; background: url(https://ruffnote.com/attachments/24501);"}
-      %img{:src => "https://ruffnote.com/attachments/24377", :style => "position: absolute; right: 69px; top: 36px;"}/
-      %img{:src => "https://ruffnote.com/attachments/24388", :style => "position: absolute; right: 70px; top: 88px;"}/
-      %img{:src => "https://ruffnote.com/attachments/24361", :style => "position: absolute; right: 70px; top: 138px;"}/
-  #footer.row
-    %a{:href => "#header"} ▲トップへ戻る
-    %a{:href => "http://245cloud.com/?alert=true"}
-      %br/
-      %hr/
-      = succeed "\u{7d42}\u{4e86}\u{6642}\u{306b}\u{5f37}\u{5236}\u{7684}\u{306b}245cloud\u{3092}\u{8868}\u{793a}\u{3055}\u{305b}\u{308b}\u{30e2}\u{30fc}\u{30c9}\u{ff08}\u{3b2}\u{ff09}" do
-        %br/
-      %br/
-    %a{:href => "http://245cloud.com/?ad=true"} 【感想聞きたい】休憩中に広告動画が流れるバージョン
+  %br/
+  %a{:href => "http://musicisvfr.com/free/se/clock01.html", :target => "_blank"}
+    はとぽっぽ効果音
     %br/
     %br/
     %br/
-    %a{:href => "http://tech.blog.hisaju.org/2014/12/12/tool/"} 【嬉しい】スタートアップチラ見せ♡ナイトで紹介してもらいました☆
-    %br/
-    %a{:href => "https://gist.github.com/ytone/6fd15b40405fb79248aa", :target => "_blank"} 【Webエンジニア向け】ブックマークレット
     %br/
     %br/
-    %a{:href => "http://blog.j-caw.co.jp/147"} 「ポモドーロ・テクニック」について
-    %br/
-    %a{:href => "https://ruffnote.com/pandeiro245/245cloud/13478", :target => "_blank"} プロジェクト協力者募集中！
-    %br/
-    %a{:href => "http://attrip.jp/138267/", :target => "_blank"} 200万PVあるattrip掲載
-    %br/
-    %a{:href => "https://www.facebook.com/groups/1507907746131907/", :target => "_blank"} facebookグループ
     %br/
     %br/
-    = succeed "---\u{2606}SPECIAL" do
-      %a{:href => "https://ruffnote.com/pandeiro245/245cloud/issues/new", :target => "_blank"}
-        ご要望
-        %br/
-        %br/
     %br/
-    %a{:href => "http://musicisvfr.com/free/se/clock01.html", :target => "_blank"}
-      はとぽっぽ効果音
-      %br/
-      %br/
-      %br/
-      %br/
-      %br/
-      %br/
-      %br/
-      %br/
-      %br/
-      %br/
-      %br/
-      %br/
-      %br/
-      %br/
-      %br/
-      %br/
-      %br/
-      %br/
     %br/
+    %br/
+    %br/
+    %br/
+    %br/
+    %br/
+    %br/
+    %br/
+    %br/
+    %br/
+  %br/
 #fb-root
 #selectRoomModal.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "selectRoomModalLabel", :role => "dialog", :tabindex => "-1"}
   .modal-dialog

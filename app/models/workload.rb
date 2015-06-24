@@ -8,18 +8,8 @@ class Workload < ActiveRecord::Base
   scope :dones, -> { where(status: 1) }
 
   def self.pomotime
-    Settings.pomotime
-    24
-  end
-
-  def complete!
-    self.status = 1
-    self.save!
-  end
-
-  def cancel!
-    self.status = 2
-    self.save!
+    #Settings.pomotime
+    0.05
   end
 
   def icon
@@ -50,7 +40,12 @@ class Workload < ActiveRecord::Base
 
   def complete!
     self.status = 1
-    self.number = Workload.where(user_id: self.user_id, status: 1).count + 1
+    self.number = Workload.where(user_id: self.user_id, status: 1, created_at: Time.now.midnight..Time.now).count + 1
+    self.save!
+  end
+
+  def cancel!
+    self.status = 2
     self.save!
   end
 

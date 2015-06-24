@@ -1,5 +1,9 @@
 module ApplicationHelper
 
+  def ruffimage id
+    image_tag "https://ruffnote.com/attachments/#{id}"
+  end
+
   def timestamp workload
     start = workload.created_at
     type = start.to_date == Date.today ? "%H:%M" : "%m/%d"

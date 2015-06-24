@@ -4,6 +4,7 @@ class WelcomeController < ApplicationController
       redirect_to current_user.workload
     else
       @dones = Workload.dones
+      @yous = current_user.workloads
       @musics_users = MusicsUser.limit(3).order('total desc')
     end
   end

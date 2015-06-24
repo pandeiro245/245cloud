@@ -79,6 +79,7 @@ class Parsecom
 
       workload2 = Workload.find_or_create_by(
         user_id: user.id,
+        number: workload['number'],
         created_at: workload['createdAt'].to_time
       )
 
