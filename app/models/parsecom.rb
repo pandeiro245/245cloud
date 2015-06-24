@@ -25,6 +25,13 @@ class Parsecom
           #password: Devise.friendly_token[0, 20]
         )
       end
+      auth = Auth.find_or_initialize_by(
+        provider: 'facebook',
+        uid: facebook_id
+      )
+      auth.user_id = user.id
+      auth.save!
+
       user_hashs[u['objectId']] = user
     end
 
