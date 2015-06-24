@@ -3,7 +3,8 @@
 %hr
 = image_tag @music.icon2
 %h1=@music.title
-%h1=link_to 'この曲で集中する！', "http://245cloud.com/##{@music.key_old}", target: '_blank'
+%h1=link_to 'この曲で集中する！', "/workloads/new?music_id=#{@music.id}"
+%h1=link_to '他の曲をランダムで探す！', "/musics/random?music_id=#{@music.id}"
 %ul
   - @music.users.each do |user|
     = link_to image_tag(user.icon), "/#{user.id}"

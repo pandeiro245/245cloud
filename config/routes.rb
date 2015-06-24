@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   get '/logout' => 'welcome#logout' #TODO deleteメソッドでログアウトさせる
 
   get '/:id' => 'users#show'
+  get '/musics/random' => 'musics#random'
   get '/musics/:id' => 'musics#show'
   root 'welcome#index'
   resources :nicoinfo, only: [:show], constraints: {id: /sm[0-9]+/}
