@@ -29,8 +29,6 @@
     %h2.status
       %img{:src => "https://ruffnote.com/attachments/24940"}/
   #ranking.row
-    %h1 245cloudヘビーローテーションランキング
-    %hr
     -@musics_users.each do |mu|
       %h2=mu.total
       - music = mu.music
