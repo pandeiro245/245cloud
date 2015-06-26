@@ -1,5 +1,8 @@
 development:
   adapter: mysql2
+  charset: utf8mb4
+  encoding: utf8mb4
+  collation: utf8mb4_general_ci
   database: 245cloud_development
   host: localhost
   username: root
@@ -8,6 +11,9 @@ development:
 
 production:
   adapter: mysql2
+  charset: utf8mb4
+  encoding: utf8mb4
+  collation: utf8mb4_general_ci
   database: 245cloud
   host: localhost
   username: root
@@ -16,6 +22,9 @@ production:
 
 test:
   adapter: mysql2
+  charset: utf8mb4
+  encoding: utf8mb4
+  collation: utf8mb4_general_ci
   database: 245cloud_test
   host: localhost
   username: root

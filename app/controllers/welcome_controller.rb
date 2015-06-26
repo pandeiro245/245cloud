@@ -6,8 +6,8 @@ class WelcomeController < ApplicationController
     render layout: 'top'
     if current_user && current_user.playing?
       redirect_to current_user.workload
-    elsif current_user && w = current_user.chatting_workload
-      redirect_to "/workloads/chatting?id=#{w.id}"
+    elsif current_user && current_user.chatting_workload
+      redirect_to "/rooms/0"
     else
       @dones = Workload.dones
       @yous = current_user.workloads

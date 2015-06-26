@@ -15,14 +15,14 @@ ActiveRecord::Schema.define(version: 20150623095023) do
 
   create_table "auths", force: :cascade do |t|
     t.integer  "user_id",     limit: 4
-    t.string   "provider",    limit: 255
-    t.string   "uid",         limit: 255
-    t.string   "name",        limit: 255
-    t.string   "nickname",    limit: 255
-    t.string   "image",       limit: 255
+    t.string   "provider",    limit: 191
+    t.string   "uid",         limit: 191
+    t.string   "name",        limit: 191
+    t.string   "nickname",    limit: 191
+    t.string   "image",       limit: 191
     t.text     "raw",         limit: 65535
-    t.string   "token",       limit: 255
-    t.string   "text",        limit: 255
+    t.string   "token",       limit: 191
+    t.string   "text",        limit: 191
     t.text     "credentials", limit: 65535
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
@@ -37,7 +37,7 @@ ActiveRecord::Schema.define(version: 20150623095023) do
   end
 
   create_table "musics", force: :cascade do |t|
-    t.string   "title",       limit: 255
+    t.string   "title",       limit: 191
     t.boolean  "is_fixed",    limit: 1
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -59,25 +59,25 @@ ActiveRecord::Schema.define(version: 20150623095023) do
   add_index "musics_users", ["user_id"], name: "index_musics_users_on_user_id", using: :btree
 
   create_table "rooms", force: :cascade do |t|
-    t.string   "title",          limit: 255
-    t.string   "image_on",       limit: 255
-    t.string   "image_off",      limit: 255
+    t.string   "title",          limit: 191
+    t.string   "image_on",       limit: 191
+    t.string   "image_off",      limit: 191
     t.integer  "comments_count", limit: 4
     t.datetime "created_at",                 null: false
     t.datetime "updated_at",                 null: false
   end
 
   create_table "users", force: :cascade do |t|
-    t.string   "email",                  limit: 255, default: "", null: false
-    t.string   "encrypted_password",     limit: 255, default: "", null: false
-    t.string   "reset_password_token",   limit: 255
+    t.string   "email",                  limit: 191, default: "", null: false
+    t.string   "encrypted_password",     limit: 191, default: "", null: false
+    t.string   "reset_password_token",   limit: 191
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
     t.integer  "sign_in_count",          limit: 4,   default: 0,  null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
-    t.string   "current_sign_in_ip",     limit: 255
-    t.string   "last_sign_in_ip",        limit: 255
+    t.string   "current_sign_in_ip",     limit: 191
+    t.string   "last_sign_in_ip",        limit: 191
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -86,7 +86,7 @@ ActiveRecord::Schema.define(version: 20150623095023) do
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
   create_table "workloads", force: :cascade do |t|
-    t.string   "title",      limit: 255
+    t.string   "title",      limit: 191
     t.integer  "status",     limit: 1,     default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
