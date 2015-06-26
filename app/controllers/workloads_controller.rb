@@ -26,10 +26,5 @@ class WorkloadsController < ApplicationController
     current_user.workload.cancel!
     redirect_to '/'
   end
-
-  def chatting
-    @workload = Workload.find(params[:id])
-    @remain = (@workload.created_at + Workload.pomotime.minutes + 5.minutes- Time.now).to_i
-  end
 end
 
