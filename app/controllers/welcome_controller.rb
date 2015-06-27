@@ -5,8 +5,6 @@ class WelcomeController < ApplicationController
     elsif current_user && current_user.chatting_workload
       redirect_to "/rooms/0"
     else
-      @dones = Workload.dones
-      @yous = current_user.workloads
       @musics_users = MusicsUser.limit(3).order('total desc')
     end
   end

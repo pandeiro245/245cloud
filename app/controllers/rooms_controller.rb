@@ -6,5 +6,7 @@ class RoomsController < ApplicationController
       is_redirect = true if @remain < 0
     end
     redirect_to '/' if is_redirect || !@workload
+    @rooms = Room.where.not(image_on: nil)
+    @room = Room.find_by(id: params[:id]) || Room.new
   end
 end

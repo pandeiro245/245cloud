@@ -8,11 +8,23 @@ class Parsecom
     @user_path = 'tmp/parsecom/_User.json'
     @room_path = 'tmp/parsecom/Room.json'
     @comment_path = 'tmp/parsecom/Comment.json'
+    @room_ids = {}
+    @user_hashs = {}
+  end
+
+  def room_ids
+    @room_ids
   end
 
   def import
-    user_hashs = {}
+    import_users
+    import_workloads
+    import_rooms
+    import_comments
+    puts 'done'
+  end
 
+  def import_users
     users = JSON.parse(File.open(@user_path).read)['results']
     users = users.sort!{|a, b| 
       a['createdAt'].to_time <=> b['createdAt'].to_time
@@ -36,9 +48,11 @@ class Parsecom
       auth.user_id = user.id
       auth.save!
 
-      user_hashs[u['objectId']] = user
+      @user_hashs[u['objectId']] = user
     end
+  end
 
+  def import_workloads
     workloads = JSON.parse(File.open(@workload_path).read)['results']
 
     puts 'start to sort Workload'
@@ -70,7 +84,7 @@ class Parsecom
       end
      
       next unless workload['user']
-      user = user_hashs[workload['user']['objectId']]
+      user = @user_hashs[workload['user']['objectId']]
 
       if music 
         msuic_user = MusicsUser.find_or_create_by(
@@ -92,32 +106,30 @@ class Parsecom
       workload2.save!
     end
     Music.all.each{|m| m.total_count = MusicsUser.where(music_id: m.id).count; m.save!}
+  end
 
-
-    room_ids = {}
+  def import_rooms
     JSON.parse(File.open(@room_path).read)['results'].each do |room|
-      room = Room.create!(
+      room2 = Room.create!(
         title: room['title'],
         created_at: room['createdAt'],
         image_off: room['img_off'],
         image_on: room['img_on'],
       )
-      room_ids[room['objectId']] = room.id
+      @room_ids[room['objectId']] = room2.id
     end
+  end
+
+  def import_comments
     JSON.parse(File.open(@comment_path).read)['results'].each do |comment|
-      if comment['user']
-        user = user_hashs[comment['user']['objectId']]
-      else
-        user = user_hashs["eAYx93GzJ8"]
-      end
+      user_hash = comment['user'] ? comment['user']['objectId'] : "eAYx93GzJ8"
+      user = @user_hashs[user_hash]
       Comment.create!(
         content: comment['body'],
         created_at: comment['createdAt'],
         user_id: user.id,
-        room_id: room_ids[comment['room_id']]
+        room_id: @room_ids[comment['room_id']]
       )
     end
-    puts 'done'
   end
 end
-
