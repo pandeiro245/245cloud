@@ -8,9 +8,9 @@ module ApplicationHelper
   end
 
   def time instance
-    time = instance.created_at
+    time = instance.created_at.localtime
     type = time.to_date == Date.today ? "%H:%M" : "%m/%d"
-    time.localtime.strftime(type)
+    time.strftime(type)
   end
 
   def timestamp workload
