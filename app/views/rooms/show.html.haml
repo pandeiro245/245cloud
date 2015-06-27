@@ -20,12 +20,17 @@
     - @rooms.each do |room|
       %a{href: "/rooms/#{room.id}"}
         %img.col-sm-2.room_icon.room_link.on{"data-off" => room.image_off, "data-on" => room.image_on, :src => room.image_off}
+    %a{href: "/rooms/999"}
+      %img.col-sm-2.room_icon.room_link.on{"data-off" => 'https://ruffnote.com/attachments/24854', "data-on" => 'https://ruffnote.com/attachments/24855', :src => 'https://ruffnote.com/attachments/24854'}
+
 #rooms_title.row
   %h2.status
     %img{:src => "https://ruffnote.com/attachments/24968"}/
 #rooms.row
   #room_default.room
-    %input.create_comment{:placeholder => "「いつもの部屋」に書き込む"}/
+    = form_for @new_comment do |f|
+      = f.text_field :content, placeholder: "「#{@room.title2}」に書き込む", class: 'create_comment'
+      = f.hidden_field :room_id, value: @room.id2
     %table.table.comments
       %tbody
         - @room.comments.each do |comment|

@@ -8,5 +8,6 @@ class RoomsController < ApplicationController
     redirect_to '/' if is_redirect || !@workload
     @rooms = Room.where.not(image_on: nil)
     @room = Room.find_by(id: params[:id]) || Room.new
+    @new_comment = Comment.new
   end
 end

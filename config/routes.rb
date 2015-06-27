@@ -12,9 +12,8 @@ Rails.application.routes.draw do
   end
   resources :musics, only: [:index]
   resources :you, only: [:index]
-  resources :rooms, only: [:index, :show] do
-    resources :comments, only: [:index, :create]
-  end
+  resources :rooms, only: [:index, :show]
+  resources :comments, only: [:index, :create]
 
   match '/auth/:provider/callback' => 'sessions#callback', via: [:get, :post]
   match '/auth/failure' => 'sessions#failure', via: [:get, :post]
