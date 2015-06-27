@@ -23,7 +23,12 @@ class WorkloadsController < ApplicationController
   end
 
   def cancel
-    current_user.workload.cancel!
+    workload = current_user.workload
+    if workload.playing?
+      workload.cancel!
+    elsif workload.done?
+      session[:done_workload_without_chatting_id] = workload.id
+    end
     redirect_to '/'
   end
 end

@@ -50,7 +50,7 @@ $ ->
   ruffnote(17758, 'search_title')
   #ruffnote(17762, 'ranking_title')
   ruffnote(17498, 'otukare')
-
+  ruffnote(17762, 'ranking_title')
   initSearch()
   init8tracks()
   initTimecrowd() if location.href.match(/timecrowd=/)
@@ -305,7 +305,6 @@ createWorkload = (params, callback) ->
   
 start = () ->
   console.log 'start'
-<<<<<<< HEAD
   if location.href.match(/timecrowd=/)
     task_id = $("input[name='timecrowd_task']:checked").val()
     team_id = $("input[name='timecrowd_task']:checked").attr('data-team-id')
@@ -315,37 +314,6 @@ start = () ->
     }
     $.post('/timecrowd/start', params)
 
-  $("#done").hide()
-  $("#search").hide()
-  $("input").hide()
-  $(".fixed_start").hide()
-  $("#music_ranking").hide()
-  $('#heatmap').hide()
-  doms = [
-    'timecrowd'
-    'start_buttons'
-    'fixedstart_artwork'
-    '8tracks'
-    '8tracks_title'
-    'kimiya_title'
-    'kimiya'
-    'naotake_title'
-    'naotake'
-    'search_title'
-    'ranking_title'
-    'ranking'
-    'whatis_title'
-    'whatis'
-    'you_title'
-    'you'
-    'news'
-    'footer'
-  ]
-  for dom in doms
-    $("##{dom}").hide()
-
-=======
->>>>>>> [WIP] main.coffeeでレンダリングしていたdomをサーバサイドでやるための第一歩
   @env.is_doing = true
   @syncWorkload('doing')
 
@@ -617,38 +585,6 @@ window.createComment = (room_id) ->
     syncComment(room_id, comment, true)
   )
 
-<<<<<<< HEAD
-initRanking = () ->
-  now = new Date()
-  year = now.getYear() + 1900 - 1
-  month = now.getMonth()
-  day = now.getDate()
-
-  to_now = new Date(now.getTime() + 24*3600*1000)
-  to_year = to_now.getYear() + 1900 - 1
-  to_month = to_now.getMonth()
-  to_day = to_now.getDate()
-
-  $('#ranking_title').html("<h2>#{year}年#{month+1}月#{day}日に再生された曲</h2>")
-  cond = [
-    ["is_done", true]
-    ["createdAt", '>', new Date(year, month, day)]
-    ["createdAt", '<', new Date(to_year, to_month, to_day)]
-  ]
-  titles = {}
-  ParseParse.where("Workload", cond, (workloads) ->
-    return unless workloads.length > 0
-    for workload in workloads
-      continue unless workload.attributes.user
-      continue unless workload.attributes.title
-      continue if titles[workload.attributes.title]
-      titles[workload.attributes.title] = true
-      disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.attributes.number}回目）"
-      @addWorkload("#ranking", workload, disp)
-  , null, 24 *500)
-=======
->>>>>>> [WIP] main.coffeeでレンダリングしていたdomをサーバサイドでやるための第一歩
-
 @addDoing = (workload) ->
   $("#doing_title").show()
   t = new Date(workload.created_at)
@@ -832,78 +768,3 @@ start_unless_doing = ()->
 artworkUrlWithNoimage = (artwork_url) ->
   artwork_url || @nomusic_url
 
-<<<<<<< HEAD
-initWhatis = () ->
-  $("#whatis_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24942' /></h2>")
-  now = new Date()
-  month = now.getMonth() + 1
-  day = now.getDate()
-  youbi = now.getDay()
-  numbers = {}
-  for i in [1..31]
-    i2 = 24371 + i
-    numbers[i] = "https://ruffnote.com/attachments/#{i2}"
-  youbis = {}
-  for i in [1..5]
-    i2 = 24358 + i
-    youbis[i] = "https://ruffnote.com/attachments/#{i2}"
-  youbis[0] = "https://ruffnote.com/attachments/24465" #日曜日
-  youbis[6] = "https://ruffnote.com/attachments/24464" #土曜日
-
-  $kokuban = $('<div></div>')
-  $kokuban.css('position', 'relative')
-  $kokuban.css('background', 'url(https://ruffnote.com/attachments/24501)')
-  $kokuban.css('width', '735px')
-  $kokuban.css('height', '483px')
-  $kokuban.css('margin', '0 auto')
-
-  $month = $('<img />')
-  $month.attr('src', numbers[month])
-  $month.css('position', 'absolute')
-  $month.css('right', '69px')
-  $month.css('top', '36px')
-
-  $day = $('<img />')
-  $day.attr('src', numbers[day])
-  $day.css('position', 'absolute')
-  $day.css('right', '70px')
-  $day.css('top', '88px')
-
-  $youbi = $('<img />')
-  $youbi.attr('src', youbis[youbi])
-  $youbi.css('position', 'absolute')
-  $youbi.css('right', '70px')
-  $youbi.css('top', '138px')
-
-  $kokuban.append($month)
-  $kokuban.append($day)
-  $kokuban.append($youbi)
-  $('#whatis').css('text-align', 'center')
-  $('#whatis').html($kokuban)
-
-initYou = () ->
-  ruffnote(17769, 'you_title')
-  $.get('/workloads/you.json', (workloads) ->
-    for workload in workloads
-      disp = "#{Util.hourMin(workload.created_at, '開始')}（#{workload.number}回目）"
-      addWorkload("#you", workload, disp)
-  )
-
-renderFixedStart = (title, icon) ->
-  fixed_text = [
-    'https://ruffnote.com/attachments/24921'
-    'https://ruffnote.com/attachments/24922'
-  ]
-  $('#fixedstart').append(txt)
-  txt = "<h5 title='#{title}' data-toggle='tooltip' data-placement='top'>#{title}</h5>"
-  $('#fixedstart').append(txt)
-  txt = "<img src='#{icon}' class='jacket'>"
-  $('#fixedstart').append(txt)
-  Util.addButton('start', $('#fixedstart'), fixed_text, start_hash)
-  $('#fixedstart').fadeIn()
-  $('#random').removeClass("col-sm-offset-#{getOffset(2)}")
-  $('#random').addClass("col-sm-offset-#{getOffset(3)}")
-  $('[data-toggle="tooltip"]').tooltip()
-
-=======
->>>>>>> [WIP] main.coffeeでレンダリングしていたdomをサーバサイドでやるための第一歩

@@ -1,12 +1,12 @@
 class User < ActiveRecord::Base
   has_many :workloads
+  has_many :comments, -> {order('created_at desc')}
   attr_accessor :total
 
   def workload
     workloads = Workload.where(
       created_at: (Time.now - Workload.pomotime.minutes - 6.minutes)..(Time.now)
     ).where(
-      status: 0,
       user: self
     )
     workloads.present? ? workloads.first : nil
