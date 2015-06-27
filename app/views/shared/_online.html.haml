@@ -9,7 +9,7 @@
       = ruffimage 24938
   #chatting.row
 
-- if current_user.nothing? || (current_user.chatting? && session[:done_workload_without_chatting_id] == current_user.workload.id)
+- if params[:controller] == 'welcome'
   = render 'shared/done'  
   = render 'shared/you'
 

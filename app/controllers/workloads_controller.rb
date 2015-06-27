@@ -5,9 +5,10 @@ class WorkloadsController < ApplicationController
 
     if @remain < 0 # 24分以上経過
       if @remain > - 60 * 6 # 経過時間30分未満
-        current_user.workload.complete! if current_user.workload
+        @workload.complete!
+        is_room = true
       end
-      redirect_to '/'
+      redirect_to (is_room ? room_path(Room.first) : root_path)
     end
   end
 
@@ -26,8 +27,6 @@ class WorkloadsController < ApplicationController
     workload = current_user.workload
     if workload.playing?
       workload.cancel!
-    elsif workload.done?
-      session[:done_workload_without_chatting_id] = workload.id
     end
     redirect_to '/'
   end
