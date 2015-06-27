@@ -7,7 +7,7 @@ gem 'coffee-rails', '~> 4.1.0'
 gem 'jquery-rails'
 gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
-gem 'mysql2'
+gem 'mysql2', '>= 0.3.12b4'
 
 group :development, :test do
   gem 'byebug'
