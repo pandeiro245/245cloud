@@ -6,9 +6,9 @@ class ApplicationController < ActionController::Base
 
   def commons
     @dones = Workload.dones
-    @yous = current_user ? current_user.workloads : []
-    @playings = [] #TODO
-    @chattings= [] #TODO
+    @yous = current_user.workloads
+    @playings = Workload.playings
+    @chattings= Workload.chattings
   end
 
   def current_user

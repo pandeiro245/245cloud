@@ -5,9 +5,8 @@ class WelcomeController < ApplicationController
     @musics_users = MusicsUser.limit(3).order('total desc')
     render layout: 'top'
     if current_user && current_user.playing?
-      redirect_to current_user.workload
+      @resume_minutes = ((current_user.workload.created_at + Workload.pomotime.minutes - Time.now)/60).to_i
     end
-    @musics_users = MusicsUser.limit(3).order('total desc')
   end
 
   def pitch

@@ -6,10 +6,16 @@ class Workload < ActiveRecord::Base
   belongs_to :user
   belongs_to :music
   scope :dones, -> { where(status: 1) }
+  scope :playings, -> { where(status: 0, created_at: Time.now..(Time.now - Workload.pomominutes)) }
+  scope :chattings, -> { where(status: 1, created_at: (Time.now - Workload.pomominutes)..(Time.now - 5.minutes)) }
 
   def self.pomotime
-    #Settings.pomotime
-    0.05
+    Settings.pomotime
+    #0.05
+  end
+
+  def self.pomominutes
+    self.pomotime.minutes
   end
 
   def icon
