@@ -8,6 +8,7 @@ class Parsecom
     @user_path = 'tmp/parsecom/_User.json'
     @room_path = 'tmp/parsecom/Room.json'
     @comment_path = 'tmp/parsecom/Comment.json'
+    @default_room = nil
     @room_ids = {}
     @user_hashs = {}
   end
@@ -107,6 +108,11 @@ class Parsecom
   end
 
   def import_rooms
+    @default_room = Room.create!(
+      title: 'いつもの部屋',
+      image_off: 'https://ruffnote.com/attachments/24832',
+      image_on: 'https://ruffnote.com/attachments/24831',
+    )
     JSON.parse(File.open(@room_path).read)['results'].each do |room|
       room2 = Room.create!(
         title: room['title'],
@@ -122,11 +128,18 @@ class Parsecom
     JSON.parse(File.open(@comment_path).read)['results'].each do |comment|
       user_hash = comment['user'] ? comment['user']['objectId'] : "eAYx93GzJ8"
       user = @user_hashs[user_hash]
+      
+      if comment['room_id']
+        room_id = @room_ids[comment['room_id']]
+      else
+        room_id = @default_room.id
+      end
+
       Comment.create!(
         content: comment['body'],
         created_at: comment['createdAt'],
         user_id: user.id,
-        room_id: @room_ids[comment['room_id']]
+        room_id: room_id
       )
     end
   end
