@@ -1,15 +1,6 @@
-- if @playings.present?
-  #doing_title.row
-    %h2.status
-      = ruffimage 24939
-  #doing.row
-- if @chattings.present?
-  #chatting_title.row
-    %h2.status
-      = ruffimage 24938
-  #chatting.row
-
+= render 'shared/workloads', workloads: @playings, ruffhead: 24939
+= render 'shared/workloads', workloads: @chattings, ruffhead: 24938
 - if params[:controller] == 'welcome'
-  = render 'shared/done'  
-  = render 'shared/you'
+  = render 'shared/workloads', workloads: @dones, ruffhead: 24937  
+  = render 'shared/workloads', workloads: @yous, ruffhead: 24943  
 

@@ -1,9 +1,9 @@
 class WelcomeController < ApplicationController
   def index
-    if current_user && current_user.playing?
-      redirect_to current_user.workload
-    end
     @musics_users = MusicsUser.limit(3).order('total desc')
+    if current_user && current_user.playing?
+      @resume_minutes = ((current_user.workload.created_at + Workload.pomotime.minutes - Time.now)/60).to_i
+    end
   end
 
   def logout
