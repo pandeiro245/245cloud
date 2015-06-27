@@ -2,6 +2,10 @@ class User < ActiveRecord::Base
   has_many :workloads
   attr_accessor :total
 
+  def name
+    "ユーザ名表示実装中"
+  end
+
   def workload
     workloads = Workload.where(
       created_at: (Time.now - Workload.pomotime.minutes - 6.minutes)..(Time.now)

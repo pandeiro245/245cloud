@@ -1,16 +1,11 @@
 = render 'shared/button_tweet'
 = render 'header'
-#doing_title.row
-  %h2.status
-    %img{:src => "https://ruffnote.com/attachments/24939"}/
-#doing.row
-#chatting_title.row
-#chatting.row
-= render 'done'  
-= render 'you'
+= render 'shared/online'
+
 #ranking_title.row
   %h2.status
     %img{:src => "https://ruffnote.com/attachments/24940"}/
+
 #ranking.row
   -@musics_users.each do |mu|
     %h2=mu.total
