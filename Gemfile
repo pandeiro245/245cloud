@@ -9,7 +9,7 @@ gem 'jquery-rails'
 gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'unicorn'
-gem 'mysql2'
+gem 'mysql2', '>= 0.3.12b4'
 
 group :development, :test do
   gem 'byebug'
