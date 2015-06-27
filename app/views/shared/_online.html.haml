@@ -1,14 +1,18 @@
-#doing_title.row
-  %h2.status
-    %img{:src => "https://ruffnote.com/attachments/24939"}/
-#doing.row
-#chatting_title.row
-#chatting.row
+- if @playings.present?
+  #doing_title.row
+    %h2.status
+      = ruffimage 24939
+  #doing.row
+- if @chattings.present?
+  #chatting_title.row
+    %h2.status
+      = ruffimage 24938
+  #chatting.row
 
-- if false
+- if current_user.nothing?
   = render 'shared/done'  
   = render 'shared/you'
-#ranking_title.row
-  %h2.status
-    %img{:src => "https://ruffnote.com/attachments/24940"}/
+  #ranking_title.row
+    %h2.status
+      = ruffimage 24940
 

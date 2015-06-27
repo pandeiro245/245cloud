@@ -2,10 +2,6 @@ class User < ActiveRecord::Base
   has_many :workloads
   attr_accessor :total
 
-  def name
-    "ユーザ名表示実装中"
-  end
-
   def workload
     workloads = Workload.where(
       created_at: (Time.now - Workload.pomotime.minutes - 6.minutes)..(Time.now)
@@ -27,6 +23,14 @@ class User < ActiveRecord::Base
     Workload.playings.where(
       user_id: self.id
     ).present?
+  end
+
+  def nothing?
+    !chatting? && !playing?
+  end
+
+  def chatting?
+    chatting_workload.present?
   end
 
   def chatting_workload
