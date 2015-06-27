@@ -6,6 +6,7 @@
   %span{:style => "color: #9e7a41;"}
     24分おつかれさまでした！5分間だけ見られる交換日記に是非参加してください☆
     %br/
+    = link_to '5分休憩を終えて次へ行く', '/workloads/cancel'
   %br/
 #ad.row
 #contents.row
@@ -46,5 +47,3 @@
 #hatopoppo.row{:style => "width: 1px;"}
   %audio#hato{:src => "/audio/Zihou01-4.mp3"}
 #remain{'data-remain' => @remain}
-%hr
-= link_to '中断する', '/workloads/cancel'

@@ -11,7 +11,6 @@ $ ->
   ruffnote(13477, 'footer')
   ruffnote(17758, 'search_title')
   ruffnote(17762, 'ranking_title')
-  ruffnote(17498, 'otukare')
 
   initSearch()
   init8tracks()

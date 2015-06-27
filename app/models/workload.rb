@@ -45,8 +45,24 @@ class Workload < ActiveRecord::Base
   end
 
   def cancel!
-    self.status = 2
+    if playing?
+      self.status = 2
+    elsif done?
+      self.status = 3
+    end
     self.save!
+  end
+
+  def playing?
+    status == 0 && Time.now < created_at + Workload.pomotime.minutes + 6.minutes
+  end
+
+  def expired?
+    Time.now > created_at + Workload.pomotime.minutes + 6.minutes
+  end
+
+  def done?
+    status == 1 || (!playing && !expired)
   end
 
   def self.playings
