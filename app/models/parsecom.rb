@@ -12,10 +12,6 @@ class Parsecom
     @user_hashs = {}
   end
 
-  def room_ids
-    @room_ids
-  end
-
   def import
     import_users
     import_workloads
@@ -41,6 +37,8 @@ class Parsecom
           #password: Devise.friendly_token[0, 20]
         )
       end
+      user.name = u['name']
+      user.save!
       auth = Auth.find_or_initialize_by(
         provider: 'facebook',
         uid: facebook_id

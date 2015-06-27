@@ -33,10 +33,11 @@
             %td
               %a{href: "/#{comment.user_id}"}
                 %img.icon{src: comment.user.icon}
+                %br
                 = comment.user.name
             %td
             %td=comment.content
-            %td 99/99
+            %td=time comment
 #hatopoppo.row{:style => "width: 1px;"}
   %audio#hato{:src => "/audio/Zihou01-4.mp3"}
 #remain{'data-remain' => @remain}

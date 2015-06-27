@@ -1,13 +1,20 @@
 module ApplicationHelper
+  def current_user
+    User.find_by(id: session[:user_id])
+  end
 
   def ruffimage id
     image_tag "https://ruffnote.com/attachments/#{id}"
   end
 
+  def time instance
+    time = instance.created_at
+    type = time.to_date == Date.today ? "%H:%M" : "%m/%d"
+    time.localtime.strftime(type)
+  end
+
   def timestamp workload
-    start = workload.created_at
-    type = start.to_date == Date.today ? "%H:%M" : "%m/%d"
-    "#{start.localtime.strftime(type)}（#{workload.number}回目）"
+    "#{time(workload)}（#{workload.number}回目）"
   end
 
   def start_button workload
