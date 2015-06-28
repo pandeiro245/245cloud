@@ -21,7 +21,7 @@
     - @rooms.each do |room|
       %a{href: "/rooms/#{room.id}"}
         %img.col-sm-2.room_icon.room_link.on{"data-off" => room.image_off, "data-on" => room.image_on, :src => room.image_off}
-    %a{href: "/rooms/999"}
+    %a{'href' => "#", 'data-toggle' => 'modal', 'data-target' => '#selectRoomModal'}
       %img.col-sm-2.room_icon.room_link.on{"data-off" => 'https://ruffnote.com/attachments/24854', "data-on" => 'https://ruffnote.com/attachments/24855', :src => 'https://ruffnote.com/attachments/24854'}
 
 #rooms_title.row
@@ -46,4 +46,21 @@
             %td=time comment
 #hatopoppo.row{:style => "width: 1px;"}
   %audio#hato{:src => "/audio/Zihou01-4.mp3"}
-#remain{'data-remain' => @remain}
+    #remain{'data-remain' => @remain}
+
+#selectRoomModal.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "selectRoomModalLabel", :role => "dialog", :tabindex => "-1"}
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+          %span{"aria-hidden" => "true"} &times;
+        %h4#selectRoomModalLabel.modal-title その他の部屋選択
+      .modal-body
+        - @noimage_rooms.each do |room|
+          = link_to room.title, room_path(room)
+          %br
+      .modal-footer
+        %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} キャンセル
+%button#selectRoomButton.btn.btn-primary.btn-lg{"data-target" => "#selectRoomModal", "data-toggle" => "modal", :style => "display:hidden; ", :type => "button"}
+
+
