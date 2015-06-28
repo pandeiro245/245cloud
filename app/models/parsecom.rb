@@ -94,12 +94,12 @@ class Parsecom
         msuic_user.save!
       end
 
-      workload2 = Workload.find_or_create_by(
-        user_id: user.id,
-        number: workload['number'],
-        created_at: workload['createdAt'].to_time
+      workload2 = Workload.find_or_initialize_by(
+        parsehash: workload['objectId']
       )
-
+      workload2.user_id = user.id
+      workload2.created_at =  workload['createdAt'].to_time
+      workload2.number = workload['number']
       workload2.status = workload['is_done'] || 0
       workload2.music_id = music.id if music
       workload2.save!
@@ -108,6 +108,7 @@ class Parsecom
   end
 
   def import_rooms
+    return if Room.count == 0
     @default_room = Room.create!(
       title: 'いつもの部屋',
       image_off: 'https://ruffnote.com/attachments/24832',
@@ -135,12 +136,14 @@ class Parsecom
         room_id = @default_room.id
       end
 
-      Comment.create!(
-        content: comment['body'],
-        created_at: comment['createdAt'],
-        user_id: user.id,
-        room_id: room_id
+      comment = Comment.find_or_initialize_by(
+        parsehash: comment['objectId']
       )
+      comment.content = comment['body']
+      comment.created_at = comment['createdAt']
+      comment.user_id = user.id
+      comment.room_id = room_id
+      comment.save!
     end
   end
 end
