@@ -1,0 +1,12 @@
+:javascript
+  $(function(){
+    $dom = $('#remain'); //FIXME
+    document._write = document.write;
+    document.write = function(msg){
+      $dom.html(msg);
+      document.write = document._write;
+    }
+    script = document.createElement('script');
+    script.src = "http://ext.nicovideo.jp/thumb_watch/#{sm_id}";
+    $dom.append(script);
+  });
