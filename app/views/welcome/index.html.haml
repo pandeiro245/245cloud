@@ -70,30 +70,4 @@
   %br/
   %a{:href => "http://musicisvfr.com/free/se/clock01.html", :target => "_blank"}
     はとぽっぽ効果音
-    %br/
-    %br/
-    %br/
-    %br/
-    %br/
-    %br/
-    %br/
-    %br/
-    %br/
-  %br/
 #fb-root
-#selectRoomModal.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "selectRoomModalLabel", :role => "dialog", :tabindex => "-1"}
-  .modal-dialog
-    .modal-content
-      .modal-header
-        %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
-          %span{"aria-hidden" => "true"} ×
-        %h4#selectRoomModalLabel.modal-title その他の部屋選択
-      .modal-body
-      .modal-footer
-        %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} キャンセル
-%button#selectRoomButton.btn.btn-primary.btn-lg{"data-target" => "#selectRoomModal", "data-toggle" => "modal", :style => "display: none;", :type => "button"}
-
-
-#fb-root
-= render 'shared/modal'
-

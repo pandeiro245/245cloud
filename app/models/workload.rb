@@ -11,7 +11,7 @@ class Workload < ActiveRecord::Base
 
   def self.pomotime
     Settings.pomotime
-    #0.05
+    0.05
   end
 
   def self.pomominutes
