@@ -36,7 +36,7 @@ class User < ActiveRecord::Base
   def chatting_workload
     Workload.chattings.where(
       user_id: self.id
-    ).first
+    ).order('created_at desc').first
   end
 
   def self.login data

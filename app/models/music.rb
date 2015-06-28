@@ -2,6 +2,10 @@ class Music < ActiveRecord::Base
   has_many :workloads
   attr_accessor :total
 
+  def self.sc_client_id
+    '2b9312964a1619d99082a76ad2d6d8c6'
+  end
+
   def users
     MusicsUser.limit(100).order(
       'total desc'

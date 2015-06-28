@@ -1,0 +1,6 @@
+- if workloads.present?
+  .row
+    %h2.status
+      = ruffimage ruffhead
+    - workloads.each do |workload|
+      = render 'shared/workload', workload: workload

@@ -1,0 +1,14 @@
+- if music
+  - key = music.key 
+  - if key.match(/^sc:/)
+    = render 'shared/player_sc', sc_id: key.gsub(/^sc:/,'')
+  - elsif key.match(/^mc:/)
+    = render 'shared/player_mc', mc_id: key.gsub(/^mc:/,'')
+  - elsif key.match(/^yt:/)
+    = render 'shared/player_yt', yt_id: key.gsub(/^yt:/,'')
+  - elsif key.match(/^et:/)
+    = render 'shared/player_et', et_id: key.gsub(/^et:/,'')
+  - elsif key.match(/^sm:/)
+    = render 'shared/player_sm', sm_id: key.gsub(/^sm:/,'')
+- else
+  = ruffimage 24981

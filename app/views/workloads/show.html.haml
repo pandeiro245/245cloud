@@ -1,6 +1,10 @@
-= image_tag @workload.music.icon2 if @workload.music
-%hr
-ポモり中
+#header
+  %div{:style => "background: #231809; width: 100%;"}
+    %img{:src => "https://ruffnote.com/attachments/24932"}/
+  %br/
+
+
+= render 'shared/player', music: @workload.music
 %hr
 .countdown2
   .countdown
