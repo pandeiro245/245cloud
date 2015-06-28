@@ -97,14 +97,28 @@ class Parsecom
       workload2 = Workload.find_or_initialize_by(
         parsehash: workload['objectId']
       )
-      workload2.user_id = user.id
-      workload2.created_at =  workload['createdAt'].to_time
-      workload2.number = workload['number']
-      workload2.status = workload['is_done'] || 0
-      workload2.music_id = music.id if music
-      workload2.save!
+      unless workload2.id
+        workload2.user_id = user.id
+        workload2.created_at =  workload['createdAt'].to_time
+        workload2.number = workload['number']
+        workload2.status = workload['is_done'] || 0
+        workload2.music_id = music.id if music
+        workload2.save!
+      end
     end
-    Music.all.each{|m| m.total_count = MusicsUser.where(music_id: m.id).count; m.save!}
+
+    if false
+      Music.all.each do |music|
+        music_users = []
+        music.users.each do |user|
+          music_user = MusicsUser.find_or_create_by(music_id: music.id, user_id: user.id)
+          music_user.total = Workload.dones.where(user_id: user.id, music_id: music.id, status: 1).count
+          music_users.push(music_user)
+        end
+        music.total_count = music_users.count
+        muisc.save!
+      end
+    end
   end
 
   def import_rooms
@@ -139,14 +153,17 @@ class Parsecom
         room_id = @default_room.id
       end
 
-      comment = Comment.find_or_initialize_by(
+      comment2 = Comment.find_or_initialize_by(
         parsehash: comment['objectId']
       )
-      comment.content = comment['body']
-      comment.created_at = comment['createdAt']
-      comment.user_id = user.id
-      comment.room_id = room_id
-      comment.save!
+      unless comment.id
+        puts comment['body']
+        comment2.content = comment['body']
+        comment2.created_at = comment['createdAt']
+        comment2.user_id = user.id
+        comment2.room_id = room_id
+        comment2.save!
+      end
     end
   end
 end
