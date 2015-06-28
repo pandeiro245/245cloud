@@ -4,9 +4,9 @@ env = {
 }
 
 if location.href.match(/245cloud.com/)
-  env.milkcocoa = 'io-ui2n0gy4p'
+  env.milkcocoa = 'iceiabmz2nv'
 else
-  env.milkcocoa = 'io-fi3zt6p3l'
+  env.milkcocoa = 'hotiabmydrw'
 
 env.pomotime =  if localStorage['dev_pomo'] then parseFloat(localStorage['dev_pomo']) else 24
 env.chattime =  if localStorage['dev_chat'] then parseFloat(localStorage['dev_chat']) else 5
