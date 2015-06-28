@@ -1,6 +1,4 @@
-= image_tag @workload.music.icon2 if @workload.music
-%hr
-ポモり中
+= render 'shared/player', music: @workload.music
 %hr
 .countdown2
   .countdown

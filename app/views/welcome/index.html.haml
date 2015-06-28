@@ -16,38 +16,7 @@
     = link_to image_tag(music.icon2), "/musics/#{music.id}"
     %hr
   %hr
-
-#8tracks_title.row
-  %h2.status
-    %img{:src => "https://ruffnote.com/attachments/24935"}/
-#8tracks.row
-  .col-lg-2{:style => "min-height: 200px;"}
-    %a{:href => "http://8tracks.com/mixes/5302932", :target => "_blank"} ゆったりした音楽
-    (00:00)
-    %br/
-    %br/
-    %img{:src => "http://images.8tracks.com/cover/i/002/853/428/IMG_8363-8151.jpg?rect=256,0,1536,1536&q=98&fm=jpg&fit=max&w=100&h=100", :width => "100px"}/
-    %a.fixed_start{:href => "#8tracks:5302932"}
-      %img{:src => "https://ruffnote.com/attachments/24353"}/
-    / <a href="#" class='add_playlist btn btn-default'>追加</a>
-  .col-lg-2{:style => "min-height: 200px;"}
-    %a{:href => "http://8tracks.com/mixes/5014459", :target => "_blank"} attrip週末リミックス
-    (36:40)
-    %br/
-    %br/
-    %img{:src => "http://images.8tracks.com/cover/i/002/706/010/tumblr_nbepr0cS4f1rx1zuco1_1280-4711.jpg?rect=0,90,540,540&q=98&fm=jpg&fit=max&w=100&h=100", :width => "100px"}/
-    %a.fixed_start{:href => "#8tracks:5014459"}
-      %img{:src => "https://ruffnote.com/attachments/24353"}/
-    / <a href="#" class='add_playlist btn btn-default'>追加</a>
-  .col-lg-2{:style => "min-height: 200px;"}
-    %a{:href => "http://8tracks.com/mixes/93096", :target => "_blank"} attrip's  2010 mix　HIPHOP
-    (17:28)
-    %br/
-    %br/
-    %img{:src => "http://images.8tracks.com/cover/i/000/865/472/26656.original-9322.jpg?rect=0,35,450,450&q=98&fm=jpg&fit=max&w=100&h=100", :width => "100px"}/
-    %a.fixed_start{:href => "#8tracks:93096"}
-      %img{:src => "https://ruffnote.com/attachments/24353"}/
-    / <a href="#" class='add_playlist btn btn-default'>追加</a>
+= #render 'eighttracks'
 #search_title.row
   %h2.status
     %img{:src => "https://ruffnote.com/attachments/24941"}/

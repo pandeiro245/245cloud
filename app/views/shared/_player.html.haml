@@ -1,0 +1,5 @@
+- key = music.key
+- if key.match(/^sc:/)
+  = render 'shared/player_sc', sc_id: key.gsub(/^sc:/,'')
+- elsif key.match(/^mc:/)
+  = render 'shared/player_mc', mc_id: key.gsub(/^mc:/,'')
