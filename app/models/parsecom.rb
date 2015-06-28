@@ -108,20 +108,23 @@ class Parsecom
   end
 
   def import_rooms
-    return if Room.count == 0
-    @default_room = Room.create!(
-      title: 'いつもの部屋',
-      image_off: 'https://ruffnote.com/attachments/24832',
-      image_on: 'https://ruffnote.com/attachments/24831',
-    )
-    JSON.parse(File.open(@room_path).read)['results'].each do |room|
-      room2 = Room.create!(
-        title: room['title'],
-        created_at: room['createdAt'],
-        image_off: room['img_off'],
-        image_on: room['img_on'],
+    if Room.count == 0
+      @default_room = Room.create!(
+        title: 'いつもの部屋',
+        image_off: 'https://ruffnote.com/attachments/24832',
+        image_on: 'https://ruffnote.com/attachments/24831',
       )
-      @room_ids[room['objectId']] = room2.id
+      JSON.parse(File.open(@room_path).read)['results'].each do |room|
+        room2 = Room.create!(
+          title: room['title'],
+          created_at: room['createdAt'],
+          image_off: room['img_off'],
+          image_on: room['img_on'],
+        )
+        @room_ids[room['objectId']] = room2.id
+      end
+    else
+      @default_room = Room.first
     end
   end
 
