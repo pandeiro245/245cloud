@@ -9,9 +9,15 @@
 %br
 = "利用者数：#{User.count}人"
 %br
+= "コメント数：#{Comment.count}件"
+%br
+= "曲数：#{Music.count}曲"
+%br
 = "達成ポモドーロ数：#{Workload.where(status: 1).count}回（#{(Workload.where(status: 1).count * 0.5).to_i}時間, #{(Workload.where(status: 1).count * 0.5 / (8*20)).to_i}人月）"
 %br
 = "1人月100万円として#{(Workload.where(status: 1).count * 0.5 / (8*20)).to_i}00万円分が245cloudで生み出されていることになります"
+%br
+= "平均達成ポモドーロ数：#{(Workload.where(status: 1).count/User.count).to_i}回（#{(((Workload.where(status: 1).count/User.count).to_i)*0.5).to_i}時間）"
 
 #login
   - if session[:user_id]
