@@ -1,15 +1,20 @@
 class Auth < ActiveRecord::Base
   belongs_to :user
 
+  def self.uid(data)
+    data['uid'] == 'id' ? JSON.parse(data['extra']['raw_info'])['id'] : data['uid'] # facebookでなぜか'id'という文字列が返ることがある
+  end
+
   def self.find_or_create_with_omniauth(data)
+    uid = Auth.uid(data)
     auth = Auth.find_or_create_by(
       provider: data['provider'],
-      uid:      data['uid']
+      uid:      uid
     )
     auth.set_info(data)
     auth.save!
     user = auth.user || User.new
-    user.email = data['email'] || "#{data['uid']}@245cloud.com"
+    user.email = data['email'] || "#{uid}@245cloud.com"
     user.save!
     auth.user_id = user.id
     auth.save!
