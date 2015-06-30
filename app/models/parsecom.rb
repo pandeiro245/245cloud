@@ -4,6 +4,7 @@ class Parsecom
   end
 
   def initialize
+    @from = '2015-06-20'.to_date
     @workload_path = 'tmp/parsecom/Workload.json'
     @user_path = 'tmp/parsecom/_User.json'
     @room_path = 'tmp/parsecom/Room.json'
@@ -15,7 +16,7 @@ class Parsecom
 
   def import
     import_users
-    import_workloads
+    #import_workloads
     import_rooms
     import_comments
     puts 'done'
@@ -53,6 +54,7 @@ class Parsecom
 
   def import_workloads
     workloads = JSON.parse(File.open(@workload_path).read)['results']
+    workloads.select!{|w| w['createdAt'].to_time > @from} if @from
 
     puts 'start to sort Workload'
     workloads = workloads.sort!{|a, b| a['createdAt'].to_time <=> b['createdAt'].to_time}
@@ -85,15 +87,6 @@ class Parsecom
       next unless workload['user']
       user = @user_hashs[workload['user']['objectId']]
 
-      if music 
-        msuic_user = MusicsUser.find_or_create_by(
-          music_id: music.id,
-          user_id: user.id,
-        )
-        msuic_user.total += 1
-        msuic_user.save!
-      end
-
       workload2 = Workload.find_or_initialize_by(
         parsehash: workload['objectId']
       )
@@ -105,6 +98,7 @@ class Parsecom
         workload2.music_id = music.id if music
         workload2.save!
       end
+      puts "done: workload.id = #{workload2.id}"
     end
 
     if false
@@ -143,7 +137,9 @@ class Parsecom
   end
 
   def import_comments
-    JSON.parse(File.open(@comment_path).read)['results'].each do |comment|
+    comments = JSON.parse(File.open(@comment_path).read)['results']
+    comments.select!{|c| c['createdAt'].to_time > @from} if @from
+    comments.each do |comment|
       user_hash = comment['user'] ? comment['user']['objectId'] : "eAYx93GzJ8"
       user = @user_hashs[user_hash]
       
@@ -156,13 +152,14 @@ class Parsecom
       comment2 = Comment.find_or_initialize_by(
         parsehash: comment['objectId']
       )
-      unless comment.id
+      unless comment2.id
         puts comment['body']
         comment2.content = comment['body']
         comment2.created_at = comment['createdAt']
         comment2.user_id = user.id
         comment2.room_id = room_id
         comment2.save!
+        puts "done: comment.id = #{comment2.id}"
       end
     end
   end
