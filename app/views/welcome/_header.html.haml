@@ -5,7 +5,7 @@
 
 %br
 - if @resume_minutes
-  = link_to "24分集中を再開する（あと#{}分）", workload_path(current_user.workload)
+  = link_to "24分集中を再開する（あと#{@resume_minutes}分）", workload_path(current_user.workload)
 %br
 = "利用者数：#{User.count}人"
 %br
