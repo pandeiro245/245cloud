@@ -16,7 +16,7 @@ class Parsecom
 
   def import
     import_users
-    #import_workloads
+    import_workloads
     import_rooms
     import_comments
     puts 'done'
