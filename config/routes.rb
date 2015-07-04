@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   resources :users, only: [:index]
   resources :rooms, only: [:show]
+  resources :musics, only: [:index]
   resources :workloads, only: [:index, :show, :new, :create, :update] do
     collection do
       get :cancel
