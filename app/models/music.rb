@@ -7,27 +7,42 @@ class Music < ActiveRecord::Base
   end
 
   def fetch
-    uri = self.class.json_url
+    uri = json_url
 
     uri = URI.parse(uri)
-    json = Net::HTTP.get(uri)
-    result = JSON.parse(json)
 
-    #raise result.inspect
-    self.title = result['title']
-    self.icon = result['artwork_url']
+    res = Net::HTTP.get(uri)
+
+    if key.match(/^sm:/).present?
+      req = Net::HTTP::Get.new(uri)
+      xml = Net::HTTP.start(uri.host, uri.port) {|http|
+        http.request(req)
+      }.body
+      require 'active_support/core_ext/hash/conversions'
+      hash = Hash.from_xml(xml)
+      data = hash["nicovideo_thumb_response"]["thumb"]
+      title = data['title']
+      icon = data['thumbnail_url']
+
+    else
+      result = JSON.parse(res)
+      title = result['title']
+      icon = result['artwork_url']
+    end
+    self.title = title
+    self.icon  = icon
     self.save!
   end
 
-  def self.json_url
+  def json_url
     if key.match(/^sc:/)
       "https://api.soundcloud.com/tracks/#{key2}.json?client_id=#{self.class.sc_client_id}"
-    elsif self.match(/^mc:/)
+    elsif key.match(/^mc:/)
       "http://api.mixcloud.com#{key2}"
-    elsif self.match(/^yt:/)
-    elsif self.match(/^et:/)
-    elsif self.match(/^sm:/)
-
+    elsif key.match(/^yt:/)
+    elsif key.match(/^et:/)
+    elsif key.match(/^sm:/)
+      "http://ext.nicovideo.jp/api/getthumbinfo/#{key2}"
     end
   end
 
