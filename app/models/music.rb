@@ -6,6 +6,35 @@ class Music < ActiveRecord::Base
     '2b9312964a1619d99082a76ad2d6d8c6'
   end
 
+  def fetch
+    uri = self.class.json_url
+
+    uri = URI.parse(uri)
+    json = Net::HTTP.get(uri)
+    result = JSON.parse(json)
+
+    #raise result.inspect
+    self.title = result['title']
+    self.icon = result['artwork_url']
+    self.save!
+  end
+
+  def self.json_url
+    if key.match(/^sc:/)
+      "https://api.soundcloud.com/tracks/#{key2}.json?client_id=#{self.class.sc_client_id}"
+    elsif self.match(/^mc:/)
+      "http://api.mixcloud.com#{key2}"
+    elsif self.match(/^yt:/)
+    elsif self.match(/^et:/)
+    elsif self.match(/^sm:/)
+
+    end
+  end
+
+  def key2
+    key.gsub(/^..:/, '')
+  end
+
   def users
     MusicsUser.limit(100).order(
       'total desc'

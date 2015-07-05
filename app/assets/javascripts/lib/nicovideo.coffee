@@ -1,8 +1,6 @@
 class @Nicovideo
   @fetch: (sm_id, callback) ->
     console.log 'nicovideo', sm_id # sm_id: 'smXXXXXXX'
-    url = "./nicovideo/#{sm_id}"
-
     url = "./nicoinfo/#{sm_id}"
 
     $.get(url, (xml) ->

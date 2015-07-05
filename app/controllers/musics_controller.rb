@@ -1,7 +1,10 @@
 class MusicsController < ApplicationController
   include ApplicationHelper
   def show
-    @music = Music.find(params[:id]) 
+    @music = Music.find(params[:id])
+    if params[:nocache]
+      @music.fetch
+    end
   end
 
   def index
