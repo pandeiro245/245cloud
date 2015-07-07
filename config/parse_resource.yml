@@ -1,6 +1,6 @@
 development:
-  app_id: FbrNkMgFmJ5QXas2RyRvpg82MakbIA1Bz7C8XXX5
-  master_key: 0ro4hf15iXvIgHlmEy6y17sFkp7UF2eQCkNVbmqK
+  app_id: 8QzCMkUbx7TyEApZjDRlhpLQ2OUj0sQWTnkEExod
+  master_key: XvJBBzpU65XyVdQM7I5kU6kbVjUGfIzcXeYH6Ffh
 
 production:
   # TODO: dotenvで管理
