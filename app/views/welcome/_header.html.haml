@@ -7,17 +7,17 @@
 - if @resume_minutes
   = link_to "24分集中を再開する（あと#{@resume_minutes}分）", workload_path(current_user.workload)
 %br
-= "利用者数：#{User.count}人"
+= "利用者数：#{@uc}人"
 %br
 = "コメント数：#{Comment.count}件"
 %br
 = "曲数：#{Music.count}曲"
 %br
-= "達成ポモドーロ数：#{Workload.where(status: 1).count}回（#{(Workload.where(status: 1).count * 0.5).to_i}時間, #{(Workload.where(status: 1).count * 0.5 / (8*20)).to_i}人月）"
+= "達成ポモドーロ数：#{@dc}回（#{(@dc* 0.5).to_i}時間, #{(@dc * 0.5 / (8*20)).to_i}人月）"
 %br
-= "1人月100万円として#{(Workload.where(status: 1).count * 0.5 / (8*20)).to_i}00万円分が245cloudで生み出されていることになります"
+= "1人月100万円として#{(@dc * 0.5 / (8*20)).to_i*100}万円分が245cloudで生み出されていることになります"
 %br
-= "平均達成ポモドーロ数：#{(Workload.where(status: 1).count/User.count).to_i}回（#{(((Workload.where(status: 1).count/User.count).to_i)*0.5).to_i}時間）"
+= "平均達成ポモドーロ数：#{@dc_per_user}回（#{((@dc_per_user)*0.5).to_i}時間）"
 
 #login
   - if session[:user_id]
