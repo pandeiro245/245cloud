@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   resources :users, only: [:index]
   resources :rooms, only: [:show]
+  resources :musics, only: [:index]
   resources :workloads, only: [:index, :show, :new, :create, :update] do
     collection do
       get :cancel
@@ -17,5 +18,4 @@ Rails.application.routes.draw do
   get '/musics/:id' => 'musics#show'
   root 'welcome#index'
   resources :nicoinfo, only: [:show], constraints: {id: /sm[0-9]+/}
-  resources :users, :workloads, :musics
 end

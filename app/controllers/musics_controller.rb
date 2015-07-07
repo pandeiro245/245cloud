@@ -1,6 +1,23 @@
 class MusicsController < ApplicationController
+  include ApplicationHelper
   def show
-    @music = Music.find(params[:id]) 
+    @music = Music.find(params[:id])
+    if !@music.title || params[:nocache] # TODO 無限ループ対応
+      @music.fetch
+    end
+  end
+
+  def index
+    if key = params[:key]
+      redirect_path = music_path(
+        Music.find_or_create_by(
+          key: key
+        )
+      )
+    else
+      redirect_path = root_path 
+    end
+    redirect_to redirect_path
   end
 
   def random
