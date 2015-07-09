@@ -60,5 +60,20 @@ class User < ActiveRecord::Base
       user_id: self.id
     ).map{|mu| music = mu.music; music.total = mu.total; music}
   end
+
+  def self.sync
+    data = ParsecomUser.all.sort{|a, b| 
+      a.attributes['createdAt'].to_time <=> b.attributes['createdAt'].to_time
+    }
+    data.each do |u|
+      attrs = u.attributes
+      user = User.find_or_create_by(
+        parsecomhash: attrs['objectId']
+      )
+      user.name  = attrs['name']
+      user.email = attrs['facebook_id_str']
+      user.save!
+    end
+  end
 end
 

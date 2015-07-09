@@ -114,9 +114,32 @@ class Workload < ActiveRecord::Base
     puts 'done'
   end
 
-  def key
-    return nil unless music
-    music.key_old
+  def self.sync is_all = false
+    data = ParsecomWorkload.where(workload_id: nil).sort{|a, b| 
+      a.attributes['createdAt'].to_time <=> b.attributes['createdAt'].to_time
+    }
+    if !is_all && !Workload.count.zero?
+      from = Workload.last.created_at.to_time
+      data.select!{|w| w['createdAt'].to_time > from}
+    end
+
+    data.each do |u|
+      attrs = u.attributes
+      instance = Workload.find_or_initialize_by(
+        parsecomhash: attrs['objectId']
+      )
+      instance.status  = attrs['is_done']
+      begin
+      instance.user_id = User.find_by(
+        parsecomhash: attrs['user']['objectId']
+      ).id
+      rescue
+        # 初期のWorkloadはuserカラムがなくTwitterカラムだった
+      end
+      instance.save!
+      u.workload_id = instance.id
+      u.save
+    end
   end
 end
 
