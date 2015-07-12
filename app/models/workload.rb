@@ -6,8 +6,8 @@ class Workload < ActiveRecord::Base
   belongs_to :user
   belongs_to :music
   scope :dones, -> { where(status: 1) }
-  scope :playings, -> { where(status: 0, created_at: Time.now..(Time.now - Workload.pomominutes)) }
-  scope :chattings, -> { where(status: 1, created_at: (Time.now - Workload.pomominutes)..(Time.now - 5.minutes)) }
+  scope :playings, -> { where(status: 0, created_at: (Time.now - Workload.pomominutes)..Time.now) }
+  scope :chattings, -> { where(status: 1, created_at: (Time.now - Workload.pomominutes - 5.minutes)..(Time.now - Workload.pomominutes)) }
 
   def self.pomotime
     Settings.pomotime
@@ -115,12 +115,12 @@ class Workload < ActiveRecord::Base
   end
 
   def self.sync is_all = false
-    data = ParsecomWorkload.where(workload_id: nil).sort{|a, b| 
+    data = ParsecomWorkload.where(workload_id: nil).limit(10000000).sort{|a, b| 
       a.attributes['createdAt'].to_time <=> b.attributes['createdAt'].to_time
     }
     if !is_all && !Workload.count.zero?
       from = Workload.last.created_at.to_time
-      data.select!{|w| w['createdAt'].to_time > from}
+      data.select!{|w| w.attributes['createdAt'].to_time > from}
     end
 
     data.each do |u|
@@ -130,12 +130,13 @@ class Workload < ActiveRecord::Base
       )
       instance.status  = attrs['is_done']
       begin
-      instance.user_id = User.find_by(
-        parsecomhash: attrs['user']['objectId']
-      ).id
+        instance.user_id = User.find_by(
+          parsecomhash: attrs['user']['objectId']
+        ).id
       rescue
         # 初期のWorkloadはuserカラムがなくTwitterカラムだった
       end
+      instance.created_at = attrs['createdAt'].to_time
       instance.save!
       u.workload_id = instance.id
       u.save
