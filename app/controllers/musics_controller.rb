@@ -2,7 +2,7 @@ class MusicsController < ApplicationController
   include ApplicationHelper
   def show
     @music = Music.find(params[:id])
-    if !@music.title || params[:nocache] # TODO 無限ループ対応
+    if !@music.title || params[:nocache] # TODO 無限ループ対策
       @music.fetch
     end
   end
