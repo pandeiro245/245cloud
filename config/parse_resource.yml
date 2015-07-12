@@ -1,6 +1,7 @@
 development:
-  app_id: 8QzCMkUbx7TyEApZjDRlhpLQ2OUj0sQWTnkEExod
-  master_key: XvJBBzpU65XyVdQM7I5kU6kbVjUGfIzcXeYH6Ffh
+  app_id: ENV['PARSE_APP_ID']
+  master_key: ENV['PARSE_MASTER_KEY']
 
 production:
-  # TODO: dotenvで管理
+  app_id: ENV['PARSE_APP_ID_PROD']
+  master_key: ENV['PARSE_MASTER_KEYu']
