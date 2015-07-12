@@ -13,7 +13,11 @@ class Music < ActiveRecord::Base
 
     res = Net::HTTP.get(uri)
 
-    if key.match(/^sm:/).present?
+    if key.match(/^mc:/).present?
+      result = JSON.parse(res)
+      title = result['name']
+      icon = result['pictures']['medium']
+    elsif key.match(/^sm:/).present?
       req = Net::HTTP::Get.new(uri)
       xml = Net::HTTP.start(uri.host, uri.port) {|http|
         http.request(req)
@@ -23,7 +27,6 @@ class Music < ActiveRecord::Base
       data = hash["nicovideo_thumb_response"]["thumb"]
       title = data['title']
       icon = data['thumbnail_url']
-
     else
       result = JSON.parse(res)
       title = result['title']
@@ -47,7 +50,7 @@ class Music < ActiveRecord::Base
   end
 
   def key2
-    key.gsub(/^..:/, '')
+    URI.encode key.gsub(/^..:/, '')
   end
 
   def users
