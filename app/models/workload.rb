@@ -1,8 +1,7 @@
 class Workload < ActiveRecord::Base
   # status 
-  # 0: created (playing or expired)
+  # 0: created (playing)
   # 1: done
-  # 2: canceled
   belongs_to :user
   belongs_to :music
   scope :dones, -> { where(status: 1) }
@@ -11,10 +10,15 @@ class Workload < ActiveRecord::Base
 
   def self.pomotime
     Settings.pomotime
+    0.1
   end
 
   def self.pomominutes
     self.pomotime.minutes
+  end
+
+  def chatting?
+    created_at + Workload.pomominutes < Time.now && Time.now < created_at + Workload.pomominutes + 5.minutes
   end
 
   def icon
@@ -46,15 +50,6 @@ class Workload < ActiveRecord::Base
   def complete!
     self.status = 1
     self.number = Workload.where(user_id: self.user_id, status: 1, created_at: Time.now.midnight..Time.now).count + 1
-    self.save!
-  end
-
-  def cancel!
-    if playing?
-      self.status = 2
-    elsif done?
-      self.status = 3
-    end
     self.save!
   end
 
@@ -115,7 +110,7 @@ class Workload < ActiveRecord::Base
   end
 
   def self.sync is_all = false
-    data = ParsecomWorkload.where(workload_id: nil).limit(10000000).sort{|a, b| 
+    data = ParsecomWorkload.where(workload_id: nil).sort{|a, b| 
       a.attributes['createdAt'].to_time <=> b.attributes['createdAt'].to_time
     }
     if !is_all && !Workload.count.zero?

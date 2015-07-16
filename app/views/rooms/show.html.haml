@@ -30,8 +30,8 @@
 #rooms.row
   #room_default.room
     = form_for @new_comment do |f|
-      = f.text_field :content, placeholder: "「#{@room.title2}」に書き込む", class: 'create_comment'
-      = f.hidden_field :room_id, value: @room.id2
+      = f.text_field :content, placeholder: "「#{@room.title}」に書き込む", class: 'create_comment'
+      = f.hidden_field :room_id, value: @room.id
     %table.table.comments
       %tbody
         - @room.comments.each do |comment|

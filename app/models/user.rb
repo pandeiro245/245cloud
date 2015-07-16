@@ -61,8 +61,8 @@ class User < ActiveRecord::Base
     ).map{|mu| music = mu.music; music.total = mu.total; music}
   end
 
-  def self.sync
-    data = ParsecomUser.all.sort{|a, b| 
+  def self.sync limit = 1000
+    data = ParsecomUser.limit(limit).sort{|a, b| 
       a.attributes['createdAt'].to_time <=> b.attributes['createdAt'].to_time
     }
     data.each do |u|
@@ -71,7 +71,7 @@ class User < ActiveRecord::Base
         parsecomhash: attrs['objectId']
       )
       user.name  = attrs['name']
-      user.email = attrs['facebook_id_str']
+      user.email = "parse-#{attrs['objectId']}@245cloud.com"
       user.save!
     end
   end

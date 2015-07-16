@@ -18,13 +18,5 @@ class WorkloadsController < ApplicationController
     workload.save!
     redirect_to workload
   end
-
-  def cancel
-    workload = current_user.workload
-    if workload.playing?
-      workload.cancel!
-    end
-    redirect_to '/'
-  end
 end
 

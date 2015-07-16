@@ -1,7 +1,7 @@
 development:
-  app_id: ENV['PARSE_APP_ID']
-  master_key: ENV['PARSE_MASTER_KEY']
+  app_id: <%= ENV['PARSE_APP_ID'] %>
+  master_key: <%= ENV['PARSE_MASTER_KEY'] %>
 
 production:
-  app_id: ENV['PARSE_APP_ID_PROD']
-  master_key: ENV['PARSE_MASTER_KEYu']
+  app_id: <%= ENV['PARSE_APP_ID_PROD'] %>
+  master_key: <%= ENV['PARSE_MASTER_KEY'] %>

@@ -4,7 +4,7 @@ class Parsecom
   end
 
   def initialize
-    @from = '2015-06-20'.to_date
+    #@from = '2015-06-20'.to_date
     @workload_path = 'tmp/parsecom/Workload.json'
     @user_path = 'tmp/parsecom/_User.json'
     @room_path = 'tmp/parsecom/Room.json'
@@ -101,38 +101,19 @@ class Parsecom
       puts "done: workload.id = #{workload2.id}"
     end
 
-    if false
-      Music.all.each do |music|
-        music_users = []
-        music.users.each do |user|
-          music_user = MusicsUser.find_or_create_by(music_id: music.id, user_id: user.id)
-          music_user.total = Workload.dones.where(user_id: user.id, music_id: music.id, status: 1).count
-          music_users.push(music_user)
-        end
-        music.total_count = music_users.count
-        muisc.save!
-      end
-    end
+    Music.update_total_counts
   end
 
   def import_rooms
-    if Room.count == 0
-      @default_room = Room.create!(
-        title: 'いつもの部屋',
-        image_off: 'https://ruffnote.com/attachments/24832',
-        image_on: 'https://ruffnote.com/attachments/24831',
+    @default_room = Room.default_room
+    JSON.parse(File.open(@room_path).read)['results'].each do |room|
+      room2 = Room.create!(
+        title: room['title'],
+        created_at: room['createdAt'],
+        image_off: room['img_off'],
+        image_on: room['img_on'],
       )
-      JSON.parse(File.open(@room_path).read)['results'].each do |room|
-        room2 = Room.create!(
-          title: room['title'],
-          created_at: room['createdAt'],
-          image_off: room['img_off'],
-          image_on: room['img_on'],
-        )
-        @room_ids[room['objectId']] = room2.id
-      end
-    else
-      @default_room = Room.first
+      @room_ids[room['objectId']] = room2.id
     end
   end
 
