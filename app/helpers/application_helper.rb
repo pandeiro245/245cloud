@@ -18,7 +18,23 @@ module ApplicationHelper
   end
 
   def timestamp workload
-    "#{time(workload)}（#{workload.number}回目）"
+    description = workload.number ? "#{workload.number}回目" : "あと#{remain(workload)}"
+    "#{time(workload)}（#{description}）"
+  end
+
+  def remain instance
+    sec = (instance.created_at + Workload.pomominutes - Time.now).to_i
+    sec2time sec
+  end
+
+  def sec2time sec
+    min = (sec/60).to_i
+    sec2 = sec - min*60
+    return "#{zero(min)}:#{zero(sec2)}"
+  end
+
+  def zero i
+    i.to_i < 10 ? "0#{i}" : i.to_s 
   end
 
   def start_button workload

@@ -1,10 +1,11 @@
 class Room < ActiveRecord::Base
-  def id2
-    id || 0
-  end
-
-  def title2
-    title || 'いつもの部屋'
+  def self.create_default_room
+    return Room.first unless Room.count.zero?
+    return Room.create!(
+      title: 'いつもの部屋',
+      image_off: 'https://ruffnote.com/attachments/24832',
+      image_on: 'https://ruffnote.com/attachments/24831',
+    )
   end
 
   def comments

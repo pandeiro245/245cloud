@@ -81,5 +81,18 @@ class Music < ActiveRecord::Base
       /.0$/, ''
     )
   end
+
+  def self.update_total_counts
+    Music.all.each do |music|
+      total_count = 0
+      music.users.each do |user|
+        music_user = MusicsUser.find_or_create_by(music_id: music.id, user_id: user.id)
+        music_user.total = Workload.dones.where(user_id: user.id, music_id: music.id, status: 1).count
+        total_count += music_user.total
+      end
+      music.total_count = total_count
+      music.save!
+    end
+  end
 end
 
