@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150718033129) do
+ActiveRecord::Schema.define(version: 20150718043253) do
 
   create_table "auths", force: :cascade do |t|
     t.integer  "user_id",     limit: 4
@@ -27,18 +27,6 @@ ActiveRecord::Schema.define(version: 20150718033129) do
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
   end
-
-  create_table "caves", force: :cascade do |t|
-    t.string   "name",       limit: 191
-    t.integer  "pref_id",    limit: 4
-    t.integer  "city_id",    limit: 4
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
-    t.text     "info",       limit: 65535
-  end
-
-  add_index "caves", ["city_id"], name: "index_caves_on_city_id", using: :btree
-  add_index "caves", ["pref_id"], name: "index_caves_on_pref_id", using: :btree
 
   create_table "cities", force: :cascade do |t|
     t.string   "name",       limit: 191
@@ -81,6 +69,18 @@ ActiveRecord::Schema.define(version: 20150718033129) do
 
   add_index "musics_users", ["music_id"], name: "index_musics_users_on_music_id", using: :btree
   add_index "musics_users", ["user_id"], name: "index_musics_users_on_user_id", using: :btree
+
+  create_table "places", force: :cascade do |t|
+    t.string   "name",       limit: 191
+    t.integer  "pref_id",    limit: 4
+    t.integer  "city_id",    limit: 4
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+    t.text     "info",       limit: 65535
+  end
+
+  add_index "places", ["city_id"], name: "index_places_on_city_id", using: :btree
+  add_index "places", ["pref_id"], name: "index_places_on_pref_id", using: :btree
 
   create_table "postals", force: :cascade do |t|
     t.string   "code",       limit: 191
@@ -150,8 +150,8 @@ ActiveRecord::Schema.define(version: 20150718033129) do
     t.string   "parsecomhash", limit: 191
   end
 
-  add_foreign_key "caves", "cities"
-  add_foreign_key "caves", "prefs"
   add_foreign_key "musics_users", "musics"
   add_foreign_key "musics_users", "users"
+  add_foreign_key "places", "cities"
+  add_foreign_key "places", "prefs"
 end

@@ -1,4 +1,4 @@
-%h1= link_to '245cloud Cafe', '/cafes'
+%h1= link_to '245cloudできる場所検索', '/places'
 
 
 ="現在#{Pref.count}都道府県、"
@@ -6,8 +6,8 @@
 ="#{number_with_delimiter(Postal.count)}件の郵便番号を解析し、最高の245cloud環境を網羅"
 
 %hr
-= link_to '2005年', '/?year=2005'
-= link_to '2010年', '/?year=2010'
+= link_to '2005年', '?year=2005'
+= link_to '2010年', '?year=2010'
 %hr
 
 - Pref.all.each do |pref|

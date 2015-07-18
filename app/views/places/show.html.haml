@@ -1,0 +1,13 @@
+%h1=@place.name
+%table.table.table-bordered
+  - Place.store_names.each do |store_name|
+    %tr
+      %th=store_name
+      %td
+        - if store_name == 'urls'
+          - @place.send(store_name).each do |url|
+            %div
+              = link_to url, url, target: '_blank'
+        - else
+          = @place.send(store_name)
+
