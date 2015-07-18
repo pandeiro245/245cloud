@@ -23,3 +23,5 @@ gem 'dotenv-rails'
 gem 'settingslogic'
 #gem 'parse_resource', github: 'adelevie/parse_resource'
 gem 'parse_resource', github: 'pandiro245/parse_resource', branch: 'issue-1'
+
+gem 'jp_prefecture'

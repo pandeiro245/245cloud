@@ -82,6 +82,7 @@ GEM
     jbuilder (2.2.13)
       activesupport (>= 3.0.0, < 5)
       multi_json (~> 1.2)
+    jp_prefecture (0.8.0)
     jquery-rails (4.0.3)
       rails-dom-testing (~> 1.0)
       railties (>= 4.2.0)
@@ -207,6 +208,7 @@ DEPENDENCIES
   dotenv-rails
   haml
   jbuilder (~> 2.0)
+  jp_prefecture
   jquery-rails
   mysql2 (>= 0.3.12b4)
   omniauth-facebook
@@ -220,3 +222,6 @@ DEPENDENCIES
   uglifier (>= 1.3.0)
   unicorn
   web-console (~> 2.0)
+
+BUNDLED WITH
+   1.10.5

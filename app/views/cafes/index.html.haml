@@ -1,0 +1,25 @@
+%h1= link_to '245cloud Cafe', '/cafes'
+
+
+="現在#{Pref.count}都道府県、"
+="#{number_with_delimiter(City.count)}市区町村、"
+="#{number_with_delimiter(Postal.count)}件の郵便番号を解析し、最高の245cloud環境を網羅"
+
+%hr
+= link_to '2005年', '/?year=2005'
+= link_to '2010年', '/?year=2010'
+%hr
+
+- Pref.all.each do |pref|
+  %span.pref
+    %h2{style: 'display: block;'}= link_to "#{pref.name}(#{pref.pop(@type)}万人)", '#', {class: "pref_title pref#{pref.id}"}
+    %span.pref_city.off{style: 'display: none;'}
+      - pref.cities.each do |city|
+        %h3{style: 'display: inline;'}= link_to "#{city.name}(#{number_with_delimiter(city.pop(@type))}人)", '#', {class: "city_title city#{city.id}"}
+        %ul.city_lot.off{style: 'display: none;'}
+          - if false
+            - city.postals.each do |postal|
+              %li="#{postal.code}: #{postal.lot}"
+
+
+
