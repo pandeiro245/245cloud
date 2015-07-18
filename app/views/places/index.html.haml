@@ -12,14 +12,6 @@
 
 - Pref.all.each do |pref|
   %span.pref
-    %h2{style: 'display: block;'}= link_to "#{pref.name}(#{pref.pop(@type)}万人)", '#', {class: "pref_title pref#{pref.id}"}
-    %span.pref_city.off{style: 'display: none;'}
-      - pref.cities.each do |city|
-        %h3{style: 'display: inline;'}= link_to "#{city.name}(#{number_with_delimiter(city.pop(@type))}人)", '#', {class: "city_title city#{city.id}"}
-        %ul.city_lot.off{style: 'display: none;'}
-          - if false
-            - city.postals.each do |postal|
-              %li="#{postal.code}: #{postal.lot}"
-
+    %h2= link_to "#{pref.name}(#{pref.pop(@type)}万人)", pref_path(pref)
 
 

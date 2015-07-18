@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150718043253) do
+ActiveRecord::Schema.define(version: 20150718052229) do
 
   create_table "auths", force: :cascade do |t|
     t.integer  "user_id",     limit: 4
@@ -148,10 +148,14 @@ ActiveRecord::Schema.define(version: 20150718043253) do
     t.integer  "user_id",      limit: 4
     t.string   "parsehash",    limit: 191
     t.string   "parsecomhash", limit: 191
+    t.integer  "place_id",     limit: 4
   end
+
+  add_index "workloads", ["place_id"], name: "index_workloads_on_place_id", using: :btree
 
   add_foreign_key "musics_users", "musics"
   add_foreign_key "musics_users", "users"
   add_foreign_key "places", "cities"
   add_foreign_key "places", "prefs"
+  add_foreign_key "workloads", "places"
 end

@@ -1,6 +1,8 @@
 class City < ActiveRecord::Base
   belongs_to :pref
   has_many :postals
+  has_many :places
+
   store :info, accessors: [:population2005, :population2010, :size]
 
   def pop(type=2010)

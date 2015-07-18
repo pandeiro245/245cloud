@@ -22,8 +22,18 @@ class Place < ActiveRecord::Base
   def self.init
     Place.delete_all
     [
-      [1, 'COUTUME ディアモール大阪店（クチューム）', 'http://tabelog.com/osaka/A2701/A270101/27082299/', nil, 1],
-      [2, 'ラウンドポイントカフェ （ROUND POINT CAFE）', 'http://tabelog.com/hyogo/A2801/A280102/28040387/dtlmenu/', 3, 3]
+      [1, 
+        'COUTUME ディアモール大阪店（クチューム）', 
+        'http://tabelog.com/osaka/A2701/A270101/27082299/', nil, 1,
+        27,
+        1226
+      ],
+      [2, 
+        'ラウンドポイントカフェ （ROUND POINT CAFE）', 
+        'http://tabelog.com/hyogo/A2801/A280102/28040387/dtlmenu/', 3, 3,
+        28,
+        1283
+      ]
     ].each do |param|
     place = Place.create!(
       id: param[0],
@@ -32,6 +42,10 @@ class Place < ActiveRecord::Base
       place.add_url param[2]
       place.wimax = param[3]
       place.elec  = param[4]
+
+      place.pref_id = param[5]
+      place.city_id  = param[6]
+
       place.save!
     end
   end

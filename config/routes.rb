@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   resources :users, only: [:index]
   resources :rooms, only: [:show]
   resources :musics, only: [:index]
-  resources :places
+  resources :places, :prefs, :cities
   resources :workloads, only: [:index, :show, :new, :create, :update]
   resources :comments, only: [:create]
 

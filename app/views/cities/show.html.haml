@@ -1,0 +1,16 @@
+%h1=@city.name
+
+%h2 245cloudスポット
+%ul
+  - @city.places.each do |place|
+    %li= link_to place.name, place_path(place)
+
+
+
+%h2 郵便番号
+%ul
+  - @city.postals.each do |postal|
+    %li="#{postal.code}: #{postal.lot}"
+
+
+
