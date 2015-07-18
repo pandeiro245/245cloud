@@ -28,6 +28,16 @@ ActiveRecord::Schema.define(version: 20150709192407) do
     t.datetime "updated_at",                null: false
   end
 
+  create_table "cities", force: :cascade do |t|
+    t.string   "name",       limit: 191
+    t.integer  "pref_id",    limit: 4
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+    t.text     "info",       limit: 65535
+  end
+
+  add_index "cities", ["pref_id"], name: "index_cities_on_pref_id", using: :btree
+
   create_table "comments", force: :cascade do |t|
     t.integer  "user_id",      limit: 4
     t.text     "content",      limit: 65535
@@ -59,6 +69,32 @@ ActiveRecord::Schema.define(version: 20150709192407) do
 
   add_index "musics_users", ["music_id"], name: "index_musics_users_on_music_id", using: :btree
   add_index "musics_users", ["user_id"], name: "index_musics_users_on_user_id", using: :btree
+
+  create_table "postals", force: :cascade do |t|
+    t.string   "code",       limit: 191
+    t.integer  "pref_id",    limit: 4
+    t.integer  "city_id",    limit: 4
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+    t.string   "lot",        limit: 191
+    t.integer  "flag1",      limit: 4
+    t.integer  "flag2",      limit: 4
+    t.integer  "flag3",      limit: 4
+    t.integer  "flag4",      limit: 4
+    t.integer  "flag5",      limit: 4
+    t.integer  "flag6",      limit: 4
+    t.text     "info",       limit: 65535
+  end
+
+  add_index "postals", ["city_id"], name: "index_postals_on_city_id", using: :btree
+  add_index "postals", ["pref_id"], name: "index_postals_on_pref_id", using: :btree
+
+  create_table "prefs", force: :cascade do |t|
+    t.string   "name",       limit: 191
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+    t.text     "info",       limit: 65535
+  end
 
   create_table "rooms", force: :cascade do |t|
     t.string   "title",          limit: 191
