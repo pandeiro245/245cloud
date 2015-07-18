@@ -33,6 +33,12 @@ class Place < ActiveRecord::Base
         'http://tabelog.com/hyogo/A2801/A280102/28040387/dtlmenu/', 3, 3,
         28,
         1283
+      ],
+      [3,
+        'ネットカフェ・漫画喫茶のメディアカフェポパイ 三ノ宮店',
+        'http://www.media-cafe.ne.jp/tenpo/sannomiya/service.htm', nil, nil,
+        28,
+        1283
       ]
     ].each do |param|
     place = Place.create!(

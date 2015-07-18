@@ -7,9 +7,9 @@ class City < ActiveRecord::Base
 
   def pop(type=2010)
     if type.to_i == 2005
-      population2005
+      population2005.to_i
     else
-      population2010
+      population2010.to_i
     end
   end
 end

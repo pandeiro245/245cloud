@@ -3,6 +3,10 @@ class Pref < ActiveRecord::Base
   has_many :postals
   store :info, accessors: [:population2005, :population2010, :size]
 
+  def cities_desc_pop
+    cities.sort{|a, b| b.pop <=> a.pop} 
+  end
+
   def self.init
     JpPrefecture::Prefecture.all.each do |p|
       Pref.find_or_create_by(

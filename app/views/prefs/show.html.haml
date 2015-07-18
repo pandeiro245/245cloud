@@ -1,5 +1,5 @@
 %h1=@pref.name
 
-- @pref.cities.each do |city|
+- @pref.cities_desc_pop.each do |city|
   %h3= link_to "#{city.name}(#{number_with_delimiter(city.pop(@type))}人)", city_path(city)
 

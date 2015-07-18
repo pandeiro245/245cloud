@@ -1,6 +1,13 @@
 class Parsecom
-  def self.import
+  def self.import zip_path
+    self.fetch_zip zip_path if zip_path
     self.new.import
+  end
+
+  def self.fetch_zip zip_path
+    f = open zip_path
+    `rm -rf tmp/parsecom/*`
+    `unzip #{f.path} -d tmp/parsecom`
   end
 
   def initialize
