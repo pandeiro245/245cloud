@@ -1,5 +1,5 @@
 class Parsecom
-  def self.import zip_path
+  def self.import zip_path = nil
     self.fetch_zip zip_path if zip_path
     self.new.import
   end
@@ -8,10 +8,11 @@ class Parsecom
     f = open zip_path
     `rm -rf tmp/parsecom/*`
     `unzip #{f.path} -d tmp/parsecom`
+    f.close
   end
 
   def initialize
-    #@from = '2015-06-20'.to_date
+    @from = Workload.last.created_at.to_date
     @workload_path = 'tmp/parsecom/Workload.json'
     @user_path = 'tmp/parsecom/_User.json'
     @room_path = 'tmp/parsecom/Room.json'
@@ -112,7 +113,7 @@ class Parsecom
   end
 
   def import_rooms
-    @default_room = Room.default_room
+    @default_room = Room.create_default_room
     JSON.parse(File.open(@room_path).read)['results'].each do |room|
       room2 = Room.create!(
         title: room['title'],
@@ -144,7 +145,7 @@ class Parsecom
         puts comment['body']
         comment2.content = comment['body']
         comment2.created_at = comment['createdAt']
-        comment2.user_id = user.id
+        comment2.user_id = user.id if user
         comment2.room_id = room_id
         comment2.save!
         puts "done: comment.id = #{comment2.id}"
