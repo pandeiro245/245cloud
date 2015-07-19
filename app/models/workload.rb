@@ -4,7 +4,7 @@ class Workload < ActiveRecord::Base
   # 1: done
   belongs_to :user
   belongs_to :music
-  scope :dones, -> { where(status: 1) }
+  #scope :dones, -> { where(status: 1) }
   scope :playings, -> { where(status: 0, created_at: (Time.now - Workload.pomominutes)..Time.now) }
   scope :chattings, -> { where(status: 1, created_at: (Time.now - Workload.pomominutes - 5.minutes)..(Time.now - Workload.pomominutes)) }
 
@@ -86,6 +86,10 @@ class Workload < ActiveRecord::Base
     Workload.where(
       status: 1
     ).order('id desc').limit(limit)
+  end
+
+  def self.dones_count
+    self.dones(nil).count
   end
 
   def self.refresh_numbers
