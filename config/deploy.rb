@@ -46,5 +46,14 @@ namespace :deploy do
   end
 end
 
+set :rbenv_type, :user
+set :rbenv_ruby, '2.2.0'
 
 set :branch, 'develop'
+
+namespace :deploy do
+  task :restart do
+    invoke 'unicorn:restart'
+  end
+end
+
