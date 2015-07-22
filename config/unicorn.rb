@@ -1,9 +1,24 @@
-worker_processes Integer(ENV["WEB_CONCURRENCY"] || 3)
-timeout 15
-preload_app true  # 更新時ダウンタイム無し
+app_path = '/var/www/245cloud'
+working_directory "#{app_path}/current"
+pid               "#{app_path}/current/tmp/pids/unicorn.pid"
 
-listen "/tmp/unicorn.sock"
-pid "/tmp/unicorn.pid"
+# listen
+listen "/tmp/unicorn.sock", :backlog => 64
+
+# logging
+stderr_path 'log/unicorn.stderr.log'
+stdout_path 'log/unicorn.stdout.log'
+
+# workers
+worker_processes 2
+
+# use correct Gemfile on restarts
+before_exec do |server|
+  ENV['BUNDLE_GEMFILE'] = "#{app_path}/current/Gemfile"
+end
+
+# preload
+preload_app true
 
 before_fork do |server, worker|
   # the following is highly recomended for Rails + "preload_app true"
@@ -29,8 +44,4 @@ after_fork do |server, worker|
     ActiveRecord::Base.establish_connection
   end
 end
-
-# ログの出力
-stderr_path File.expand_path('log/unicorn.log', ENV['RAILS_ROOT'])
-stdout_path File.expand_path('log/unicorn.log', ENV['RAILS_ROOT'])
 
