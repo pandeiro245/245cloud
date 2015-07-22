@@ -3,7 +3,6 @@ lock '3.4.0'
 
 set :application, '245cloud'
 set :repo_url, 'git@github.com:pandeiro245/245cloud.git'
-set :unicorn_config_path, "#{current_path}/config/unicorn.rb"
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
