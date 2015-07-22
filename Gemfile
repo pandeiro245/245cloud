@@ -17,6 +17,17 @@ end
 gem 'therubyracer', :platforms => :ruby
 gem 'unicorn'
 
+group :development do
+  gem 'capistrano'
+  gem 'capistrano-rbenv'
+  gem 'capistrano-bundler'
+  gem 'capistrano-rails'
+  gem 'capistrano3-unicorn'
+  gem 'capistrano-sidekiq'
+  gem 'chatwork'
+  gem 'capistrano-pending', require: false
+end
+
 gem 'haml'
 gem 'omniauth-facebook'
 gem 'dotenv-rails'
