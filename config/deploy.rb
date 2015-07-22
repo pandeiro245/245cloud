@@ -59,3 +59,11 @@ namespace :deploy do
   end
 end
 
+set :branch, 'develop'
+
+namespace :deploy do
+  task :restart do
+    invoke 'unicorn:restart'
+  end
+end
+
