@@ -44,5 +44,7 @@ namespace :deploy do
       # end
     end
   end
-
 end
+
+
+set :branch, 'develop'
