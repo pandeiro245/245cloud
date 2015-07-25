@@ -6,7 +6,7 @@
 # server 'example.com', user: 'deploy', roles: %w{app db web}, my_property: :my_value
 # server 'example.com', user: 'deploy', roles: %w{app web}, other_property: :other_value
 # server 'db.example.com', user: 'deploy', roles: %w{db}
-server '52.69.126.62', user: 'ec2-user', role: %w{web app db}
+server '52.69.126.62', user: 'ec2-user', roles: %w{web app db}
 set :deploy_to, '/var/www/245cloud'
 
 
