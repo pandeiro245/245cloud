@@ -17,6 +17,20 @@ class Workload < ActiveRecord::Base
     self.pomotime.minutes
   end
 
+  def save_with_parsecom!
+    raise self.inspect
+    parse_user = ParsecomUser.find(user.parsecomhash)
+    parse_workload = ParsecomWorkload.new(user: parse_user)
+    if music_id
+      key_val = self.music.key.split(':')
+      key = key_val.first
+      val = key_val.last
+      parse_workload.send("#{key}_id=", val)
+    end
+    parse_workload.save
+    save!
+  end
+
   def chatting?
     created_at + Workload.pomominutes < Time.now && Time.now < created_at + Workload.pomominutes + 5.minutes
   end
