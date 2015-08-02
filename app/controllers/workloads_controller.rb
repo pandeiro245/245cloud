@@ -15,7 +15,7 @@ class WorkloadsController < ApplicationController
   def new
     workload = Workload.new(user: current_user)
     workload.music_id = params[:music_id] if params[:music_id]
-    workload.save!
+    workload.save_with_parsecom!
     redirect_to workload
   end
 end

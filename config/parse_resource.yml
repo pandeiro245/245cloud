@@ -4,4 +4,4 @@ development:
 
 production:
   app_id: <%= ENV['PARSE_APP_ID_PROD'] %>
-  master_key: <%= ENV['PARSE_MASTER_KEY'] %>
+  master_key: <%= ENV['PARSE_MASTER_KEY_PROD'] %>
