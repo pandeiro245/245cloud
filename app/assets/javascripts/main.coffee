@@ -166,18 +166,6 @@ initStart = () ->
         $('#random').removeClass("col-sm-offset-#{getOffset(2)}")
         $('#random').addClass("col-sm-offset-#{getOffset(3)}")
       )
-    if location.hash.match(/youtube/)
-      Youtube.fetch(id, (track) ->
-        artwork_url = artworkUrlWithNoimage(track['entry']['media$group']['media$thumbnail'][3]['url'])
-        txt = "<h5>#{track['entry']['title']['$t']}</h5>"
-        $('#fixedstart').append(txt)
-        txt = "<img src='#{artwork_url}' class='jacket'>"
-        $('#fixedstart').append(txt)
-        Util.addButton('start', $('#fixedstart'), fixed_text, start_hash)
-        $('#fixedstart').fadeIn()
-        $('#random').removeClass("col-sm-offset-#{getOffset(2)}")
-        $('#random').addClass("col-sm-offset-#{getOffset(3)}")
-      )
     if location.hash.match(/mixcloud/)
       Mixcloud.fetch(id, (track) ->
         artwork_url = artworkUrlWithNoimage(track.pictures.medium)
@@ -571,6 +559,14 @@ start = () ->
 
   Util.countDown(@env.pomotime*60*1000, complete)
 
+window.youtubeDurationSec = (key)  ->
+  duration = key['contentDetails']['duration'].replace(/^PT/, '').replace(/S$/, '')
+  hour = parseInt(duration.split('H')[0])
+  min = parseInt(duration.split('H')[1].split('M')[0])
+  sec = parseInt(duration.split('H')[1].split('M')[1])
+  sec = hour*60*60+min*60+sec
+  parseInt(sec)
+
 window.play = (key) ->
   console.log 'play', key
   params = {}
@@ -584,13 +580,13 @@ window.play = (key) ->
       window.play_repeat(key, track.duration)
     )
   else if key.match(/^youtube/)
-    Youtube.fetch(id, (track) ->
+    Youtube.fetch(id, (data) ->
+      track = data['items'][0]['snippet']
       params['yt_id'] = id
-      params['title'] = track['entry']['title']['$t']
-      params['artwork_url'] = track['entry']['media$group']['media$thumbnail'][3]['url']
+      params['title'] = track['title']
+      params['artwork_url'] = track['thumbnails']['default']['url']
       createWorkload(params, start)
-      sec = track['entry']['media$group']['yt$duration']['seconds']
-      sec = parseInt(sec)
+      sec = youtubeDurationSec(data['items'][0])
       if sec > 24*60
         start_sec = sec - 24*60
         Youtube.play(id, $("#playing"), true, start_sec)
@@ -1053,9 +1049,9 @@ searchMusics = () ->
 
   $tracks = $('#tracks')
   Youtube.search(q, $tracks)
-  Nicovideo.search(q, $tracks)
-  Soundcloud.search(q, @env.sc_client_id, $tracks)
-  Mixcloud.search(q, $tracks)
+  #Nicovideo.search(q, $tracks)
+  #Soundcloud.search(q, @env.sc_client_id, $tracks)
+  #Mixcloud.search(q, $tracks)
   #EightTracks.search(q, $tracks)
 
 
