@@ -92,7 +92,8 @@ class @Youtube
             track = data['snippet']
             title = track['title']
             artwork_url = artworkUrlWithNoimage(track['thumbnails']['default']['url'])
-            duration = youtubeDurationSec(data) * 1000
+            #duration = youtubeDurationSec(data) * 1000
+            duration = 1000
             artwork = "<img src=\"https://ruffnote.com/attachments/24162\" width='100px'/>"
             if artwork_url
               artwork = "<img src=\"#{artwork_url}\" width='100px'/>"
@@ -100,7 +101,7 @@ class @Youtube
             $dom.append("""
               <div class='col-lg-2' style='min-height: 200px;'>
                 <a href='#{url}' target='_blank'>#{title}</a>
-                (#{Util.time(duration)})<br />
+                <!--(#{Util.time(duration)})<br />-->
                 <br />
                 #{artwork}
                 <a href=\"##{href}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24353' /></a>

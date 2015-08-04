@@ -1049,9 +1049,9 @@ searchMusics = () ->
 
   $tracks = $('#tracks')
   Youtube.search(q, $tracks)
-  #Nicovideo.search(q, $tracks)
-  #Soundcloud.search(q, @env.sc_client_id, $tracks)
-  #Mixcloud.search(q, $tracks)
+  Nicovideo.search(q, $tracks)
+  Soundcloud.search(q, @env.sc_client_id, $tracks)
+  Mixcloud.search(q, $tracks)
   #EightTracks.search(q, $tracks)
 
 
