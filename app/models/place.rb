@@ -44,7 +44,15 @@ class Place < ActiveRecord::Base
         'http://tabelog.com/osaka/A2701/A270201/27013879/', nil, nil,
         27,
         1227
+      ],
+      [5,
+        '住之江公園',
+        'http://www.osaka-park.or.jp/rinkai/suminoe/main.html', nil, nil,
+        27,
+        1224
       ]
+
+
     ].each do |param|
       place = Place.find_or_create_by(
         id: param[0]
