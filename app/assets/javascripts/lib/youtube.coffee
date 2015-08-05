@@ -102,7 +102,7 @@ class @Youtube
                 <!--(#{Util.time(duration)})<br />-->
                 <br />
                 #{artwork}
-                <a href=\"##{href}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24353' /></a>
+                <a href=\"/musics?key=#{href}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24353' /></a>
                 <!--<a href=\"#\" class='add_playlist btn btn-default'>追加</a>-->
               </div>
             """)
