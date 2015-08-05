@@ -5,13 +5,12 @@ env = {
 
 if location.href.match(/245cloud.com/)
   env.milkcocoa = 'iceiabmz2nv'
+  env.yt_client_id = 'AIzaSyAvb5RW4gNEcQlaHODHZ1h0jjYxD8mKvIM'
 else
   env.milkcocoa = 'hotiabmydrw'
+  env.yt_client_id = 'AIzaSyD1A25NZMbp4VA4uikV8e-naG7oVa-B1pY'
 
 env.pomotime =  if localStorage['dev_pomo'] then parseFloat(localStorage['dev_pomo']) else 24
 env.chattime =  if localStorage['dev_chat'] then parseFloat(localStorage['dev_chat']) else 5
-
-env.is_kakuhen = false
-#env.is_kakuhen = true
 
 @env = env
