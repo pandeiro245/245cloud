@@ -32,6 +32,10 @@ $ ->
     'ranking'
     '8tracks_title'
     '8tracks'
+    'kimiya_title'
+    'kimiya'
+    'naotake_title'
+    'naotake'
     'search_title'
     'search'
     'playing'
@@ -79,6 +83,8 @@ $ ->
 
   initSearch()
   init8tracks()
+  initNaotake()
+  initKimiya()
   initChatting()
   initStart()
   initDoing()
@@ -110,6 +116,14 @@ initCalendar = () ->
 init8tracks = () ->
   ruffnote(17763, '8tracks_title')
   EightTracks.attrip($('#8tracks'))
+
+initKimiya = () ->
+  ruffnote(21800, 'kimiya_title')
+  Mixcloud.search('/kimiya-sato/', $('#kimiya'))
+
+initNaotake = () ->
+  ruffnote(21799, 'naotake_title')
+  Mixcloud.search('/naotake/', $('#naotake'))
 
 initStart = () ->
   if location.href.match(/sparta/)
