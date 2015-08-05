@@ -7,7 +7,7 @@ window.workload = null
 $ ->
   Util.realtime()
   ruffnote(17758, 'search_title')
-
+  initSearch()
   initHatopoppo()
   #initYou()
  

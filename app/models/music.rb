@@ -17,6 +17,8 @@ class Music < ActiveRecord::Base
       result = JSON.parse(res)
       title = result['name']
       icon = result['pictures']['medium']
+    elsif key.match(/^yt:/).present?
+      #TODO
     elsif key.match(/^sm:/).present?
       req = Net::HTTP::Get.new(uri)
       xml = Net::HTTP.start(uri.host, uri.port) {|http|
@@ -40,6 +42,8 @@ class Music < ActiveRecord::Base
   def json_url
     if key.match(/^sc:/)
       "https://api.soundcloud.com/tracks/#{key2}.json?client_id=#{self.class.sc_client_id}"
+    elsif key.match(/^yt:/)
+      #TODO
     elsif key.match(/^mc:/)
       "http://api.mixcloud.com#{key2}"
     elsif key.match(/^yt:/)
