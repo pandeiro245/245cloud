@@ -6,16 +6,8 @@ window.workload = null
 
 $ ->
   Util.realtime()
-  ruffnote(13475, 'header')
-  ruffnote(18004, 'news')
-  ruffnote(13477, 'footer')
   ruffnote(17758, 'search_title')
-  ruffnote(17762, 'ranking_title')
-
   initSearch()
-  init8tracks()
-  initStart()
-  initFixedStart()
   initHatopoppo()
   #initYou()
  
@@ -25,213 +17,155 @@ init8tracks = () ->
   ruffnote(17763, '8tracks_title')
   EightTracks.attrip($('#8tracks'))
 
+initKimiya = () ->
+  ruffnote(21800, 'kimiya_title')
+  Mixcloud.search('/kimiya-sato/', $('#kimiya'))
+
+initNaotake = () ->
+  ruffnote(21799, 'naotake_title')
+  Mixcloud.search('/naotake/', $('#naotake'))
+
 initStart = () ->
   text = "24分やり直しでも大丈夫ですか？"
   Util.beforeunload(text, 'env.is_doing')
-
 initSearch = () ->
   $('#track').keypress((e) ->
     if e.which == 13 #enter
       searchMusics()
   )
 
-@initSelectRooms = () ->
-  console.log 'initSelectRooms'
-  $('#rooms_title').html(Util.tag('h2', Util.tag('img', 'https://ruffnote.com/attachments/24968'), {class: 'status'}))
-  $('#select_rooms').html(Util.tag('h2', Util.tag('img', 'https://ruffnote.com/attachments/24967'), {class: 'status'}))
-  $('#select_rooms').append(Util.tag('div', null, {class: 'imgs'}))
+createWorkload = (params = {}, callback) ->
+  params.host = location.host
 
-  $.get('/rooms.json', (rooms) ->
-    $('#select_rooms .imgs').html('')
+  if location.href.match('review=')
+    if location.href.match('sparta=')
+      review = prompt("今から24分間集中するにあたって一言（公開されます）", '24分間頑張るぞ！')
+    else
+      review = $('#input_review_before').val()
 
-    # いつも部屋
-    on2= 'https://ruffnote.com/attachments/24831'
-    off2= 'https://ruffnote.com/attachments/24832'
-    $img = Util.tag('img', on2)
-    $img.attr('data-values', "0:いつもの部屋")
-    $img.tooltip({title: 'いつもの部屋はログが流れやすいよ', placement: 'bottom'})
-    $img.addClass('col-sm-2 room_icon room_link')
-    $img.addClass('on')
-    $img.css('cursor', 'pointer')
-    $img.attr('data-on', "#{on2}")
-    $img.attr('data-off', "#{off2}")
-    $('#select_rooms .imgs').append($img)
+    if review.length
+      params['review_before'] = review
 
-    $('.modal-body').html('')
-
-    # DB部屋
-    unread_count = 0 #TODO
-    for room in rooms
-      r = room
-      room_id = room.id
-      total_count = r.comments_count
-      if r.img_on
-        on2= r.img_on
-        off2= r.img_off
-        $img = Util.tag('img', off2)
-        $img.attr('data-values', "#{room_id}:#{r.title}")
-        $img.tooltip({title: "未読数：#{unread_count} / 投稿数：#{total_count}", placement: 'bottom'})
-        $img.addClass('col-sm-2 room_icon room_link')
-        $img.css('cursor', 'pointer')
-        $img.attr('data-on', "#{on2}")
-        $img.attr('data-off', "#{off2}")
-        $('#select_rooms .imgs').append($img)
-      else
-        $('.modal-body').append(
-          "<a class='room_link' style='cursor: pointer; display:block;'  data-values=\"#{room.id}:#{room.title}\">#{room.title} (#{unread_count}/#{total_count})</option>"
-        )
-      
-    #  その他
-    on2= 'https://ruffnote.com/attachments/24855'
-    off2= 'https://ruffnote.com/attachments/24854'
-    $img = Util.tag('img', off2)
-    $img.tooltip({title: 'その他の部屋を見たい場合はここをクリックしてね', placement: 'bottom'})
-    $img.addClass('col-sm-2')
-    $img.addClass('room_icon sonota room_link')
-    $img.css('cursor', 'pointer')
-    $img.attr('data-toggle', 'modal')
-    $img.attr('data-target', '#selectRoomModal')
-    $img.attr('data-on', "#{on2}")
-    $img.attr('data-off', "#{off2}")
-
-    $('#select_rooms .imgs').append($img)
-
-    $(document).on('click', ".room_link", () ->
-      $self = $(this)
-
-      # 画像部屋を押したらその部屋だけ開くようにする
-      if $self.hasClass('room_icon')
-        for i in $('.on')
-          $(i).attr('src', $(i).attr('data-off'))
-          $(i).removeClass('on')
-        $self.addClass('on')
-        $self.attr('src', $self.attr('data-on'))
-
-      # 押したのがその他だったらモーダルを開く
-      if $self.hasClass('sonota')
-        if $('#selectRoomModal').attr('style').match(/hidden/)
-          $('#selectRoomButton').click()
-      # そうでなければその部屋を開いてモーダルを閉じる
-      else
-        vals = $self.attr('data-values').split(':')
-        initRoom(vals[0], vals[1])
-        $('.modal-header .close').click()
-    )
-
-    $(document).on('mouseover', ".room_icon", () ->
-      $self = $(this)
-      $self.attr('src', $self.attr('data-on'))
-    )
-
-    $(document).on('mouseout', ".room_icon", () ->
-      $self = $(this)
-      unless $self.hasClass('on')
-        $self.attr('src', $self.attr('data-off'))
-    )
+  ParseParse.create("Workload", params, (workload) ->
+    @workload = workload
+    callback()
   )
- 
-complete = () ->
-  console.log 'complete'
-  @syncWorkload('chatting')
-  window.is_hato = false
-  Util.countDown(@env.chattime*60*1000, 'finish')
-  $('#header').hide()
-  $('#otukare').fadeIn()
-  $("#playing").fadeOut()
-  $("#search").fadeOut()
-  $("#playing").html('') # for stopping
-  unless @env.is_kakuhen
+  
+start = () ->
+  console.log 'start'
+  $("#done").hide()
+  $("#search").hide()
+  $("input").hide()
+  $(".fixed_start").hide()
+  $("#music_ranking").hide()
+  doms = [
+    'kpi_title'
+    'kpi3_title'
+    'kpi3'
+    'kpi2_title'
+    'kpi2'
+    'kpi1_title'
+    'kpi1'
+    'start_buttons'
+    'fixedstart_artwork'
+    '8tracks'
+    '8tracks_title'
+    'search_title'
+    'ranking_title'
+    'ranking'
+    'whatis_title'
+    'whatis'
+    'you_title'
+    'you'
+    'news'
+    'footer'
+  ]
+  for dom in doms
+    $("##{dom}").hide()
+
+  @env.is_doing = true
+  @syncWorkload('doing')
+  
+  if @env.is_kakuhen
+    initComments()
     @initSelectRooms()
 
-  alert '24分間お疲れ様でした！5分間交換日記ができます☆' if location.href.match('alert') unless @env.is_done
+  Util.countDown(@env.pomotime*60*1000, complete)
 
-  @env.is_doing = false
-  @env.is_done = true
+window.youtubeDurationSec = (key)  ->
+  duration = key['contentDetails']['duration'].replace(/^PT/, '').replace(/S$/, '')
+  hour = parseInt(duration.split('H')[0])
+  min = parseInt(duration.split('H')[1].split('M')[0])
+  sec = parseInt(duration.split('H')[1].split('M')[1])
+  sec = hour*60*60+min*60+sec
+  parseInt(sec)
 
-  if location.href.match("ad=") and !$('#ad iframe').length
-    $.get('/ads/random.json', (ad) ->
-      $('#ad').html(
-        """
-        <h2><a href=\"#{ad.click_url}?from=245cloud.com\" target=\"_blank\">#{ad.name}</a></h2>
-        <iframe width=\"560\" height=\"315\" src=\"#{ad.movie_url}\" frameborder=\"0\" allowfullscreen></iframe>
-        """
-      )
+window.play = (key) ->
+  console.log 'play', key
+  params = {}
+  id = key.split(':')[1]
+  if key.match(/^soundcloud/)
+    Soundcloud.fetch(id, @env.sc_client_id, (track) ->
+      params['sc_id'] = parseInt(id)
+      for k in ['title', 'artwork_url']
+        params[k] = track[k]
+      createWorkload(params, start)
+      window.play_repeat(key, track.duration)
+    )
+  else if key.match(/^youtube/)
+    Youtube.fetch(id, (data) ->
+      track = data['items'][0]['snippet']
+      params['yt_id'] = id
+      params['title'] = track['title']
+      params['artwork_url'] = track['thumbnails']['default']['url']
+      createWorkload(params, start)
+      sec = youtubeDurationSec(data['items'][0])
+      if sec > 24*60
+        start_sec = sec - 24*60
+        Youtube.play(id, $("#playing"), true, start_sec)
+      else
+        window.play_repeat(key, sec * 1000)
+    )
+  else if key.match(/^mixcloud/)
+    Mixcloud.fetch(id, (track) ->
+      params['mc_id'] = id
+      params['title'] = track.name
+      params['artwork_url'] = track.pictures.medium
+      createWorkload(params, start)
+      if track.audio_length > 24*60
+        Mixcloud.play(id, $("#playing"), true)
+      else
+        window.play_repeat(key, track.audio_length * 1000)
+    )
+  else if key.match(/^nicovideo/)
+    Nicovideo.fetch(id, (track) ->
+      createWorkload(track, start)
+    )
+    Nicovideo.play(id, $("#playing"))
+  if key.match(/^8tracks/)
+    EightTracks.fetch(id, @env.et_client_id, (track) ->
+      params['et_id'] = parseInt(id)
+      params.title = track.mix.name
+      params.artwork_url = track.mix.cover_urls.sq100
+      createWorkload(params, start)
+      window.play_repeat(key, track.mix.duration * 1000)
     )
 
-  $.ajax({
-    type: 'PUT',
-    url: "/workloads/#{window.workload.id}/complete"
-  })
-
-  $complete = $('#complete')
-  $complete.html('')
-  initComments()
-
-window.initComments = () ->
-  initRoom()
-
-window.initRoom = (id = 0, title='いつもの部屋') ->
-  console.log "initRoom: #{id}, #{title}"
-
-  $(".room").hide()
-
-  $room = $("#room_#{id}")
-
-  if $room.length
-    $room.show()
-  else
-    $room = $('<div></div>')
-    $room.addClass('room')
-    $room.attr('id', "room_#{id}")
-    $createComment = $('<input />').addClass('create_comment').attr('placeholder', "「#{title}」に書き込む")
-    $room.append($createComment)
-  
-    $comments = $("<table></table>").addClass('table comments')
-    $room.append($comments)
-
-    $('#rooms').append($room)
-    
-    limit = if id == 0 then 100 else 10000
-
-    $.get("/rooms/#{id}/comments.json", (comments) ->
-      $(document).on('keypress', "#room_#{id} .create_comment", (e) ->
-        if e.which == 13 #enter
-          window.createComment(id)
-      )
-      for comment in comments
-        window.addComment(id, comment)
-      return
-    )
-
-window.finish = () ->
-  console.log 'finish'
-  @syncWorkload('finish')
-  location.reload()
-
-window.createComment = (room_id) ->
-  console.log 'createComment'
-  $createComment = $("#room_#{room_id} .create_comment")
-  
-  content = $createComment.val()
-
-  $createComment.val('')
-  
-  return if content.length < 1
-
-  params = {content: content}
-
-  params.room_id = room_id
-
-  #$.post("/rooms/#{room_id}/comments.json", params, (comment) ->
-  $.post("/rooms/#{room_id}/comments.json", params, () -> # レスポンスに関係なくレンダリングとsync
-    comment = params
-    # 自分の投稿を自分の画面に
-    window.addComment(room_id, comment, true, true)
-
-    # 自分の投稿を他人の画面に
-    syncComment(room_id, comment, true)
-  )
-
+window.play_repeat = (key, duration) ->
+  console.log 'play_repeat'
+  return false if @env.is_done
+  id = key.split(':')[1]
+  if key.match(/^soundcloud/)
+    Soundcloud.play(id, @env.sc_client_id, $("#playing"))
+  else if key.match(/^youtube/)
+    Youtube.play(id, $("#playing"))
+  else if key.match(/^mixcloud/)
+    Mixcloud.play(id, $("#playing"),)
+  else if key.match(/^8tracks/)
+    EightTracks.play(id, $("#playing"))
+  else if key.match(/^nicovideo/)
+    Nicovideo.play(id, $("#playing"))
+  setTimeout("play_repeat\(\"#{key}\"\, #{duration})", duration)
 
 @addDoing = (workload) ->
   $("#doing_title").show()
