@@ -73,6 +73,11 @@ class User < ActiveRecord::Base
       user.name  = attrs['name']
       user.email = "parse-#{attrs['objectId']}@245cloud.com"
       user.save!
+      Auth.find_or_create_by(
+        user: user,
+        uid: attrs['facebook_id_str'],
+        provider: "facebook"
+      )
     end
   end
 end

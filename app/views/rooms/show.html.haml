@@ -38,9 +38,9 @@
           %tr
             %td
               %a{href: "/#{comment.user_id}"}
-                %img.icon{src: comment.user.icon}
+                %img.icon{src: comment.icon_url}
                 %br
-                = comment.user.name
+                = comment.user_name
             %td
             %td=comment.content
             %td=time comment

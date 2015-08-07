@@ -1,10 +1,6 @@
 class Workload < ActiveRecord::Base
-  # status 
-  # 0: created (playing)
-  # 1: done
   belongs_to :user
   belongs_to :music
-  #scope :dones, -> { where(status: 1) }
   scope :playings, -> { where(status: 0, created_at: (Time.now - Workload.pomominutes)..Time.now) }
   scope :chattings, -> { where(status: 1, created_at: (Time.now - Workload.pomominutes - 5.minutes)..(Time.now - Workload.pomominutes)) }
 
@@ -15,6 +11,34 @@ class Workload < ActiveRecord::Base
 
   def self.pomominutes
     self.pomotime.minutes
+  end
+
+  def save_with_parsecom!
+    parse_user = ParsecomUser.find(user.parsecomhash)
+    if self.parsecomhash
+      parse_workload = ParsecomWorkload.find(self.parsecomhash)
+    else
+      parse_workload = ParsecomWorkload.new(user: parse_user)
+    end
+    if music_id
+      key_val = self.music.key.split(':')
+      key = key_val.first
+      val = key_val.last
+      parse_workload.send("#{key}_id=", val)
+      parse_workload.title = music.title
+      parse_workload.artwork_url = music.icon
+    end
+    if self.status == 1
+      parse_workload.is_done = true
+    end
+    if self.number
+      parse_workload.number = self.number
+    end
+    if parse_workload.save
+      save!
+    else
+      raise parse_workload.inspect
+    end
   end
 
   def chatting?
@@ -50,7 +74,8 @@ class Workload < ActiveRecord::Base
   def complete!
     self.status = 1
     self.number = Workload.where(user_id: self.user_id, status: 1, created_at: Time.now.midnight..Time.now).count + 1
-    self.save!
+    #self.save!
+    self.save_with_parsecom!
   end
 
   def playing?
