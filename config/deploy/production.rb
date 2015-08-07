@@ -6,7 +6,9 @@
 # server 'example.com', user: 'deploy', roles: %w{app db web}, my_property: :my_value
 # server 'example.com', user: 'deploy', roles: %w{app web}, other_property: :other_value
 # server 'db.example.com', user: 'deploy', roles: %w{db}
-server '52.69.126.62', user: 'ec2-user', role: %w{web app db}
+
+#server '52.69.126.62', user: 'ec2-user', role: %w{web app db} #staging
+server '52.69.123.52', user: 'ec2-user', role: %w{web app db} #production
 set :deploy_to, '/var/www/245cloud'
 
 
