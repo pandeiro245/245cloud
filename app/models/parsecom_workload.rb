@@ -16,7 +16,8 @@ class ParsecomWorkload < ParseResource::Base
   end
 
   def self.sync
-    self.where(workload_id: nil).order('createdAt asc').each do |parse_workload|
+    #self.where(workload_id: nil).order('createdAt asc').each do |parse_workload|
+    self.where(workload_id: nil).order('createdAt desc').each do |parse_workload|
       workload = parse_workload.attributes
 
       next if workload['user'].nil?
