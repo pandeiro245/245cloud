@@ -2,7 +2,7 @@ class Workload < ActiveRecord::Base
   belongs_to :user
   belongs_to :music
   scope :playings, -> { where(status: 0, created_at: (Time.now - Workload.pomominutes)..Time.now) }
-  scope :chattings, -> { where(status: 1, created_at: (Time.now - Workload.pomominutes - 5.minutes)..(Time.now - Workload.pomominutes)) }
+  scope :chattings, -> { where(status: 1, created_at: (Time.now - Workload.pomominutes - Workload.chatminutes)..(Time.now - Workload.pomominutes)) }
 
   include Redis::Objects
   value :hoge
@@ -12,8 +12,17 @@ class Workload < ActiveRecord::Base
     0.1
   end
 
+  def self.chattime
+    Settings.chattime
+    0.1
+  end
+
   def self.pomominutes
     self.pomotime.minutes
+  end
+
+  def self.chatminutes
+    self.chattime.minutes
   end
 
   def save_with_parsecom!
@@ -46,7 +55,7 @@ class Workload < ActiveRecord::Base
   end
 
   def chatting?
-    created_at + Workload.pomominutes < Time.now && Time.now < created_at + Workload.pomominutes + 5.minutes
+    created_at + Workload.pomominutes < Time.now && Time.now < created_at + Workload.pomominutes + Workload.chatminutes
   end
 
   def icon
@@ -103,9 +112,9 @@ class Workload < ActiveRecord::Base
   end
 
   def self.chattings
-    pomo = Time.now - Workload.pomotime.minutes
+    pomo = Time.now - Workload.pomominutes
     Workload.where(
-      created_at: (pomo - 5.minutes)..pomo
+      created_at: (pomo - Workload.chatminutes)..pomo
     ).where(
       status: 1
     ).order('id desc')

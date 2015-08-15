@@ -1,5 +1,6 @@
 defaults: &defaults
   pomotime: 24
+  chattime: 5
   cool:
     saweet: nested settings
   awesome_setting: <%= "Did you know 5 + 5 = #{5 + 5}?" %>
