@@ -1,4 +1,4 @@
-require 'CSV'
+require 'csv'
 
 class Postal < ActiveRecord::Base
   belongs_to :pref
