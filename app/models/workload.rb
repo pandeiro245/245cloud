@@ -9,12 +9,10 @@ class Workload < ActiveRecord::Base
 
   def self.pomotime
     Settings.pomotime
-    0.1
   end
 
   def self.chattime
     Settings.chattime
-    0.1
   end
 
   def self.pomominutes
