@@ -5,7 +5,7 @@ class ParsecomWorkload < ParseResource::Base
   def self.hoge!
     Workload.delete_all
     ActiveRecord::Base.connection.execute('ALTER TABLE workloads AUTO_INCREMENT = 0')
-    self.order('createdAt asc').each do |parse_workload|
+    self.order('createdAt asc').where(host: '245cloud.com').each do |parse_workload|
       if parse_workload.attributes['workload_id'] 
         parse_workload.workload_id = nil
         parse_workload.save
