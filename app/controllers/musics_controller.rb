@@ -6,6 +6,10 @@ class MusicsController < ApplicationController
     end
     if !@music.title || params[:nocache] # TODO 無限ループ対策
       @music.fetch
+      Rails.cache.delete("music:#{params[:id]}")
+      Rails.cache.fetch("music:#{params[:id]}") do
+        @music
+      end
     end
   end
 
