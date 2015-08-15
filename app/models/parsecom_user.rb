@@ -1,6 +1,11 @@
 class ParsecomUser < ParseUser
   fields :name, :facebook_id_str, :user_id
 
+  def self.hoge
+    User.delete_all
+    ActiveRecord::Base.connection.execute('ALTER TABLE users AUTO_INCREMENT = 0')
+  end
+
   def self.sync refresh = false
     if refresh
       parse_users = self.order('createdAt asc')
