@@ -2,5 +2,5 @@
   .row
     %h2.status
       = ruffimage ruffhead
-    - workloads.each do |workload|
-      = render 'shared/workload', workload: workload
+    - workloads.each_with_index do |workload, i|
+      = render 'shared/workload', workload: workload, is_first: i == 0, item_count: workloads.count

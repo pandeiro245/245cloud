@@ -5,7 +5,8 @@ class ApplicationController < ActionController::Base
   before_filter :commons
 
   def commons
-    if params[:refresh]
+    #if params[:refresh]
+    if true
       ['dones', 'playings', 'chattings'].each do |key|
         Rails.cache.delete(key)
       end

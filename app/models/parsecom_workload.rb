@@ -5,7 +5,7 @@ class ParsecomWorkload < ParseResource::Base
   def self.hoge!
     Workload.delete_all
     ActiveRecord::Base.connection.execute('ALTER TABLE workloads AUTO_INCREMENT = 0')
-    self.order('createdAt asc').where(host: '245cloud.com').each do |parse_workload|
+    self.order('createdAt asc').where(host: '245cloud.com').limit(999999).each do |parse_workload|
       if parse_workload.attributes['workload_id'] 
         parse_workload.workload_id = nil
         parse_workload.save
@@ -17,8 +17,11 @@ class ParsecomWorkload < ParseResource::Base
 
   def self.sync
     #self.where(workload_id: nil).order('createdAt asc').each do |parse_workload|
-    self.where(workload_id: nil).order('createdAt desc').each do |parse_workload|
+    #self.where(workload_id: nil).order('createdAt desc').each do |parse_workload|
+    self.limit(100).order('createdAt desc').each do |parse_workload|
       workload = parse_workload.attributes
+
+      puts workload['createdAt']
 
       next if workload['user'].nil?
 
@@ -64,12 +67,15 @@ class ParsecomWorkload < ParseResource::Base
         workload2.save!
       end
 
-      #parse_workload.workload_id = workload2.id
-      #parse_workload.save
+      parse_workload.workload_id = workload2.id
+      parse_workload.save unless parse_workload.workload_id.to_i == workload2.id
 
       puts "done: workload.id = #{workload2.id}"
     end
     puts 'done'
+    puts "sleep 60sec..."
+    sleep 60
+    self.sync
   end
 end
 
