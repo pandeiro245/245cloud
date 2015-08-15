@@ -54,7 +54,7 @@ class User < ActiveRecord::Base
   end
 
   def facebook_id
-    email.split('@').first
+    auth.uid
   end
 
   def musics
