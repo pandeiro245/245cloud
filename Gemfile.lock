@@ -181,6 +181,8 @@ GEM
       activesupport (>= 4.2.0.beta, < 5.0)
       nokogiri (~> 1.6.0)
       rails-deprecated_sanitizer (>= 1.0.1)
+    rails-footnotes (4.1.7)
+      rails (>= 3.2)
     rails-html-sanitizer (1.0.2)
       loofah (~> 2.0)
     railties (4.2.0)
@@ -298,6 +300,7 @@ DEPENDENCIES
   omniauth-timecrowd!
   parse_resource!
   rails (= 4.2.0)
+  rails-footnotes
   rb-readline
   redis
   redis-objects

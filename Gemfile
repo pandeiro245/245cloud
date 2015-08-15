@@ -29,6 +29,7 @@ group :development do
   gem 'chatwork'
   gem 'capistrano-pending', require: false
   gem 'gem_reloader'
+  gem 'rails-footnotes'
 end
 
 gem 'haml'

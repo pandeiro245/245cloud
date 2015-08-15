@@ -5,10 +5,21 @@ class ApplicationController < ActionController::Base
   before_filter :commons
 
   def commons
-    @dones = Workload.dones
-    @yous = current_user.workloads
-    @playings = Workload.playings
-    @chattings= Workload.chattings
+    if params[:refresh]
+      ['dones', 'playings', 'chattings'].each do |key|
+        Rails.cache.delete(key)
+      end
+    end
+    @dones = Rails.cache.fetch('dones') do
+      Workload.dones
+    end
+    @playings = Rails.cache.fetch('playings') do
+      Workload.playings
+    end
+    @chattings = Rails.cache.fetch('chattings') do
+      Workload.chattings
+    end
+    @yous = current_user ? current_user.workloads : []
   end
 
   def current_user
