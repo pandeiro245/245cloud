@@ -17,18 +17,10 @@ class Workload < ActiveRecord::Base
   end
 
   def save_with_parsecom!
-    begin
-      parse_user = ParsecomUser.find(user.parsecomhash)
-    rescue
-      # NoMethodError (undefined method `[]' for nil:NilClass):
-      # app/models/workload.rb:20:in `save_with_parsecom!'
-      # app/controllers/workloads_controller.rb:22:in `new'
-      raise user.inspect
-    end
     if self.parsecomhash
       parse_workload = ParsecomWorkload.find(self.parsecomhash)
     else
-      parse_workload = ParsecomWorkload.new(user: parse_user)
+      parse_workload = ParsecomWorkload.new(user: ParsecomUser.find(self.user.parsecomhash))
     end
     if music_id
       key_val = self.music.key.split(':')
