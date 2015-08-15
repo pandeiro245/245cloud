@@ -1,7 +1,9 @@
 class MusicsController < ApplicationController
   include ApplicationHelper
   def show
-    @music = Music.find(params[:id])
+    @music = Rails.cache.fetch("music:#{params[:id]}") do
+      Music.find(params[:id])
+    end
     if !@music.title || params[:nocache] # TODO 無限ループ対策
       @music.fetch
     end

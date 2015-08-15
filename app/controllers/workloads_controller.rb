@@ -16,7 +16,9 @@ class WorkloadsController < ApplicationController
 
   def new
     workload = Workload.new(user: current_user)
-    workload.music_id = params[:music_id] if params[:music_id]
+    workload.music = Rails.cache.fetch("music:#{params[:music_id]}") do
+      Music.find(params[:id])
+    end if params[:music_id]
     workload.save_with_parsecom!
 
     Rails.cache.fetch("workload:#{workload.id}") do
