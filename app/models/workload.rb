@@ -46,6 +46,7 @@ class Workload < ActiveRecord::Base
       parse_workload.number = self.number
     end
     if parse_workload.save
+      self.parsecomhash = parse_workload.id
       save!
     else
       raise parse_workload.inspect
