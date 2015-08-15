@@ -49,7 +49,7 @@ class ParsecomWorkload < ParseResource::Base
       next unless workload['user']
 
       workload2 = Workload.find_or_initialize_by(
-        parsehash: workload['objectId']
+        parsecomhash: workload['objectId']
       )
 
       user = User.find_by(parsecomhash: workload['user']['objectId'])
@@ -63,8 +63,9 @@ class ParsecomWorkload < ParseResource::Base
         workload2.music_id = music.id if music
         workload2.save!
       end
-      parse_workload.workload_id = workload2.id
-      parse_workload.save
+
+      #parse_workload.workload_id = workload2.id
+      #parse_workload.save
 
       puts "done: workload.id = #{workload2.id}"
     end

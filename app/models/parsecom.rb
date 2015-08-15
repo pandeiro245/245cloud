@@ -96,7 +96,7 @@ class Parsecom
       user = @user_hashs[workload['user']['objectId']]
 
       workload2 = Workload.find_or_initialize_by(
-        parsehash: workload['objectId']
+        parsecomhash: workload['objectId']
       )
       unless workload2.id
         workload2.user_id = user.id
@@ -140,7 +140,7 @@ class Parsecom
       end
 
       comment2 = Comment.find_or_initialize_by(
-        parsehash: comment['objectId']
+        parsecomhash: comment['objectId']
       )
       unless comment2.id
         puts comment['body']
