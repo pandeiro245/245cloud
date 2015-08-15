@@ -26,6 +26,8 @@ group :development do
   gem 'capistrano-sidekiq'
   gem 'chatwork'
   gem 'capistrano-pending', require: false
+
+  gem 'rails-footnotes'
 end
 
 gem 'haml'
