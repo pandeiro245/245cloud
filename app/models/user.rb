@@ -42,7 +42,7 @@ class User < ActiveRecord::Base
   def self.login data
     auth = Auth.find_or_create_with_omniauth(data)
     if auth.user.parsecomhash.nil?
-      auth.user.parsecomhash = ParsecomUser.where(facebook_id_str: facebook_id.to_s).first.id
+      auth.user.parsecomhash = ParsecomUser.where(facebook_id_str: auth.user.facebook_id.to_s).first.id
       auth.user.save!
     end
     auth.user
