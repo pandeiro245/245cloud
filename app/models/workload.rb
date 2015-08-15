@@ -1,8 +1,6 @@
 class Workload < ActiveRecord::Base
   belongs_to :user
   belongs_to :music
-  scope :playings, -> { where(status: 0, created_at: (Time.now - Workload.pomominutes)..Time.now) }
-  scope :chattings, -> { where(status: 1, created_at: (Time.now - Workload.pomominutes - Workload.chatminutes)..(Time.now - Workload.pomominutes)) }
 
   include Redis::Objects
   value :hoge
@@ -103,7 +101,7 @@ class Workload < ActiveRecord::Base
 
   def self.playings
     Workload.where(
-      created_at: (Time.now - Workload.pomotime.minutes)..Time.now
+      created_at: (Time.now - Workload.pomominutes)..Time.now
     ).where(
       status: 0
     ).order('created_at desc')
@@ -121,6 +119,8 @@ class Workload < ActiveRecord::Base
   def self.dones limit = 48
     Workload.where(
       status: 1
+    ).where(
+      "created_at < ?", Time.now - Workload.pomominutes - Workload.chatminutes 
     ).order('created_at desc').limit(limit)
   end
 

@@ -54,10 +54,7 @@ class User < ActiveRecord::Base
   end
 
   def facebook_id
-    Auth.find_by(
-      provider: 'facebook',
-      user_id: self.id
-    ).uid
+    email.split('@').first
   end
 
   def musics

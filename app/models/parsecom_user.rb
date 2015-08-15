@@ -1,21 +1,32 @@
 class ParsecomUser < ParseUser
   fields :name, :facebook_id_str, :user_id
 
-  def self.hoge
+  def self.hoge!
     User.delete_all
-    ActiveRecord::Base.connection.execute('ALTER TABLE users AUTO_INCREMENT = 0')
+    ActiveRecord::Base.connection.execute('ALTER TABLE users AUTO_INCREMENT = 1')
+
+    #self.order('createdAt asc').limit(999999).each do |parse_user|
+    #  if parse_user.attributes['user_id'] 
+    #    parse_user.user_id = nil
+    #    parse_user.save
+    #  else
+    #    return
+    #  end
+    #end
+
+
   end
 
   def self.sync refresh = false
     if refresh
-      parse_users = self.order('createdAt asc')
+      parse_users = self.order('createdAt asc').limit(999999)
     else
       parse_users = self.where(user_id: nil).order('createdAt asc')
     end
     parse_users.each do |parse_user|
       u = parse_user.attributes
 
-      facebook_id = u['authData']['facebook']['id']
+      facebook_id = u['facebook_id_str']
       email = "#{facebook_id}@245cloud.com"
       user = User.find_or_create_by(
         email: email 
@@ -24,8 +35,8 @@ class ParsecomUser < ParseUser
       user.parsecomhash = u['objectId']
       user.save!
 
-      parse_user.user_id = user.id
-      parse_user.save
+      #parse_user.user_id = user.id
+      #parse_user.save
 
       auth = Auth.find_or_initialize_by(
         provider: 'facebook',

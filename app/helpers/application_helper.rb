@@ -1,4 +1,17 @@
 module ApplicationHelper
+
+  def get_offset(is_first, item_count)
+    return '' unless is_first or item_count >= 5
+    data = {
+      1 => 5,
+      2 => 4,
+      3 => 3,
+      4 => 2,
+    }
+    offset = data[item_count]
+    "col-sm-offset-#{offset}"
+  end
+
   def music_path music
     "/musics/#{music.id}"
   end
