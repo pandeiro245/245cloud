@@ -1,6 +1,6 @@
 GIT
   remote: git@github.com:pandeiro245/parse_resource.git
-  revision: 0e5fae7acda041505228343216deadac9c2f8bce
+  revision: 6e0b13e0d2326aca2c1166fad8f29951d0e88b02
   branch: issue-1
   specs:
     parse_resource (1.8.0)
