@@ -106,7 +106,7 @@ class Workload < ActiveRecord::Base
       created_at: (Time.now - Workload.pomotime.minutes)..Time.now
     ).where(
       status: 0
-    ).order('id desc')
+    ).order('created_at desc')
   end
 
   def self.chattings
@@ -115,13 +115,13 @@ class Workload < ActiveRecord::Base
       created_at: (pomo - Workload.chatminutes)..pomo
     ).where(
       status: 1
-    ).order('id desc')
+    ).order('created_at desc')
   end
 
   def self.dones limit = 48
     Workload.where(
       status: 1
-    ).order('id desc').limit(limit)
+    ).order('created_at desc').limit(limit)
   end
 
   def self.dones_count

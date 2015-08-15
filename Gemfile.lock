@@ -1,4 +1,13 @@
 GIT
+  remote: git://github.com/pandeiro245/omniauth-timecrowd.git
+  revision: bf857b38c79a56767e52f25504f51cd1d8e41197
+  branch: issue-1
+  specs:
+    omniauth-timecrowd (0.1.0)
+      omniauth (>= 1.1.1)
+      omniauth-oauth2 (>= 1.1.1)
+
+GIT
   remote: git@github.com:pandeiro245/parse_resource.git
   revision: 6e0b13e0d2326aca2c1166fad8f29951d0e88b02
   branch: issue-1
@@ -98,6 +107,7 @@ GEM
     execjs (2.5.2)
     faraday (0.9.1)
       multipart-post (>= 1.2, < 3)
+    gem_reloader (0.0.2)
     globalid (0.3.6)
       activesupport (>= 4.1.0)
     haml (4.0.6)
@@ -277,6 +287,7 @@ DEPENDENCIES
   chatwork
   coffee-rails (~> 4.1.0)
   dotenv-rails
+  gem_reloader
   haml
   hiredis
   jbuilder (~> 2.0)
@@ -284,6 +295,7 @@ DEPENDENCIES
   jquery-rails
   mysql2 (>= 0.3.12b4)
   omniauth-facebook
+  omniauth-timecrowd!
   parse_resource!
   rails (= 4.2.0)
   rb-readline
@@ -298,3 +310,6 @@ DEPENDENCIES
   uglifier (>= 1.3.0)
   unicorn
   web-console (~> 2.0)
+
+BUNDLED WITH
+   1.10.5

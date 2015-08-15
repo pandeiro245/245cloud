@@ -33,6 +33,7 @@ end
 
 gem 'haml'
 gem 'omniauth-facebook'
+gem 'omniauth-timecrowd', github: 'pandeiro245/omniauth-timecrowd', branch: 'issue-1'
 gem 'dotenv-rails'
 gem 'settingslogic'
 #gem 'parse_resource', github: 'adelevie/parse_resource'
