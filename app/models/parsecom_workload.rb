@@ -1,6 +1,18 @@
 class ParsecomWorkload < ParseResource::Base
   fields :workload_id, :sc_id, :mc_id, :yt_id, :et_id, :sm_id, :is_done, :number, :artwork_url, :title
 
+
+  def self.hoge
+    self.order('createdAt asc').each do |parse_workload|
+      if parse_workload.attributes['workload_id'] 
+        parse_workload.workload_id = nil
+        parse_workload.save
+      else
+        return
+      end
+    end
+  end
+
   def self.sync
     self.where(workload_id: nil).order('createdAt asc').each do |parse_workload|
       workload = parse_workload.attributes
