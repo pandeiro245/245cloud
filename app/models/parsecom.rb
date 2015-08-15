@@ -12,7 +12,7 @@ class Parsecom
   end
 
   def initialize
-    @from = Workload.last.created_at.to_date
+    @from = Workload.last.created_at.to_date if Workload.count > 0
     @workload_path = 'tmp/parsecom/Workload.json'
     @user_path = 'tmp/parsecom/_User.json'
     @room_path = 'tmp/parsecom/Room.json'
