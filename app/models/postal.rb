@@ -10,6 +10,7 @@ class Postal < ActiveRecord::Base
   end
 
   def self.import_postals
+    #  wget http://www.post.japanpost.jp/zipcode/dl/kogaki/zip/ken_all.zip
     file_path = './tmp/KEN_ALL.csv'
 
     open(file_path, 'r:cp932:utf-8', undef: :replace) do |f|
@@ -35,6 +36,7 @@ class Postal < ActiveRecord::Base
   end
 
   def self.import_kokuseis
+    # http://www.e-stat.go.jp/SG1/estat/GL08020103.do?_csvDownload_&fileId=000004996641&releaseCount=2
     file_path = './tmp/001.csv'
 
     pref_names = Pref.all.map{|pref| pref.name}
