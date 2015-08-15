@@ -101,6 +101,7 @@ GEM
     haml (4.0.6)
       tilt
     hashie (3.4.2)
+    hiredis (0.6.0)
     hitimes (1.2.2)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
@@ -179,8 +180,26 @@ GEM
     rake (10.4.2)
     rdoc (4.2.0)
     redis (3.2.1)
+    redis-actionpack (4.0.0)
+      actionpack (~> 4)
+      redis-rack (~> 1.5.0)
+      redis-store (~> 1.1.0)
+    redis-activesupport (4.1.1)
+      activesupport (~> 4)
+      redis-store (~> 1.1.0)
     redis-namespace (1.5.2)
       redis (~> 3.0, >= 3.0.4)
+    redis-objects (1.2.0)
+      redis (>= 3.0.2)
+    redis-rack (1.5.0)
+      rack (~> 1.5)
+      redis-store (~> 1.1.0)
+    redis-rails (4.0.0)
+      redis-actionpack (~> 4)
+      redis-activesupport (~> 4)
+      redis-store (~> 1.1.0)
+    redis-store (1.1.6)
+      redis (>= 2.2)
     ref (2.0.0)
     rest-client (1.8.0)
       http-cookie (>= 1.0.2, < 2.0)
@@ -256,6 +275,7 @@ DEPENDENCIES
   coffee-rails (~> 4.1.0)
   dotenv-rails
   haml
+  hiredis
   jbuilder (~> 2.0)
   jp_prefecture
   jquery-rails
@@ -263,6 +283,9 @@ DEPENDENCIES
   omniauth-facebook
   parse_resource!
   rails (= 4.2.0)
+  redis
+  redis-objects
+  redis-rails
   sass-rails (~> 5.0)
   sdoc (~> 0.4.0)
   settingslogic
