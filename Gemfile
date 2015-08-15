@@ -45,3 +45,5 @@ gem "hiredis"
 gem "redis", nil, :require => ["redis/connection/hiredis", "redis"]
 gem 'redis-objects'
 gem 'redis-rails'
+gem 'rb-readline'
+
