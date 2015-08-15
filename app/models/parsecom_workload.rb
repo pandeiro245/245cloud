@@ -5,7 +5,7 @@ class ParsecomWorkload < ParseResource::Base
     self.where(workload_id: nil).order('createdAt asc').each do |parse_workload|
       workload = parse_workload.attributes
 
-      next unless workload['user']
+      next if workload['user'].nil?
 
       id = nil
       key = nil
