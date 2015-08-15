@@ -40,3 +40,9 @@ gem 'settingslogic'
 gem 'jp_prefecture'
 #gem 'parse_resource', git: 'git@github.com:pandeiro245/parse_resource.git', branch: 'issue-1'
 gem 'parse_resource', path: '../parse_resource'
+
+
+gem "hiredis"
+gem "redis", nil, :require => ["redis/connection/hiredis", "redis"]
+gem 'redis-objects'
+gem 'redis-rails'

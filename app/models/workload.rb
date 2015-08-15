@@ -4,6 +4,9 @@ class Workload < ActiveRecord::Base
   scope :playings, -> { where(status: 0, created_at: (Time.now - Workload.pomominutes)..Time.now) }
   scope :chattings, -> { where(status: 1, created_at: (Time.now - Workload.pomominutes - 5.minutes)..(Time.now - Workload.pomominutes)) }
 
+  include Redis::Objects
+  value :hoge
+
   def self.pomotime
     Settings.pomotime
     0.1

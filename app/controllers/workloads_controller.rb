@@ -1,6 +1,8 @@
 class WorkloadsController < ApplicationController
   def show
-    @workload = Workload.find(params[:id])
+    @workload = Rails.cache.fetch("workload:#{params[:id]}") do
+      Workload.find(params[:id])
+    end
     @remain = (@workload.created_at + Workload.pomotime.minutes - Time.now).to_i
 
     if @remain < 0 # 24分以上経過
@@ -16,6 +18,10 @@ class WorkloadsController < ApplicationController
     workload = Workload.new(user: current_user)
     workload.music_id = params[:music_id] if params[:music_id]
     workload.save_with_parsecom!
+
+    Rails.cache.fetch("workload:#{workload.id}") do
+      workload
+    end
     redirect_to workload
   end
 end
