@@ -1,5 +1,7 @@
-PATH
-  remote: ../parse_resource
+GIT
+  remote: git@github.com:pandeiro245/parse_resource.git
+  revision: 0e5fae7acda041505228343216deadac9c2f8bce
+  branch: issue-1
   specs:
     parse_resource (1.8.0)
       activemodel

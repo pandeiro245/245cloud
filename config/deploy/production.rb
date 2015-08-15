@@ -64,3 +64,11 @@ set :deploy_to, '/var/www/245cloud'
 set :application, '245cloud'
 set :unicorn_config_path, "#{current_path}/config/unicorn.rb"
 set :repo_url, 'git@github.com:pandeiro245/245cloud.git'
+set :branch, 'develop'
+
+after 'deploy:publishing', 'deploy:restart'
+namespace :deploy do
+  task :restart do
+    invoke 'unicorn:restart'
+  end
+end
