@@ -27,6 +27,7 @@ class Workload < ActiveRecord::Base
       key_val = self.music.key.split(':')
       key = key_val.first
       val = key_val.last
+      val = val.to_i if ['sc', 'et'].include?(key)
       parse_workload.send("#{key}_id=", val)
       parse_workload.title = music.title
       parse_workload.artwork_url = music.icon
