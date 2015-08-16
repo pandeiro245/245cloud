@@ -109,9 +109,12 @@ class Workload < ActiveRecord::Base
   end
 
   def self.chattings
-    pomo = Time.now - Workload.pomominutes
+    # 現在時間から24分前が今からchat開始した人のcreatedAt
+    last = Time.now - Workload.pomominutes
+    # 上記時間のさらに5分前が今からchatが終わる人のcreatedAt
+    start = last - Workload.chatminutes
     Workload.where(
-      created_at: (pomo + Workload.chatminutes)..pomo
+      created_at: start..last
     ).where(
       status: 1
     ).order('created_at desc')
