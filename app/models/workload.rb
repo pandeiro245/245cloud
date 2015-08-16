@@ -11,6 +11,7 @@ class Workload < ActiveRecord::Base
 
   def self.chattime
     Settings.chattime
+    5
   end
 
   def self.pomominutes
@@ -110,7 +111,7 @@ class Workload < ActiveRecord::Base
   def self.chattings
     pomo = Time.now - Workload.pomominutes
     Workload.where(
-      created_at: (pomo - Workload.chatminutes)..pomo
+      created_at: (pomo + Workload.chatminutes)..pomo
     ).where(
       status: 1
     ).order('created_at desc')
