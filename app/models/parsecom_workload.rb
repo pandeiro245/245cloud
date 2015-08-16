@@ -18,7 +18,9 @@ class ParsecomWorkload < ParseResource::Base
   def self.sync
     #self.where(workload_id: nil).order('createdAt asc').each do |parse_workload|
     #self.where(workload_id: nil).order('createdAt desc').each do |parse_workload|
+    
     self.limit(100).order('createdAt desc').each do |parse_workload|
+    #self.limit(5).order('createdAt desc').each do |parse_workload|
       workload = parse_workload.attributes
 
       puts workload['createdAt']
@@ -60,12 +62,15 @@ class ParsecomWorkload < ParseResource::Base
       unless workload2.id
         workload2.user_id = user.id
         workload2.created_at =  workload['createdAt'].to_time
-        workload2.number = workload['number']
         workload2.place_id = workload['place_id']
-        workload2.status = workload['is_done'] || 0
         workload2.music_id = music.id if music
-        workload2.save!
+      else
+        workload2.number = workload['number']
       end
+       
+      workload2.status = workload['is_done'] ? 1 : 0
+
+      workload2.save!
 
       parse_workload.workload_id = workload2.id
       parse_workload.save unless parse_workload.workload_id.to_i == workload2.id
