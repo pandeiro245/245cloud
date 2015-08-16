@@ -13,7 +13,7 @@
           = link_to '集中を再開', "/workloads/#{workload.id}"
         - if workload.number && workload.chatting? && workload.user_id == current_user.id
           - unless params[:controller] == 'rooms'
-            = link_to 'チャットを再開', "/rooms/0"
+            = link_to 'チャットを再開', "/rooms/#{Room.first.id}"
         - else
           - m = workload.music_id ? "?music_id=#{workload.music_id}" : ''
           = link_to start_button(workload), "/workloads/new#{m}", class: 'fixed_start'
