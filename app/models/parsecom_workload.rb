@@ -23,8 +23,6 @@ class ParsecomWorkload < ParseResource::Base
     #self.limit(5).order('createdAt desc').each do |parse_workload|
       workload = parse_workload.attributes
 
-      puts workload['createdAt']
-
       next if workload['user'].nil?
 
       id = nil

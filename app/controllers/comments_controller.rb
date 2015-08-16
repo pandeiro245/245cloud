@@ -3,6 +3,7 @@ class CommentsController < ApplicationController
     @comment = Comment.new(comment_params)
     @comment.user_id = current_user.id
     @comment.save
+    @comment.save_with_parsecom!
     redirect_to room_path(@comment.room)
   end
 

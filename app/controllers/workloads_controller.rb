@@ -3,10 +3,10 @@ class WorkloadsController < ApplicationController
     @workload = Rails.cache.fetch("workload:#{params[:id]}") do
       Workload.find(params[:id])
     end
-    @remain = (@workload.created_at + Workload.pomotime.minutes - Time.now).to_i
+    @remain = (@workload.created_at + Workload.pomominutes - Time.now).to_i
 
     if @remain < 0 # 24分以上経過
-      if @remain > - 60 * 6 # 経過時間30分未満
+      if @remain > - 60 * Workload.pomotime # 経過時間30分未満
         @workload.complete!
         is_room = true
       end
