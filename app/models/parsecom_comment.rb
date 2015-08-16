@@ -1,8 +1,14 @@
 class ParsecomComment < ParseResource::Base
   fields :body, :room_id, :user
 
-  def self.sync
-    self.limit(999999).each do |parse_comment|
+  def self.hoge!
+    Comment.delete_all
+    ActiveRecord::Base.connection.execute('ALTER TABLE comments AUTO_INCREMENT = 0')
+  end
+
+  def self.sync refresh = false
+    limit = refresh ? 99999 : 100
+    self.limit(limit).each do |parse_comment|
       comment = parse_comment.attributes
 
       comment2 = Comment.find_or_create_by(
