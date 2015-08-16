@@ -1,13 +1,10 @@
 defaults: &defaults
   pomotime: 24
   chattime: 5
-  cool:
-    saweet: nested settings
-  awesome_setting: <%= "Did you know 5 + 5 = #{5 + 5}?" %>
 
 development:
-  <<: *defaults
-  neat_setting: 800
+  pomotime: 0.1
+  chattime: 0.1
 
 test:
   <<: *defaults
