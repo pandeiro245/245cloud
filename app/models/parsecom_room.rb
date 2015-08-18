@@ -1,7 +1,7 @@
 class ParsecomRoom < ParseResource::Base
   fields :title, :img_off, :img_on
 
-  def self.hoge!
+  def self.refresh!
     Room.delete_all
     ActiveRecord::Base.connection.execute('ALTER TABLE rooms AUTO_INCREMENT = 0')
     Room.create_default_room
