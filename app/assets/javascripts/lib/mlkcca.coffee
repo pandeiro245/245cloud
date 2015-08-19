@@ -1,19 +1,11 @@
-unless location.href.match(/offline=/)
-  mlkcca = new MilkCocoa("#{@env.milkcocoa}.mlkcca.com")
-  @socket = mlkcca.dataStore('workload')
+mlkcca = new MilkCocoa("#{@env.milkcocoa}.mlkcca.com")
+@socket = mlkcca.dataStore('workload')
 
-  @socket.on( 'push', (params) ->
-    console.log 'mlkcca', params
-    params = params.value
-    if params.type == 'comment'
-      # 自分の投稿だけはMilkcocoaを経由させない 
-      unless params.comment.user.objectId == Parse.User.current().id
-        @addComment(params.room_id, params.comment, params.is_countup)
-    else if params.type == 'doing'
-      @addDoing(params.workload)
-    else if params.type == 'chatting'
-      @addChatting(params.workload)
-    else if params.type == 'finish'
-      @stopUser(params.workload.user.objectId)
-  )
+@socket.on( 'push', (params) ->
+  console.log 'mlkcca', params
+  params = params.value
+  $('table.comments').prepend("""
+  <tr><td><img class="icon" src="https://graph.facebook.com/10152403406713381/picture?type=square"></td> <td></td> <td>#{Util.parseHttp(params.comment.body)}</td> <td>#{Util.hourMin(new Date())}</td> </tr>
+  """)
+)
 

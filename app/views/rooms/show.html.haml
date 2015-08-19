@@ -26,12 +26,14 @@
 
 #rooms_title.row
   %h2.status
-    %img{:src => "https://ruffnote.com/attachments/24968"}/
+    %img{:src => "https://ruffnote.com/attachments/24968"}
 #rooms.row
   #room_default.room
-    = form_for @new_comment do |f|
-      = f.text_field :content, placeholder: "「#{@room.title}」に書き込む", class: 'create_comment'
-      = f.hidden_field :room_id, value: @room.id
+    - if false
+      = form_for @new_comment, remote: true, onsubmit: 'return false' do |f|
+        = f.text_field :content, placeholder: "「#{@room.title}」に書き込む", class: 'create_comment'
+        = f.hidden_field :room_id, value: @room.id
+    %input.create_comment{placeholder: "「#{@room.title}」に書き込む"}
     %table.table.comments
       %tbody
         - @room.comments.each do |comment|
