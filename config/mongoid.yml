@@ -1,3 +1,20 @@
+staging:
+  sessions:
+    default:
+      database: com245cloud_staging
+      hosts:
+        - localhost:27017
+      options:
+
+production:
+  sessions:
+    default:
+      database: com245cloud_production
+      hosts:
+        - localhost:27017
+      options:
+
+
 development:
   # Configure available database sessions. (required)
   sessions:
