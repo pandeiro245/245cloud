@@ -1,4 +1,17 @@
-class Workload < ActiveRecord::Base
+#class Workload < ActiveRecord::Base
+class Workload
+  include Mongoid::Document
+  include Mongoid::Timestamps
+
+  field :status, type: Integer
+  field :key, type: String
+  field :music_id, type: Integer
+  field :number, type: Integer
+  #field :user_id, type: Integer
+  field :user_hash, type: String
+  field :parsecomhash, type: String
+  field :place_id, type: Integer
+
   belongs_to :user
   belongs_to :music
 
@@ -26,7 +39,7 @@ class Workload < ActiveRecord::Base
     if self.parsecomhash
       parse_workload = ParsecomWorkload.find(self.parsecomhash)
     else
-      parse_workload = ParsecomWorkload.new(user: ParsecomUser.find(self.user.parsecomhash))
+      parse_workload = ParsecomWorkload.new(user: ParsecomUser.find(User.find(self.user_id).parsecomhash))
     end
     if music_id
       key_val = self.music.key.split(':')
@@ -56,7 +69,13 @@ class Workload < ActiveRecord::Base
   end
 
   def icon
-    user.present? ? user.icon : "https://ruffnote.com/attachments/24311"
+    #user.present? ? user.icon : "https://ruffnote.com/attachments/24311"
+    begin
+      user.icon
+    rescue
+      u= User.find(self.user_id)
+      u.present? ? u.icon : "https://ruffnote.com/attachments/24311"
+    end
   end
 
   def music_icon
@@ -124,7 +143,8 @@ class Workload < ActiveRecord::Base
     Workload.where(
       status: 1
     ).where(
-      "created_at < ?", Time.now - Workload.pomominutes - Workload.chatminutes 
+      #"created_at < ?", Time.now - Workload.pomominutes - Workload.chatminutes 
+      :created_at.lt => Time.now - Workload.pomominutes - Workload.chatminutes 
     ).order('created_at desc').limit(limit)
   end
 
@@ -154,32 +174,33 @@ class Workload < ActiveRecord::Base
   end
 
   def self.sync is_all = false
-    data = ParsecomWorkload.where(workload_id: nil).sort{|a, b| 
-      a.attributes['createdAt'].to_time <=> b.attributes['createdAt'].to_time
-    }
-    if !is_all && !Workload.count.zero?
-      from = Workload.last.created_at.to_time
-      data.select!{|w| w.attributes['createdAt'].to_time > from}
-    end
-
-    data.each do |u|
-      attrs = u.attributes
-      instance = Workload.find_or_initialize_by(
-        parsecomhash: attrs['objectId']
-      )
-      instance.status  = attrs['is_done']
-      begin
-        instance.user_id = User.find_by(
-          parsecomhash: attrs['user']['objectId']
-        ).id
-      rescue
-        # 初期のWorkloadはuserカラムがなくTwitterカラムだった
-      end
-      instance.created_at = attrs['createdAt'].to_time
-      instance.save!
-      u.workload_id = instance.id
-      u.save
-    end
+    ParsecomWorkload.sync
+#    data = ParsecomWorkload.where(workload_id: nil).sort{|a, b| 
+#      a.attributes['createdAt'].to_time <=> b.attributes['createdAt'].to_time
+#    }
+#    if !is_all && !Workload.count.zero?
+#      from = Workload.last.created_at.to_time
+#      data.select!{|w| w.attributes['createdAt'].to_time > from}
+#    end
+#
+#    data.each do |u|
+#      attrs = u.attributes
+#      instance = Workload.find_or_initialize_by(
+#        parsecomhash: attrs['objectId']
+#      )
+#      instance.status  = attrs['is_done']
+#      begin
+#        instance.user_id = User.find_by(
+#          parsecomhash: attrs['user']['objectId']
+#        ).id
+#      rescue
+#        # 初期のWorkloadはuserカラムがなくTwitterカラムだった
+#      end
+#      instance.created_at = attrs['createdAt'].to_time
+#      instance.save!
+#      u.workload_id = instance.id
+#      u.save
+#    end
   end
 end
 

@@ -29,21 +29,22 @@ class ParsecomUser < ParseUser
       facebook_id = u['facebook_id_str']
       email = "#{facebook_id}@245cloud.com"
       user = User.find_or_create_by(
-        email: email 
+        parsecomhash: u['objectId']
       )
       user.name = u['name']
+      user.email = email
       user.parsecomhash = u['objectId']
       user.save!
 
       #parse_user.user_id = user.id
       #parse_user.save
 
-      auth = Auth.find_or_initialize_by(
-        provider: 'facebook',
-        uid: facebook_id
-      )
-      auth.user_id = user.id
-      auth.save!
+     # auth = Auth.find_or_initialize_by(
+     #   provider: 'facebook',
+     #   uid: facebook_id
+     # )
+     # auth.user_id = user.id
+     # auth.save!
     end
     return 'done'
   end

@@ -49,3 +49,6 @@ gem 'redis-objects'
 gem 'redis-rails'
 gem 'rb-readline'
 
+gem 'mongoid', '~> 4.0.0'
+
+

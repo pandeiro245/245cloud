@@ -17,7 +17,7 @@ module ApplicationHelper
   end
 
   def current_user
-    User.find_by(id: session[:user_id])
+    User.current_user(session[:user_id])
   end
 
   def ruffimage id
