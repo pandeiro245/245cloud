@@ -85,7 +85,8 @@ class ParsecomWorkload < ParseResource::Base
     end
     puts 'done'
     ParsecomUser.sync(true)
-    ParsecomComment.sync(true)
+    #ParsecomComment.sync(true)
+    ParsecomComment.sync(false)
     puts "sleep 60sec..."
     sleep 60
     self.sync
