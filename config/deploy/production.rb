@@ -6,7 +6,8 @@
 # server 'example.com', user: 'deploy', roles: %w{app db web}, my_property: :my_value
 # server 'example.com', user: 'deploy', roles: %w{app web}, other_property: :other_value
 # server 'db.example.com', user: 'deploy', roles: %w{db}
-server '52.69.126.62', user: 'ec2-user', roles: %w{web app db}
+#server '52.69.126.62', user: 'ec2-user', roles: %w{web app db}
+server '52.69.123.52', user: 'ec2-user', roles: %w{web app db}
 set :deploy_to, '/var/www/245cloud'
 
 
@@ -64,8 +65,6 @@ set :deploy_to, '/var/www/245cloud'
 set :application, '245cloud'
 set :unicorn_config_path, "#{current_path}/config/unicorn.rb"
 set :repo_url, 'git@github.com:pandeiro245/245cloud.git'
-set :branch, 'develop'
-
 after 'deploy:publishing', 'deploy:restart'
 namespace :deploy do
   task :restart do

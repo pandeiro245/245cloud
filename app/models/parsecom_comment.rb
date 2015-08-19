@@ -8,7 +8,7 @@ class ParsecomComment < ParseResource::Base
   end
 
   def self.sync refresh = false
-    limit = refresh ? 99999 : 100
+    limit = refresh ? 99999 : 100 # 99999 とかだとparse.com側でエラー
     self.limit(limit).order('createdAt desc').each do |parse_comment|
       parse_comment.save_with_ar!
     end
@@ -23,17 +23,16 @@ class ParsecomComment < ParseResource::Base
 
     comment2.content = comment['body']
 
-
-
     # 立ちあげ当初はコメントにuser_id保存していなかった
     begin
     comment2.user = User.find_by(parsecomhash: comment['user']['objectId'])
     rescue
     end
-
-    raise comment2.user.inspect
-
-    comment2.room = Room.find_by(parsecomhash: comment['room_id']) || Room.first
+    begin
+    comment2.room = Room.find_by(parsecomhash: comment['room_id'])
+    rescue
+      Room.first
+    end
     comment2.created_at =  comment['createdAt'].to_time
 
     comment2.save!

@@ -55,29 +55,38 @@ class ParsecomWorkload < ParseResource::Base
         parsecomhash: workload['objectId']
       )
 
-      user = User.find_by(parsecomhash: workload['user']['objectId'])
+      user = User.find_or_create_by(parsecomhash: workload['user']['objectId'])
 
-      unless workload2.id
-        workload2.user_id = user.id
+      #unless workload2.id
+        #workload2.user_id = user.id
+        begin
+        workload2.user = user
+        rescue
+        end
         workload2.created_at =  workload['createdAt'].to_time
-        workload2.place_id = workload['place_id']
-        workload2.music_id = music.id if music
-      else
+        #workload2.place_id = workload['place_id']
+        #workload2.music_id = music.id if music
+        begin
+        workload2.music = music if music
+        rescue
+        end
+      #else
         workload2.number = workload['number']
-      end
+      #end
        
       workload2.status = workload['is_done'] ? 1 : 0
 
       workload2.save!
 
-      parse_workload.workload_id = workload2.id
-      parse_workload.save unless parse_workload.workload_id.to_i == workload2.id
+      #parse_workload.workload_id = workload2.id
+      #parse_workload.save unless parse_workload.workload_id.to_i == workload2.id
 
       puts "done: workload.id = #{workload2.id}"
     end
     puts 'done'
     ParsecomUser.sync(true)
-    ParsecomComment.sync(true)
+    #ParsecomComment.sync(true)
+    ParsecomComment.sync(false)
     puts "sleep 60sec..."
     sleep 60
     self.sync
