@@ -49,7 +49,7 @@ end
 set :rbenv_type, :user
 set :rbenv_ruby, '2.2.0'
 
-set :branch, 'develop'
+set :branch, 'mongodb'
 
 after 'deploy:publishing', 'deploy:restart'
 namespace :deploy do
