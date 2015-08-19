@@ -1,7 +1,7 @@
 class SessionsController < ApplicationController
   def callback
     data = request.env['omniauth.auth']
-    session[:user_id] = User.login(data).id
+    session[:user_id] = User.login(data).id.to_s
     redirect_to root_path, notice: 'ログインが完了しました'
   end
 

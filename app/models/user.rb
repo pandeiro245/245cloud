@@ -1,7 +1,23 @@
-class User < ActiveRecord::Base
+#class User < ActiveRecord::Base
+class User
+  include Mongoid::Document
+  include Mongoid::Timestamps
+  field :parsecomhash, type: String
+  field :name, type: String
+  field :email, type: String
+
   has_many :workloads
-  has_many :comments, -> {order('created_at desc')}
-  attr_accessor :total
+  #has_many :comments, -> {order('created_at desc')}
+  #attr_accessor :total
+  
+  def self.current_user user_id
+    #User.find(user_id)
+    begin
+      User.find(user_id)
+    rescue
+      nil
+    end
+  end
 
   def workload
     workloads = Workload.where(
@@ -40,12 +56,15 @@ class User < ActiveRecord::Base
   end
 
   def self.login data
-    auth = Auth.find_or_create_with_omniauth(data)
-    if auth.user.parsecomhash.nil?
-      auth.user.parsecomhash = ParsecomUser.where(facebook_id_str: auth.user.facebook_id.to_s).first.id
-      auth.user.save!
-    end
-    auth.user
+    #auth = Auth.find_or_create_with_omniauth(data)
+    #if auth.user.parsecomhash.nil?
+    #  auth.user.parsecomhash = ParsecomUser.where(facebook_id_str: auth.user.facebook_id.to_s).first.id
+    #  auth.user.save!
+    #end
+    #auth.user
+    User.find_or_create_by(
+      email: "#{Auth.uid(data)}@245cloud.com"
+    )
   end
 
   def icon

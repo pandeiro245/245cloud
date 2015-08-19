@@ -30,10 +30,11 @@ class ParsecomComment < ParseResource::Base
     comment2.user = User.find_by(parsecomhash: comment['user']['objectId'])
     rescue
     end
-
-    raise comment2.user.inspect
-
-    comment2.room = Room.find_by(parsecomhash: comment['room_id']) || Room.first
+    begin
+    comment2.room = Room.find_by(parsecomhash: comment['room_id'])
+    rescue
+      Room.first
+    end
     comment2.created_at =  comment['createdAt'].to_time
 
     comment2.save!

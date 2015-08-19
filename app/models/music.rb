@@ -1,6 +1,13 @@
-class Music < ActiveRecord::Base
+#class Music < ActiveRecord::Base
+class Music
+  include Mongoid::Document
+  include Mongoid::Timestamps
   has_many :workloads
   attr_accessor :total
+
+  field :title, type: String
+  field :icon, type: String
+  field :key, type: String
 
   def self.sc_client_id
     '2b9312964a1619d99082a76ad2d6d8c6'

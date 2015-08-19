@@ -1,4 +1,13 @@
-class Room < ActiveRecord::Base
+#class Room < ActiveRecord::Base
+class Room
+  include Mongoid::Document
+  include Mongoid::Timestamps
+
+  field :parsecomhash, type: String
+  field :title, type: String
+  field :image_on, type: String
+  field :image_off, type: String
+
   def self.create_default_room
     return Room.first unless Room.count.zero?
     return Room.create!(
