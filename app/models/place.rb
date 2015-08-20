@@ -51,8 +51,12 @@ class Place < ActiveRecord::Base
         27,
         1224
       ]
-
-
+      [6,
+        'フレイムス 中目黒店（FRAMES）',
+        'http://tabelog.com/tokyo/A1317/A131701/13025901/', nil, nil,
+        0,
+        0
+      ]
     ].each do |param|
       place = Place.find_or_create_by(
         id: param[0]

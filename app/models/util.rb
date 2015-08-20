@@ -1,4 +1,10 @@
 class Util
+  def self.sync_parsecom
+    ParsecomUser.sync(true)
+    ParsecomWorkload.sync(false)
+    ParsecomComment.sync(false)
+  end
+
   def self.reset!
     User.delete_all
     Workload.delete_all
