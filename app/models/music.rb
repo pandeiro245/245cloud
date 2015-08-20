@@ -5,9 +5,13 @@ class Music
   #has_many :workloads
   attr_accessor :total
 
+  scope :random, -> { skip(rand(self.count)) }
+
   field :title, type: String
   field :icon, type: String
   field :key, type: String
+
+  has_and_belongs_to_many :users
 
   def workloads(limit=20)
     Workload.where(music_id: self.id).limit(limit)
@@ -68,13 +72,13 @@ class Music
     URI.encode key.gsub(/^..:/, '')
   end
 
-  def users
-    MusicsUser.limit(100).order(
-      'total desc'
-    ).where(
-      music_id: self.id
-    ).map{|mu| user = mu.user; user.total = mu.total; user}
-  end
+  #def users
+  #  MusicsUser.limit(100).order(
+  #    'total desc'
+  #  ).where(
+  #    music_id: self.id
+  #  ).map{|mu| user = mu.user; user.total = mu.total; user}
+  #end
 
   def icon2
     icon ? icon : 'https://ruffnote.com/attachments/24162'

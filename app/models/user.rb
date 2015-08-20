@@ -7,6 +7,7 @@ class User
   field :email, type: String
 
   has_many :workloads
+  has_and_belongs_to_many :musics
   #has_many :comments, -> {order('created_at desc')}
   #attr_accessor :total
   
