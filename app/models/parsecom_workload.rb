@@ -15,7 +15,7 @@ class ParsecomWorkload < ParseResource::Base
     end
   end
 
-  def self.sync
+  def self.sync is_refresh=false
     #self.where(workload_id: nil).order('createdAt asc').each do |parse_workload|
     #self.where(workload_id: nil).order('createdAt desc').each do |parse_workload|
     
