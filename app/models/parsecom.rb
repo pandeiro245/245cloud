@@ -25,8 +25,11 @@ class Parsecom
   def import
     import_users
     import_workloads
+    Music.update_done_count
+
     import_rooms
     import_comments
+
     puts 'done'
   end
 
@@ -90,7 +93,7 @@ class Parsecom
       workload2.created_at =  workload['createdAt'].to_time
       workload2.number = workload['number']
       workload2.place_id = workload['place_id']
-      workload2.status = workload['is_done'] || 0
+      workload2.status = workload['is_done'] ? 1 : 0
       workload2.music_id = music.id if music
       workload2.save!
       puts "done: workload.id = #{workload2.id}"

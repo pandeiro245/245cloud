@@ -10,11 +10,23 @@ class Music
   field :title, type: String
   field :icon, type: String
   field :key, type: String
+  field :dones_count, type: Integer
 
   has_and_belongs_to_many :users
 
+  def self.update_done_count
+    self.all.each do |music|
+      music.dones_count = Workload.dones.where(music_id: music.id).count
+      music.save
+    end
+  end
+
   def workloads(limit=20)
     Workload.where(music_id: self.id).limit(limit)
+  end
+
+  def dones(limit=20)
+    workloads.dones
   end
 
   def self.sc_client_id
@@ -22,6 +34,7 @@ class Music
   end
 
   def fetch
+    return unless json_url
     uri = json_url
 
     uri = URI.parse(uri)
