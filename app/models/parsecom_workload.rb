@@ -63,6 +63,10 @@ class ParsecomWorkload < ParseResource::Base
         workload2.user = user
         rescue
         end
+        begin
+        workload2.user_icon = user.icon
+        rescue
+        end
         workload2.created_at =  workload['createdAt'].to_time
         #workload2.place_id = workload['place_id']
         #workload2.music_id = music.id if music

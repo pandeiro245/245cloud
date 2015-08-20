@@ -9,6 +9,15 @@ class WelcomeController < ApplicationController
     #@dc_per_user = @uc.zero? ? 0 : (@dc/@uc).to_i
   end
 
+  def recent
+    headers['Access-Control-Allow-Origin'] = '*'
+    render json: {
+      playings: Workload.playings,
+      chattings: Workload.chattings,
+      dones: Workload.dones,
+    }
+  end
+
   def logout
     session[:user_id] = nil
     redirect_to root_path
