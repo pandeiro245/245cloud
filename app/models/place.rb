@@ -50,7 +50,7 @@ class Place < ActiveRecord::Base
         'http://www.osaka-park.or.jp/rinkai/suminoe/main.html', nil, nil,
         27,
         1224
-      ]
+      ],
       [6,
         'フレイムス 中目黒店（FRAMES）',
         'http://tabelog.com/tokyo/A1317/A131701/13025901/', nil, nil,
