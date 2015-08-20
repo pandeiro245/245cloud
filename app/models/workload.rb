@@ -9,6 +9,7 @@ class Workload
   field :number, type: Integer
   #field :user_id, type: Integer
   field :user_hash, type: String
+  field :user_icon, type: String
   field :parsecomhash, type: String
   field :place_id, type: Integer
 

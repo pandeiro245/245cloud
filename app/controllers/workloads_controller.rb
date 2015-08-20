@@ -20,6 +20,10 @@ class WorkloadsController < ApplicationController
       workload.user = current_user
     rescue
     end
+    begin
+      workload.user_icon = current_user.icon
+    rescue
+    end
     workload.music = Rails.cache.fetch("music:#{params[:music_id]}") do
       Music.find(params[:music_id])
     end if params[:music_id]
