@@ -30,6 +30,7 @@ require 'capistrano/rails/assets'
 require 'capistrano/rails/migrations'
 require 'capistrano3/unicorn'
 require 'capistrano/pending'
+require 'whenever/capistrano'
 
 require 'dotenv'
 Dotenv.load('.env')
