@@ -32,41 +32,29 @@ class Parsecom
 
   def import_users
     users = JSON.parse(File.open(@user_path).read)['results']
-    users = users.sort!{|a, b| 
-      a['createdAt'].to_time <=> b['createdAt'].to_time
-    }
+    #users = users.sort!{|a, b| 
+    #  a['createdAt'].to_time <=> b['createdAt'].to_time
+    #}
     users.each do |u|
       facebook_id = u['authData']['facebook']['id']
       email = "#{facebook_id}@245cloud.com"
-      user = User.find_by(
+      user = User.find_or_create_by(
         email: email 
       )
-      unless user
-        user = User.create!(
-          email: email,
-          #password: Devise.friendly_token[0, 20]
-        )
-      end
       user.name = u['name']
       user.save!
-      auth = Auth.find_or_initialize_by(
-        provider: 'facebook',
-        uid: facebook_id
-      )
-      auth.user_id = user.id
-      auth.save!
-
       @user_hashs[u['objectId']] = user
     end
   end
 
   def import_workloads
     workloads = JSON.parse(File.open(@workload_path).read)['results']
-    workloads.select!{|w| w['createdAt'].to_time > @from} if @from
+    
+    #workloads.select!{|w| w['createdAt'].to_time > @from} if @from
 
-    puts 'start to sort Workload'
-    workloads = workloads.sort!{|a, b| a['createdAt'].to_time <=> b['createdAt'].to_time}
-    puts 'end to sort Workload'
+    #puts 'start to sort Workload'
+    #workloads = workloads.sort!{|a, b| a['createdAt'].to_time <=> b['createdAt'].to_time}
+    #puts 'end to sort Workload'
 
     workloads.each do |workload|
       id = nil
@@ -95,7 +83,7 @@ class Parsecom
       next unless workload['user']
       user = @user_hashs[workload['user']['objectId']]
 
-      workload2 = Workload.find_or_initialize_by(
+      workload2 = Workload.find_or_create_by(
         parsecomhash: workload['objectId']
       )
       unless workload2.id
@@ -109,7 +97,7 @@ class Parsecom
       puts "done: workload.id = #{workload2.id}"
     end
 
-    Music.update_total_counts
+    #Music.update_total_counts
   end
 
   def import_rooms

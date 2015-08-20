@@ -4,12 +4,17 @@
 .row
   %h2.status
     = ruffimage 24937
-  - Music.all.each do |music|
+  - Music.limit(96).random.each do |music|
     .workload.col-sm-2{style: "min-height: 180px;"}
       .inborder{:style => "border: 4px solid rgb(234, 219, 160); border-radius: 18px; margin: 10px 5px 3px; padding: 0px 0px 6px; color: rgb(178, 178, 178); background: rgb(255, 255, 255); width: 100%;"}
-        %h5=music.title || '無音'
-        %div
-          = link_to_if music, image_tag(music.icon, class: 'jacket'), "/musics/#{music.id}"
+        %h5
+          = #link_to '☆', '#'
+          = link_to music.title, music
+        %div{style: 'text-align:center;'}
+          = #link_to_if music, image_tag(music.icon, class: 'jacket'), "/musics/#{music.id}"
+          %div{style: "margin:3px auto; border-radius:8px; background: url(\"#{music.icon}\") no-repeat; width: 100px; height:100px; text-align: center; color:#fff; font-size: 20px; padding: 25px 0 0 25px;"}
+            = music.workloads.count
+
         %div{style: ''}
           - music.workloads(6).each do |workload|
             %span
