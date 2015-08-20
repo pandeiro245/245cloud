@@ -26,7 +26,7 @@ class Music
   end
 
   def dones(limit=20)
-    workloads.dones
+    workloads(limit).dones
   end
 
   def self.sc_client_id
