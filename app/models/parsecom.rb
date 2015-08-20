@@ -25,8 +25,11 @@ class Parsecom
   def import
     import_users
     import_workloads
+    Music.update_done_count
+
     import_rooms
     import_comments
+
     puts 'done'
   end
 
