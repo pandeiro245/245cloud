@@ -3,6 +3,8 @@ class Util
     ParsecomUser.sync(true)
     ParsecomWorkload.sync(false)
     ParsecomComment.sync(false)
+
+    Music.update_rankings
   end
 
   def self.reset!
@@ -17,5 +19,7 @@ class Util
     ParsecomRoom.sync
     ParsecomComment.sync
     ParsecomWorkload.sync
+
+    Music.update_rankings
   end
 end
