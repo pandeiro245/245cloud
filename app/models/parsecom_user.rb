@@ -18,6 +18,7 @@ class ParsecomUser < ParseUser
   end
 
   def self.sync refresh = false
+    r = Redis.new
     if refresh
       parse_users = self.order('createdAt asc').limit(999999)
     else
@@ -35,6 +36,9 @@ class ParsecomUser < ParseUser
       user.email = email
       user.parsecomhash = u['objectId']
       user.save!
+      
+      r.set("user_icon_#{user.id.to_s}", user.icon)
+      
 
       #parse_user.user_id = user.id
       #parse_user.save

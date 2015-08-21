@@ -1,7 +1,8 @@
 class WelcomeController < ApplicationController
   def index
     #raise cookies['timecrowd'].inspect
-    @dones = Workload.dones
+    #@dones = Workload.dones
+    @r = Redis.new
     @musics_users = MusicsUser.limit(3).order('total desc')
     render layout: 'top'
     if current_user && current_user.playing?
@@ -12,10 +13,10 @@ class WelcomeController < ApplicationController
     #@dc_per_user = @uc.zero? ? 0 : (@dc/@uc).to_i
   end
 
-<<<<<<< HEAD
   def pitch
     render layout: 'top'
-=======
+  end
+
   def recent
     headers['Access-Control-Allow-Origin'] = '*'
     render json: {
@@ -23,7 +24,6 @@ class WelcomeController < ApplicationController
       chattings: Workload.chattings,
       dones: Workload.dones,
     }
->>>>>>> /recent
   end
 
   def logout

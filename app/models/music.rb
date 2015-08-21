@@ -2,6 +2,10 @@
 class Music
   include Mongoid::Document
   include Mongoid::Timestamps
+  include Redis::Objects
+
+  sorted_set :rankings
+
   #has_many :workloads
   attr_accessor :total
 
@@ -11,14 +15,23 @@ class Music
   field :icon, type: String
   field :key, type: String
   field :dones_count, type: Integer
+  field :user_dones_counts, type: Array
+  # user_icon, dones_count, user_id
 
   has_and_belongs_to_many :users
 
-  def self.update_done_count
+  def self.update_rankings
     self.all.each do |music|
-      music.dones_count = Workload.dones.where(music_id: music.id).count
-      music.save
+      music.update_rankings
     end
+  end
+
+  def update_rankings
+    self.workloads.each do |w|
+      self.rankings[w.user_id] ||= 0
+      self.rankings[w.user_id] += 1
+    end
+    self.save
   end
 
   def workloads(limit=20)
