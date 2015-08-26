@@ -24,6 +24,6 @@ else
   else if location.href.match(/nishikocloud-staging.herokuapp.com/)
     env.facebook_app_id = '366798926855430'
 
-env.is_kakuhen = true
+env.is_kakuhen = false
 
 @env = env
