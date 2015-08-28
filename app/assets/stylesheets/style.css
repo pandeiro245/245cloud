@@ -168,3 +168,6 @@ input#track {
   width: 150px;
 }
 
+table.comments .icon{
+  width: 25px;
+}
