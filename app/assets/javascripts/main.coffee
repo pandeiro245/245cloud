@@ -989,7 +989,7 @@ initService = ($dom, url) ->
     <td>
     <a class='facebook_#{user.id}' target='_blank'>
     <img class='icon icon_#{user.id}' src='#{userIdToIconUrl(c.user.objectId)}' />
-    <div class='facebook_name_#{user.id}'></div>
+    <!--<div class='facebook_name_#{user.id}'></div>-->
     </a>
     <td>
     <td>#{Util.parseHttp(c.body)}</td>
