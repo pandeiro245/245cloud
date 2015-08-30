@@ -8,7 +8,6 @@ class @Youtube
       id = location.hash.split(':')[1]
       Youtube.fetch(id, (data) ->
         track = data['items'][0]['snippet']
-        window.hoge = data
         artwork_url = artworkUrlWithNoimage(track['thumbnails']['default']['url'])
         txt = "<h5>#{track['title']}</h5>"
         $('#fixedstart').append(txt)
@@ -84,7 +83,6 @@ class @Youtube
         console.log resp.error.message
       else
         tracks = resp['items']
-        window.hoge = tracks
         if tracks[0]
           for data in tracks
             id = data['id']['videoId']

@@ -11,7 +11,7 @@
     %script{:src => "//cdn.mlkcca.com/v2.0.0/milkcocoa.js"}
     %script{:src => "//www.parsecdn.com/js/parse-1.2.18.min.js"}
     
-    = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true
+    = stylesheet_link_tag    'application', media: 'all'
     = javascript_include_tag 'application'
     = csrf_meta_tags
     %script{:src => "https://apis.google.com/js/client.js?onload=onJSClientLoad"}
@@ -24,7 +24,6 @@
     %link{:href => "/icon.png", :rel => "apple-touch-icon-precomposed"}/
     %meta{:content => "https://ruffnote.com/attachments/24010", :property => "og:image"}/
   %body
-    .hoge
     .socialbutton
       %a.twitter-share-button{"data-text" => "音楽を聞きながら24分集中して5分休む「ニシコクラウド」", "data-url" => "http://245cloud.com", :href => "https://twitter.com/share"} Tweet
       :javascript
