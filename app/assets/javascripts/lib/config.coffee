@@ -25,5 +25,8 @@ else
     env.facebook_app_id = '366798926855430'
 
 env.is_kakuhen = false
+env.is_doing = false
+env.is_done = false
+@nomusic_url = 'https://ruffnote.com/attachments/24985'
 
 @env = env

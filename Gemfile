@@ -38,3 +38,5 @@ gem 'jp_prefecture'
 gem 'parse_resource', git: 'git@github.com:pandeiro245/parse_resource.git', branch: 'issue-1'
 
 gem 'comfortable_mexican_sofa', '~> 1.12.0'
+
+gem 'mithril_rails'

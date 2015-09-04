@@ -1,15 +1,33 @@
-@env.is_doing = false
-@env.is_done = false
+User = list: ->
+  ParseMithril.all('users')
 
-@nomusic_url = 'https://ruffnote.com/attachments/24985'
+Demo =
+  controller: ->
+    users = User.list()
+    {
+      users: users
+      rotate: ->
+        users().push users().shift()
+        return
+    }
+  view: (ctrl) ->
+    m 'div', [
+      ctrl.users().map((user) ->
+        m 'a', { href: user.name }, user.name
+      )
+      m('button', { onclick: ctrl.rotate }, 'Rotate links')
+    ]
 
 $ ->
+  m.mount $('#example')[0], Demo
+
   ParseParse.all("User", (users) ->
     for user in users
       img = "https://graph.facebook.com/#{user.get('facebook_id_str')}/picture?height=40&width=40"
       localStorage["icon_#{user.id}"] = img if img
       $(".icon_#{user.id}").attr('src', img)
   )
+
   ParseParse.addAccesslog()
   Util.scaffolds([
     ['header', {is_row: false}]

@@ -45,7 +45,7 @@ class @ParseParse
         console.log error
     })
 
-  @all: (model_name, callback, params={}) ->
+  @all: (model_name, callback) ->
     Model = Parse.Object.extend(model_name)
     query = new Parse.Query(Model)
     query.limit(999999)
@@ -54,8 +54,6 @@ class @ParseParse
       success: (data) ->
         callback(data)
     })
-
-  @find_or_create: (model_name, key_params, params, callback) ->
 
   @create: (model_name, params, callback=null) ->
     Model = Parse.Object.extend(model_name)
