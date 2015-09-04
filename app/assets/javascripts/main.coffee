@@ -6,7 +6,7 @@
 $ ->
   ParseParse.all("User", (users) ->
     for user in users
-      img = user.get('icon_url')
+      img = "https://graph.facebook.com/#{user.get('facebook_id_str')}/picture?height=40&width=40"
       localStorage["icon_#{user.id}"] = img if img
       $(".icon_#{user.id}").attr('src', img)
   )
@@ -1003,7 +1003,8 @@ initService = ($dom, url) ->
       else
         $comments.append(html)
       ParseParse.fetch("user", comment, (ent, user) ->
-        img = user.get('icon_url') || user.get('icon')._url
+        img = "https://graph.facebook.com/#{user.get('facebook_id_str')}/picture?height=40&width=40"
+
         $(".icon_#{user.id}").attr('src', img)
         if user.get('facebook_id_str')
           href = "https://facebook.com/#{user.get('facebook_id_str')}"
