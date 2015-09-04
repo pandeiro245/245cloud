@@ -18,9 +18,39 @@ Demo =
       m('button', { onclick: ctrl.rotate }, 'Rotate links')
     ]
 
-$ ->
-  m.mount $('#example')[0], Demo
+Workload = dones: ->
+  ParseMithril.all('dones')
 
+Dones =
+  controller: ->
+    workloads = Workload.dones()
+    {
+      workloads: workloads
+    }
+  view: (ctrl) ->
+    m 'h2.status', [
+      m 'img', src: 'https://ruffnote.com/attachments/24937'
+    ]
+    ctrl.workloads().map((workload) ->
+      m 'div.col-sm-2.workload', [
+        m '.inborder', [
+          m 'h5', workload.title || '無音'
+          m 'span', [
+            m 'img.jacket', src: jacketUrl(workload)
+          ]
+          m 'span', [
+            m 'img.icon img-thumbnail', src: userIdToIconUrl(workload.user.objectId)
+          ]
+          m '.disp', "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.number}回目）"
+        ]
+      ]
+    )
+
+jacketUrl = (workload) ->
+  return'https://ruffnote.com/attachments/24981' unless workload.title
+  workload.artwork_url || @nomusic_url
+
+$ ->
   ParseParse.all("User", (users) ->
     for user in users
       img = "https://graph.facebook.com/#{user.get('facebook_id_str')}/picture?height=40&width=40"
@@ -34,18 +64,16 @@ $ ->
     'news'
     ['otukare', {is_hide: true}]
     'ad'
-    'review'
     'contents'
     'start_buttons'
     'doing_title'
     'doing'
     'chatting_title'
     'chatting'
+    'done_title'
     'done'
     'you_title'
     'you'
-    'calendar_title'
-    'calendar'
     'search_title'
     'search'
     'ranking_title'
@@ -61,21 +89,14 @@ $ ->
     'select_rooms'
     'rooms_title'
     'rooms'
-    'kpi_title'
-    'kpi3_title'
-    'kpi3'
-    'kpi2_title'
-    'kpi2'
-    'kpi1_title'
-    'kpi1'
     'whatis_title'
     ['whatis', {is_row: false}]
-    #'mlkcca_title'
-    #'mlkcca'
     'footer'
-    ['otukare_services', {is_hide: true}]
     'hatopoppo'
   ])
+
+  #m.mount $('#example')[0], Demo
+
   Util.realtime()
   ruffnote(13475, 'header')
   ruffnote(18004, 'news')
@@ -93,10 +114,6 @@ $ ->
 
   $('#selectRoomButton').hide()
 
-  for service in window.services
-    if location.href.match("#{service[0]}=")
-      initService($('#otukare_services'), service[1])
-
   ruffnote(17661, 'music_ranking')
 
   initSearch()
@@ -109,27 +126,14 @@ $ ->
   initDone()
   initRanking()
   initFixedStart()
-  #initKpi()
-  #ParseBatch.repeat()
   initHatopoppo()
-  initWhatis()
+  window.initWhatis()
   initYou()
   
   if user = Parse.User.current()
     ParseParse.find('User', user.id, (user)->
       window.current_user = user
-      #initCalendar()
     )
-
-initCalendar = () ->
-  $("#calendar_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24936' /></h2>")
-  $('#calendar').html("""
-<span onClick=\"Util.calendar('previous')\"><B>&lt;&lt;</B></span>
-<span onClick=\"Util.calendar('thismonth')\" class='thismonth'></span>
-<span onClick=\"Util.calendar('next')\"><B>&gt;&gt;</B></span>
-<DIV id='carenda'></DIV>
-  """)
-  Util.calendar('thismonth')
 
 init8tracks = () ->
   ruffnote(17763, '8tracks_title')
@@ -247,15 +251,6 @@ initStart = () ->
     $nomusic.append(Util.tag('img', 'https://ruffnote.com/attachments/24981', {class: 'jacket'}))
     #Util.addButton('start', $nomusic, text, start_nomusic, tooltip)
     Util.addButton('start', $nomusic, text, start_nomusic)
-
-    if location.href.match('review=')
-      attrs = {
-        id: 'input_review_before'
-        style: 'margin:0 auto; width: 100%;'
-      }
-      $before = Util.tag('input', "今から24分間集中するにあたって一言（公開されます） 例：24分で企画書のたたき台を作る！", attrs)
-      $review = Util.tag('div', $before, {style: 'text-align: center;'})
-      $('#contents').append($review)
 
   else
     text = 'facebookログイン'
@@ -423,88 +418,8 @@ initDoing = () ->
 
 initDone = () ->
   console.log 'initDone'
-  cond = [
-    ["is_done", true]
-    ["createdAt", '<', Util.minAgo(@env.pomotime + @env.chattime)]
-  ]
-  ParseParse.where("Workload", cond, (workloads) ->
-    return unless workloads.length > 0
-    $("#done").append("<h2 class='status'><img src='https://ruffnote.com/attachments/24937' /></h2>")
-    for workload in workloads
-      continue unless workload.attributes.user
-      disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.attributes.number}回目）"
-      @addWorkload("#done", workload, disp)
-  , null, 24 * 4)
- 
-initKpi = () ->
-  ruffnote(17548, 'kpi_title')
-  $('#kpi3').css('height', '300px')
-  $('#kpi2').css('height', '300px')
-  $('#kpi1').css('height', '300px')
-  $('#kpi3_title').html('<h2>直近50回分</h2>')
-  $('#kpi2_title').html('<h2>直近300回分</h2>')
-  $('#kpi1_title').html("<h2 style='margin-top: 30px;'>直近1000回分</h2>")
-
-  cond = [
-    ['is_done', true]
-  ]
-  ParseParse.where('Workload', cond, (workloads) ->
-    chart1 = {}
-    chart_viewer1 = {}
-    chart2 = {}
-    chart_viewer2 = {}
-    chart3 = {}
-    chart_viewer3 = {}
-    for workload, i in workloads
-      continue unless workload.get('synchro_start')
-      key_start = workload.createdAt
-      val_start = workload.get('synchro_start')
-      key_end = Util.minAgo(-1 * @env.pomotime, workload.createdAt)
-      val_end = workload.get('synchro_end')
-
-      # kPI1: 1000
-      if workload.get('user') && Parse.User.current() && workload.get('user').id == Parse.User.current().id
-        chart_viewer1[key_start] = val_start
-        chart_viewer1[key_end] = val_end
-      chart1[key_start] = val_start
-      chart1[key_end] = val_end
-
-      continue if i > 300
-
-      # KPI2: 300
-      if workload.get('user') && Parse.User.current() && workload.get('user').id == Parse.User.current().id
-        chart_viewer2[key_start] = val_start
-        chart_viewer2[key_end] = val_end
-      chart2[key_start] = val_start
-      chart2[key_end] = val_end
-
-      continue if i > 50
-
-      # KPI3: 50
-      if workload.get('user') && Parse.User.current() && workload.get('user').id == Parse.User.current().id
-        chart_viewer3[key_start] = val_start
-        chart_viewer3[key_end] = val_end
-      chart3[key_start] = val_start
-      chart3[key_end] = val_end
- 
-    data1 = [
-      {name: '全体', data: chart1},
-      {name: 'あなた', data: chart_viewer1}
-    ]
-    new Chartkick.LineChart("kpi1", data1)
- 
-    data2 = [
-      {name: '全体', data: chart2},
-      {name: 'あなた', data: chart_viewer2}
-    ]
-    new Chartkick.LineChart("kpi2", data2)
-   
-    data3 = [
-      {name: '全体', data: chart3},
-      {name: 'あなた', data: chart_viewer3}
-    ]
-    new Chartkick.LineChart("kpi3", data3)
-  , null, 1000)
+  ruffnote(17769, 'done_title')
+  m.mount $('#done')[0], Dones
 
 login = () ->
   console.log 'login'
@@ -535,15 +450,6 @@ window.start_nomusic = () ->
 
 createWorkload = (params = {}, callback) ->
   params.host = location.host
-
-  if location.href.match('review=')
-    if location.href.match('sparta=')
-      review = prompt("今から24分間集中するにあたって一言（公開されます）", '24分間頑張るぞ！')
-    else
-      review = $('#input_review_before').val()
-
-    if review.length
-      params['review_before'] = review
 
   ParseParse.create("Workload", params, (workload) ->
     @workload = workload
@@ -677,7 +583,6 @@ complete = () ->
   Util.countDown(@env.chattime*60*1000, 'finish')
   $('#header').hide()
   $('#otukare').fadeIn()
-  $("#otukare_services").fadeIn()
   $("#playing").fadeOut()
   $("#search").fadeOut()
   $("#playing").html('') # for stopping
@@ -741,52 +646,7 @@ complete = () ->
   $complete = $('#complete')
   $complete.html('')
 
-  initReview() if location.href.match('review=')
   initComments()
-
-window.initReview = () ->
-  attrs = {
-    id: 'input_review_point'
-    style: 'margin:0 auto;'
-  }
-  titles = {
-    1: '全然集中できなかった'
-    2: '集中できなかった'
-    3: '普通に集中できた'
-    4: '結構集中できた'
-    5: 'かなり集中できた'
-  }
-  options = '<option value="">自己評価（1〜5）を選択してください</option>'
-  for i in [1..5]
-    options += "<option value=\"#{i}\">#{titles[i]}</option>"
-  $point = Util.tag('select', options, attrs)
-  $review = Util.tag('div', $point, {style: 'text-align: center;'})
-  $('#review').append($review)
-
-  attrs = {
-    id: 'input_review_after'
-    style: 'margin:0 auto; width: 100%;'
-  }
-  $after = Util.tag('input', '終わってからの感想（公開されます） 例：あんまり集中できなかった', attrs)
-  $review = Util.tag('div', $after, {style: 'text-align: center;'})
-  $('#review').append($review)
-
-  attrs = {
-    id: 'input_review_submit'
-    style: 'margin:0 auto;'
-    type: 'submit'
-    value: 'レビューを保存'
-  }
-  $submit = Util.tag('input', null, attrs)
-  $review = Util.tag('div', $submit, {style: 'text-align: center;'})
-  $('#review').append($review)
-
-  $(document).on('click', '#input_review_submit', () ->
-    workload.set('point', parseInt($('#input_review_point').val()))
-    workload.set('review_after', $('#input_review_after').val())
-    workload.save()
-    alert 'レビューを保存しました'
-  )
 
 window.initComments = () ->
   initRoom()
@@ -886,22 +746,6 @@ initRanking = () ->
     w = workload
     user_id = w.user.objectId
 
-  review = ""
-  stars = ""
-
-  if location.href.match('review=')
-    if w.review_before
-      review += "<div class=\"review\">【前】#{w.review_before}</div>"
-    if w.review_after
-      review += "<div class=\"review\">【後】#{w.review_after}</div>"
-    
-    if w.point
-      if w.point < 5
-        for i in [1..(5-w.point)]
-          stars += "☆"
-      for i in [1..w.point]
-        stars += "★"
-
   if w.title
     href = '#'
     if w.sc_id
@@ -924,21 +768,12 @@ initRanking = () ->
   user_img = "<img class='icon icon_#{user_id} img-thumbnail' src='#{userIdToIconUrl(user_id)}' />"
 
   $item = Util.tag('div', null, {class: 'inborder'})
-  $item.css("border", '4px solid #eadba0')
-  $item.css("border-radius", '18px')
-  $item.css("background", '#fff')
-  $item.css("margin", '10px 5px 3px')
-  $item.css("padding", '0 0 6px')
-  $item.css("color", '#b2b2b2')
-
   $item.html("""
    <h5>#{title} </h5>
    <span>#{jacket}</span>
    <span>#{user_img}</span>
    <div class='disp'>#{disp}</div>
    <div>#{fixed}</div>
-   <div>#{stars}</div>
-   <div>#{review}</div>
   """)
 
   unless dom == '#done'
@@ -1129,57 +964,9 @@ start_unless_doing = ()->
 artworkUrlWithNoimage = (artwork_url) ->
   artwork_url || @nomusic_url
 
-initWhatis = () ->
-  $("#whatis_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24942' /></h2>")
-  now = new Date()
-  month = now.getMonth() + 1
-  day = now.getDate()
-  youbi = now.getDay()
-  numbers = {}
-  for i in [1..31]
-    i2 = 24371 + i
-    numbers[i] = "https://ruffnote.com/attachments/#{i2}"
-  youbis = {}
-  for i in [1..5]
-    i2 = 24358 + i
-    youbis[i] = "https://ruffnote.com/attachments/#{i2}"
-  youbis[0] = "https://ruffnote.com/attachments/24465" #日曜日
-  youbis[6] = "https://ruffnote.com/attachments/24464" #土曜日
-
-  $kokuban = $('<div></div>')
-  $kokuban.css('position', 'relative')
-  $kokuban.css('background', 'url(https://ruffnote.com/attachments/24501)')
-  $kokuban.css('width', '735px')
-  $kokuban.css('height', '483px')
-  $kokuban.css('margin', '0 auto')
-
-  $month = $('<img />')
-  $month.attr('src', numbers[month])
-  $month.css('position', 'absolute')
-  $month.css('right', '69px')
-  $month.css('top', '36px')
-
-  $day = $('<img />')
-  $day.attr('src', numbers[day])
-  $day.css('position', 'absolute')
-  $day.css('right', '70px')
-  $day.css('top', '88px')
-
-  $youbi = $('<img />')
-  $youbi.attr('src', youbis[youbi])
-  $youbi.css('position', 'absolute')
-  $youbi.css('right', '70px')
-  $youbi.css('top', '138px')
-
-  $kokuban.append($month)
-  $kokuban.append($day)
-  $kokuban.append($youbi)
-  $('#whatis').css('text-align', 'center')
-  $('#whatis').html($kokuban)
-
 initYou = () ->
   return unless Parse.User.current()
-  ruffnote(17769, 'you_title')
+  ruffnote(22876, 'you_title')
   cond = [
     ["user", Parse.User.current()]
     ["is_done", true]
@@ -1191,5 +978,4 @@ initYou = () ->
       disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.attributes.number}回目）"
       addWorkload("#you", workload, disp)
   null, 24)
-
 

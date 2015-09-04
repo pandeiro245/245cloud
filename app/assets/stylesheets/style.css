@@ -24,6 +24,10 @@ h2.status img {
   margin: 0 auto;
 }
 
+.workload{
+  min-height: 180px;
+}
+
 #contents, #search{
   text-align: center;
 }
@@ -117,6 +121,15 @@ input#track {
   border: solid 3px #fff;
   border-radius: 7px;
   margin: 2px;
+}
+
+.inborder{
+  border:4px solid #eadba0;
+  border-radius:18px;
+  background:#fff;
+  margin:10px 5px 3px;
+  padding:0 0 6px;
+  color:'#b2b2b2';
 }
 
 .inborder .fixed_start img {

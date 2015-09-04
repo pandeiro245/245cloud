@@ -10,6 +10,8 @@ Rails.application.routes.draw do
   match '/auth/failure' => 'sessions#failure', via: [:get, :post]
   get '/logout' => 'welcome#logout' #TODO deleteメソッドでログアウトさせる
 
+  get '/dones' => 'workloads#dones'
+
   get '/musics/random' => 'musics#random'
   get '/musics/:id' => 'musics#show'
   root 'welcome#index'
