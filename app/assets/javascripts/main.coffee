@@ -11,7 +11,13 @@ Workload = {
   you: ->
     m.request
       url: "/dones.json?user_id=#{Parse.User.current().id}"
-  }
+}
+
+User = {
+  find: (id) ->
+    m.request
+      url: "/users/#{id}"
+}
 
 DoingsController =
   controller: ->
@@ -20,7 +26,7 @@ DoingsController =
       workloads: workloads
     }
   view: (ctrl) ->
-    WorkloadsView(ctrl, true)
+    WorkloadsView(ctrl, 'doing')
 
 ChattingsController =
   controller: ->
@@ -29,7 +35,7 @@ ChattingsController =
       workloads: workloads
     }
   view: (ctrl) ->
-    WorkloadsView(ctrl, true)
+    WorkloadsView(ctrl, 'chatting')
 
 DonesController =
   controller: ->
@@ -51,19 +57,25 @@ YouController =
   view: (ctrl) ->
     WorkloadsView(ctrl)
 
-WorkloadsView = (ctrl, isWorking=false) ->
+WorkloadsView = (ctrl, status=null) ->
   m 'div', [
     ctrl.workloads().map((workload) ->
-      WorkloadView(workload, isWorking)
-    )
+      WorkloadView(workload, status)
+    ),
+    window.renderWorkloads('#doing')
+    window.renderWorkloads('#chatting')
   ]
 
-WorkloadView = (workload, isWorking=false) ->
+WorkloadView = (workload, status=null) ->
   img_id = if workload.title then '24921' else '24926'
 
-  if isWorking
+  if status == 'doing'
     t = new Date(workload.createdAt)
     end_time = @env.pomotime*60*1000 + t.getTime()
+    disp = m.trust("#{Util.hourMin(workload.createdAt, '開始')}（あと<span class='realtime' data-countdown='#{end_time}'></span>）")
+  else if status == 'chatting'
+    t = new Date(workload.createdAt)
+    end_time = @env.chattime*60*1000 + t.getTime()
     disp = m.trust("#{Util.hourMin(workload.createdAt, '開始')}（あと<span class='realtime' data-countdown='#{end_time}'></span>）")
   else
     disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.number}回目）"
@@ -87,7 +99,14 @@ WorkloadView = (workload, isWorking=false) ->
   ]
 
 iconUrl = (instance) ->
-  "https://graph.facebook.com/#{instance.user.facebook_id_str}/picture?height=40&width=40"
+  #"https://graph.facebook.com/#{instance.user.facebook_id_str}/picture?height=40&width=40"
+  
+  #return instance.icon_url if instance.icon_url
+  #user = User.find(instance.user.objectId)
+  #console.log user
+  #"https://graph.facebook.com/#{user.facebook_id_str}/picture?height=40&width=40"
+  
+  return instance.icon_url
 
 jacketUrl = (workload) ->
   return'https://ruffnote.com/attachments/24981' unless workload.title
@@ -414,14 +433,13 @@ initChatting = () ->
   #)
 
   m.mount $('#chatting')[0], ChattingsController
+  window.renderWorkloads('#chatting')
 
 initDoing = () ->
   console.log 'initDoing'
   ruffnote(22877, 'doing_title')
-  $("#doing_title").hide()
   m.mount $('#doing')[0], DoingsController
-  if $('#doing').length
-    $("#doing_title").show()
+  window.renderWorkloads('#doing')
 
   #cond = [
   #  ["is_done", null]
@@ -953,16 +971,22 @@ getOffset = (all_count) ->
   }
   data[all_count]
 
-renderWorkloads = (dom) ->
+window.renderWorkloads = (dom) ->
   console.log 'renderWorkloads'
   $dom = $("#{dom}")
   $items = $("#{dom} .workload")
+
+  unless $items.length
+    $dom = $("#{dom}_title").hide()
+    return
+
   $first = $("#{dom} .workload:first")
   $items.removeClass('col-sm-offset-2')
   $items.removeClass('col-sm-offset-3')
   $items.removeClass('col-sm-offset-4')
   $items.removeClass('col-sm-offset-5')
   $first.addClass("col-sm-offset-#{getOffset($items.length)}")
+  $dom = $("#{dom}_title").fadeIn()
 
 artworkUrlWithNoimage = (artwork_url) ->
   artwork_url || @nomusic_url

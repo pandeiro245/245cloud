@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :users, only: [:show]
   match '/auth/:provider/callback' => 'sessions#callback', via: [:get, :post]
   match '/auth/failure' => 'sessions#failure', via: [:get, :post]
   get '/logout' => 'welcome#logout' #TODO deleteメソッドでログアウトさせる

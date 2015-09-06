@@ -36,7 +36,7 @@ class Workload
       query += " -G"
       query += q
       query += " --data-urlencode 'order=-createdAt'"
-      query += " --data-urlencode 'include=user'"
+      #query += " --data-urlencode 'include=user'"
       query += " https://api.parse.com/1/classes/Workload"
       res = `#{query}`
       res = JSON.parse(res)['results']
