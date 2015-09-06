@@ -61,6 +61,7 @@ class @ParseParse
     for key of params
       val = params[key]
       model.set(key, val)
+    model.set('icon_url', "https://graph.facebook.com/#{Parse.User.current().get('facebook_id_str')}/picture?height=40&width=40") if Parse.User.current()
     if Parse.User.current()
       model.set('user', Parse.User.current())
       modelACL = new Parse.ACL(Parse.User.current())
