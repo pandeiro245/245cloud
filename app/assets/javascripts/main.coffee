@@ -1,63 +1,99 @@
-User = list: ->
-  ParseMithril.all('users')
+Workload = {
+  doings: ->
+    m.request
+      url: "/doings.json"
+  chattings: ->
+    m.request
+      url: "/chattings.json"
+  dones: ->
+    m.request
+      url: "/dones.json"
+  you: ->
+    m.request
+      url: "/dones.json?user_id=#{Parse.User.current().id}"
+  }
 
-Demo =
+DoingsController =
   controller: ->
-    users = User.list()
-    {
-      users: users
-      rotate: ->
-        users().push users().shift()
-        return
-    }
-  view: (ctrl) ->
-    m 'div', [
-      ctrl.users().map((user) ->
-        m 'a', { href: user.name }, user.name
-      )
-      m('button', { onclick: ctrl.rotate }, 'Rotate links')
-    ]
-
-Workload = dones: ->
-  ParseMithril.all('dones')
-
-Dones =
-  controller: ->
-    workloads = Workload.dones()
+    workloads = Workload.doings()
     {
       workloads: workloads
     }
   view: (ctrl) ->
-    m 'h2.status', [
-      m 'img', src: 'https://ruffnote.com/attachments/24937'
-    ]
+    WorkloadsView(ctrl, true)
+
+ChattingsController =
+  controller: ->
+    workloads = Workload.chattings()
+    {
+      workloads: workloads
+    }
+  view: (ctrl) ->
+    WorkloadsView(ctrl, true)
+
+DonesController =
+  controller: ->
+    workloads = Workload.dones()
+    {
+      workloads: workloads
+      reverse: ->
+        workloads().reverse()
+    }
+  view: (ctrl) ->
+    WorkloadsView(ctrl)
+
+YouController =
+  controller: ->
+    workloads = Workload.you()
+    {
+      workloads: workloads
+    }
+  view: (ctrl) ->
+    WorkloadsView(ctrl)
+
+WorkloadsView = (ctrl, isWorking=false) ->
+  m 'div', [
     ctrl.workloads().map((workload) ->
-      m 'div.col-sm-2.workload', [
-        m '.inborder', [
-          m 'h5', workload.title || '無音'
-          m 'span', [
-            m 'img.jacket', src: jacketUrl(workload)
-          ]
-          m 'span', [
-            m 'img.icon img-thumbnail', src: userIdToIconUrl(workload.user.objectId)
-          ]
-          m '.disp', "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.number}回目）"
+      WorkloadView(workload, isWorking)
+    )
+  ]
+
+WorkloadView = (workload, isWorking=false) ->
+  img_id = if workload.title then '24921' else '24926'
+
+  if isWorking
+    t = new Date(workload.createdAt)
+    end_time = @env.pomotime*60*1000 + t.getTime()
+    disp = m.trust("#{Util.hourMin(workload.createdAt, '開始')}（あと<span class='realtime' data-countdown='#{end_time}'></span>）")
+  else
+    disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.number}回目）"
+
+  m 'div.col-sm-2.workload', [
+    m '.inborder', [
+      m 'h5', workload.title || '無音'
+      m 'span', [
+        m 'img.jacket', src: jacketUrl(workload)
+      ]
+      m 'span', [
+        m 'img.icon.img-thumbnail', src: iconUrl(workload)
+      ]
+      m '.disp', disp
+      m 'div', [
+        m 'a.fixed_start', {href: w2href(workload), onclick: fixedStart}, [
+          m 'img', src: "https://ruffnote.com/attachments/#{img_id}"
         ]
       ]
-    )
+    ]
+  ]
+
+iconUrl = (instance) ->
+  "https://graph.facebook.com/#{instance.user.facebook_id_str}/picture?height=40&width=40"
 
 jacketUrl = (workload) ->
   return'https://ruffnote.com/attachments/24981' unless workload.title
   workload.artwork_url || @nomusic_url
 
 $ ->
-  ParseParse.all("User", (users) ->
-    for user in users
-      img = "https://graph.facebook.com/#{user.get('facebook_id_str')}/picture?height=40&width=40"
-      localStorage["icon_#{user.id}"] = img if img
-      $(".icon_#{user.id}").attr('src', img)
-  )
-
   ParseParse.addAccesslog()
   Util.scaffolds([
     ['header', {is_row: false}]
@@ -95,8 +131,6 @@ $ ->
     'hatopoppo'
   ])
 
-  #m.mount $('#example')[0], Demo
-
   Util.realtime()
   ruffnote(13475, 'header')
   ruffnote(18004, 'news')
@@ -104,13 +138,6 @@ $ ->
   ruffnote(17758, 'search_title')
   ruffnote(17762, 'ranking_title')
   ruffnote(17498, 'otukare')
-
-  window.services = [
-    ['ingress', 'https://www.ingress.com/intel']
-    ['togetter', 'http://togetter.com/']
-    ['newspicks', 'https://newspicks.com/top-news']
-    ['itoicom', 'http://www.1101.com/home.html']
-  ]
 
   $('#selectRoomButton').hide()
 
@@ -130,11 +157,6 @@ $ ->
   window.initWhatis()
   initYou()
   
-  if user = Parse.User.current()
-    ParseParse.find('User', user.id, (user)->
-      window.current_user = user
-    )
-
 init8tracks = () ->
   ruffnote(17763, '8tracks_title')
   EightTracks.attrip($('#8tracks'))
@@ -148,9 +170,6 @@ initNaotake = () ->
   Mixcloud.search('/naotake/', $('#naotake'))
 
 initStart = () ->
-  if location.href.match(/sparta/)
-    Util.countDown(1*60*1000, start_unless_doing)
-
   text = "24分やり直しでも大丈夫ですか？"
   Util.beforeunload(text, 'env.is_doing')
   
@@ -375,51 +394,56 @@ initSearch = () ->
 
 initChatting = () ->
   console.log 'initChatting'
-  $("#chatting_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24938' /></h2>")
+  ruffnote(22878, 'chatting_title')
 
-  cond = [
-    ["is_done", true]
-    ["createdAt", '>', Util.minAgo(@env.pomotime + @env.chattime)]
-    ["createdAt", '<', Util.minAgo(@env.pomotime)]
-  ]
-  $("#chatting_title").hide()
-  ParseParse.where("Workload", cond, (workloads) ->
-    return unless workloads.length > 0
-    $("#chatting_title").show()
-    for workload, i in workloads
-      continue unless workload.attributes.user
+  #cond = [
+  #  ["is_done", true]
+  #  ["createdAt", '>', Util.minAgo(@env.pomotime + @env.chattime)]
+  #  ["createdAt", '<', Util.minAgo(@env.pomotime)]
+  #]
+  #$("#chatting_title").hide()
+  #ParseParse.where("Workload", cond, (workloads) ->
+  #  return unless workloads.length > 0
+  #  $("#chatting_title").show()
+  #  for workload, i in workloads
+  #    continue unless workload.attributes.user
 
-      @addChatting(workload)
-    renderWorkloads('#chatting')
-    renderWorkloads('#doing')
-  )
+  #    @addChatting(workload)
+  #  renderWorkloads('#chatting')
+  #  renderWorkloads('#doing')
+  #)
+
+  m.mount $('#chatting')[0], ChattingsController
 
 initDoing = () ->
   console.log 'initDoing'
-  $("#doing_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24939' /></h2>")
+  ruffnote(22877, 'doing_title')
   $("#doing_title").hide()
-
-  cond = [
-    ["is_done", null]
-    ["createdAt", '>', Util.minAgo(@env.pomotime)]
-  ]
-  ParseParse.where("Workload", cond, (workloads) ->
-    return unless workloads.length > 0
+  m.mount $('#doing')[0], DoingsController
+  if $('#doing').length
     $("#doing_title").show()
-    user_keys = {}
-    user_count = 0
-    for workload, i in workloads
-      continue unless workload.attributes.user
-      unless user_keys[workload.attributes.user.id]
-        @addDoing(workload)
-        user_keys[workload.attributes.user.id] = true
-    renderWorkloads('#doing')
-  )
+
+  #cond = [
+  #  ["is_done", null]
+  #  ["createdAt", '>', Util.minAgo(@env.pomotime)]
+  #]
+  #ParseParse.where("Workload", cond, (workloads) ->
+  #  return unless workloads.length > 0
+  #  $("#doing_title").show()
+  #  user_keys = {}
+  #  user_count = 0
+  #  for workload, i in workloads
+  #    continue unless workload.attributes.user
+  #    unless user_keys[workload.attributes.user.id]
+  #      @addDoing(workload)
+  #      user_keys[workload.attributes.user.id] = true
+  #  renderWorkloads('#doing')
+  #)
 
 initDone = () ->
   console.log 'initDone'
   ruffnote(17769, 'done_title')
-  m.mount $('#done')[0], Dones
+  m.mount $('#done')[0], DonesController
 
 login = () ->
   console.log 'login'
@@ -464,15 +488,7 @@ start = () ->
   $(".fixed_start").hide()
   $("#music_ranking").hide()
   doms = [
-    'kpi_title'
-    'kpi3_title'
-    'kpi3'
-    'kpi2_title'
-    'kpi2'
-    'kpi1_title'
-    'kpi1'
     'start_buttons'
-    'fixedstart_artwork'
     '8tracks'
     '8tracks_title'
     'kimiya_title'
@@ -747,17 +763,7 @@ initRanking = () ->
     user_id = w.user.objectId
 
   if w.title
-    href = '#'
-    if w.sc_id
-      href += "soundcloud:#{w.sc_id}"
-    if w.yt_id
-      href += "youtube:#{w.yt_id}"
-    if w.mc_id
-      href += "mixcloud:#{w.mc_id}"
-    if w.et_id
-      href += "8tracks:#{w.et_id}"
-    if w.sm_id
-      href += "nicovideo:#{w.sm_id}"
+    href = w2href(w)
     fixed = "<a href=\"#{href}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24921' /></a>"
     jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" class=\"jacket\" />' else "<img src=\"#{@nomusic_url}\" class=\"jacket\" />"}"
     title = w.title
@@ -802,6 +808,9 @@ initRanking = () ->
   $("#{dom}").fadeIn()
 
 initFixedStart = () ->
+  fixedStart()
+
+fixedStart = ()->
   $(document).on('click', '.fixed_start', () ->
     if Parse.User.current()
       hash = $(this).attr('href').replace(/^#/, '')
@@ -829,8 +838,6 @@ initService = ($dom, url) ->
   else
     c = comment
   user = c.user
-
-
 
   t = new Date()
   hour = t.getHours()
@@ -957,25 +964,24 @@ renderWorkloads = (dom) ->
   $items.removeClass('col-sm-offset-5')
   $first.addClass("col-sm-offset-#{getOffset($items.length)}")
 
-start_unless_doing = ()->
-  unless ( @env.is_doing or @env.is_done)
-    start_hash()
-
 artworkUrlWithNoimage = (artwork_url) ->
   artwork_url || @nomusic_url
 
 initYou = () ->
   return unless Parse.User.current()
   ruffnote(22876, 'you_title')
-  cond = [
-    ["user", Parse.User.current()]
-    ["is_done", true]
-    ["createdAt", '<', Util.minAgo(@env.pomotime + @env.chattime)]
-  ]
-  ParseParse.where('Workload', cond, (workloads) ->
-    for workload in workloads
-      continue unless workload.attributes.user
-      disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.attributes.number}回目）"
-      addWorkload("#you", workload, disp)
-  null, 24)
+  m.mount $('#you')[0], YouController
 
+w2href = (w) ->
+  href = '#'
+  if w.sc_id
+    href += "soundcloud:#{w.sc_id}"
+  if w.yt_id
+    href += "youtube:#{w.yt_id}"
+  if w.mc_id
+    href += "mixcloud:#{w.mc_id}"
+  if w.et_id
+    href += "8tracks:#{w.et_id}"
+  if w.sm_id
+    href += "nicovideo:#{w.sm_id}"
+  return href

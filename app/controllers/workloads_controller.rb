@@ -1,14 +1,14 @@
 class WorkloadsController < ApplicationController
-  def dones
-    res = `curl -X GET \
-  -H "X-Parse-Application-Id: #{ENV['PARSE_APP_ID']}" \
-  -H "X-Parse-REST-API-Key: #{ENV['PARSE_REST_KEY']}" \
-  -G \
-  --data-urlencode 'where={"is_done":true}' \
-  --data-urlencode 'order=-createdAt' \
-  --data-urlencode 'limit=48' \
-  https://api.parse.com/1/classes/Workload`
+  def doings
+    render json: Workload.doings
+  end
 
-    render json: JSON.parse(res)['results']
+  def chattings
+    render json: Workload.chattings
+  end
+
+  def dones
+    user_id = params[:user_id] || nil
+    render json: Workload.dones(user_id)
   end
 end

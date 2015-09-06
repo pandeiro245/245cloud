@@ -108,6 +108,6 @@ class @Youtube
             """)
           callback() if callback
         else
-          $dom.append("<div>「#{keyword}」YouTubeCloudにはで24分前後の曲はまだ出てないようです...。他のキーワードで探してみてください！</div>")
+          $dom.append("<div>「#{keyword}」YouTubeにはで24分前後の曲はまだ出てないようです...。他のキーワードで探してみてください！</div>")
     )
    
