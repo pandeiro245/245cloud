@@ -21,7 +21,7 @@ class Workload
     query += " --data-urlencode 'where={\"createdAt\":{\"$lte\": \"#{self.ago(29)}\"}}'"
     query += with_user
     query += " --data-urlencode 'limit=48'"
-    self.res(query)
+    self.res(query, ignore_doing: true)
   end
 
   private
