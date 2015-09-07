@@ -13,4 +13,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require lib/config
+//= require react
+//= require react_ujs
+//= require components
 //= require_tree .
