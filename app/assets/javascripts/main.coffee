@@ -75,30 +75,35 @@ WorkloadsView = (ctrl, status=null) ->
   m 'div', [
     ctrl().workloads.map((workload) ->
       WorkloadView(workload, status)
-    )
+    ),
+    renderWorkloads('#chatting'),
+    renderWorkloads('#doing')
   ]
 
 WorkloadView = (workload, status=null) ->
   if workload.attributes
     w = workload.attributes
+    user_id = w.user.id
   else
     w = workload
-  #console.log w
+    user_id = w.user.objectId
 
   img_id = if w.title then '24921' else '24926'
+  t = new Date(workload.createdAt)
 
   if status == 'doing'
-    t = new Date(workload.createdAt)
-    end_time = @env.pomotime*60*1000 + t.getTime()
-    disp = m.trust("#{Util.hourMin(workload.createdAt, '開始')}（あと<span class='realtime' data-countdown='#{end_time}'></span>）")
+    end_time = @env.pomotime*60*1000
   else if status == 'chatting'
-    t = new Date(workload.createdAt)
-    end_time = @env.chattime*60*1000 + t.getTime()
-    disp = m.trust("#{Util.hourMin(workload.createdAt, '開始')}（あと<span class='realtime' data-countdown='#{end_time}'></span>）")
+    end_time = @env.chattime*60*1000
+
+  if status == 'doing' or status == 'chatting'
+    disp = m.trust("#{Util.hourMin(workload.createdAt, '開始')}（あと<span class='realtime' data-countdown='#{end_time + t.getTime()}'></span>）")
+    $("#chatting .user_#{user_id}").remove()
+    $("#doing .user_#{user_id}").remove()
   else
     disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{w.number}回目）"
 
-  m 'div.col-sm-2.workload', [
+  m "div.col-sm-2.workload.user_#{user_id}", [
     m '.inborder', [
       m 'h5', w.title || '無音'
       m 'span', [
