@@ -56,7 +56,7 @@ Room = {
 }
 
 Comment = {
-  list: (room_id='default')->
+  list: (room_id=null)->
     cond = [
       ["room_id", room_id]
     ]
@@ -107,6 +107,18 @@ YouController =
   view: (ctrl) ->
     WorkloadsView(ctrl)
 
+CommentsController =
+  controller: ->
+    Comment.list().then((comments) ->
+      {
+        comments: comments
+      }
+    )
+  view: (ctrl) ->
+    CommentsView(ctrl)
+
+
+
 # View
 
 WorkloadsView = (ctrl, status=null) ->
@@ -156,6 +168,27 @@ WorkloadView = (workload, status=null) ->
         ]
       ]
     ]
+  ]
+
+CommentsView = (ctrl) ->
+  comments = ctrl().comments
+  m 'div', [
+    ctrl().comments.map((comment) ->
+      CommentView(comment)
+    )
+  ]
+
+CommentView = (comment) ->
+  if typeof(comment.attributes) != 'undefined'
+    c = comment.attributes
+  else
+    c = comment
+  m 'tr', [
+    m 'td', [
+      m 'img', {src: c.icon_url}
+    ]
+    m 'td', c.body
+    m 'td', Util.hourMin(comment.createdAt)
   ]
 
 # Initialize 
@@ -691,6 +724,8 @@ window.initRoom = (id = 'default', title='いつもの部屋') ->
     search_id = if id == 'default' then null else id
     limit = if id == 'default' then 100 else 10000
 
+    m.mount $('#rooms .comments')[0], CommentsController
+
     #ParseParse.where("Comment", [['room_id', search_id]], (comments) ->
     #  $("#room_#{id} .create_comment").keypress((e) ->
     #    if e.which == 13 #enter
@@ -832,10 +867,6 @@ initService = ($dom, url) ->
   else
     c = comment
   user = c.user
-
-  t = new Date()
-  hour = t.getHours()
-  min = t.getMinutes()
 
   if user && c.body
     html = """
