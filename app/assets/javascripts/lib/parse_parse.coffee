@@ -39,13 +39,11 @@ class @ParseParse
     query.descending("createdAt")
     query.find({
       success: (data) ->
-        console.log 'callback data', data
         deferred.resolve(data)
         m.endComputation()
       error: (error) ->
         deferred.reject(data)
     })
-    console.log 'deferred.promise', deferred.promise
     return deferred.promise
 
   @all: (model_name, callback) ->
