@@ -21,7 +21,9 @@ class @ParseParse
         callback(child, parent)
     })
 
-  @where: (model_name, cond, callback, instance=null, limit=100) ->
+  @where: (model_name, cond, limit=100) ->
+    m.startComputation()
+    deferred = m.deferred()
     Model = Parse.Object.extend(model_name)
     query = new Parse.Query(Model)
     query.limit(limit)
@@ -37,13 +39,14 @@ class @ParseParse
     query.descending("createdAt")
     query.find({
       success: (data) ->
-        if instance
-          callback(instance, data)
-        else
-          callback(data)
+        console.log 'callback data', data
+        deferred.resolve(data)
+        m.endComputation()
       error: (error) ->
-        console.log error
+        deferred.reject(data)
     })
+    console.log 'deferred.promise', deferred.promise
+    return deferred.promise
 
   @all: (model_name, callback) ->
     Model = Parse.Object.extend(model_name)

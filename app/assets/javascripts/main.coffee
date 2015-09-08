@@ -1,73 +1,91 @@
 Workload = {
   doings: ->
-    m.request
-      url: "/doings.json"
+    cond = [
+      ["is_done", null]
+      ["createdAt", '>', Util.minAgo(24)]
+    ]
+    ParseParse.where("Workload", cond)
   chattings: ->
-    m.request
-      url: "/chattings.json"
+    cond = [
+      ["is_done", true]
+      ["createdAt", '>', Util.minAgo(29)]
+      ["createdAt", '<', Util.minAgo(24)]
+    ]
+    ParseParse.where("Workload", cond)
   dones: ->
-    m.request
-      url: "/dones.json"
+    cond = [
+      ["is_done", true]
+      ["createdAt", '<', Util.minAgo(29)]
+    ]
+    ParseParse.where("Workload", cond, 48)
   you: ->
-    m.request
-      url: "/dones.json?user_id=#{Parse.User.current().id}"
-}
-
-User = {
-  find: (id) ->
-    m.request
-      url: "/users/#{id}"
+    cond = [
+      ["user", Parse.User.current()]
+      ["is_done", true]
+      ["createdAt", '<', Util.minAgo(29)]
+    ]
+    ParseParse.where("Workload", cond, 24)
 }
 
 DoingsController =
   controller: ->
-    workloads = Workload.doings()
-    {
-      workloads: workloads
-    }
+    Workload.doings().then((workloads) ->
+      {
+        workloads: workloads
+      }
+    )
   view: (ctrl) ->
     WorkloadsView(ctrl, 'doing')
 
 ChattingsController =
   controller: ->
-    workloads = Workload.chattings()
-    {
-      workloads: workloads
-    }
+    Workload.chattings().then((workloads) ->
+      {
+        workloads: workloads
+      }
+    )
   view: (ctrl) ->
     WorkloadsView(ctrl, 'chatting')
 
 DonesController =
   controller: ->
-    workloads = Workload.dones()
-    {
-      workloads: workloads
-      reverse: ->
-        workloads().reverse()
-    }
+    Workload.dones().then((workloads) ->
+      {
+        workloads: workloads
+        reverse: ->
+          workloads().reverse()
+      }
+    )
   view: (ctrl) ->
     WorkloadsView(ctrl)
 
 YouController =
   controller: ->
-    workloads = Workload.you()
-    {
-      workloads: workloads
-    }
+    Workload.you().then((workloads) ->
+      {
+        workloads: workloads
+      }
+    )
   view: (ctrl) ->
     WorkloadsView(ctrl)
 
 WorkloadsView = (ctrl, status=null) ->
+  console.log 'in WorkloadsView', ctrl # function
+  return unless ctrl().workloads.length
   m 'div', [
-    ctrl.workloads().map((workload) ->
+    ctrl().workloads.map((workload) ->
       WorkloadView(workload, status)
-    ),
-    window.renderWorkloads('#doing')
-    window.renderWorkloads('#chatting')
+    )
   ]
 
 WorkloadView = (workload, status=null) ->
-  img_id = if workload.title then '24921' else '24926'
+  if workload.attributes
+    w = workload.attributes
+  else
+    w = workload
+  #console.log w
+
+  img_id = if w.title then '24921' else '24926'
 
   if status == 'doing'
     t = new Date(workload.createdAt)
@@ -78,20 +96,20 @@ WorkloadView = (workload, status=null) ->
     end_time = @env.chattime*60*1000 + t.getTime()
     disp = m.trust("#{Util.hourMin(workload.createdAt, '開始')}（あと<span class='realtime' data-countdown='#{end_time}'></span>）")
   else
-    disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.number}回目）"
+    disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{w.number}回目）"
 
   m 'div.col-sm-2.workload', [
     m '.inborder', [
-      m 'h5', workload.title || '無音'
+      m 'h5', w.title || '無音'
       m 'span', [
-        m 'img.jacket', src: jacketUrl(workload)
+        m 'img.jacket', src: jacketUrl(w)
       ]
       m 'span', [
-        m 'img.icon.img-thumbnail', src: iconUrl(workload)
+        m 'img.icon.img-thumbnail', src: iconUrl(w)
       ]
       m '.disp', disp
       m 'div', [
-        m 'a.fixed_start', {href: w2href(workload), onclick: fixedStart}, [
+        m 'a.fixed_start', {href: w2href(w), onclick: fixedStart}, [
           m 'img', src: "https://ruffnote.com/attachments/#{img_id}"
         ]
       ]
@@ -107,6 +125,7 @@ iconUrl = (instance) ->
   #"https://graph.facebook.com/#{user.facebook_id_str}/picture?height=40&width=40"
   
   return instance.icon_url
+
 
 jacketUrl = (workload) ->
   return'https://ruffnote.com/attachments/24981' unless workload.title
@@ -789,7 +808,7 @@ initRanking = () ->
     title = '無音'
     fixed = "<a href=\"#\" class='fixed_start'><img src='https://ruffnote.com/attachments/24926' /></a>"
     jacket = "<img src=\"https://ruffnote.com/attachments/24981\" class='jacket'/>"
-  user_img = "<img class='icon icon_#{user_id} img-thumbnail' src='#{userIdToIconUrl(user_id)}' />"
+  user_img = "<img class='icon img-thumbnail' src='#{w.icon_url}' />"
 
   $item = Util.tag('div', null, {class: 'inborder'})
   $item.html("""
