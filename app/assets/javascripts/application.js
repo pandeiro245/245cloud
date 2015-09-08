@@ -15,6 +15,4 @@
 //= require mithril
 //= require mithril_ujs
 //= require lib/config
-//= require mithril
-//= require mithril_ujs
 //= require_tree .

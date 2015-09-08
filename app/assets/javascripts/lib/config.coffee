@@ -5,8 +5,7 @@ env = {
 env.pomotime =  if localStorage['dev_pomo'] then parseFloat(localStorage['dev_pomo']) else 24
 env.chattime =  if localStorage['dev_chat'] then parseFloat(localStorage['dev_chat']) else 5
 
-#if location.href.match(/245cloud.com/)
-if true
+if location.href.match(/245cloud.com/)
   env.parse_app_id = 'jemiGIUHsvNeVQojqiUaXxFJZvzFDxFbUsfjPr78'
   env.parse_key = 'ZoyMZflFV5H2VoASJv505vJ2wWd9zqa2ZW5MU780'
   env.facebook_app_id = '275431199325537'
