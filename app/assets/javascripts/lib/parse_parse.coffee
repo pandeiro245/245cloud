@@ -83,3 +83,5 @@ class @ParseParse
     ParseParse.create('Accesslog',
       {url: location.href}
     )
+
+

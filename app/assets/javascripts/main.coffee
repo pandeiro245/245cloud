@@ -19,113 +19,34 @@ initYou = () ->
   ruffnote(22876, 'you_title')
   m.mount $('#you')[0], YouController
 
-# Model
-
-Workload = {
-  doings: ->
-    cond = [
-      ["is_done", null]
-      ["createdAt", '>', Util.minAgo(24)]
-    ]
-    ParseParse.where("Workload", cond)
-  chattings: ->
-    cond = [
-      ["is_done", true]
-      ["createdAt", '>', Util.minAgo(29)]
-      ["createdAt", '<', Util.minAgo(24)]
-    ]
-    ParseParse.where("Workload", cond)
-  dones: ->
-    cond = [
-      ["is_done", true]
-      ["createdAt", '<', Util.minAgo(29)]
-    ]
-    ParseParse.where("Workload", cond, 48)
-  you: ->
-    cond = [
-      ["user", Parse.User.current()]
-      ["is_done", true]
-      ["createdAt", '<', Util.minAgo(29)]
-    ]
-    ParseParse.where("Workload", cond, 24)
-}
-
-Room = {
-  list:  ->
-    ParseParse.all("Room")
-}
-
-Comment = {
-  list: (room_id=null)->
-    cond = [
-      ["room_id", room_id]
-    ]
-    ParseParse.where("Comment", cond)
-}
-
 # Controller
+ApplicationController = (model_name, action_name, view_name) ->
+  {
+    controller: ->
+      eval(model_name)[action_name]().then((items) ->
+        {
+          items: items
+          reverse: ->
+            items().reverse()
+        }
+      )
+    view: (ctrl) ->
+      eval(view_name)(ctrl)
+  }
 
-DoingsController =
-  controller: ->
-    Workload.doings().then((workloads) ->
-      {
-        workloads: workloads
-      }
-    )
-  view: (ctrl) ->
-    WorkloadsView(ctrl, 'doing')
-
-ChattingsController =
-  controller: ->
-    Workload.chattings().then((workloads) ->
-      {
-        workloads: workloads
-      }
-    )
-  view: (ctrl) ->
-    WorkloadsView(ctrl, 'chatting')
-
-DonesController =
-  controller: ->
-    Workload.dones().then((workloads) ->
-      {
-        workloads: workloads
-        reverse: ->
-          workloads().reverse()
-      }
-    )
-  view: (ctrl) ->
-    WorkloadsView(ctrl)
-
-YouController =
-  controller: ->
-    Workload.you().then((workloads) ->
-      {
-        workloads: workloads
-      }
-    )
-  view: (ctrl) ->
-    WorkloadsView(ctrl)
-
-CommentsController =
-  controller: ->
-    Comment.list().then((comments) ->
-      {
-        comments: comments
-      }
-    )
-  view: (ctrl) ->
-    CommentsView(ctrl)
-
-
+DoingsController = ApplicationController('Workload', 'doings', 'WorkloadsView')
+ChattingsController = ApplicationController('Workload', 'chattings', 'WorkloadsView')
+DonesController = ApplicationController('Workload', 'dones', 'WorkloadsView')
+YouController = ApplicationController('Workload', 'you', 'WorkloadsView')
+CommentsController = ApplicationController('Comment', 'list', 'CommentsView')
 
 # View
 
 WorkloadsView = (ctrl, status=null) ->
-  return unless ctrl().workloads.length
+  return unless ctrl().items.length
   m 'div', [
-    ctrl().workloads.map((workload) ->
-      WorkloadView(workload, status)
+    ctrl().items.map((item) ->
+      WorkloadView(item, status)
     ),
     renderWorkloads('#chatting'),
     renderWorkloads('#doing')
@@ -171,12 +92,14 @@ WorkloadView = (workload, status=null) ->
   ]
 
 CommentsView = (ctrl) ->
-  comments = ctrl().comments
+  comments = ctrl().items
   m 'div', [
-    ctrl().comments.map((comment) ->
+    ctrl().items.map((comment) ->
       CommentView(comment)
     )
   ]
+  # TODO: 未読数の更新（部屋毎）
+  #window.updateUnreads(search_id, comments.length)
 
 CommentView = (comment) ->
   if typeof(comment.attributes) != 'undefined'
@@ -190,6 +113,51 @@ CommentView = (comment) ->
     m 'td', c.body
     m 'td', Util.hourMin(comment.createdAt)
   ]
+
+# Model
+
+Workload = {
+  doings: ->
+    cond = [
+      ["is_done", null]
+      ["createdAt", '>', Util.minAgo(24)]
+    ]
+    ParseParse.where("Workload", cond)
+  chattings: ->
+    cond = [
+      ["is_done", true]
+      ["createdAt", '>', Util.minAgo(29)]
+      ["createdAt", '<', Util.minAgo(24)]
+    ]
+    ParseParse.where("Workload", cond)
+  dones: ->
+    cond = [
+      ["is_done", true]
+      ["createdAt", '<', Util.minAgo(29)]
+    ]
+    ParseParse.where("Workload", cond, 48)
+  you: ->
+    cond = [
+      ["user", Parse.User.current()]
+      ["is_done", true]
+      ["createdAt", '<', Util.minAgo(29)]
+    ]
+    ParseParse.where("Workload", cond, 24)
+}
+
+Room = {
+  list:  ->
+    ParseParse.all("Room")
+}
+
+Comment = {
+  list: (room_id=null)->
+    cond = [
+      ["room_id", room_id]
+    ]
+    ParseParse.where("Comment", cond)
+}
+
 
 # Initialize 
 $ ->
@@ -726,16 +694,6 @@ window.initRoom = (id = 'default', title='いつもの部屋') ->
 
     m.mount $('#rooms .comments')[0], CommentsController
 
-    #ParseParse.where("Comment", [['room_id', search_id]], (comments) ->
-    #  $("#room_#{id} .create_comment").keypress((e) ->
-    #    if e.which == 13 #enter
-    #      window.createComment(id)
-    #  )
-    #  for comment in comments
-    #    @addComment(id, comment)
-    #  window.updateUnreads(search_id, comments.length)
-    #, null, limit)
-
 window.updateUnreads = (room_id, count) ->
   unreads = Parse.User.current().get("unreads")
   unreads = {} unless unreads
@@ -995,7 +953,7 @@ window.renderWorkloads = (dom) ->
   
   $items = $("#{dom} .workload")
 
-  # workloads 5つ以下は1つめにoffsetをつける
+  # workloads 5つ以下は1つめにoffsetをつける(中央寄せにする)
   $first = $("#{dom} .workload:first")
   for i in [2..5]
     $items.removeClass("col-sm-offset-#{i}")
