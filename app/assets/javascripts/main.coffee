@@ -134,7 +134,7 @@ $ ->
   Util.scaffolds([
     ['header', ['row', 'without-will_hide']]
     'news'
-    ['otukare', ['hidden']]
+    ['otukare', ['hidden', 'without-will_hide']]
     'ad'
     'contents'
     'start_buttons'
@@ -583,6 +583,7 @@ complete = () ->
   window.is_hato = false
   Util.countDown(@env.chattime*60*1000, 'finish')
   $('#header').hide()
+  $('#otukare').removeClass('hidden')
   $('#otukare').fadeIn()
   $("#playing").fadeOut()
   $("#playing").html('') # for stopping
