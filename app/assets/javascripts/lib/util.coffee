@@ -7,18 +7,21 @@ class Util
     $body = $('#nc')
     $body.html('') # remove contents for SEO
     for param in params
-      attr = null
+      attrs = []
+      $item = $('<div></div>')
       if typeof(param) == 'object'
         id = param[0]
-        attr = param[1]
-      else
+        attrs = param[1]
+      else # string
         id = param
-      $item = $('<div></div>')
-      $item.attr('id', id)
-      unless (attr && attr.is_row == false)
         $item.addClass('row')
-      if attr && attr.is_hide == true
-        $item.hide()
+        $item.addClass('will_hide')
+      $item.attr('id', id)
+      for attr in attrs
+        $item.addClass(attr)
+      for key in ['row', 'will_hide']
+        unless $item.hasClass("without-#{key}")
+          $item.addClass(key)
       $body.append($item)
 
   @time: (mtime) ->

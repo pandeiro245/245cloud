@@ -1,26 +1,4 @@
-# mount
-
-initDoing = () ->
-  ruffnote(22877, 'doing_title')
-  m.mount $('#doing')[0], DoingsController
-  window.renderWorkloads('#doing')
-
-initChatting = () ->
-  ruffnote(22878, 'chatting_title')
-  m.mount $('#chatting')[0], ChattingsController
-  window.renderWorkloads('#chatting')
-
-initDone = () ->
-  ruffnote(17769, 'done_title')
-  m.mount $('#done')[0], DonesController
-
-initYou = () ->
-  return unless Parse.User.current()
-  ruffnote(22876, 'you_title')
-  m.mount $('#you')[0], YouController
-
-# Controller
-ApplicationController = (model_name, action_name, view_name) ->
+vm = (model_name, action_name, view_name) ->
   {
     controller: ->
       eval(model_name)[action_name]().then((items) ->
@@ -33,14 +11,6 @@ ApplicationController = (model_name, action_name, view_name) ->
     view: (ctrl) ->
       eval(view_name)(ctrl)
   }
-
-DoingsController = ApplicationController('Workload', 'doings', 'WorkloadsView')
-ChattingsController = ApplicationController('Workload', 'chattings', 'WorkloadsView')
-DonesController = ApplicationController('Workload', 'dones', 'WorkloadsView')
-YouController = ApplicationController('Workload', 'you', 'WorkloadsView')
-CommentsController = ApplicationController('Comment', 'list', 'CommentsView')
-
-# View
 
 WorkloadsView = (ctrl, status=null) ->
   return unless ctrl().items.length
@@ -60,7 +30,7 @@ WorkloadView = (workload, status=null) ->
     w = workload
     user_id = w.user.objectId
 
-  img_id = if w.title then '24921' else '24926'
+  img_id = if w.title then '24921' else '24926' # この曲 or 無音
   t = new Date(workload.createdAt)
 
   if status == 'doing'
@@ -159,13 +129,12 @@ Comment = {
 }
 
 
-# Initialize 
 $ ->
   ParseParse.addAccesslog()
   Util.scaffolds([
-    ['header', {is_row: false}]
+    ['header', ['row', 'without-will_hide']]
     'news'
-    ['otukare', {is_hide: true}]
+    ['otukare', ['hidden']]
     'ad'
     'contents'
     'start_buttons'
@@ -187,13 +156,13 @@ $ ->
     'kimiya'
     'naotake_title'
     'naotake'
-    'playing'
-    'complete'
-    'select_rooms'
-    'rooms_title'
-    'rooms'
+    ['playing', ['without-will_hide']]
+    ['complete', ['without-will_hide']]
+    ['select_rooms', ['without-will_hide']]
+    ['rooms_title', ['without-will_hide']]
+    ['rooms', ['without-will_hide']]
     'whatis_title'
-    ['whatis', {is_row: false}]
+    ['whatis', ['row']]
     'footer'
     'hatopoppo'
   ])
@@ -240,7 +209,24 @@ jacketUrl = (workload) ->
   return'https://ruffnote.com/attachments/24981' unless workload.title
   workload.artwork_url || @nomusic_url
 
+initDoing = () ->
+  ruffnote(22877, 'doing_title')
+  m.mount $('#doing')[0], vm('Workload', 'doings', 'WorkloadsView')
+  window.renderWorkloads('#doing')
 
+initChatting = () ->
+  ruffnote(22878, 'chatting_title')
+  m.mount $('#chatting')[0], vm('Workload', 'chattings', 'WorkloadsView')
+  window.renderWorkloads('#chatting')
+
+initDone = () ->
+  ruffnote(17769, 'done_title')
+  m.mount $('#done')[0], vm('Workload', 'dones', 'WorkloadsView')
+
+initYou = () ->
+  return unless Parse.User.current()
+  ruffnote(22876, 'you_title')
+  m.mount $('#you')[0], vm('Workload', 'you', 'WorkloadsView')
   
 init8tracks = () ->
   ruffnote(17763, '8tracks_title')
@@ -508,31 +494,7 @@ createWorkload = (params = {}, callback) ->
   )
   
 start = () ->
-  $("#done").hide()
-  $("#search").hide()
-  $("input").hide()
-  $(".fixed_start").hide()
-  $("#music_ranking").hide()
-  doms = [
-    'start_buttons'
-    '8tracks'
-    '8tracks_title'
-    'kimiya_title'
-    'kimiya'
-    'naotake_title'
-    'naotake'
-    'search_title'
-    'ranking_title'
-    'ranking'
-    'whatis_title'
-    'whatis'
-    'you_title'
-    'you'
-    'news'
-    'footer'
-  ]
-  for dom in doms
-    $("##{dom}").hide()
+  $(".will_hide").hide()
 
   @env.is_doing = true
   @syncWorkload('doing')
@@ -623,7 +585,6 @@ complete = () ->
   $('#header').hide()
   $('#otukare').fadeIn()
   $("#playing").fadeOut()
-  $("#search").fadeOut()
   $("#playing").html('') # for stopping
   unless @env.is_kakuhen
     @initSelectRooms()
@@ -692,7 +653,7 @@ window.initRoom = (id = 'default', title='いつもの部屋') ->
     search_id = if id == 'default' then null else id
     limit = if id == 'default' then 100 else 10000
 
-    m.mount $('#rooms .comments')[0], CommentsController
+    m.mount $('#rooms .comments')[0], vm('Comment', 'list', 'CommentsView')
 
 window.updateUnreads = (room_id, count) ->
   unreads = Parse.User.current().get("unreads")
@@ -926,12 +887,7 @@ initHatopoppo = () ->
 
 getOffset = (all_count) ->
   return 0 if all_count >= 5
-  data = {
-    1: 5
-    2: 4
-    3: 3
-    4: 2
-  }
+  data = {1: 5, 2: 4, 3: 3, 4: 2}
   data[all_count]
 
 window.renderWorkloads = (dom) ->
