@@ -21,7 +21,9 @@ class @ParseParse
         callback(child, parent)
     })
 
-  @where: (model_name, cond, callback, instance=null, limit=100) ->
+  @where: (model_name, cond, limit=100) ->
+    m.startComputation()
+    deferred = m.deferred()
     Model = Parse.Object.extend(model_name)
     query = new Parse.Query(Model)
     query.limit(limit)
@@ -37,15 +39,14 @@ class @ParseParse
     query.descending("createdAt")
     query.find({
       success: (data) ->
-        if instance
-          callback(instance, data)
-        else
-          callback(data)
+        deferred.resolve(data)
+        m.endComputation()
       error: (error) ->
-        console.log error
+        deferred.reject(data)
     })
+    return deferred.promise
 
-  @all: (model_name, callback, params={}) ->
+  @all: (model_name, callback) ->
     Model = Parse.Object.extend(model_name)
     query = new Parse.Query(Model)
     query.limit(999999)
@@ -54,8 +55,6 @@ class @ParseParse
       success: (data) ->
         callback(data)
     })
-
-  @find_or_create: (model_name, key_params, params, callback) ->
 
   @create: (model_name, params, callback=null) ->
     Model = Parse.Object.extend(model_name)
@@ -84,3 +83,5 @@ class @ParseParse
     ParseParse.create('Accesslog',
       {url: location.href}
     )
+
+
