@@ -1,3 +1,5 @@
+window.models = {}
+
 vm = (model_name, action_name, view_name) ->
   {
     controller: ->

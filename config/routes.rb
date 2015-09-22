@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   get '/musics/:id' => 'musics#show'
+  get '/mithril' => 'welcome#mithril'
   root 'welcome#index'
   resources :nicoinfo, only: [:show], constraints: {id: /sm[0-9]+/}
 

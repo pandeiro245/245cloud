@@ -1,0 +1,66 @@
+<div id='example'></div>
+<hr />
+<div id='example2'></div>
+
+<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="/js/mithril.js"></script>
+<script>
+
+var Model = function(url){
+  m.startComputation()
+  var deferred = m.deferred()
+  $.get(url, function(data){
+    console.log(data);
+    deferred.resolve(data);
+    m.endComputation();
+  });
+  return deferred.promise
+}
+
+var vm = function(model_name, action_name, view_name, num){
+  return {
+    controller: function() {
+      return eval(model_name)[action_name]().then(function(items){
+        return {
+          items: items,
+          rotate: function() {
+            items().push(items().shift());
+          }
+        }
+      });
+    },
+    view: function(ctrl) {
+      return eval(view_name)(ctrl, num);
+    }
+  };
+};
+
+var Page = {
+  list: function() {
+    return Model('pages.json');
+  },
+  list2: function() {
+    return Model('pages2.json');
+  }
+};
+
+var pagesView = function(ctrl, num){
+  window.hoge = ctrl
+  return m("div", [
+    ctrl().items.map(function(page) {
+      return pageView(page, num);
+    }),
+    m("button", {onclick: ctrl.rotate}, "Rotate links" + num)
+  ]);
+};
+
+var pageView = function(page, num){
+  return [
+    m("a", {href: page.url}, page.title + ' of ' + num),
+    m('br')
+  ];
+}
+
+m.mount($("#example")[0], vm('Page', 'list', 'pagesView', 1));
+m.mount($("#example2")[0], vm('Page', 'list2', 'pagesView', 2));
+</script>
