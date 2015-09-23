@@ -61,12 +61,26 @@ WorkloadView = (workload, status=null) ->
     ]
   ]
 
-CommentsView = (ctrl) ->
+CommentsView = (ctrl, id = 'default', title='いつもの部屋') ->
+  window.commentsController = ctrl
   comments = ctrl().items
-  m 'div', [
-    ctrl().items.map((comment) ->
-      CommentView(comment)
-    )
+  [
+    m 'div', {id: "room_#{id}", class: 'room'},  [
+      m(
+        'input'
+        {
+          class: 'create_comment'
+          placeholder: "「#{title}」に書き込む"
+          onkeydown: (e) ->
+            window.createComment(id) if e.keyCode == 13 # enter
+        }
+      )
+      m 'table', {class: 'table comments'}, [
+        ctrl().items.map((comment) ->
+          CommentView(comment)
+        )
+      ]
+    ]
   ]
   # TODO: 未読数の更新（部屋毎）
   #window.updateUnreads(search_id, comments.length)
@@ -196,14 +210,8 @@ $ ->
 # Util
 
 iconUrl = (instance) ->
-  #"https://graph.facebook.com/#{instance.user.facebook_id_str}/picture?height=40&width=40"
-  
-  #return instance.icon_url if instance.icon_url
-  #user = User.find(instance.user.objectId)
-  #"https://graph.facebook.com/#{user.facebook_id_str}/picture?height=40&width=40"
-  
+  # TODO 過去データ対応とゲストユーザ対応
   return instance.icon_url
-
 
 jacketUrl = (workload) ->
   return'https://ruffnote.com/attachments/24981' unless workload.title
@@ -633,28 +641,7 @@ window.initComments = () ->
   initRoom()
 
 window.initRoom = (id = 'default', title='いつもの部屋') ->
-  $(".room").hide()
-
-  $room = $("#room_#{id}")
-
-  if $room.length
-    $room.show()
-  else
-    $room = $('<div></div>')
-    $room.addClass('room')
-    $room.attr('id', "room_#{id}")
-    $createComment = $('<input />').addClass('create_comment').attr('placeholder', "「#{title}」に書き込む")
-    $room.append($createComment)
-  
-    $comments = $("<table></table>").addClass('table comments')
-    $room.append($comments)
-
-    $('#rooms').append($room)
-    
-    search_id = if id == 'default' then null else id
-    limit = if id == 'default' then 100 else 10000
-
-    m.mount $('#rooms .comments')[0], vm('Comment', 'list', 'CommentsView')
+  m.mount $('#rooms')[0], vm('Comment', 'list', 'CommentsView')
 
 window.updateUnreads = (room_id, count) ->
   unreads = Parse.User.current().get("unreads")
@@ -781,44 +768,7 @@ initService = ($dom, url) ->
   $dom.append("<iframe src='#{url}' width='85%' height='900px'></iframe>")
 
 @addComment = (room_id, comment, is_countup=false, is_prepend=false) ->
-  $comments = $("#room_#{room_id} .comments")
-  if typeof(comment.attributes) != 'undefined'
-    c = comment.attributes
-  else
-    c = comment
-  user = c.user
-
-  if user && c.body
-    html = """
-    <tr>
-    <td>
-    <a class='facebook_#{user.id}' target='_blank'>
-    <img class='icon icon_#{user.id}' src='#{userIdToIconUrl(c.user.objectId)}' />
-    <!--<div class='facebook_name_#{user.id}'></div>-->
-    </a>
-    <td>
-    <td>#{Util.parseHttp(c.body)}</td>
-    <td>#{Util.hourMin(comment.createdAt)}</td>
-    </tr>
-    """
-
-    if typeof(comment.attributes) != 'undefined'
-      if is_prepend
-        $comments.prepend(html)
-      else
-        $comments.append(html)
-      ParseParse.fetch("user", comment, (ent, user) ->
-        img = "https://graph.facebook.com/#{user.get('facebook_id_str')}/picture?height=40&width=40"
-
-        $(".icon_#{user.id}").attr('src', img)
-        if user.get('facebook_id_str')
-          href = "https://facebook.com/#{user.get('facebook_id_str')}"
-          $(".facebook_#{user.id}").attr('href', href)
-        if name = user.get('name')
-          $(".facebook_name_#{user.id}").html(name)
-      )
-    else
-      $comments.prepend(html)
+  window.commentsController().items.unshift(comment); m.redraw()
 
 userIdToIconUrl = (userId) ->
   localStorage["icon_#{userId}"] || ""
