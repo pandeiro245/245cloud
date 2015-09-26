@@ -672,7 +672,7 @@ complete = () ->
   @env.is_done = true
 
   if location.href.match("gohobi_youtube=") and !$('#ad iframe').length
-    url = "https://www.youtube.com/embed/#{location.href.split('gohobi_youtube=')[1].replace(/&.*$/,'').replace(/#/,'')}?autoplay=1"
+    url = "https://www.youtube.com/embed/#{location.href.split('gohobi_youtube=')[1].replace(/&.*$/,'').replace(/#.*$/,'')}?autoplay=1"
     $('#ad').html(
       """
       <h2>ご褒美動画です☆</h2>
