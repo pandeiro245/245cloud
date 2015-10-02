@@ -603,7 +603,15 @@ complete = () ->
   @env.is_doing = false
   @env.is_done = true
 
-  if location.href.match("ad=") and !$('#ad iframe').length
+  if location.href.match("gohobi_youtube=") and !$('#ad iframe').length
+    url = "https://www.youtube.com/embed/#{location.href.split('gohobi_youtube=')[1].replace(/&.*$/,'').replace(/#.*$/,'')}?autoplay=1"
+    $('#ad').html(
+      """
+      <h2>ご褒美動画です☆</h2>
+      <iframe width=\"560\" height=\"315\" src=\"#{url}\" frameborder=\"0\" allowfullscreen></iframe>
+      """
+    )
+  else if location.href.match("ad=") and !$('#ad iframe').length
     ParseParse.all("Ad", (ads) ->
       n = Math.floor(Math.random() * ads.length)
       ad = ads[n].attributes
