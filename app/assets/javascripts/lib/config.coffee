@@ -30,3 +30,4 @@ env.is_done = false
 @nomusic_url = 'https://ruffnote.com/attachments/24985'
 
 @env = env
+window.env = env

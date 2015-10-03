@@ -9,7 +9,7 @@ vm = (model_name, action_name, view_name) ->
         }
       )
     view: (ctrl) ->
-      eval(view_name)(ctrl)
+      eval(view_name)(ctrl, action_name)
   }
 
 WorkloadsView = (ctrl, status=null) ->
@@ -104,20 +104,20 @@ Workload = {
   doings: ->
     cond = [
       ["is_done", null]
-      ["createdAt", '>', Util.minAgo(24)]
+      ["createdAt", '>', Util.minAgo(window.env.pomotime)]
     ]
     ParseParse.where("Workload", cond)
   chattings: ->
     cond = [
       ["is_done", true]
-      ["createdAt", '>', Util.minAgo(29)]
-      ["createdAt", '<', Util.minAgo(24)]
+      ["createdAt", '>', Util.minAgo(window.env.pomotime+window.env.chattime)]
+      ["createdAt", '<', Util.minAgo(window.env.pomotime)]
     ]
     ParseParse.where("Workload", cond)
   dones: ->
     cond = [
       ["is_done", true]
-      ["createdAt", '<', Util.minAgo(29)]
+      ["createdAt", '<', Util.minAgo(window.env.pomotime+window.env.chattime)]
     ]
     ParseParse.where("Workload", cond, 48)
   you: ->
@@ -214,7 +214,7 @@ iconUrl = (instance) ->
   return instance.icon_url
 
 jacketUrl = (workload) ->
-  return'https://ruffnote.com/attachments/24981' unless workload.title
+  return'https://ruffnote.com/attachments/24981' unless workload.title # 無音
   workload.artwork_url || @nomusic_url
 
 initDoing = () ->
@@ -625,6 +625,7 @@ complete = () ->
 
   workload = @workload
   w = workload.attributes
+
   first = new Date(workload.createdAt)
   first = first.getTime() - first.getHours()*60*60*1000 - first.getMinutes()*60*1000 - first.getSeconds() * 1000
   first = new Date(first)
@@ -634,16 +635,15 @@ complete = () ->
     ["createdAt", '<', workload.createdAt]
     ["createdAt", '>', first]
   ]
-  ParseParse.where("Workload", cond, (workload, data) ->
-    workload.set('number', data.length + 1)
+  workloads = ParseParse.where("Workload", cond)
+  workloads.then((items) ->
+    workload.set('number', items.length + 1)
     workload.set('is_done', true)
     workload.save()
-  , workload)
-
-  $complete = $('#complete')
-  $complete.html('')
-
-  initComments()
+    $complete = $('#complete')
+    $complete.html('')
+    initComments()
+  )
 
 window.initComments = () ->
   initRoom()
