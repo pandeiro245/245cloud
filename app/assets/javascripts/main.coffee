@@ -515,9 +515,16 @@ start = () ->
 
 window.youtubeDurationSec = (key)  ->
   duration = key['contentDetails']['duration'].replace(/^PT/, '').replace(/S$/, '')
-  hour = parseInt(duration.split('H')[0])
-  min = parseInt(duration.split('H')[1].split('M')[0])
-  sec = parseInt(duration.split('H')[1].split('M')[1])
+
+  console.log duration
+  if duration.match(/H/)
+    hour = parseInt(duration.split('H')[0])
+    d2 = duration.split('H')[1]
+  else
+    hour = 0
+    d2 = duration
+  min = parseInt(d2.split('M')[0])
+  sec = parseInt(d2.split('M')[1])
   sec = hour*60*60+min*60+sec
   parseInt(sec)
 
