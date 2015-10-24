@@ -1,7 +1,7 @@
-vm = (model_name, action_name, view_name) ->
+vm = (model_name, action_name, view_name, params={}) ->
   {
     controller: ->
-      eval(model_name)[action_name]().then((items) ->
+      eval(model_name)[action_name](params).then((items) ->
         {
           items: items
           reverse: ->
@@ -9,7 +9,7 @@ vm = (model_name, action_name, view_name) ->
         }
       )
     view: (ctrl) ->
-      eval(view_name)(ctrl, action_name)
+      eval(view_name)(ctrl, action_name, params)
   }
 
 WorkloadsView = (ctrl, status=null) ->
@@ -61,8 +61,11 @@ WorkloadView = (workload, status=null) ->
     ]
   ]
 
-CommentsView = (ctrl, id = 'default', title='いつもの部屋') ->
+CommentsView = (ctrl, action_name, params) ->
   window.commentsController = ctrl
+  id = params['id']
+  title = params['title']
+
   comments = ctrl().items
   [
     m 'div', {id: "room_#{id}", class: 'room'},  [
@@ -135,11 +138,17 @@ Room = {
 }
 
 Comment = {
-  list: (room_id=null)->
+  list: (params)->
+    room_id = params['id']
+    @room_id = room_id
+    @room_title = params['title']
+    room_id = null if room_id == 'default'
     cond = [
       ["room_id", room_id]
     ]
     ParseParse.where("Comment", cond)
+  room_id: @room_id
+  room_title: @room_title
 }
 
 
@@ -455,6 +464,7 @@ initSearch = () ->
       if $self.hasClass('sonota')
         if $('#selectRoomModal').attr('style').match(/hidden/)
           $('#selectRoomButton').click()
+
       # そうでなければその部屋を開いてモーダルを閉じる
       else
         vals = $self.attr('data-values').split(':')
@@ -660,7 +670,11 @@ window.initComments = () ->
   initRoom()
 
 window.initRoom = (id = 'default', title='いつもの部屋') ->
-  m.mount $('#rooms')[0], vm('Comment', 'list', 'CommentsView')
+  params = {
+    id: id
+    title: title
+  }
+  m.mount $('#rooms')[0], vm('Comment', 'list', 'CommentsView', params)
 
 window.updateUnreads = (room_id, count) ->
   unreads = Parse.User.current().get("unreads")
@@ -690,6 +704,7 @@ window.createComment = (room_id) ->
 
   if room_id != 'default'
     params.room_id = room_id
+
   ParseParse.create('Comment', params, (comment)->
     updateRoomCommentsCount(room_id)
 

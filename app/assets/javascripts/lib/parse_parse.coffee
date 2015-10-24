@@ -37,6 +37,7 @@ class @ParseParse
         query.equalTo(c[0], c[1])
 
     query.descending("createdAt")
+
     query.find({
       success: (data) ->
         deferred.resolve(data)
