@@ -249,6 +249,10 @@ initNaotake = () ->
   Mixcloud.search('/naotake/', $('#naotake'))
 
 initStart = () ->
+  if location.href.match(/sparta/)
+    Util.countDown(1*60*1000, start_unless_doing)
+  if location.href.match(/auto_start=/)
+    start_unless_doing()
   text = "24分やり直しでも大丈夫ですか？"
   Util.beforeunload(text, 'env.is_doing')
   
@@ -667,7 +671,11 @@ window.updateUnreads = (room_id, count) ->
 
 window.finish = () ->
   @syncWorkload('finish')
-  location.reload()
+  if location.href.match(/auto_close=/)
+    window.open(location, '_self', '')
+    window.close()
+  else
+    location.reload()
 
 window.createComment = (room_id) ->
   $createComment = $("#room_#{room_id} .create_comment")
