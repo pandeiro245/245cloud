@@ -50,7 +50,7 @@ WorkloadView = (workload, status=null) ->
         m 'img.jacket', src: jacketUrl(w)
       ]
       m 'span', [
-        m 'img.icon.img-thumbnail', src: iconUrl(w)
+        m 'img.icon.img-thumbnail', src: iconUrl(workload)
       ]
       m '.disp', disp
       m 'div', [
@@ -95,7 +95,7 @@ CommentView = (comment) ->
     c = comment
   m 'tr', [
     m 'td', [
-      m 'img', {src: c.icon_url}
+      m 'img', {src: iconUrl(comment)}
     ]
     m 'td', c.body
     m 'td', Util.hourMin(comment.createdAt)
@@ -219,8 +219,15 @@ $ ->
 # Util
 
 iconUrl = (instance) ->
-  # TODO 過去データ対応とゲストユーザ対応
-  return instance.icon_url
+  i = instance.attributes
+  return i.icon_url if i.icon_url
+  ParseParse.find('_User', i.user.id).then((user) ->
+    facebook_id = user.get('facebook_id_str')
+    icon_url = "https://graph.facebook.com/#{facebook_id}/picture?height=40&width=40"
+    instance.set('icon_url', icon_url)
+    instance.save()
+    return icon_url
+  )
 
 jacketUrl = (workload) ->
   return'https://ruffnote.com/attachments/24981' unless workload.title # 無音
@@ -807,9 +814,6 @@ initService = ($dom, url) ->
 
 @addComment = (room_id, comment, is_countup=false, is_prepend=false) ->
   window.commentsController().items.unshift(comment); m.redraw()
-
-userIdToIconUrl = (userId) ->
-  localStorage["icon_#{userId}"] || ""
 
 getUnreadsCount = (room_id, total_count) ->
   return total_count unless Parse.User.current()
