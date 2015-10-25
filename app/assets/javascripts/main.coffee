@@ -67,6 +67,7 @@ CommentsView = (ctrl, action_name, params) ->
   title = params['title']
 
   comments = ctrl().items
+  window.updateUnreads(id, comments.length)
   [
     m 'div', {id: "room_#{id}", class: 'room'},  [
       m(
@@ -85,8 +86,6 @@ CommentsView = (ctrl, action_name, params) ->
       ]
     ]
   ]
-  # TODO: 未読数の更新（部屋毎）
-  #window.updateUnreads(search_id, comments.length)
 
 CommentView = (comment) ->
   if typeof(comment.attributes) != 'undefined'
@@ -825,12 +824,12 @@ getUnreadsCount = (room_id, total_count) ->
     return total_count
 
 updateRoomCommentsCount = (room_id) ->
-  ParseParse.find('Room', room_id, (room) ->
-    ParseParse.where('Comment', [['room_id', room_id]], (room, comments)->
+  ParseParse.find('Room', room_id).then((room) ->
+    ParseParse.where('Comment', [['room_id', room_id]]).then((comments)->
       room.set('comments_count', comments.length)
       room.save()
       window.updateUnreads(room_id, comments.length)
-    , room)
+    )
   )
 
 @syncWorkload = (type) ->
