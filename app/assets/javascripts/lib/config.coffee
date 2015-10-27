@@ -5,10 +5,17 @@ env = {
 env.pomotime =  if localStorage['dev_pomo'] then parseFloat(localStorage['dev_pomo']) else 24
 env.chattime =  if localStorage['dev_chat'] then parseFloat(localStorage['dev_chat']) else 5
 
-if location.href.match(/245cloud.com/)
+href = location.href
+if href.match(/production_mode=/) || href.match(/245cloud.com/)
   env.parse_app_id = 'jemiGIUHsvNeVQojqiUaXxFJZvzFDxFbUsfjPr78'
   env.parse_key = 'ZoyMZflFV5H2VoASJv505vJ2wWd9zqa2ZW5MU780'
-  env.facebook_app_id = '275431199325537'
+
+  if href.match(/245cloud.dev/) # http://pow.cx/
+    env.facebook_app_id = '275431199325537'
+  else if href.match(/245cloud.com/)
+    env.facebook_app_id = '363848477150475'
+  else
+    alert 'please set facebook_app_id in app/assets/javascripts/lib/config.coffee'
   env.milkcocoa = 'iceiabmz2nv'
   env.yt_client_id = 'AIzaSyAvb5RW4gNEcQlaHODHZ1h0jjYxD8mKvIM'
 else
