@@ -33,12 +33,12 @@ WorkloadView = (workload, status=null) ->
   img_id = if w.title then '24921' else '24926' # この曲 or 無音
   t = new Date(workload.createdAt)
 
-  if status == 'doing'
+  if status == 'doings'
     end_time = @env.pomotime*60*1000
   else if status == 'chatting'
     end_time = @env.chattime*60*1000
 
-  if status == 'doing' or status == 'chatting'
+  if status == 'doings' or status == 'chatting'
     disp = m.trust("#{Util.hourMin(workload.createdAt, '開始')}（あと<span class='realtime' data-countdown='#{end_time + t.getTime()}'></span>）")
   else
     disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{w.number}回目）"
