@@ -25,8 +25,8 @@ if href.match(/production_mode=/) || href.match(/245cloud.com/)
   env.milkcocoa = 'iceiabmz2nv'
   env.yt_client_id = 'AIzaSyAvb5RW4gNEcQlaHODHZ1h0jjYxD8mKvIM'
 else
-  env.parse_app_id = '8QzCMkUbx7TyEApZjDRlhpLQ2OUj0sQWTnkEExod'
-  env.parse_key = 'gzlnFfIOoLFQzQ08bU4mxkhAHcSqEok3rox0PBOM'
+  env.parse_app_id = 'xDQHbCXqlrdCoOAnTbunjJjoxxBhSbQll1vKIcSQ' #245cloudDev2
+  env.parse_key = 'jcwkk9MstoMebuv9ovsFB26aR9IDNg5vc6Ec0GwN'
   env.milkcocoa = 'hotiabmydrw'
   env.yt_client_id = 'AIzaSyD1A25NZMbp4VA4uikV8e-naG7oVa-B1pY'
   
