@@ -791,7 +791,8 @@ window.initReview = () ->
 
 window.initWantedly = () ->
   $('#wantedly').html("""
-  【試験的宣伝】
+  【試験的宣伝】<br/>
+  ※正常動作しない場合は<a href='https://www.facebook.com/pandeiro245' target='_blank'>西小倉</a>までご連絡ください！ここから貼り付けコードを発行して共有頂ければ西小倉による紹介文付きで追加させて頂きます！（もちろん無料っすけど誰かに怒られたりしたら突然消えますｗ）<br/><br/>
   <div id='social-wantedly'>
   245cloud mix作者のkimiyaさんをはじめ、コアユーザの菊本さん、瀬川さん等々が率いる技術者集団<a href="https://www.wantedly.com/projects/33589" target='_blank'>スタテク</a>の話を聞いてみませんか？<br />
   <div class="wantedly-visit-button" data-visit-button-id="H77rEIjYFdS8X0dyRnohdA" data-width="270" data-height="60"></div>
