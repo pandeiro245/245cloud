@@ -16,6 +16,7 @@ $ ->
     'news'
     ['otukare', {is_hide: true}]
     'ad'
+    'wantedly'
     'review'
     'contents'
     'start_buttons'
@@ -55,7 +56,6 @@ $ ->
     #'mlkcca_title'
     #'mlkcca'
     'footer'
-    'wantedly'
     ['otukare_services', {is_hide: true}]
     'hatopoppo'
   ])
@@ -790,16 +790,41 @@ window.initReview = () ->
   )
 
 window.initWantedly = () ->
+  companies = [
+    [
+      '245cloud mix作者のkimiyaさんをはじめ、コアユーザの菊本さん、瀬川さん等々が率いる技術者集団'
+      33589
+      'スタテク'
+      'H77rEIjYFdS8X0dyRnohdA'
+      'https://i.gyazo.com/e33c7a589df67ea5e68a5b9dec74df3d.png'
+    ]
+    [
+      '245cloudを作っている西小倉が働く'
+      29075
+      'ラフノート'
+      'b3umDS_P10Avjbmwv-1ldA'
+      'https://i.gyazo.com/e72ff20360920ff26dab3dde6155bb1c.png'
+    ]
+    [
+      'この245cloudはホトスタの香月さんと西小倉の2人でポモドーロする会からスタートしました。社長のハッシーもコアユーザ'
+      6683
+      'ホトスタ'
+      'CJm45IwYynMvPdaLRvUESg'
+      'https://i.gyazo.com/8218576144d00615a898433f3a61f9f3.png'
+    ]
+  ]
+  n = Math.floor(Math.random() * companies.length)
+  company = companies[n]
   $('#wantedly').html("""
   【試験的宣伝】<br/>
-  ※正常動作しない場合は<a href='https://www.facebook.com/pandeiro245' target='_blank'>西小倉</a>までご連絡ください！ここから貼り付けコードを発行して共有頂ければ西小倉による紹介文付きで追加させて頂きます！（もちろん無料っすけど誰かに怒られたりしたら突然消えますｗ）<br/><br/>
-  <div id='social-wantedly'>
-  245cloud mix作者のkimiyaさんをはじめ、コアユーザの菊本さん、瀬川さん等々が率いる技術者集団<a href="https://www.wantedly.com/projects/33589" target='_blank'>スタテク</a>の話を聞いてみませんか？<br />
-  <div class="wantedly-visit-button" data-visit-button-id="H77rEIjYFdS8X0dyRnohdA" data-width="270" data-height="60"></div>
+  正常動作しない場合は<a href='https://www.facebook.com/pandeiro245' target='_blank'>西小倉</a>までご連絡ください！<br>
+  <a href='https://github.com/pandeiro245/245cloud/issues/138' target='_blank'>ここから</a>貼り付けコードを発行して共有頂ければ西小倉による紹介文付きで追加させて頂きます！<br>
+  （もちろん無料っすけど誰かに怒られたりしたら突然消えますｗ）<br/><br/>
+  <img src='#{company[4]}' width='500px'/>
   <br/>
-
-  245cloudを作っている西小倉が働く<a href='https://www.wantedly.com/projects/29075' target='_blank'>ラフノート</a>の話を聞いてみませんか？<br />
-  <div class="wantedly-visit-button" data-visit-button-id="b3umDS_P10Avjbmwv-1ldA" data-width="270" data-height="60"></div>
+  #{company[0]}<br>
+  「<a href='https://www.wantedly.com/projects/#{company[1]}' target='_blank'>#{company[2]}</a>」の話を聞いてみませんか？<br />
+  <div class="wantedly-visit-button" data-visit-button-id="#{company[3]}" data-width="270" data-height="60"></div>
   </div>
   """)
  
