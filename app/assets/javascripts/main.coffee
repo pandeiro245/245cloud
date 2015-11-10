@@ -16,6 +16,7 @@ $ ->
     'news'
     ['otukare', {is_hide: true}]
     'ad'
+    'wantedly'
     'review'
     'contents'
     'start_buttons'
@@ -672,6 +673,7 @@ complete = () ->
   $("#playing").fadeOut()
   $("#search").fadeOut()
   $("#playing").html('') # for stopping
+  initWantedly()
   unless @env.is_kakuhen
     @initSelectRooms()
 
@@ -786,6 +788,30 @@ window.initReview = () ->
     workload.save()
     alert 'レビューを保存しました'
   )
+
+window.initWantedly = () ->
+  $('#wantedly').html("""
+  【試験的宣伝】
+  <div id='social-wantedly'>
+  245cloud mix作者のkimiyaさんをはじめ、コアユーザの菊本さん、瀬川さん等々が率いる技術者集団<a href="https://www.wantedly.com/projects/33589" target='_blank'>スタテク</a>の話を聞いてみませんか？<br />
+  <div class="wantedly-visit-button" data-visit-button-id="H77rEIjYFdS8X0dyRnohdA" data-width="270" data-height="60"></div>
+  <br/>
+
+  245cloudを作っている西小倉が働く<a href='https://www.wantedly.com/projects/29075' target='_blank'>ラフノート</a>の話を聞いてみませんか？<br />
+  <div class="wantedly-visit-button" data-visit-button-id="b3umDS_P10Avjbmwv-1ldA" data-width="270" data-height="60"></div>
+  </div>
+  """)
+ 
+  d = document
+  s = 'script'
+  id = 'wantedly-visit-buttons-wjs'
+  fjs = d.getElementsByTagName(s)[0]
+  if d.getElementById(id)
+    return
+  js = d.createElement(s)
+  js.id = id
+  js.src = 'https://platform.wantedly.com/visit_buttons/script.js'
+  fjs.parentNode.insertBefore js, fjs
 
 window.initComments = () ->
   initRoom()
