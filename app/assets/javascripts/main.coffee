@@ -812,6 +812,13 @@ window.initWantedly = () ->
       'CJm45IwYynMvPdaLRvUESg'
       'https://i.gyazo.com/8218576144d00615a898433f3a61f9f3.png'
     ]
+    [
+      '累計ポモ数ダントツ１位のはらぱんさんのRubyアジャイルな会社'
+      20027
+      'mofmof'
+      'r0P3mUnqLLLrOnFazuo1aQ'
+      'https://i.gyazo.com/b33f22cfe8b883a5d8b1cbc2f691ee3a.png'
+    ]
   ]
   n = Math.floor(Math.random() * companies.length)
   company = companies[n]
