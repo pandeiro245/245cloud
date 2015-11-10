@@ -16,7 +16,6 @@ $ ->
     'news'
     ['otukare', {is_hide: true}]
     'ad'
-    'wantedly'
     'review'
     'contents'
     'start_buttons'
@@ -56,6 +55,7 @@ $ ->
     #'mlkcca_title'
     #'mlkcca'
     'footer'
+    'wantedly'
     ['otukare_services', {is_hide: true}]
     'hatopoppo'
   ])
