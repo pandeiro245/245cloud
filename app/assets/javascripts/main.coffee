@@ -819,6 +819,14 @@ window.initWantedly = () ->
       'r0P3mUnqLLLrOnFazuo1aQ'
       'https://i.gyazo.com/b33f22cfe8b883a5d8b1cbc2f691ee3a.png'
     ]
+    [
+      'エンジニアの今さんも伊藤さんも245cloudユーザ☆'
+      27659
+      'ベストティーチャー'
+      '_6Z51YeGo0gOplv7iHbimw'
+      'https://i.gyazo.com/ea0a709fb5a6215021809e04eb147dcd.png'
+
+    ]
   ]
   n = Math.floor(Math.random() * companies.length)
   company = companies[n]
