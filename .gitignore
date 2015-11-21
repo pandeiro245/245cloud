@@ -31,3 +31,4 @@ config/environments/*.local.yml
 
 public/youtube
 public/youtube.html
+config/parse_resource.yml
