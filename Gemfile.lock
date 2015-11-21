@@ -171,6 +171,10 @@ GEM
     mimemagic (0.3.0)
     mini_portile (0.6.2)
     minitest (5.8.0)
+    mithril_rails (0.0.7)
+      execjs (>= 2.2.2)
+      rails (>= 3.2.0)
+      tilt
     multi_json (1.11.2)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
@@ -321,6 +325,7 @@ DEPENDENCIES
   jbuilder (~> 2.0)
   jp_prefecture
   jquery-rails
+  mithril_rails
   mysql2
   omniauth-facebook
   parse_resource!
@@ -333,3 +338,6 @@ DEPENDENCIES
   uglifier (>= 1.3.0)
   unicorn
   web-console (~> 2.0)
+
+BUNDLED WITH
+   1.10.6

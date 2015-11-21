@@ -12,5 +12,7 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require mithril
+//= require mithril_ujs
 //= require lib/config
 //= require_tree .
