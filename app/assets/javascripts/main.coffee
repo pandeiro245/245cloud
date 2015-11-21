@@ -150,7 +150,6 @@ Comment = {
   room_title: @room_title
 }
 
-
 $ ->
   ParseParse.addAccesslog()
   Util.scaffolds([
@@ -423,13 +422,14 @@ initSearch = () ->
     for room in rooms
       r = room.attributes
       room_id = room.id
+      title = r.title
       total_count = r.comments_count
       unread_count = getUnreadsCount(room.id, total_count)
       if r.img_on
         on2= r.img_on
         off2= r.img_off
         $img = Util.tag('img', off2)
-        $img.attr('data-values', "#{room_id}:#{r.title}")
+        $img.attr('data-values', "#{room_id}:#{title}")
         $img.tooltip({title: "未読数：#{unread_count} / 投稿数：#{total_count}", placement: 'bottom'})
         $img.addClass('col-sm-2 room_icon room_link')
         $img.css('cursor', 'pointer')
@@ -438,8 +438,16 @@ initSearch = () ->
         $('#select_rooms .imgs').append($img)
       else
         $('.modal-body').append(
-          "<a class='room_link' style='cursor: pointer; display:block;'  data-values=\"#{room.id}:#{room.attributes.title}\">#{room.attributes.title} (#{unread_count}/#{total_count})</option>"
+          "<a class='room_link' style='cursor: pointer; display:block;'  data-values=\"#{room.id}:#{title}\">#{title} (#{unread_count}/#{total_count})</option>"
         )
+
+      params = {
+        id: room_id
+        title: title
+      }
+      $("#rooms").append("<div id=\"room_#{room_id}\"></div>")
+
+      m.mount $("#room_#{room_id}")[0], vm('Comment', 'list', 'CommentsView', params)
       
     #  その他
     on2= 'https://ruffnote.com/attachments/24855'
@@ -743,11 +751,8 @@ window.initComments = () ->
   initRoom()
 
 window.initRoom = (id = 'default', title='いつもの部屋') ->
-  params = {
-    id: id
-    title: title
-  }
-  m.mount $('#rooms')[0], vm('Comment', 'list', 'CommentsView', params)
+  $(".room").hide()
+  $("#room_#{id}").show()
 
 window.updateUnreads = (room_id, count) ->
   unreads = Parse.User.current().get("unreads")
