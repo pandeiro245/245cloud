@@ -5,18 +5,16 @@ env = {
   et_client_id: '534872bc1c3389f658f335e241a25efd219fd144'
 }
 
-if min = href.match(/pomotime=(.[0-9.]*)/)
-  localStorage['pomotime'] = min[1]
+pomotime = href.match(/pomotime=(.[0-9.]*)/)
+env.pomotime = if pomotime then parseFloat(pomotime[1]) else 24
 
-env.pomotime = if localStorage['pomotime'] then parseFloat(localStorage['pomotime']) else 24
-env.chattime = if localStorage['chattime'] then parseFloat(localStorage['chattime']) else 5
-
+chattime = href.match(/chattime=(.[0-9.]*)/)
+env.chattime = if chattime then parseFloat(chattime[1]) else 5
 
 if href.match(/production_mode=/) || href.match(/245cloud.com/)
   env.parse_app_id = 'jemiGIUHsvNeVQojqiUaXxFJZvzFDxFbUsfjPr78'
   env.parse_key = 'ZoyMZflFV5H2VoASJv505vJ2wWd9zqa2ZW5MU780'
-
-  if href.match(/245cloud.dev/) # http://pow.cx/
+  if href.match(/245cloud.dev/)
     env.facebook_app_id = '275431199325537'
   else if href.match(/245cloud.com/)
     env.facebook_app_id = '363848477150475'
