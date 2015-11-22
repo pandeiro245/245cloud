@@ -1,3 +1,5 @@
+window.commentsControllers = {}
+
 vm = (model_name, action_name, view_name, params={}) ->
   {
     controller: ->
@@ -62,9 +64,10 @@ WorkloadView = (workload, status=null) ->
   ]
 
 CommentsView = (ctrl, action_name, params) ->
-  window.commentsController = ctrl
   id = params['id']
   title = params['title']
+
+  window.commentsControllers[id] = ctrl
 
   comments = ctrl().items
   window.updateUnreads(id, comments.length)
@@ -216,7 +219,7 @@ $ ->
 # Util
 
 iconUrl = (instance) ->
-  i = instance.attributes
+  i = instance.attributes || instance
   return i.icon_url if i.icon_url
 
   return "https://graph.facebook.com/undefined/picture?height=40&width=40" # 下の処理が多すぎるとハングするため一旦ここでreturn
@@ -801,10 +804,10 @@ window.createComment = (room_id) ->
     updateRoomCommentsCount(room_id)
 
     # 自分の投稿を自分の画面に
-    @addComment(room_id, comment, true, true)
+    @addComment(room_id, comment)
 
     # 自分の投稿を他人の画面に
-    syncComment(room_id, comment, true)
+    syncComment(room_id, comment)
   )
 
 initRanking = () ->
@@ -897,8 +900,8 @@ ruffnote = (id, dom, callback=null) ->
 initService = ($dom, url) ->
   $dom.append("<iframe src='#{url}' width='85%' height='900px'></iframe>")
 
-@addComment = (room_id, comment, is_countup=false, is_prepend=false) ->
-  window.commentsController().items.unshift(comment); m.redraw()
+@addComment = (room_id, comment) ->
+  window.commentsControllers[room_id]().items.unshift(comment); m.redraw()
 
 getUnreadsCount = (room_id, total_count) ->
   return total_count unless Parse.User.current()
@@ -924,12 +927,11 @@ updateRoomCommentsCount = (room_id) ->
     workload: @workload
   })
 
-syncComment = (room_id, comment, is_countup=false) ->
+syncComment = (room_id, comment) ->
   @socket.push({
     type: 'comment'
     comment: comment
     room_id: room_id
-    is_countup: is_countup
   })
 
 @stopUser = (user_id) ->

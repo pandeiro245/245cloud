@@ -7,7 +7,7 @@ mlkcca = new MilkCocoa("#{@env.milkcocoa}.mlkcca.com")
   if params.type == 'comment'
     # 自分の投稿だけはMilkcocoaを経由させない 
     unless params.comment.user.objectId == Parse.User.current().id
-      @addComment(params.room_id, params.comment, params.is_countup)
+      @addComment(params.room_id, params.comment)
   else if params.type == 'doing'
     @addDoing(params.workload)
   else if params.type == 'chatting'

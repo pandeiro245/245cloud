@@ -7,7 +7,7 @@ class Parsecom::Workload < ParseResource::Base
         c.sync_icon_url
       end
     end
-    self.sync_icon_url
+    self.sync_icon_url 
   end
 
   def sync_icon_url
