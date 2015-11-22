@@ -4,6 +4,7 @@ class Parsecom::Comment < ParseResource::Base
   def self.sync_icon_url
     self.where(icon_url: nil).each do |c|
       c.sync_icon_url
+      sleep 0.1
     end
     self.sync_icon_url
   end

@@ -5,6 +5,7 @@ class Parsecom::Workload < ParseResource::Base
     [nil, 'https://graph.facebook.com/undefined/picture?height=40&width=40'].each do |icon_url|
       self.where(icon_url: icon_url).each do |c|
         c.sync_icon_url
+        sleep 0.1
       end
     end
     self.sync_icon_url 

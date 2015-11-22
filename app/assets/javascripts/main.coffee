@@ -1,5 +1,19 @@
 window.commentsControllers = {}
 
+now = new Date()
+first = now.getTime() - now.getHours()*60*60*1000 - now.getMinutes()*60*1000 - now.getSeconds() * 1000
+first = new Date(first)
+cond = [
+  ["is_done", true]
+  ['user', Parse.User.current()]
+  ["createdAt", '>', first]
+]
+
+workloads = ParseParse.where("Workload", cond)
+workloads.then((items) ->
+  window.number = items.length + 1
+)
+
 vm = (model_name, action_name, view_name, params={}) ->
   {
     controller: ->
@@ -680,24 +694,12 @@ complete = () ->
   workload = @workload
   w = workload.attributes
 
-  first = new Date(workload.createdAt)
-  first = first.getTime() - first.getHours()*60*60*1000 - first.getMinutes()*60*1000 - first.getSeconds() * 1000
-  first = new Date(first)
-  cond = [
-    ["is_done", true]
-    ['user', w.user]
-    ["createdAt", '<', workload.createdAt]
-    ["createdAt", '>', first]
-  ]
-  workloads = ParseParse.where("Workload", cond)
-  workloads.then((items) ->
-    workload.set('number', items.length + 1)
-    workload.set('is_done', true)
-    workload.save()
-    $complete = $('#complete')
-    $complete.html('')
-    initComments()
-  )
+  workload.set('number', window.number)
+  workload.set('is_done', true)
+  workload.save()
+  $complete = $('#complete')
+  $complete.html('')
+  initComments()
 
 window.initWantedly = () ->
   companies = [
