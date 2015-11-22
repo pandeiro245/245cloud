@@ -1,3 +1,19 @@
+window.commentsControllers = {}
+
+now = new Date()
+first = now.getTime() - now.getHours()*60*60*1000 - now.getMinutes()*60*1000 - now.getSeconds() * 1000
+first = new Date(first)
+cond = [
+  ["is_done", true]
+  ['user', Parse.User.current()]
+  ["createdAt", '>', first]
+]
+
+workloads = ParseParse.where("Workload", cond)
+workloads.then((items) ->
+  window.number = items.length + 1
+)
+
 vm = (model_name, action_name, view_name, params={}) ->
   {
     controller: ->
@@ -62,28 +78,27 @@ WorkloadView = (workload, status=null) ->
   ]
 
 CommentsView = (ctrl, action_name, params) ->
-  window.commentsController = ctrl
   id = params['id']
   title = params['title']
+
+  window.commentsControllers[id] = ctrl
 
   comments = ctrl().items
   window.updateUnreads(id, comments.length)
   [
-    m 'div', {id: "room_#{id}", class: 'room'},  [
-      m(
-        'input'
-        {
-          class: 'create_comment'
-          placeholder: "「#{title}」に書き込む"
-          onkeydown: (e) ->
-            window.createComment(id) if e.keyCode == 13 # enter
-        }
+    m(
+      'input'
+      {
+        class: 'create_comment'
+        placeholder: "「#{title}」に書き込む"
+        onkeydown: (e) ->
+          window.createComment(id) if e.keyCode == 13 # enter
+      }
+    )
+    m 'table', {class: 'table comments'}, [
+      ctrl().items.map((comment) ->
+        CommentView(comment)
       )
-      m 'table', {class: 'table comments'}, [
-        ctrl().items.map((comment) ->
-          CommentView(comment)
-        )
-      ]
     ]
   ]
 
@@ -149,7 +164,6 @@ Comment = {
   room_id: @room_id
   room_title: @room_title
 }
-
 
 $ ->
   ParseParse.addAccesslog()
@@ -219,8 +233,11 @@ $ ->
 # Util
 
 iconUrl = (instance) ->
-  i = instance.attributes
+  i = instance.attributes || instance
   return i.icon_url if i.icon_url
+
+  return "https://graph.facebook.com/undefined/picture?height=40&width=40" # 下の処理が多すぎるとハングするため一旦ここでreturn
+
   ParseParse.find('_User', i.user.id).then((user) ->
     facebook_id = user.get('facebook_id_str')
     icon_url = "https://graph.facebook.com/#{facebook_id}/picture?height=40&width=40"
@@ -396,7 +413,17 @@ initSearch = () ->
       searchMusics()
   )
 
-@initSelectRooms = () ->
+@showRooms = () ->
+  $('#rooms').show()
+  $('#rooms_title').show()
+  $('#select_rooms').show()
+
+@initRooms = () ->
+  console.log 'initRooms'
+  $('#rooms').hide()
+  $('#rooms_title').hide()
+  $('#select_rooms').hide()
+
   $('#rooms_title').html(Util.tag('h2', Util.tag('img', 'https://ruffnote.com/attachments/24968'), {class: 'status'}))
   $('#select_rooms').html(Util.tag('h2', Util.tag('img', 'https://ruffnote.com/attachments/24967'), {class: 'status'}))
   $('#select_rooms').append(Util.tag('div', null, {class: 'imgs'}))
@@ -419,17 +446,21 @@ initSearch = () ->
 
     $('.modal-body').html('')
 
+    $("#rooms").append("<div class='room' id=\"room_default\" style='display:block;'></div>")
+    m.mount $("#room_default")[0], vm('Comment', 'list', 'CommentsView', {id: 'default', title: 'いつもの部屋'})
+
     # DB部屋
     for room in rooms
       r = room.attributes
       room_id = room.id
+      title = r.title
       total_count = r.comments_count
       unread_count = getUnreadsCount(room.id, total_count)
       if r.img_on
         on2= r.img_on
         off2= r.img_off
         $img = Util.tag('img', off2)
-        $img.attr('data-values', "#{room_id}:#{r.title}")
+        $img.attr('data-values', "#{room_id}:#{title}")
         $img.tooltip({title: "未読数：#{unread_count} / 投稿数：#{total_count}", placement: 'bottom'})
         $img.addClass('col-sm-2 room_icon room_link')
         $img.css('cursor', 'pointer')
@@ -438,8 +469,16 @@ initSearch = () ->
         $('#select_rooms .imgs').append($img)
       else
         $('.modal-body').append(
-          "<a class='room_link' style='cursor: pointer; display:block;'  data-values=\"#{room.id}:#{room.attributes.title}\">#{room.attributes.title} (#{unread_count}/#{total_count})</option>"
+          "<a class='room_link' style='cursor: pointer; display:block;'  data-values=\"#{room.id}:#{title}\">#{title} (#{unread_count}/#{total_count})</option>"
         )
+
+      params = {
+        id: room_id
+        title: title
+      }
+      $("#rooms").append("<div class='room' id=\"room_#{room_id}\" style='display:none;'></div>")
+
+      m.mount $("#room_#{room_id}")[0], vm('Comment', 'list', 'CommentsView', params)
       
     #  その他
     on2= 'https://ruffnote.com/attachments/24855'
@@ -503,9 +542,9 @@ start_random = () ->
   )
   
 window.start_hash = (key = null) ->
+  @initRooms() # 時間かかるので先にダウンロードしておく
   unless key
     key = location.hash.replace(/#/, '')
-
   if key
      window.play(key)
    else
@@ -530,7 +569,7 @@ start = () ->
   
   if @env.is_kakuhen
     initComments()
-    @initSelectRooms()
+    @showRooms()
 
   Util.countDown(@env.pomotime*60*1000, complete)
 
@@ -625,7 +664,7 @@ complete = () ->
   $("#playing").html('') # for stopping
   initWantedly()
   unless @env.is_kakuhen
-    @initSelectRooms()
+    @showRooms()
 
   alert '24分間お疲れ様でした！5分間交換日記ができます☆' if location.href.match('alert') unless @env.is_done
 
@@ -655,24 +694,12 @@ complete = () ->
   workload = @workload
   w = workload.attributes
 
-  first = new Date(workload.createdAt)
-  first = first.getTime() - first.getHours()*60*60*1000 - first.getMinutes()*60*1000 - first.getSeconds() * 1000
-  first = new Date(first)
-  cond = [
-    ["is_done", true]
-    ['user', w.user]
-    ["createdAt", '<', workload.createdAt]
-    ["createdAt", '>', first]
-  ]
-  workloads = ParseParse.where("Workload", cond)
-  workloads.then((items) ->
-    workload.set('number', items.length + 1)
-    workload.set('is_done', true)
-    workload.save()
-    $complete = $('#complete')
-    $complete.html('')
-    initComments()
-  )
+  workload.set('number', window.number)
+  workload.set('is_done', true)
+  workload.save()
+  $complete = $('#complete')
+  $complete.html('')
+  initComments()
 
 window.initWantedly = () ->
   companies = [
@@ -743,11 +770,8 @@ window.initComments = () ->
   initRoom()
 
 window.initRoom = (id = 'default', title='いつもの部屋') ->
-  params = {
-    id: id
-    title: title
-  }
-  m.mount $('#rooms')[0], vm('Comment', 'list', 'CommentsView', params)
+  $(".room").hide()
+  $("#room_#{id}").show()
 
 window.updateUnreads = (room_id, count) ->
   unreads = Parse.User.current().get("unreads")
@@ -782,10 +806,10 @@ window.createComment = (room_id) ->
     updateRoomCommentsCount(room_id)
 
     # 自分の投稿を自分の画面に
-    @addComment(room_id, comment, true, true)
+    @addComment(room_id, comment)
 
     # 自分の投稿を他人の画面に
-    syncComment(room_id, comment, true)
+    syncComment(room_id, comment)
   )
 
 initRanking = () ->
@@ -878,8 +902,8 @@ ruffnote = (id, dom, callback=null) ->
 initService = ($dom, url) ->
   $dom.append("<iframe src='#{url}' width='85%' height='900px'></iframe>")
 
-@addComment = (room_id, comment, is_countup=false, is_prepend=false) ->
-  window.commentsController().items.unshift(comment); m.redraw()
+@addComment = (room_id, comment) ->
+  window.commentsControllers[room_id]().items.unshift(comment); m.redraw()
 
 getUnreadsCount = (room_id, total_count) ->
   return total_count unless Parse.User.current()
@@ -905,12 +929,11 @@ updateRoomCommentsCount = (room_id) ->
     workload: @workload
   })
 
-syncComment = (room_id, comment, is_countup=false) ->
+syncComment = (room_id, comment) ->
   @socket.push({
     type: 'comment'
     comment: comment
     room_id: room_id
-    is_countup: is_countup
   })
 
 @stopUser = (user_id) ->

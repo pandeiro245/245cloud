@@ -110,7 +110,12 @@ class Util
       if dom = params.dom
         $dom = $(dom)
       else
-        $('title').html(remain2)
+        if window.number
+          disp = "#{remain2} (#{window.number}回目)"
+        else
+          disp = remain2
+
+        $('title').html(disp)
         $dom = $('.countdown')
       #$dom.html("あと#{remain2}")
       $dom.html("<img src='https://ruffnote.com/attachments/24966' />#{remain2_img}")
