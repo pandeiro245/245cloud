@@ -69,21 +69,19 @@ CommentsView = (ctrl, action_name, params) ->
   comments = ctrl().items
   window.updateUnreads(id, comments.length)
   [
-    m 'div', {id: "room_#{id}", class: 'room'},  [
-      m(
-        'input'
-        {
-          class: 'create_comment'
-          placeholder: "「#{title}」に書き込む"
-          onkeydown: (e) ->
-            window.createComment(id) if e.keyCode == 13 # enter
-        }
+    m(
+      'input'
+      {
+        class: 'create_comment'
+        placeholder: "「#{title}」に書き込む"
+        onkeydown: (e) ->
+          window.createComment(id) if e.keyCode == 13 # enter
+      }
+    )
+    m 'table', {class: 'table comments'}, [
+      ctrl().items.map((comment) ->
+        CommentView(comment)
       )
-      m 'table', {class: 'table comments'}, [
-        ctrl().items.map((comment) ->
-          CommentView(comment)
-        )
-      ]
     ]
   ]
 
@@ -220,6 +218,9 @@ $ ->
 iconUrl = (instance) ->
   i = instance.attributes
   return i.icon_url if i.icon_url
+
+  return "https://graph.facebook.com/undefined/picture?height=40&width=40" # 下の処理が多すぎるとハングするため一旦ここでreturn
+
   ParseParse.find('_User', i.user.id).then((user) ->
     facebook_id = user.get('facebook_id_str')
     icon_url = "https://graph.facebook.com/#{facebook_id}/picture?height=40&width=40"
@@ -395,7 +396,17 @@ initSearch = () ->
       searchMusics()
   )
 
-@initSelectRooms = () ->
+@showRooms = () ->
+  $('#rooms').show()
+  $('#rooms_title').show()
+  $('#select_rooms').show()
+
+@initRooms = () ->
+  console.log 'initRooms'
+  $('#rooms').hide()
+  $('#rooms_title').hide()
+  $('#select_rooms').hide()
+
   $('#rooms_title').html(Util.tag('h2', Util.tag('img', 'https://ruffnote.com/attachments/24968'), {class: 'status'}))
   $('#select_rooms').html(Util.tag('h2', Util.tag('img', 'https://ruffnote.com/attachments/24967'), {class: 'status'}))
   $('#select_rooms').append(Util.tag('div', null, {class: 'imgs'}))
@@ -417,6 +428,9 @@ initSearch = () ->
     $('#select_rooms .imgs').append($img)
 
     $('.modal-body').html('')
+
+    $("#rooms").append("<div class='room' id=\"room_default\" style='display:block;'></div>")
+    m.mount $("#room_default")[0], vm('Comment', 'list', 'CommentsView', {id: 'default', title: 'いつもの部屋'})
 
     # DB部屋
     for room in rooms
@@ -445,7 +459,7 @@ initSearch = () ->
         id: room_id
         title: title
       }
-      $("#rooms").append("<div id=\"room_#{room_id}\"></div>")
+      $("#rooms").append("<div class='room' id=\"room_#{room_id}\" style='display:none;'></div>")
 
       m.mount $("#room_#{room_id}")[0], vm('Comment', 'list', 'CommentsView', params)
       
@@ -511,9 +525,9 @@ start_random = () ->
   )
   
 window.start_hash = (key = null) ->
+  @initRooms() # 時間かかるので先にダウンロードしておく
   unless key
     key = location.hash.replace(/#/, '')
-
   if key
      window.play(key)
    else
@@ -538,7 +552,7 @@ start = () ->
   
   if @env.is_kakuhen
     initComments()
-    @initSelectRooms()
+    @showRooms()
 
   Util.countDown(@env.pomotime*60*1000, complete)
 
@@ -633,7 +647,7 @@ complete = () ->
   $("#playing").html('') # for stopping
   initWantedly()
   unless @env.is_kakuhen
-    @initSelectRooms()
+    @showRooms()
 
   alert '24分間お疲れ様でした！5分間交換日記ができます☆' if location.href.match('alert') unless @env.is_done
 
