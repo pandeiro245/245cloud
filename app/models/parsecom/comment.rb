@@ -2,7 +2,7 @@ class Parsecom::Comment < ParseResource::Base
   fields :user, :icon_url
 
   def self.sync_icon_url
-    Parsecom::Comment.where(icon_url: nil).each do |c|
+    self.where(icon_url: nil).each do |c|
       c.sync_icon_url
     end
     self.sync_icon_url
