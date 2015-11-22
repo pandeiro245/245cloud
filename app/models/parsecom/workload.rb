@@ -1,9 +1,11 @@
-class Parsecom::Comment < ParseResource::Base
+class Parsecom::Workload < ParseResource::Base
   fields :user, :icon_url
 
   def self.sync_icon_url
-    self.where(icon_url: nil).each do |c|
-      c.sync_icon_url
+    [nil, 'https://graph.facebook.com/undefined/picture?height=40&width=40'].each do |icon_url|
+      self.where(icon_url: icon_url).each do |c|
+        c.sync_icon_url
+      end
     end
     self.sync_icon_url
   end
