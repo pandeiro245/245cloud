@@ -1,27 +1,23 @@
 Parse.initialize(@env.parse_app_id, @env.parse_key)
 
 class @ParseParse
-  @find: (model_name, id, callback, instance=null) ->
+  @find: (model_name, id) ->
+    m.startComputation()
+    deferred = m.deferred()
     Model = Parse.Object.extend(model_name)
     query = new Parse.Query(Model)
     query.get(id, {
       success: (data) ->
-        if instance
-          callback(instance, data)
-        else
-          callback(data)
+        deferred.resolve(data)
+        m.endComputation()
       , error: (object, error) ->
-        console.log error
-        #alert 'error...'
+        deferred.reject(data)
     })
+    return deferred.promise
 
-  @fetch: (model_name, child, callback) ->
-    child.get(model_name).fetch({
-      success: (parent) ->
-        callback(child, parent)
-    })
-
-  @where: (model_name, cond, callback, instance=null, limit=100) ->
+  @where: (model_name, cond, limit=100) ->
+    m.startComputation()
+    deferred = m.deferred()
     Model = Parse.Object.extend(model_name)
     query = new Parse.Query(Model)
     query.limit(limit)
@@ -35,17 +31,17 @@ class @ParseParse
         query.equalTo(c[0], c[1])
 
     query.descending("createdAt")
+
     query.find({
       success: (data) ->
-        if instance
-          callback(instance, data)
-        else
-          callback(data)
+        deferred.resolve(data)
+        m.endComputation()
       error: (error) ->
-        console.log error
+        deferred.reject(data)
     })
+    return deferred.promise
 
-  @all: (model_name, callback, params={}) ->
+  @all: (model_name, callback) ->
     Model = Parse.Object.extend(model_name)
     query = new Parse.Query(Model)
     query.limit(999999)
@@ -54,8 +50,6 @@ class @ParseParse
       success: (data) ->
         callback(data)
     })
-
-  @find_or_create: (model_name, key_params, params, callback) ->
 
   @create: (model_name, params, callback=null) ->
     Model = Parse.Object.extend(model_name)
@@ -84,3 +78,5 @@ class @ParseParse
     ParseParse.create('Accesslog',
       {url: location.href}
     )
+
+
