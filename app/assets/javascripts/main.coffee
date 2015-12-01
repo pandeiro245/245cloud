@@ -64,7 +64,7 @@ $ ->
   ruffnote(18004, 'news')
   ruffnote(13477, 'footer')
   ruffnote(17758, 'search_title')
-  ruffnote(17762, 'ranking_title')
+  #ruffnote(17762, 'ranking_title')
   ruffnote(17498, 'otukare')
 
   window.services = [
@@ -932,7 +932,35 @@ window.createComment = (room_id) ->
   )
 
 initRanking = () ->
-  $('#ranking').html('ここにランキング結果が入る予定')
+  now = new Date()
+  year = now.getYear() + 1900 - 1
+  month = now.getMonth()
+  day = now.getDate()
+
+  to_now = new Date(now.getTime() + 24*3600*1000)
+  to_year = to_now.getYear() + 1900 - 1
+  to_month = to_now.getMonth()
+  to_day = to_now.getDate()
+
+  $('#ranking_title').html("<h2>#{year}年#{month+1}月#{day}日に再生された曲</h2>")
+  $('#ranking_title').html("<h2>#{to_year}年#{to_month+1}月#{to_day}日に再生された曲</h2>")
+  cond = [
+    ["is_done", true]
+    ["createdAt", '>', new Date(year, month, day)]
+    ["createdAt", '<', new Date(to_year, to_month, to_day)]
+  ]
+  titles = {}
+  ParseParse.where("Workload", cond, (workloads) ->
+    console.log workloads
+    return unless workloads.length > 0
+    for workload in workloads
+      continue unless workload.attributes.user
+      continue unless workload.attributes.title
+      continue if titles[workload.attributes.title]
+      titles[workload.attributes.title] = true
+      disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.attributes.number}回目）"
+      @addWorkload("#ranking", workload, disp)
+  , null, 24 *500)
 
 @addDoing = (workload) ->
   $("#doing_title").show()
