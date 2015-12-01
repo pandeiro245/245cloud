@@ -943,7 +943,6 @@ initRanking = () ->
   to_day = to_now.getDate()
 
   $('#ranking_title').html("<h2>#{year}年#{month+1}月#{day}日に再生された曲</h2>")
-  $('#ranking_title').html("<h2>#{to_year}年#{to_month+1}月#{to_day}日に再生された曲</h2>")
   cond = [
     ["is_done", true]
     ["createdAt", '>', new Date(year, month, day)]
