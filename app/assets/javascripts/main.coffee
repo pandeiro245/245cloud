@@ -675,7 +675,7 @@ complete = () ->
   $("#search").fadeOut()
   $("#playing").html('') # for stopping
   initWantedly()
-  initLivechat()
+  ruffnote(23777, 'livechat')
   unless @env.is_kakuhen
     @initSelectRooms()
 
@@ -855,16 +855,6 @@ window.initWantedly = () ->
   js.id = id
   js.src = 'https://platform.wantedly.com/visit_buttons/script.js'
   fjs.parentNode.insertBefore js, fjs
-
-window.initLivechat = () ->
-  $('#livechat').html("""
-  【試験的ライブチャット】<br/>↓の「Enter room」を押すだけで5分休憩中の人同士でテレビ電話ができるようにしてみました（もちろん無料）<br />
-  ただし、Enter room押した自分の顔が送信されちゃうので、今顔移るとやばいという方はすかさず<br/>
-  「Disable camera」を押せば音声だけになります。（デフォルトでOFFにする方法確認中）<br/>
-  <img src='https://i.gyazo.com/5fb0308618873a5408ca4a14640cca45.png' /><br />
-    <iframe src="https://appear.in/245cloud" width="800" height="640" frameborder="0"></iframe>
-  """)
-
 
 window.initComments = () ->
   initRoom()
@@ -1090,7 +1080,7 @@ initFixedStart = () ->
   )
 
 
-ruffnote = (id, dom, callback=null) ->
+window.ruffnote = (id, dom, callback=null) ->
   Ruffnote.fetch("pandeiro245/245cloud/#{id}", dom, callback)
 
 initService = ($dom, url) ->
