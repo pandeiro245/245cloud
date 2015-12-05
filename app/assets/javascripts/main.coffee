@@ -16,6 +16,7 @@ $ ->
     'news'
     ['otukare', {is_hide: true}]
     'ad'
+    'livechat'
     'review'
     'contents'
     'start_buttons'
@@ -54,6 +55,7 @@ $ ->
     ['whatis', {is_row: false}]
     #'mlkcca_title'
     #'mlkcca'
+    'wantedly'
     'footer'
     ['otukare_services', {is_hide: true}]
     'hatopoppo'
@@ -63,7 +65,7 @@ $ ->
   ruffnote(18004, 'news')
   ruffnote(13477, 'footer')
   ruffnote(17758, 'search_title')
-  ruffnote(17762, 'ranking_title')
+  #ruffnote(17762, 'ranking_title')
   ruffnote(17498, 'otukare')
 
   window.services = [
@@ -672,6 +674,8 @@ complete = () ->
   $("#playing").fadeOut()
   $("#search").fadeOut()
   $("#playing").html('') # for stopping
+  initWantedly()
+  initLivechat()
   unless @env.is_kakuhen
     @initSelectRooms()
 
@@ -787,6 +791,81 @@ window.initReview = () ->
     alert 'レビューを保存しました'
   )
 
+window.initWantedly = () ->
+  companies = [
+    [
+      '245cloud mix作者のkimiyaさんをはじめ、コアユーザの菊本さん、瀬川さん等々が率いる技術者集団'
+      33589
+      'スタテク'
+      'H77rEIjYFdS8X0dyRnohdA'
+      'https://i.gyazo.com/e33c7a589df67ea5e68a5b9dec74df3d.png'
+    ]
+    [
+      '245cloudを作っている西小倉が働く'
+      29075
+      'ラフノート'
+      'b3umDS_P10Avjbmwv-1ldA'
+      'https://i.gyazo.com/e72ff20360920ff26dab3dde6155bb1c.png'
+    ]
+    [
+      'この245cloudはホトスタの香月さんと西小倉の2人でポモドーロする会からスタートしました。社長のハッシーもコアユーザ'
+      6683
+      'ホトスタ'
+      'CJm45IwYynMvPdaLRvUESg'
+      'https://i.gyazo.com/8218576144d00615a898433f3a61f9f3.png'
+    ]
+    [
+      '累計ポモ数ダントツ１位のはらぱんさんのRubyアジャイルな会社'
+      20027
+      'mofmof'
+      'r0P3mUnqLLLrOnFazuo1aQ'
+      'https://i.gyazo.com/b33f22cfe8b883a5d8b1cbc2f691ee3a.png'
+    ]
+    [
+      'エンジニアの今さんも伊藤さんも245cloudユーザ☆'
+      27659
+      'ベストティーチャー'
+      '_6Z51YeGo0gOplv7iHbimw'
+      'https://i.gyazo.com/ea0a709fb5a6215021809e04eb147dcd.png'
+
+    ]
+  ]
+  n = Math.floor(Math.random() * companies.length)
+  company = companies[n]
+  $('#wantedly').html("""
+  【試験的宣伝】<br/>
+  正常動作しない場合は<a href='https://www.facebook.com/pandeiro245' target='_blank'>西小倉</a>までご連絡ください！<br>
+  <a href='https://github.com/pandeiro245/245cloud/issues/138' target='_blank'>ここから</a>貼り付けコードを発行して共有頂ければ西小倉による紹介文付きで追加させて頂きます！<br>
+  （もちろん無料っすけど誰かに怒られたりしたら突然消えますｗ）<br/><br/>
+  <img src='#{company[4]}' width='500px'/>
+  <br/>
+  #{company[0]}<br>
+  「<a href='https://www.wantedly.com/projects/#{company[1]}' target='_blank'>#{company[2]}</a>」の話を聞いてみませんか？<br />
+  <div class="wantedly-visit-button" data-visit-button-id="#{company[3]}" data-width="270" data-height="60"></div>
+  </div>
+  """)
+ 
+  d = document
+  s = 'script'
+  id = 'wantedly-visit-buttons-wjs'
+  fjs = d.getElementsByTagName(s)[0]
+  if d.getElementById(id)
+    return
+  js = d.createElement(s)
+  js.id = id
+  js.src = 'https://platform.wantedly.com/visit_buttons/script.js'
+  fjs.parentNode.insertBefore js, fjs
+
+window.initLivechat = () ->
+  $('#livechat').html("""
+  【試験的ライブチャット】<br/>↓の「Enter room」を押すだけで5分休憩中の人同士でテレビ電話ができるようにしてみました（もちろん無料）<br />
+  ただし、Enter room押した自分の顔が送信されちゃうので、今顔移るとやばいという方はすかさず<br/>
+  「Disable camera」を押せば音声だけになります。（デフォルトでOFFにする方法確認中）<br/>
+  <img src='https://i.gyazo.com/5fb0308618873a5408ca4a14640cca45.png' /><br />
+    <iframe src="https://appear.in/245cloud" width="800" height="640" frameborder="0"></iframe>
+  """)
+
+
 window.initComments = () ->
   initRoom()
 
@@ -865,7 +944,34 @@ window.createComment = (room_id) ->
   )
 
 initRanking = () ->
-  $('#ranking').html('ここにランキング結果が入る予定')
+  now = new Date()
+  year = now.getYear() + 1900 - 1
+  month = now.getMonth()
+  day = now.getDate()
+
+  to_now = new Date(now.getTime() + 24*3600*1000)
+  to_year = to_now.getYear() + 1900 - 1
+  to_month = to_now.getMonth()
+  to_day = to_now.getDate()
+
+  $('#ranking_title').html("<h2>#{year}年#{month+1}月#{day}日に再生された曲</h2>")
+  cond = [
+    ["is_done", true]
+    ["createdAt", '>', new Date(year, month, day)]
+    ["createdAt", '<', new Date(to_year, to_month, to_day)]
+  ]
+  titles = {}
+  ParseParse.where("Workload", cond, (workloads) ->
+    console.log workloads
+    return unless workloads.length > 0
+    for workload in workloads
+      continue unless workload.attributes.user
+      continue unless workload.attributes.title
+      continue if titles[workload.attributes.title]
+      titles[workload.attributes.title] = true
+      disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.attributes.number}回目）"
+      @addWorkload("#ranking", workload, disp)
+  , null, 24 *500)
 
 @addDoing = (workload) ->
   $("#doing_title").show()
