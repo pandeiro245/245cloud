@@ -4,6 +4,7 @@
 @nomusic_url = 'https://ruffnote.com/attachments/24985'
 
 $ ->
+  return unless $('#nc').length
   ParseParse.all("User", (users) ->
     for user in users
       img = "https://graph.facebook.com/#{user.get('facebook_id_str')}/picture?height=40&width=40"
