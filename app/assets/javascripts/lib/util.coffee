@@ -3,8 +3,8 @@ class Util
     date = new Date() unless date
     new Date(date.getTime() - min*60*1000)
 
-  @scaffolds: (params) ->
-    $body = $('#nc')
+  @scaffolds: (params, key='nc') ->
+    $body = $("##{key}")
     $body.html('') # remove contents for SEO
     for param in params
       attr = null
