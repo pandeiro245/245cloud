@@ -46,6 +46,27 @@ initCalendar = ->
         )
     )
 
+    $(document).on('click', '.cancel', ()->
+      unless user = Parse.User.current()
+        alert '245cloudにログインしてから操作してください（あとでこっちからもログインできるようにしますね...）'
+        location.href = '/'
+
+      id = $(this).attr('data-id')
+      window.pitch
+      ParseParse.find('Pitch', id, (pitch)->
+        pitch.destroy({
+          success: ->
+            alert '予約の完了しました！'
+            location.reload()
+          error: ->
+            alert '予約の完了に失敗しました。西小倉に連絡してください…'
+            location.reload()
+        })
+      )
+    )
+
+
+
     utime = now.getTime()
     wdays = ['日', '月', '火', '水', '木', '金', '土']
     button = "<button class='btn btn-primary'>申し込む</btton>"
@@ -73,11 +94,12 @@ initCalendar = ->
         start = new Date("#{1900+target.getYear()}-#{target.getMonth()+1}-#{target.getDate()} #{i}")
         wantdo += "<td style='vertical-align:bottom;'>"
         if start.getTime() < now.getTime()
-          wantdo += "<button class='btn btn-disabled cancel do' data-start=#{start.getTime()}>終了</btton></td>"
+          wantdo += "<button class='btn btn-disabled' data-start=#{start.getTime()}>終了</btton></td>"
         else if pitch = pitches[start.getTime()]
+          window.pitch = pitch
           wantdo += "<img src='#{pitch.get('icon_url')}' style='margin:6px; '/>"
-          if pitch.get('user').get('id') == Parse.User.current().get('id')
-            wantdo += "<button class='btn btn-danger cancel do' data-start=#{start.getTime()}>キャンセル</btton>"
+          if pitch.get('user').id == Parse.User.current().id
+            wantdo += "<button class='btn btn-danger cancel do' data-id=#{pitch.id} data-start=#{start.getTime()}>キャンセル</btton>"
           wantdo += "</td>"
         else
           wantdo += "<button class='btn btn-primary apply do' data-start=#{start.getTime()}>申し込む</btton></td>"
