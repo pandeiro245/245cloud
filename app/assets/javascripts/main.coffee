@@ -62,7 +62,8 @@ $ ->
     'hatopoppo'
   ])
   Util.realtime()
-  ruffnote(13475, 'header')
+  #ruffnote(13475, 'header')
+  ruffnote(23854, 'header')
   ruffnote(18004, 'news')
   ruffnote(13477, 'footer')
   ruffnote(17758, 'search_title')
