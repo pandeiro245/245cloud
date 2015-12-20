@@ -1,3 +1,78 @@
+class @ParseParse
+  @find: (model_name, id, callback, instance=null) ->
+    Model = Parse.Object.extend(model_name)
+    query = new Parse.Query(Model)
+    query.get(id, {
+      success: (data) ->
+        if instance
+          callback(instance, data)
+        else
+          callback(data)
+      , error: (object, error) ->
+        console.log error
+        #alert 'error...'
+    })
+
+  @fetch: (model_name, child, callback) ->
+    child.get(model_name).fetch({
+      success: (parent) ->
+        callback(child, parent)
+    })
+
+  @where: (model_name, cond, callback, instance=null, limit=100) ->
+    Model = Parse.Object.extend(model_name)
+    query = new Parse.Query(Model)
+    query.limit(limit)
+    for c in cond
+      if c[2]
+        if c[1] == '<'
+          query.lessThan(c[0], c[2])
+        else if c[1] == '>'
+          query.greaterThan(c[0], c[2])
+      else
+        query.equalTo(c[0], c[1])
+
+    query.descending("createdAt")
+    query.find({
+      success: (data) ->
+        if instance
+          callback(instance, data)
+        else
+          callback(data)
+      error: (error) ->
+        console.log error
+    })
+
+  @all: (model_name, callback, params={}) ->
+    Model = Parse.Object.extend(model_name)
+    query = new Parse.Query(Model)
+    query.limit(999999)
+    query.descending("createdAt")
+    query.find({
+      success: (data) ->
+        callback(data)
+    })
+
+  @find_or_create: (model_name, key_params, params, callback) ->
+
+  @create: (model_name, params, callback=null) ->
+    url = kintone.api.url('/k/v1/record', true)
+    appId = kintone.app.getId()
+    param = {app: appId, record: {}}
+    for p of params
+      param.record[p] = {value: params[p]}
+    param.record['key'] = {value: location.hash.replace(/^#/, '')}
+    kintone.api(url, 'POST', param, (workload) ->
+      @workload = workload
+      callback()
+    )
+
+  @addAccesslog: () ->
+    console.log 'addAccesslog'
+    ParseParse.create('Accesslog',
+      {url: location.href}
+    )
+
 @env.is_doing = false
 @env.is_done = false
 
@@ -138,116 +213,102 @@ initStart = () ->
   text = "24分やり直しでも大丈夫ですか？"
   Util.beforeunload(text, 'env.is_doing')
   
-  if Parse.User.current()
-    $('#contents').append("""
-      <div class='countdown2' >
-      <div class='countdown' ></div>
-      </div>
-    """)
-      
-    $('#contents').append("<br>")
+  $('#contents').append("""
+    <div class='countdown2' >
+    <div class='countdown' ></div>
+    </div>
+  """)
+    
+  $('#contents').append("<br>")
 
-    $('#start_buttons').html("""
-      <div id='random' class='col-sm-2'></div>
-      <div id='fixedstart' class='col-sm-2'></div>
-      <div id='nomusic' class='col-sm-2'></div>
-    """)
+  $('#start_buttons').html("""
+    <div id='random' class='col-sm-2'></div>
+    <div id='fixedstart' class='col-sm-2'></div>
+    <div id='nomusic' class='col-sm-2'></div>
+  """)
 
-    #text = '曲おまかせで24分間集中する！'
-    text = [
-      'https://ruffnote.com/attachments/24919'
-      'https://ruffnote.com/attachments/24920'
-    ]
-    tooltip = '現在はSoundcloudの人気曲からランダム再生ですが今後もっと賢くなっていくはず'
-    $random = $('#start_buttons #random')
-    $random.html("""<h5>おまかせ</h5>
-      <img src="\https://ruffnote.com/attachments/24982\" class='jacket'/>
-    """)
-    #Util.addButton('start', $random, text, start_random, tooltip)
-    Util.addButton('start', $random, text, start_random)
-    $random.addClass("col-sm-offset-#{getOffset(2)}")
- 
-    #text = 'この曲で集中'
-    $('#fixedstart').hide()
-    fixed_text = [
-      'https://ruffnote.com/attachments/24921'
-      'https://ruffnote.com/attachments/24922'
-    ]
-    id = location.hash.split(':')[1]
-    if location.hash.match(/soundcloud/)
-      Soundcloud.fetch(id, @env.sc_client_id, (track) ->
-        artwork_url = artworkUrlWithNoimage(track['artwork_url'])
-        txt = "<h5>#{track['title']}</h5>"
-        $('#fixedstart').append(txt)
-        txt = "<img src='#{artwork_url}' class='jacket'>"
-        $('#fixedstart').append(txt)
-        Util.addButton('start', $('#fixedstart'), fixed_text, start_hash)
-        $('#fixedstart').fadeIn()
-        $('#random').removeClass("col-sm-offset-#{getOffset(2)}")
-        $('#random').addClass("col-sm-offset-#{getOffset(3)}")
-      )
-    if location.hash.match(/mixcloud/)
-      Mixcloud.fetch(id, (track) ->
-        artwork_url = artworkUrlWithNoimage(track.pictures.medium)
-        txt = "<h5>#{track.name}</h5>"
-        $('#fixedstart').append(txt)
-        txt = "<img src='#{artwork_url}' class='jacket'>"
-        $('#fixedstart').append(txt)
-        Util.addButton('start', $('#fixedstart'), fixed_text, start_hash)
-        $('#fixedstart').fadeIn()
-        $('#random').removeClass("col-sm-offset-#{getOffset(2)}")
-        $('#random').addClass("col-sm-offset-#{getOffset(3)}")
-      )
-    if location.hash.match(/nicovideo/)
-      Nicovideo.fetch(id, (track) ->
-        artwork_url = artworkUrlWithNoimage(track.artwork_url)
-        txt = "<h5>#{track.title}</h5>"
-        $('#fixedstart').append(txt)
-        txt = "<img src='#{artwork_url}' class='jacket'>"
-        $('#fixedstart').append(txt)
-        Util.addButton('start', $('#fixedstart'), fixed_text, start_hash)
-        $('#fixedstart').fadeIn()
-        $('#random').removeClass("col-sm-offset-#{getOffset(2)}")
-        $('#random').addClass("col-sm-offset-#{getOffset(3)}")
-      )
-    if location.hash.match(/8tracks/)
-      EightTracks.fetch(id, @env.et_client_id, (track) ->
-        artwork_url = artworkUrlWithNoimage(track.mix.cover_urls.sq100)
-        txt = "<h5>#{track.mix.name}</h5>"
-        $('#fixedstart').append(txt)
-        txt = "<img src='#{artwork_url}' class='jacket'>"
-        $('#fixedstart').append(txt)
-        Util.addButton('start', $('#fixedstart'), fixed_text, start_hash)
-        $('#fixedstart').fadeIn()
-        $('#random').removeClass("col-sm-offset-#{getOffset(2)}")
-        $('#random').addClass("col-sm-offset-#{getOffset(3)}")
-      )
+  #text = '曲おまかせで24分間集中する！'
+  text = [
+    'https://ruffnote.com/attachments/24919'
+    'https://ruffnote.com/attachments/24920'
+  ]
+  tooltip = '現在はSoundcloudの人気曲からランダム再生ですが今後もっと賢くなっていくはず'
+  $random = $('#start_buttons #random')
+  $random.html("""<h5>おまかせ</h5>
+    <img src="\https://ruffnote.com/attachments/24982\" class='jacket'/>
+  """)
+  #Util.addButton('start', $random, text, start_random, tooltip)
+  Util.addButton('start', $random, text, start_random)
+  $random.addClass("col-sm-offset-#{getOffset(2)}")
 
-    #text = '無音で24分集中'
-    text = [
-      'https://ruffnote.com/attachments/24926'
-      'https://ruffnote.com/attachments/24927'
-    ]
-    tooltip = '無音ですが終了直前にはとぽっぽが鳴ります'
-    $nomusic = $('#start_buttons #nomusic')
+  #text = 'この曲で集中'
+  $('#fixedstart').hide()
+  fixed_text = [
+    'https://ruffnote.com/attachments/24921'
+    'https://ruffnote.com/attachments/24922'
+  ]
+  id = location.hash.split(':')[1]
+  if location.hash.match(/soundcloud/)
+    Soundcloud.fetch(id, @env.sc_client_id, (track) ->
+      artwork_url = artworkUrlWithNoimage(track['artwork_url'])
+      txt = "<h5>#{track['title']}</h5>"
+      $('#fixedstart').append(txt)
+      txt = "<img src='#{artwork_url}' class='jacket'>"
+      $('#fixedstart').append(txt)
+      Util.addButton('start', $('#fixedstart'), fixed_text, start_hash)
+      $('#fixedstart').fadeIn()
+      $('#random').removeClass("col-sm-offset-#{getOffset(2)}")
+      $('#random').addClass("col-sm-offset-#{getOffset(3)}")
+    )
+  if location.hash.match(/mixcloud/)
+    Mixcloud.fetch(id, (track) ->
+      artwork_url = artworkUrlWithNoimage(track.pictures.medium)
+      txt = "<h5>#{track.name}</h5>"
+      $('#fixedstart').append(txt)
+      txt = "<img src='#{artwork_url}' class='jacket'>"
+      $('#fixedstart').append(txt)
+      Util.addButton('start', $('#fixedstart'), fixed_text, start_hash)
+      $('#fixedstart').fadeIn()
+      $('#random').removeClass("col-sm-offset-#{getOffset(2)}")
+      $('#random').addClass("col-sm-offset-#{getOffset(3)}")
+    )
+  if location.hash.match(/nicovideo/)
+    Nicovideo.fetch(id, (track) ->
+      artwork_url = artworkUrlWithNoimage(track.artwork_url)
+      txt = "<h5>#{track.title}</h5>"
+      $('#fixedstart').append(txt)
+      txt = "<img src='#{artwork_url}' class='jacket'>"
+      $('#fixedstart').append(txt)
+      Util.addButton('start', $('#fixedstart'), fixed_text, start_hash)
+      $('#fixedstart').fadeIn()
+      $('#random').removeClass("col-sm-offset-#{getOffset(2)}")
+      $('#random').addClass("col-sm-offset-#{getOffset(3)}")
+    )
+  if location.hash.match(/8tracks/)
+    EightTracks.fetch(id, @env.et_client_id, (track) ->
+      artwork_url = artworkUrlWithNoimage(track.mix.cover_urls.sq100)
+      txt = "<h5>#{track.mix.name}</h5>"
+      $('#fixedstart').append(txt)
+      txt = "<img src='#{artwork_url}' class='jacket'>"
+      $('#fixedstart').append(txt)
+      Util.addButton('start', $('#fixedstart'), fixed_text, start_hash)
+      $('#fixedstart').fadeIn()
+      $('#random').removeClass("col-sm-offset-#{getOffset(2)}")
+      $('#random').addClass("col-sm-offset-#{getOffset(3)}")
+    )
 
-    $nomusic.html('<h5>無音</h5>')
-    $nomusic.append(Util.tag('img', 'https://ruffnote.com/attachments/24981', {class: 'jacket'}))
-    #Util.addButton('start', $nomusic, text, start_nomusic, tooltip)
-    Util.addButton('start', $nomusic, text, start_nomusic)
+  #text = '無音で24分集中'
+  text = [
+    'https://ruffnote.com/attachments/24926'
+    'https://ruffnote.com/attachments/24927'
+  ]
+  tooltip = '無音ですが終了直前にはとぽっぽが鳴ります'
+  $nomusic = $('#start_buttons #nomusic')
 
-    if location.href.match('review=')
-      attrs = {
-        id: 'input_review_before'
-        style: 'margin:0 auto; width: 100%;'
-      }
-      $before = Util.tag('input', "今から24分間集中するにあたって一言（公開されます） 例：24分で企画書のたたき台を作る！", attrs)
-      $review = Util.tag('div', $before, {style: 'text-align: center;'})
-      $('#contents').append($review)
-
-  else
-    text = 'facebookログイン'
-    Util.addButton('login', $('#contents'), text, login)
+  $nomusic.html('<h5>無音</h5>')
+  $nomusic.append(Util.tag('img', 'https://ruffnote.com/attachments/24981', {class: 'jacket'}))
+  #Util.addButton('start', $nomusic, text, start_nomusic, tooltip)
+  Util.addButton('start', $nomusic, text, start_nomusic)
 
 initSearch = () ->
   $track = $("<input />").attr('id', 'track').attr('placeholder', 'ここにアーティスト名や曲名を入れてね')
@@ -523,15 +584,6 @@ window.start_nomusic = () ->
 
 createWorkload = (params = {}, callback) ->
   params.host = location.host
-
-  if location.href.match('review=')
-    if location.href.match('sparta=')
-      review = prompt("今から24分間集中するにあたって一言（公開されます）", '24分間頑張るぞ！')
-    else
-      review = $('#input_review_before').val()
-
-    if review.length
-      params['review_before'] = review
 
   ParseParse.create("Workload", params, (workload) ->
     @workload = workload
@@ -990,19 +1042,6 @@ initRanking = () ->
   review = ""
   stars = ""
 
-  if location.href.match('review=')
-    if w.review_before
-      review += "<div class=\"review\">【前】#{w.review_before}</div>"
-    if w.review_after
-      review += "<div class=\"review\">【後】#{w.review_after}</div>"
-    
-    if w.point
-      if w.point < 5
-        for i in [1..(5-w.point)]
-          stars += "☆"
-      for i in [1..w.point]
-        stars += "★"
-
   if w.title
     href = '#'
     if w.sc_id
@@ -1069,18 +1108,10 @@ initRanking = () ->
 
 initFixedStart = () ->
   $(document).on('click', '.fixed_start', () ->
-    if Parse.User.current()
-      hash = $(this).attr('href').replace(/^#/, '')
-      location.hash = hash
-      start_hash()
-    else
-      alert 'Facebookログインをお願いします！'
-      window.fbAsyncInit()
+    hash = $(this).attr('href').replace(/^#/, '')
+    location.hash = hash
+    start_hash()
   )
-  $(document).on('click', '.add_playlist', () ->
-    alert 'プレイリストに追加する機能は現在開発中です。。。'
-  )
-
 
 window.ruffnote = (id, dom, callback=null) ->
   Ruffnote.fetch("pandeiro245/245cloud/#{id}", dom, callback)
@@ -1095,8 +1126,6 @@ initService = ($dom, url) ->
   else
     c = comment
   user = c.user
-
-
 
   t = new Date()
   hour = t.getHours()
