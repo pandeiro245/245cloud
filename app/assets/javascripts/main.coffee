@@ -1,3 +1,4 @@
+Parse.initialize(@env.parse_app_id, @env.parse_key)
 class @ParseParse
   @find: (model_name, id, callback, instance=null) ->
     Model = Parse.Object.extend(model_name)
@@ -53,9 +54,9 @@ class @ParseParse
         callback(data)
     })
 
-  @find_or_create: (model_name, key_params, params, callback) ->
-
   @create: (model_name, params, callback=null) ->
+    console.log 'ParseParse.create'
+
     url = kintone.api.url('/k/v1/record', true)
     appId = kintone.app.getId()
     param = {app: appId, record: {}}
@@ -161,9 +162,9 @@ $ ->
   ruffnote(17661, 'music_ranking')
 
   initSearch()
-  init8tracks()
-  initNaotake()
-  initKimiya()
+  #init8tracks()
+  #initNaotake()
+  #initKimiya()
   initChatting()
   initStart()
   initDoing()
@@ -1227,7 +1228,7 @@ initHatopoppo = () ->
   $audio = $('<audio></audio>')
   $audio.attr('id', 'hato')
   # thanks for http://musicisvfr.com/free/se/clock01.html
-  $audio.attr('src', '/audio/Zihou01-4.mp3')
+  $audio.attr('src', 'http://245cloud.com/audio/Zihou01-4.mp3')
   #$audio.attr('src', '/audio/20141231_shion_poppo.m4a')
   $('#hatopoppo').append($audio)
 

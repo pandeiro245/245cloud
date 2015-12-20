@@ -7,7 +7,8 @@ sass       = require 'gulp-sass'
 
 
 files =
-    coffee: './app/**/*.coffee'
+  #coffee: './app/**/*.coffee'
+    coffee: './app/assets/javascripts/main.coffee'
     scss  : './assets/css/**/*.scss'
 
 gulp.task 'js', ->
