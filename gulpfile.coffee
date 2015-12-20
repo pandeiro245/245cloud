@@ -18,11 +18,11 @@ gulp.task 'js', ->
             loadMaps: true
         .pipe coffee
             bare: true
-        .pipe concat 'app.js'
+        .pipe concat 'kintone.js'
         .pipe sourcemaps.write '.',
             addComment: true
             sourceRoot: '/src'
-        .pipe gulp.dest './app'
+        .pipe gulp.dest './tmp'
 
 
 gulp.task 'css', ->
