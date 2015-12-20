@@ -17,7 +17,7 @@ gulp.task 'js', ->
         #    loadMaps: true
         .pipe coffee
             bare: true
-        .pipe concat 'app2.js'
+        .pipe concat 'app.js'
         #.pipe sourcemaps.write '.',
         #    addComment: true
         #    sourceRoot: '/src'
