@@ -26,8 +26,25 @@ class TimeCrowd
   end
 
   def recents
-    #access_token.get("/api/v1/user/recent_tasks").parsed
-    access_token.get("/api/v1/user/recent_entries").parsed
+    return {
+      is_working: working_entry.present?,
+      entries: [working_entry] + access_token.get("/api/v1/user/recent_entries").parsed
+    }
+  end
+
+  def stop
+    access_token.get("/api/v1/teams?state=#{state}").parsed
+  end
+
+  def working_entry
+    w = working_users.select{|u| u['id'] == user_info['id']}.first
+    res = w['time_entry']
+    res['task'] = w['task']
+    return res
+  end
+
+  def stop
+    access_token.put("/api/v1/time_entries/#{working_entry['id']}").parsed
   end
 
   def teams(state = nil)
@@ -48,6 +65,10 @@ class TimeCrowd
 
   def working_users
     access_token.get("/api/v1/user/working_users").parsed
+  end
+
+  def user_info
+    access_token.get("/api/v1/user/info.json").parsed
   end
 
   def time_entries page = nil

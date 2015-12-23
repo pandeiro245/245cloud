@@ -4,6 +4,11 @@ class TimecrowdController < ApplicationController
     render json: t.recents
   end
 
+  def stop
+    t = TimeCrowd.new
+    t.stop
+  end
+
   def start
     t = TimeCrowd.new
     t.create_time_entry(
@@ -14,7 +19,6 @@ class TimecrowdController < ApplicationController
         team_id: params[:team_id],
       }
     )
-    redirect_to params[:url]
   end
 
   def login

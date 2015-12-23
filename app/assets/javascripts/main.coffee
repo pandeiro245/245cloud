@@ -92,7 +92,7 @@ $ ->
   initKimiya()
   initChatting()
   initStart()
-  initTimecrowd()
+  initTimecrowd() if location.href.match(/timecrowd=/)
   initDoing()
   initDone()
   initRanking()
@@ -110,9 +110,16 @@ $ ->
     )
 
 initTimecrowd = () ->
-  $('#timecrowd').html('<h2>TimeCrowd</h2><ul></ul>')
-  $.get('/timecrowd/recents', (entries) ->
-    for entry in entries
+  $('#timecrowd').html("<h2>TimeCrowd</h2><ul id='timecrowd_select_task'></ul>")
+  $.get('/timecrowd/recents', (data) ->
+    if data.is_working
+      console.log 'data', data
+      working_entry = data.entries[0]
+      $('#timecrowd ul').append("""
+        <li class='btn btn-default' checked='checked' style='margin: 3px;'><label><input type='radio' name='timecrowd_task' value='#{working_entry.task.id}' />#{working_entry.task.title}</label></li>
+      """)
+    for entry in data.entries
+      continue if working_entry && entry.id == working_entry.id
       $('#timecrowd ul').append("""
         <li class='btn btn-default' style='margin: 3px;'><label><input type='radio' name='timecrowd_task' value='#{entry.task.id}' />#{entry.task.title}</label></li>
       """)
@@ -668,6 +675,8 @@ window.play_repeat = (key, duration) ->
 
 complete = () ->
   console.log 'complete'
+  $.get('/timecrowd/stop')
+
   @syncWorkload('chatting')
   window.is_hato = false
   Util.countDown(@env.chattime*60*1000, 'finish')
