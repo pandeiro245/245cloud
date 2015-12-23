@@ -29,12 +29,13 @@ group :development do
 end
 
 gem 'haml'
-gem 'omniauth-facebook'
 gem 'dotenv-rails'
 gem 'settingslogic'
 
 gem 'jp_prefecture'
-#gem 'parse_resource', github: 'pandiro245/parse_resource', branch: 'issue-1'
 gem 'parse_resource', git: 'git@github.com:pandeiro245/parse_resource.git', branch: 'issue-1'
-
 gem 'comfortable_mexican_sofa', '~> 1.12.0'
+
+gem 'omniauth-facebook'
+gem 'omniauth-timecrowd', github: 'ruffnote/omniauth-timecrowd'
+

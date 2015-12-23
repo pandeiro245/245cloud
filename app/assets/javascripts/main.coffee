@@ -20,6 +20,7 @@ $ ->
     'livechat'
     'review'
     'contents'
+    'timecrowd'
     'start_buttons'
     'doing_title'
     'doing'
@@ -91,6 +92,7 @@ $ ->
   initKimiya()
   initChatting()
   initStart()
+  initTimecrowd()
   initDoing()
   initDone()
   initRanking()
@@ -107,15 +109,14 @@ $ ->
       #initCalendar()
     )
 
-initCalendar = () ->
-  $("#calendar_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24936' /></h2>")
-  $('#calendar').html("""
-<span onClick=\"Util.calendar('previous')\"><B>&lt;&lt;</B></span>
-<span onClick=\"Util.calendar('thismonth')\" class='thismonth'></span>
-<span onClick=\"Util.calendar('next')\"><B>&gt;&gt;</B></span>
-<DIV id='carenda'></DIV>
-  """)
-  Util.calendar('thismonth')
+initTimecrowd = () ->
+  $('#timecrowd').html('<h2>TimeCrowd</h2><ul></ul>')
+  $.get('/timecrowd/recents', (entries) ->
+    for entry in entries
+      $('#timecrowd ul').append("""
+        <li class='btn btn-default' style='margin: 3px;'><label><input type='radio' name='timecrowd_task' value='#{entry.task.id}' />#{entry.task.title}</label></li>
+      """)
+  )
 
 init8tracks = () ->
   ruffnote(17763, '8tracks_title')

@@ -33,3 +33,5 @@ public/youtube
 public/youtube.html
 
 config/parse_resource.yml
+
+node_modules
