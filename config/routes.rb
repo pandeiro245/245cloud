@@ -4,6 +4,6 @@ Rails.application.routes.draw do
   get '/pitch' => 'welcome#pitch'
   get '/auth/timecrowd/callback', to: 'timecrowd#login'
   get '/timecrowd/recents' => 'timecrowd#recents'
-  get '/timecrowd/start' => 'timecrowd#start'
+  post '/timecrowd/start' => 'timecrowd#start'
   get '/timecrowd/stop' => 'timecrowd#stop'
 end

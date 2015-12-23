@@ -1,7 +1,9 @@
 class TimeCrowd
   attr_accessor :client, :access_token
 
-  def initialize
+  def initialize(keys_json)
+    keys = JSON.parse(keys_json)
+
     self.client = OAuth2::Client.new(
       ENV['TIMECROWD_CLIENT_ID'],
       ENV['TIMECROWD_SECRET_KEY'],
@@ -10,34 +12,36 @@ class TimeCrowd
     )
     self.access_token = OAuth2::AccessToken.new(
       client,
-      File.open("tmp/timecrowd_token.txt", 'r').read,
-      refresh_token: File.open("tmp/timecrowd_refresh_token.txt", 'r').read,
-      expires_at: File.open("tmp/timecrowd_expires_at.txt", 'r').read
+      keys['timecrowd_token'],
+      refresh_token: keys['timecrowd_refresh_token'],
+      expires_at: keys['timecrowd_expires_at']
     )
+  end
 
+  def refresh_keys_json
     #self.access_token = access_token.refresh! if self.access_token.expired?
-    self.access_token = access_token.refresh!
-
+    access_token = self.access_token.refresh!
+    keys = {}
     %w(expires_at refresh_token token).each do |key|
-      val = self.access_token.send(key)
-      File.open("tmp/timecrowd_#{key}.txt", 'w') { |file| file.write(val) }
+      val = access_token.send(key)
+      #File.open("tmp/timecrowd_#{key}.txt", 'w') { |file| file.write(val) }
+      keys["timecrowd_#{key}"] = val
     end
-    access_token
+    keys.to_json
   end
 
   def recents
+    entries = access_token.get("/api/v1/user/recent_entries").parsed
+    entries = [working_entry] + entries if working_entry.present?
     return {
       is_working: working_entry.present?,
-      entries: [working_entry] + access_token.get("/api/v1/user/recent_entries").parsed
+      entries: entries
     }
-  end
-
-  def stop
-    access_token.get("/api/v1/teams?state=#{state}").parsed
   end
 
   def working_entry
     w = working_users.select{|u| u['id'] == user_info['id']}.first
+    return nil unless w
     res = w['time_entry']
     res['task'] = w['task']
     return res
@@ -45,6 +49,11 @@ class TimeCrowd
 
   def stop
     access_token.put("/api/v1/time_entries/#{working_entry['id']}").parsed
+  end
+
+  def start(team_id, task_id)
+    url = "/api/v1/teams/#{team_id}/tasks/#{task_id}/start"
+    access_token.post(url).parsed
   end
 
   def teams(state = nil)
