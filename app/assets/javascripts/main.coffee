@@ -1,79 +1,3 @@
-Parse.initialize(@env.parse_app_id, @env.parse_key)
-class @ParseParse
-  @find: (model_name, id, callback, instance=null) ->
-    Model = Parse.Object.extend(model_name)
-    query = new Parse.Query(Model)
-    query.get(id, {
-      success: (data) ->
-        if instance
-          callback(instance, data)
-        else
-          callback(data)
-      , error: (object, error) ->
-        console.log error
-        #alert 'error...'
-    })
-
-  @fetch: (model_name, child, callback) ->
-    child.get(model_name).fetch({
-      success: (parent) ->
-        callback(child, parent)
-    })
-
-  @where: (model_name, cond, callback, instance=null, limit=100) ->
-    Model = Parse.Object.extend(model_name)
-    query = new Parse.Query(Model)
-    query.limit(limit)
-    for c in cond
-      if c[2]
-        if c[1] == '<'
-          query.lessThan(c[0], c[2])
-        else if c[1] == '>'
-          query.greaterThan(c[0], c[2])
-      else
-        query.equalTo(c[0], c[1])
-
-    query.descending("createdAt")
-    query.find({
-      success: (data) ->
-        if instance
-          callback(instance, data)
-        else
-          callback(data)
-      error: (error) ->
-        console.log error
-    })
-
-  @all: (model_name, callback, params={}) ->
-    Model = Parse.Object.extend(model_name)
-    query = new Parse.Query(Model)
-    query.limit(999999)
-    query.descending("createdAt")
-    query.find({
-      success: (data) ->
-        callback(data)
-    })
-
-  @create: (model_name, params, callback=null) ->
-    console.log 'ParseParse.create'
-
-    url = kintone.api.url('/k/v1/record', true)
-    appId = kintone.app.getId()
-    param = {app: appId, record: {}}
-    for p of params
-      param.record[p] = {value: params[p]}
-    param.record['key'] = {value: location.hash.replace(/^#/, '')}
-    kintone.api(url, 'POST', param, (workload) ->
-      @workload = workload
-      callback()
-    )
-
-  @addAccesslog: () ->
-    console.log 'addAccesslog'
-    ParseParse.create('Accesslog',
-      {url: location.href}
-    )
-
 @env.is_doing = false
 @env.is_done = false
 
@@ -584,6 +508,7 @@ window.start_nomusic = () ->
   createWorkload({}, start)
 
 createWorkload = (params = {}, callback) ->
+  console.log 'createWorkload'
   params.host = location.host
 
   ParseParse.create("Workload", params, (workload) ->

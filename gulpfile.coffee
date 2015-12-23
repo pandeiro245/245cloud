@@ -3,7 +3,7 @@ coffee     = require 'gulp-coffee'
 concat     = require 'gulp-concat'
 plumber    = require 'gulp-plumber'
 sass       = require 'gulp-sass'
-#sourcemaps = require 'gulp-sourcemaps'
+sourcemaps = require 'gulp-sourcemaps'
 
 files =
   coffee: [
@@ -20,14 +20,14 @@ files =
 gulp.task 'js', ->
   gulp.src files.coffee
     .pipe plumber()
-    #.pipe sourcemaps.init
-    #    loadMaps: true
+    .pipe sourcemaps.init
+        loadMaps: true
     .pipe coffee
         bare: true
     .pipe concat 'app_without_vendors.js'
-    #.pipe sourcemaps.write '.',
-    #    addComment: true
-    #    sourceRoot: '/src'
+    .pipe sourcemaps.write '.',
+        addComment: true
+        sourceRoot: '/src'
     .pipe gulp.dest './tmp/kintone'
 
 gulp.task 'all', ->

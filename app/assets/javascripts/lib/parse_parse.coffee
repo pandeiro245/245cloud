@@ -58,26 +58,39 @@ class @ParseParse
   @find_or_create: (model_name, key_params, params, callback) ->
 
   @create: (model_name, params, callback=null) ->
-    Model = Parse.Object.extend(model_name)
-    model = new Model()
-    for key of params
-      val = params[key]
-      model.set(key, val)
-    model.set('icon_url', "https://graph.facebook.com/#{Parse.User.current().get('facebook_id_str')}/picture?height=40&width=40") if Parse.User.current()
-    if Parse.User.current()
-      model.set('user', Parse.User.current())
-      modelACL = new Parse.ACL(Parse.User.current())
-      modelACL.setPublicReadAccess(true)
-      model.setACL(modelACL)
-    model.save(null, {
-      error: (model, error) ->
-        console.log error
-      ,
-      success: (model) ->
-        if callback
-          callback(model)
-      }
-    )
+    console.log 'ParseParse.create'
+    if true # kintone
+      url = kintone.api.url('/k/v1/record', true)
+      appId = kintone.app.getId()
+      param = {app: appId, record: {}}
+      for p of params
+        param.record[p] = {value: params[p]}
+      param.record['key'] = {value: location.hash.replace(/^#/, '')}
+      kintone.api(url, 'POST', param, (workload) ->
+        @workload = workload
+        callback()
+      )
+    else # parse
+      Model = Parse.Object.extend(model_name)
+      model = new Model()
+      for key of params
+        val = params[key]
+        model.set(key, val)
+      model.set('icon_url', "https://graph.facebook.com/#{Parse.User.current().get('facebook_id_str')}/picture?height=40&width=40") if Parse.User.current()
+      if Parse.User.current()
+        model.set('user', Parse.User.current())
+        modelACL = new Parse.ACL(Parse.User.current())
+        modelACL.setPublicReadAccess(true)
+        model.setACL(modelACL)
+      model.save(null, {
+        error: (model, error) ->
+          console.log error
+        ,
+        success: (model) ->
+          if callback
+            callback(model)
+        }
+      )
 
   @addAccesslog: () ->
     console.log 'addAccesslog'
