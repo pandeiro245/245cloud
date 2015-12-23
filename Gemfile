@@ -39,3 +39,4 @@ gem 'comfortable_mexican_sofa', '~> 1.12.0'
 gem 'omniauth-facebook'
 gem 'omniauth-timecrowd', github: 'ruffnote/omniauth-timecrowd'
 
+gem 'rb-readline'
