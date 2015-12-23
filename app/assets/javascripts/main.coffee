@@ -20,6 +20,7 @@ $ ->
     'livechat'
     'review'
     'contents'
+    'timecrowd'
     'start_buttons'
     'doing_title'
     'doing'
@@ -91,6 +92,7 @@ $ ->
   initKimiya()
   initChatting()
   initStart()
+  initTimecrowd() if location.href.match(/timecrowd=/)
   initDoing()
   initDone()
   initRanking()
@@ -107,15 +109,34 @@ $ ->
       #initCalendar()
     )
 
-initCalendar = () ->
-  $("#calendar_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24936' /></h2>")
-  $('#calendar').html("""
-<span onClick=\"Util.calendar('previous')\"><B>&lt;&lt;</B></span>
-<span onClick=\"Util.calendar('thismonth')\" class='thismonth'></span>
-<span onClick=\"Util.calendar('next')\"><B>&gt;&gt;</B></span>
-<DIV id='carenda'></DIV>
-  """)
-  Util.calendar('thismonth')
+initTimecrowd = () ->
+  console.log 'initTimecrowd'
+  $('#timecrowd').html("<h2>TimeCrowd</h2><ul id='timecrowd_select_task'><li>ローディング中。。。<br>（タスクが多いと時間がかかるかもです…。）</li></ul>")
+  $.get('/timecrowd/recents', (data) ->
+    console.log 'GET /timecrowd/recents', data
+    $('#timecrowd ul').html('')
+    if data.status == 'ng'
+      $('#timecrowd ul').html("""
+      <a href='/auth/timecrowd'>ログイン</a>
+      """)
+    else
+      task_ids = {}
+      if data.is_working
+        working_entry = data.entries[0]
+        task_ids[working_entry.task.id] = true
+        $('#timecrowd ul').append("""
+          <li class='btn btn-default' style='margin: 3px;'><label><input type='radio' name='timecrowd_task' data-team-id='#{working_entry.task.team_id}' value='#{working_entry.task.id}' />#{working_entry.task.title}</label></li>
+        """)
+      for entry in data.entries
+        continue if working_entry && entry.id == working_entry.id
+        continue if task_ids[entry.task.id]
+        task_ids[entry.task.id] = true
+        $('#timecrowd ul').append("""
+          <li class='btn btn-default' style='margin: 3px;'><label><input type='radio' name='timecrowd_task' data-team-id='#{entry.task.team_id}' value='#{entry.task.id}' />#{entry.task.title}</label></li>
+        """)
+
+      $('#timecrowd ul li:first label input').attr('checked', 'checked')
+  )
 
 init8tracks = () ->
   ruffnote(17763, '8tracks_title')
@@ -540,6 +561,15 @@ createWorkload = (params = {}, callback) ->
   
 start = () ->
   console.log 'start'
+  if location.href.match(/timecrowd=/)
+    task_id = $("input[name='timecrowd_task']:checked").val()
+    team_id = $("input[name='timecrowd_task']:checked").attr('data-team-id')
+    params = {
+      team_id: team_id
+      task_id: task_id
+    }
+    $.post('/timecrowd/start', params)
+
   $("#done").hide()
   $("#search").hide()
   $("input").hide()
@@ -667,6 +697,10 @@ window.play_repeat = (key, duration) ->
 
 complete = () ->
   console.log 'complete'
+  if location.href.match(/timecrowd=/)
+    alert '完了！'
+    $.get('/timecrowd/stop')
+
   @syncWorkload('chatting')
   window.is_hato = false
   Util.countDown(@env.chattime*60*1000, 'finish')
@@ -745,53 +779,7 @@ complete = () ->
 
   $complete = $('#complete')
   $complete.html('')
-
-  initReview() if location.href.match('review=')
   initComments()
-
-window.initReview = () ->
-  attrs = {
-    id: 'input_review_point'
-    style: 'margin:0 auto;'
-  }
-  titles = {
-    1: '全然集中できなかった'
-    2: '集中できなかった'
-    3: '普通に集中できた'
-    4: '結構集中できた'
-    5: 'かなり集中できた'
-  }
-  options = '<option value="">自己評価（1〜5）を選択してください</option>'
-  for i in [1..5]
-    options += "<option value=\"#{i}\">#{titles[i]}</option>"
-  $point = Util.tag('select', options, attrs)
-  $review = Util.tag('div', $point, {style: 'text-align: center;'})
-  $('#review').append($review)
-
-  attrs = {
-    id: 'input_review_after'
-    style: 'margin:0 auto; width: 100%;'
-  }
-  $after = Util.tag('input', '終わってからの感想（公開されます） 例：あんまり集中できなかった', attrs)
-  $review = Util.tag('div', $after, {style: 'text-align: center;'})
-  $('#review').append($review)
-
-  attrs = {
-    id: 'input_review_submit'
-    style: 'margin:0 auto;'
-    type: 'submit'
-    value: 'レビューを保存'
-  }
-  $submit = Util.tag('input', null, attrs)
-  $review = Util.tag('div', $submit, {style: 'text-align: center;'})
-  $('#review').append($review)
-
-  $(document).on('click', '#input_review_submit', () ->
-    workload.set('point', parseInt($('#input_review_point').val()))
-    workload.set('review_after', $('#input_review_after').val())
-    workload.save()
-    alert 'レビューを保存しました'
-  )
 
 window.initWantedly = () ->
   companies = [
@@ -954,7 +942,6 @@ initRanking = () ->
   ]
   titles = {}
   ParseParse.where("Workload", cond, (workloads) ->
-    console.log workloads
     return unless workloads.length > 0
     for workload in workloads
       continue unless workload.attributes.user
