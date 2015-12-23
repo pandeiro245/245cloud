@@ -5,42 +5,39 @@ plumber    = require 'gulp-plumber'
 sass       = require 'gulp-sass'
 #sourcemaps = require 'gulp-sourcemaps'
 
-
 files =
-  coffee: './app/**/*.coffee'
-  scss  : './assets/css/**/*.scss'
+  coffee: [
+    './app/assets/javascripts/lib/config.coffee'
+    './app/**/*.coffee'
+  ]
+  all: [
+    './kintone/js/jquery.js'
+    './kintone/js/jquery_ujs.js'
+    './kintone/js/bootstrap.min.js'
+    'tmp/kintone/app_without_vendors.js'
+  ]
 
 gulp.task 'js', ->
-    gulp.src files.coffee
-        .pipe plumber()
-        #.pipe sourcemaps.init
-        #    loadMaps: true
-        .pipe coffee
-            bare: true
-        .pipe concat 'app.js'
-        #.pipe sourcemaps.write '.',
-        #    addComment: true
-        #    sourceRoot: '/src'
-        .pipe gulp.dest './tmp/kintone'
+  gulp.src files.coffee
+    .pipe plumber()
+    #.pipe sourcemaps.init
+    #    loadMaps: true
+    .pipe coffee
+        bare: true
+    .pipe concat 'app_without_vendors.js'
+    #.pipe sourcemaps.write '.',
+    #    addComment: true
+    #    sourceRoot: '/src'
+    .pipe gulp.dest './tmp/kintone'
 
-
-gulp.task 'css', ->
-    gulp.src files.scss
-        .pipe plumber()
-        .pipe sass()
-        .pipe gulp.dest './assets/css'
-
-gulp.task 'venders', ->
-    gulp.src('kintone/js/*.js').pipe(concat('venders.js')).pipe(gulp.dest('./tmp/kintone'))
-
-gulp.task 'kintone', ->
-    gulp.src('tmp/kintone/*.js').pipe(concat('kintone.js')).pipe(gulp.dest('./tmp'))
+gulp.task 'all', ->
+  gulp.src files.all
+    .pipe plumber()
+    .pipe concat 'app.js'
+    .pipe gulp.dest './tmp/kintone'
 
 gulp.task 'watch', ['build'], ->
-    gulp.watch files.coffee, ['js']
-    gulp.watch files.scss, ['css']
+  gulp.watch files.coffee, ['js', 'all']
 
-gulp.task 'build', ['js']
-#gulp.task 'build', ['js', 'css', 'venders', 'kintone']
-#gulp.task 'build', ['kintone']
+gulp.task 'build', ['js', 'all']
 gulp.task 'default', ['build']
