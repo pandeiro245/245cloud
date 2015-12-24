@@ -4,6 +4,7 @@
 @nomusic_url = 'https://ruffnote.com/attachments/24985'
 
 $ ->
+  return unless $('#nc').length
   ParseParse.all("User", (users) ->
     for user in users
       img = "https://graph.facebook.com/#{user.get('facebook_id_str')}/picture?height=40&width=40"
@@ -16,8 +17,10 @@ $ ->
     'news'
     ['otukare', {is_hide: true}]
     'ad'
+    'livechat'
     'review'
     'contents'
+    'timecrowd'
     'start_buttons'
     'doing_title'
     'doing'
@@ -43,27 +46,22 @@ $ ->
     'select_rooms'
     'rooms_title'
     'rooms'
-    'kpi_title'
-    'kpi3_title'
-    'kpi3'
-    'kpi2_title'
-    'kpi2'
-    'kpi1_title'
-    'kpi1'
     'whatis_title'
     ['whatis', {is_row: false}]
     #'mlkcca_title'
     #'mlkcca'
+    'wantedly'
     'footer'
     ['otukare_services', {is_hide: true}]
     'hatopoppo'
   ])
   Util.realtime()
-  ruffnote(13475, 'header')
+  #ruffnote(13475, 'header')
+  ruffnote(23854, 'header')
   ruffnote(18004, 'news')
   ruffnote(13477, 'footer')
   ruffnote(17758, 'search_title')
-  ruffnote(17762, 'ranking_title')
+  #ruffnote(17762, 'ranking_title')
   ruffnote(17498, 'otukare')
 
   window.services = [
@@ -87,11 +85,11 @@ $ ->
   initKimiya()
   initChatting()
   initStart()
+  initTimecrowd() if location.href.match(/timecrowd=/)
   initDoing()
   initDone()
   initRanking()
   initFixedStart()
-  #initKpi()
   #ParseBatch.repeat()
   initHatopoppo()
   initWhatis()
@@ -103,15 +101,34 @@ $ ->
       #initCalendar()
     )
 
-initCalendar = () ->
-  $("#calendar_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24936' /></h2>")
-  $('#calendar').html("""
-<span onClick=\"Util.calendar('previous')\"><B>&lt;&lt;</B></span>
-<span onClick=\"Util.calendar('thismonth')\" class='thismonth'></span>
-<span onClick=\"Util.calendar('next')\"><B>&gt;&gt;</B></span>
-<DIV id='carenda'></DIV>
-  """)
-  Util.calendar('thismonth')
+initTimecrowd = () ->
+  console.log 'initTimecrowd'
+  $('#timecrowd').html("<h2>TimeCrowd</h2><ul id='timecrowd_select_task'><li>ローディング中。。。<br>（タスクが多いと時間がかかるかもです…。）</li></ul>")
+  $.get('/timecrowd/recents', (data) ->
+    console.log 'GET /timecrowd/recents', data
+    $('#timecrowd ul').html('')
+    if data.status == 'ng'
+      $('#timecrowd ul').html("""
+      <a href='/auth/timecrowd'>ログイン</a>
+      """)
+    else
+      task_ids = {}
+      if data.is_working
+        working_entry = data.entries[0]
+        task_ids[working_entry.task.id] = true
+        $('#timecrowd ul').append("""
+          <li class='btn btn-default' style='margin: 3px;'><label><input type='radio' name='timecrowd_task' data-team-id='#{working_entry.task.team_id}' value='#{working_entry.task.id}' />#{working_entry.task.title}</label></li>
+        """)
+      for entry in data.entries
+        continue if working_entry && entry.id == working_entry.id
+        continue if task_ids[entry.task.id]
+        task_ids[entry.task.id] = true
+        $('#timecrowd ul').append("""
+          <li class='btn btn-default' style='margin: 3px;'><label><input type='radio' name='timecrowd_task' data-team-id='#{entry.task.team_id}' value='#{entry.task.id}' />#{entry.task.title}</label></li>
+        """)
+
+      $('#timecrowd ul li:first label input').attr('checked', 'checked')
+  )
 
 init8tracks = () ->
   ruffnote(17763, '8tracks_title')
@@ -420,76 +437,6 @@ initDone = () ->
       @addWorkload("#done", workload, disp)
   , null, 24 * 4)
  
-initKpi = () ->
-  ruffnote(17548, 'kpi_title')
-  $('#kpi3').css('height', '300px')
-  $('#kpi2').css('height', '300px')
-  $('#kpi1').css('height', '300px')
-  $('#kpi3_title').html('<h2>直近50回分</h2>')
-  $('#kpi2_title').html('<h2>直近300回分</h2>')
-  $('#kpi1_title').html("<h2 style='margin-top: 30px;'>直近1000回分</h2>")
-
-  cond = [
-    ['is_done', true]
-  ]
-  ParseParse.where('Workload', cond, (workloads) ->
-    chart1 = {}
-    chart_viewer1 = {}
-    chart2 = {}
-    chart_viewer2 = {}
-    chart3 = {}
-    chart_viewer3 = {}
-    for workload, i in workloads
-      continue unless workload.get('synchro_start')
-      key_start = workload.createdAt
-      val_start = workload.get('synchro_start')
-      key_end = Util.minAgo(-1 * @env.pomotime, workload.createdAt)
-      val_end = workload.get('synchro_end')
-
-      # kPI1: 1000
-      if workload.get('user') && Parse.User.current() && workload.get('user').id == Parse.User.current().id
-        chart_viewer1[key_start] = val_start
-        chart_viewer1[key_end] = val_end
-      chart1[key_start] = val_start
-      chart1[key_end] = val_end
-
-      continue if i > 300
-
-      # KPI2: 300
-      if workload.get('user') && Parse.User.current() && workload.get('user').id == Parse.User.current().id
-        chart_viewer2[key_start] = val_start
-        chart_viewer2[key_end] = val_end
-      chart2[key_start] = val_start
-      chart2[key_end] = val_end
-
-      continue if i > 50
-
-      # KPI3: 50
-      if workload.get('user') && Parse.User.current() && workload.get('user').id == Parse.User.current().id
-        chart_viewer3[key_start] = val_start
-        chart_viewer3[key_end] = val_end
-      chart3[key_start] = val_start
-      chart3[key_end] = val_end
- 
-    data1 = [
-      {name: '全体', data: chart1},
-      {name: 'あなた', data: chart_viewer1}
-    ]
-    new Chartkick.LineChart("kpi1", data1)
- 
-    data2 = [
-      {name: '全体', data: chart2},
-      {name: 'あなた', data: chart_viewer2}
-    ]
-    new Chartkick.LineChart("kpi2", data2)
-   
-    data3 = [
-      {name: '全体', data: chart3},
-      {name: 'あなた', data: chart_viewer3}
-    ]
-    new Chartkick.LineChart("kpi3", data3)
-  , null, 1000)
-
 login = () ->
   console.log 'login'
   window.fbAsyncInit()
@@ -536,19 +483,22 @@ createWorkload = (params = {}, callback) ->
   
 start = () ->
   console.log 'start'
+  if location.href.match(/timecrowd=/)
+    task_id = $("input[name='timecrowd_task']:checked").val()
+    team_id = $("input[name='timecrowd_task']:checked").attr('data-team-id')
+    params = {
+      team_id: team_id
+      task_id: task_id
+    }
+    $.post('/timecrowd/start', params)
+
   $("#done").hide()
   $("#search").hide()
   $("input").hide()
   $(".fixed_start").hide()
   $("#music_ranking").hide()
   doms = [
-    'kpi_title'
-    'kpi3_title'
-    'kpi3'
-    'kpi2_title'
-    'kpi2'
-    'kpi1_title'
-    'kpi1'
+    'timecrowd'
     'start_buttons'
     'fixedstart_artwork'
     '8tracks'
@@ -663,6 +613,9 @@ window.play_repeat = (key, duration) ->
 
 complete = () ->
   console.log 'complete'
+  if location.href.match(/timecrowd=/)
+    $.get('/timecrowd/stop')
+
   @syncWorkload('chatting')
   window.is_hato = false
   Util.countDown(@env.chattime*60*1000, 'finish')
@@ -672,6 +625,8 @@ complete = () ->
   $("#playing").fadeOut()
   $("#search").fadeOut()
   $("#playing").html('') # for stopping
+  initWantedly()
+  ruffnote(23777, 'livechat')
   unless @env.is_kakuhen
     @initSelectRooms()
 
@@ -739,53 +694,72 @@ complete = () ->
 
   $complete = $('#complete')
   $complete.html('')
-
-  initReview() if location.href.match('review=')
   initComments()
 
-window.initReview = () ->
-  attrs = {
-    id: 'input_review_point'
-    style: 'margin:0 auto;'
-  }
-  titles = {
-    1: '全然集中できなかった'
-    2: '集中できなかった'
-    3: '普通に集中できた'
-    4: '結構集中できた'
-    5: 'かなり集中できた'
-  }
-  options = '<option value="">自己評価（1〜5）を選択してください</option>'
-  for i in [1..5]
-    options += "<option value=\"#{i}\">#{titles[i]}</option>"
-  $point = Util.tag('select', options, attrs)
-  $review = Util.tag('div', $point, {style: 'text-align: center;'})
-  $('#review').append($review)
+window.initWantedly = () ->
+  companies = [
+    [
+      '245cloud mix作者のkimiyaさんをはじめ、コアユーザの菊本さん、瀬川さん等々が率いる技術者集団'
+      33589
+      'スタテク'
+      'H77rEIjYFdS8X0dyRnohdA'
+      'https://i.gyazo.com/e33c7a589df67ea5e68a5b9dec74df3d.png'
+    ]
+    [
+      '245cloudを作っている西小倉が働く'
+      29075
+      'ラフノート'
+      'b3umDS_P10Avjbmwv-1ldA'
+      'https://i.gyazo.com/e72ff20360920ff26dab3dde6155bb1c.png'
+    ]
+    [
+      'この245cloudはホトスタの香月さんと西小倉の2人でポモドーロする会からスタートしました。社長のハッシーもコアユーザ'
+      6683
+      'ホトスタ'
+      'CJm45IwYynMvPdaLRvUESg'
+      'https://i.gyazo.com/8218576144d00615a898433f3a61f9f3.png'
+    ]
+    [
+      '累計ポモ数ダントツ１位のはらぱんさんのRubyアジャイルな会社'
+      20027
+      'mofmof'
+      'r0P3mUnqLLLrOnFazuo1aQ'
+      'https://i.gyazo.com/b33f22cfe8b883a5d8b1cbc2f691ee3a.png'
+    ]
+    [
+      'エンジニアの今さんも伊藤さんも245cloudユーザ☆'
+      27659
+      'ベストティーチャー'
+      '_6Z51YeGo0gOplv7iHbimw'
+      'https://i.gyazo.com/ea0a709fb5a6215021809e04eb147dcd.png'
 
-  attrs = {
-    id: 'input_review_after'
-    style: 'margin:0 auto; width: 100%;'
-  }
-  $after = Util.tag('input', '終わってからの感想（公開されます） 例：あんまり集中できなかった', attrs)
-  $review = Util.tag('div', $after, {style: 'text-align: center;'})
-  $('#review').append($review)
-
-  attrs = {
-    id: 'input_review_submit'
-    style: 'margin:0 auto;'
-    type: 'submit'
-    value: 'レビューを保存'
-  }
-  $submit = Util.tag('input', null, attrs)
-  $review = Util.tag('div', $submit, {style: 'text-align: center;'})
-  $('#review').append($review)
-
-  $(document).on('click', '#input_review_submit', () ->
-    workload.set('point', parseInt($('#input_review_point').val()))
-    workload.set('review_after', $('#input_review_after').val())
-    workload.save()
-    alert 'レビューを保存しました'
-  )
+    ]
+  ]
+  n = Math.floor(Math.random() * companies.length)
+  company = companies[n]
+  $('#wantedly').html("""
+  【試験的宣伝】<br/>
+  正常動作しない場合は<a href='https://www.facebook.com/pandeiro245' target='_blank'>西小倉</a>までご連絡ください！<br>
+  <a href='https://github.com/pandeiro245/245cloud/issues/138' target='_blank'>ここから</a>貼り付けコードを発行して共有頂ければ西小倉による紹介文付きで追加させて頂きます！<br>
+  （もちろん無料っすけど誰かに怒られたりしたら突然消えますｗ）<br/><br/>
+  <img src='#{company[4]}' width='500px'/>
+  <br/>
+  #{company[0]}<br>
+  「<a href='https://www.wantedly.com/projects/#{company[1]}' target='_blank'>#{company[2]}</a>」の話を聞いてみませんか？<br />
+  <div class="wantedly-visit-button" data-visit-button-id="#{company[3]}" data-width="270" data-height="60"></div>
+  </div>
+  """)
+ 
+  d = document
+  s = 'script'
+  id = 'wantedly-visit-buttons-wjs'
+  fjs = d.getElementsByTagName(s)[0]
+  if d.getElementById(id)
+    return
+  js = d.createElement(s)
+  js.id = id
+  js.src = 'https://platform.wantedly.com/visit_buttons/script.js'
+  fjs.parentNode.insertBefore js, fjs
 
 window.initComments = () ->
   initRoom()
@@ -865,7 +839,33 @@ window.createComment = (room_id) ->
   )
 
 initRanking = () ->
-  $('#ranking').html('ここにランキング結果が入る予定')
+  now = new Date()
+  year = now.getYear() + 1900 - 1
+  month = now.getMonth()
+  day = now.getDate()
+
+  to_now = new Date(now.getTime() + 24*3600*1000)
+  to_year = to_now.getYear() + 1900 - 1
+  to_month = to_now.getMonth()
+  to_day = to_now.getDate()
+
+  $('#ranking_title').html("<h2>#{year}年#{month+1}月#{day}日に再生された曲</h2>")
+  cond = [
+    ["is_done", true]
+    ["createdAt", '>', new Date(year, month, day)]
+    ["createdAt", '<', new Date(to_year, to_month, to_day)]
+  ]
+  titles = {}
+  ParseParse.where("Workload", cond, (workloads) ->
+    return unless workloads.length > 0
+    for workload in workloads
+      continue unless workload.attributes.user
+      continue unless workload.attributes.title
+      continue if titles[workload.attributes.title]
+      titles[workload.attributes.title] = true
+      disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.attributes.number}回目）"
+      @addWorkload("#ranking", workload, disp)
+  , null, 24 *500)
 
 @addDoing = (workload) ->
   $("#doing_title").show()
@@ -984,7 +984,7 @@ initFixedStart = () ->
   )
 
 
-ruffnote = (id, dom, callback=null) ->
+window.ruffnote = (id, dom, callback=null) ->
   Ruffnote.fetch("pandeiro245/245cloud/#{id}", dom, callback)
 
 initService = ($dom, url) ->
