@@ -147,7 +147,7 @@ entryItem = (entry) ->
     <tr>
       <label>
       <td><input type='radio' name='timecrowd_task' data-team-id='#{entry.task.team_id}' value='#{entry.task.id}' /></td>
-      <td>#{entry.task.title}</td>
+      <td><a href='#{entry.task.url}' target='_blank'>#{entry.task.title}</a></td>
       <td>#{Util.time(entry.started_at)}</td>
       </label>
     </tr>
