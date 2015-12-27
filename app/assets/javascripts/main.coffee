@@ -103,10 +103,20 @@ $ ->
 
 initTimecrowd = () ->
   console.log 'initTimecrowd'
-  $('#timecrowd').html("<h2>TimeCrowd</h2><ul id='timecrowd_select_task'><li>ローディング中。。。<br>（タスクが多いと時間がかかるかもです…。）</li></ul>")
+  $('#timecrowd').html("""
+  <h2>TimeCrowd</h2>
+  <div style='display:none; width:100%; text-align:center;'><input placeholder='タスク追加' style='width:100%;' id='timecrowd_add_task'/></div>
+  <ul><li class='loading'>ローディング中。。。<br>（タスクが多いと時間がかかるかもです…。）</li></ul>
+  <table class='table table-bordered table-hover' id='timecrowd_select_task'>
+  </table>
+  """)
+  $('#timecrowd_add_task').keypress((e) ->
+    if e.which == 13 #enter
+      alert $('#timecrowd_add_task').val()
+  )
   $.get('/timecrowd/recents', (data) ->
     console.log 'GET /timecrowd/recents', data
-    $('#timecrowd ul').html('')
+    $('.loading').remove()
     if data.status == 'ng'
       $('#timecrowd ul').html("""
       <a href='/auth/timecrowd'>ログイン</a>
@@ -116,19 +126,33 @@ initTimecrowd = () ->
       if data.is_working
         working_entry = data.entries[0]
         task_ids[working_entry.task.id] = true
-        $('#timecrowd ul').append("""
-          <li class='btn btn-default' style='margin: 3px;'><label><input type='radio' name='timecrowd_task' data-team-id='#{working_entry.task.team_id}' value='#{working_entry.task.id}' />#{working_entry.task.title}</label></li>
-        """)
+        $('#timecrowd table').append(entryItem(working_entry))
       for entry in data.entries
         continue if working_entry && entry.id == working_entry.id
         continue if task_ids[entry.task.id]
+        continue if !entry.task.url.match(/github.com/) and !entry.task.url.match(/trello.com/) 
         task_ids[entry.task.id] = true
-        $('#timecrowd ul').append("""
-          <li class='btn btn-default' style='margin: 3px;'><label><input type='radio' name='timecrowd_task' data-team-id='#{entry.task.team_id}' value='#{entry.task.id}' />#{entry.task.title}</label></li>
-        """)
+        $('#timecrowd table').append(entryItem(entry))
 
-      $('#timecrowd ul li:first label input').attr('checked', 'checked')
+      $('#timecrowd table tr:first input').attr('checked', 'checked')
+      $('#timecrowd table tr').click((e) ->
+        console.log e
+        $('#timecrowd table input').removeAttr('checked')
+        $(e.currentTarget).find('input').prop('checked', true)
+      )
   )
+
+entryItem = (entry) ->
+  """
+    <tr>
+      <label>
+      <td><input type='radio' name='timecrowd_task' data-team-id='#{entry.task.team_id}' value='#{entry.task.id}' /></td>
+      <td>#{entry.task.title}</td>
+      <td>#{Util.time(entry.started_at)}</td>
+      </label>
+    </tr>
+  """
+
 
 init8tracks = () ->
   ruffnote(17763, '8tracks_title')
