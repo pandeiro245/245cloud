@@ -130,7 +130,7 @@ initTimecrowd = () ->
       for entry in data.entries
         continue if working_entry && entry.id == working_entry.id
         continue if task_ids[entry.task.id]
-        continue if !entry.task.url.match(/github.com/) and !entry.task.url.match(/trello.com/) 
+        continue if !entry.task.url.match(/github.com/) and !entry.task.url.match(/trello.com/) and !entry.task.url.match(/cybozu.com/) 
         task_ids[entry.task.id] = true
         $('#timecrowd table').append(entryItem(entry))
 
