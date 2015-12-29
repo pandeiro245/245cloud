@@ -40,3 +40,4 @@ gem 'omniauth-facebook'
 gem 'omniauth-timecrowd', github: 'ruffnote/omniauth-timecrowd'
 
 gem 'rb-readline'
+gem 'ruby-trello'
