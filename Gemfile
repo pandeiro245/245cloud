@@ -26,6 +26,7 @@ group :development do
   gem 'capistrano-sidekiq'
   gem 'chatwork'
   gem 'capistrano-pending', require: false
+  gem 'gem_reloader'
 end
 
 gem 'haml'
@@ -40,3 +41,5 @@ gem 'omniauth-facebook'
 gem 'omniauth-timecrowd', github: 'ruffnote/omniauth-timecrowd'
 
 gem 'rb-readline'
+
+gem 'kintone_sync', path: '../kintone_sync'
