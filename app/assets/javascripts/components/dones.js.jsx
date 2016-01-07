@@ -12,7 +12,6 @@ var Dones = React.createClass({
     return (
       <ul className="dones">
         {this.data.workloads.map(function(c) {
-          console.log(c);
           return <li>{c.title}</li>;
         })}
       </ul>
