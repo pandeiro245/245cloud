@@ -1,6 +1,6 @@
 class @Mixcloud
   @fetch: (mc_id, callback) ->
-    url = "http://api.mixcloud.com#{mc_id}"
+    url = "//api.mixcloud.com#{mc_id}"
     console.log url
     $.getJSON(url, (track) ->
       console.log track
@@ -14,7 +14,7 @@ class @Mixcloud
     """)
 
   @search: (keyword, $dom, callback=null) ->
-    url = "http://api.mixcloud.com/search/?q=#{keyword}&type=cloudcast"
+    url = "//api.mixcloud.com/search/?q=#{keyword}&type=cloudcast"
     $.getJSON(url, (tracks) ->
       if tracks.data
         for track in tracks.data

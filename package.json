@@ -1,0 +1,13 @@
+{
+    "name": "gulp-coffee-sass",
+    "version": "1.0.0",
+    "devDependencies": {
+        "coffee-script": "*",
+        "gulp": "*",
+        "gulp-coffee": "*",
+        "gulp-concat": "*",
+        "gulp-plumber": "*",
+        "gulp-sourcemaps": "*",
+        "gulp-sass": "*"
+    }
+}
