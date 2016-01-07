@@ -1,45 +1,26 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.2.0'
+gem 'rails', '4.2.5'
+gem 'sqlite3'
 gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.1.0'
-gem 'therubyracer', platforms: :ruby
+# gem 'therubyracer', platforms: :ruby
 gem 'jquery-rails'
+gem 'turbolinks'
 gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
-gem 'unicorn'
+# gem 'bcrypt', '~> 3.1.7'
+# gem 'unicorn'
+# gem 'capistrano-rails', group: :development
 
 group :development, :test do
-  gem 'mysql2'
   gem 'byebug'
+end
+
+group :development do
   gem 'web-console', '~> 2.0'
   gem 'spring'
 end
 
-group :development do
-  gem 'capistrano'
-  gem 'capistrano-rbenv'
-  gem 'capistrano-bundler'
-  gem 'capistrano-rails'
-  gem 'capistrano3-unicorn'
-  gem 'capistrano-sidekiq'
-  gem 'chatwork'
-  gem 'capistrano-pending', require: false
-  gem 'gem_reloader'
-end
-
-gem 'haml'
-gem 'dotenv-rails'
-gem 'settingslogic'
-
-gem 'jp_prefecture'
-gem 'parse_resource', git: 'git@github.com:pandeiro245/parse_resource.git', branch: 'issue-1'
-gem 'comfortable_mexican_sofa', '~> 1.12.0'
-
-gem 'omniauth-facebook'
-gem 'omniauth-timecrowd', github: 'ruffnote/omniauth-timecrowd'
-
-gem 'rb-readline'
-
-gem 'kintone_sync', path: '../kintone_sync'
+gem 'react-rails', '~> 1.0'
