@@ -4,7 +4,7 @@ var Dones = React.createClass({
 
   observe: function(){
     return {
-      workloads: (new Parse.Query('Workload')).ascending('createdAt')
+      workloads: (new Parse.Query('Workload')).descending('createdAt')
     };
   },
 
