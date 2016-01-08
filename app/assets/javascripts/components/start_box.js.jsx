@@ -11,13 +11,15 @@ var StartBox = React.createClass({
 
 var StartWithoutMusic = React.createClass({
   onClick(e) {
+    $('#dones').hide();
+    $('#start').hide();
     ParseReact.Mutation.Create('Workload', {
       title: 'no music'
     }).dispatch()
   },
   render: function() {
     return (
-      <a className="startWithoutMusic" href='#' onClick={this.onClick} >
+      <a id='start' className="startWithoutMusic" href='#' onClick={this.onClick} >
       無音で集中
       </a>
     );
