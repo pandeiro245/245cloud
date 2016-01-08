@@ -87,7 +87,7 @@ $ ->
   initChatting()
   initStart()
   initTimecrowd() if location.href.match(/timecrowd=/)
-  initHeatmap()
+  initHeatmap() if location.href.match(/heatmap=/)
   initDoing()
   initDone()
   initRanking()
@@ -136,7 +136,7 @@ initHeatmap = () ->
             pomos[+workloads[i].createdAt / 1000] = 1
           cal.update(pomos)
           cal.options.data = pomos
-        )
+        , null, 99999)
     })
 
 initTimecrowd = () ->
