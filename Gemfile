@@ -38,7 +38,7 @@ gem 'parse_resource', git: 'git@github.com:pandeiro245/parse_resource.git', bran
 gem 'comfortable_mexican_sofa', '~> 1.12.0'
 
 gem 'omniauth-facebook'
-gem 'omniauth-timecrowd', github: 'ruffnote/omniauth-timecrowd'
+gem 'omniauth-timecrowd', github: 'pandeiro245/omniauth-timecrowd', branch: 'issue-1'
 
 gem 'rb-readline'
 

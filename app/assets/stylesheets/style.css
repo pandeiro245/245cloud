@@ -171,3 +171,9 @@ input#track {
 table.comments .icon{
   width: 25px;
 }
+
+#heatmap {
+  display: inline-block;
+  margin-left: auto;
+  margin-right: auto;
+}
