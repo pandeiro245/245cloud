@@ -71,6 +71,11 @@ class Util
     month = date.getMonth() + 1
     day  = date.getDate()
     "#{Util.zero(month)}月#{Util.zero(day)}日"
+    
+  @yearMonthDay: (time) ->
+    date = new Date(time)
+    
+    "#{date.getFullYear()}年#{Util.monthDay(date)}"
 
   @hourMin: (time, suffix='') ->
     now = new Date()
