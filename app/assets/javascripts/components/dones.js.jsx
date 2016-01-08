@@ -4,15 +4,16 @@ var Dones = React.createClass({
 
   observe: function(){
     return {
-      workloads: (new Parse.Query('Workload')).descending('createdAt')
+      workloads: (new Parse.Query('Workload')).descending('createdAt').equalTo('is_done', true)
     };
   },
 
   render: function() {
     return (
-      <ul className="dones">
+      <ul className="dones" id="dones">
         {this.data.workloads.map(function(c) {
-          return <li>{c.title}</li>;
+          title = c.title || '無音'
+          return <li>{title}</li>;
         })}
       </ul>
     );
