@@ -2,7 +2,6 @@ var StartBox = React.createClass({
   render: function() {
     return (
       <div className="startBox">
-        <h1>Start Buttons</h1>
         <StartWithoutMusic />
       </div>
     );
@@ -11,8 +10,10 @@ var StartBox = React.createClass({
 
 var StartWithoutMusic = React.createClass({
   onClick(e) {
+    $('#news').hide();
     $('#dones').hide();
     $('#start').hide();
+    $('#footer').hide();
     ParseReact.Mutation.Create('Workload', {
       title: 'no music'
     }).dispatch()
@@ -20,7 +21,7 @@ var StartWithoutMusic = React.createClass({
   render: function() {
     return (
       <a id='start' className="startWithoutMusic" href='#' onClick={this.onClick} >
-      無音で集中
+      <img src='https://ruffnote.com/attachments/24926' />
       </a>
     );
   }
