@@ -4,7 +4,7 @@ var Dones = React.createClass({
 
   observe: function(){
     return {
-      workloads: (new Parse.Query('Workload')).ascending('createdAt')
+      workloads: (new Parse.Query('Workload')).descending('createdAt')
     };
   },
 
@@ -12,7 +12,6 @@ var Dones = React.createClass({
     return (
       <ul className="dones">
         {this.data.workloads.map(function(c) {
-          console.log(c);
           return <li>{c.title}</li>;
         })}
       </ul>
