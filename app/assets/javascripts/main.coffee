@@ -252,7 +252,7 @@ initStart = () ->
     if location.hash.match(/soundcloud/)
       Soundcloud.fetch(id, @env.sc_client_id, (track) ->
         artwork_url = artworkUrlWithNoimage(track['artwork_url'])
-        txt = "<h5>#{track['title']}</h5>"
+        txt = "<h5 title='#{track['title']}'>#{track['title']}</h5>"
         $('#fixedstart').append(txt)
         txt = "<img src='#{artwork_url}' class='jacket'>"
         $('#fixedstart').append(txt)
@@ -264,7 +264,7 @@ initStart = () ->
     if location.hash.match(/mixcloud/)
       Mixcloud.fetch(id, (track) ->
         artwork_url = artworkUrlWithNoimage(track.pictures.medium)
-        txt = "<h5>#{track.name}</h5>"
+        txt = "<h5 title='#{track.name}'>#{track.name}</h5>"
         $('#fixedstart').append(txt)
         txt = "<img src='#{artwork_url}' class='jacket'>"
         $('#fixedstart').append(txt)
@@ -276,7 +276,7 @@ initStart = () ->
     if location.hash.match(/nicovideo/)
       Nicovideo.fetch(id, (track) ->
         artwork_url = artworkUrlWithNoimage(track.artwork_url)
-        txt = "<h5>#{track.title}</h5>"
+        txt = "<h5 title='#{track.title}'>#{track.title}</h5>"
         $('#fixedstart').append(txt)
         txt = "<img src='#{artwork_url}' class='jacket'>"
         $('#fixedstart').append(txt)
@@ -288,7 +288,7 @@ initStart = () ->
     if location.hash.match(/8tracks/)
       EightTracks.fetch(id, @env.et_client_id, (track) ->
         artwork_url = artworkUrlWithNoimage(track.mix.cover_urls.sq100)
-        txt = "<h5>#{track.mix.name}</h5>"
+        txt = "<h5 title='#{track.mix.name}'>#{track.mix.name}</h5>"
         $('#fixedstart').append(txt)
         txt = "<img src='#{artwork_url}' class='jacket'>"
         $('#fixedstart').append(txt)
@@ -998,7 +998,7 @@ initRanking = () ->
   $item.css("color", '#b2b2b2')
 
   $item.html("""
-   <h5>#{title} </h5>
+   <h5 title='#{title}'>#{title} </h5>
    <span>#{jacket}</span>
    <span>#{user_img}</span>
    <div class='disp'>#{disp}</div>
