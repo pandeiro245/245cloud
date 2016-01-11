@@ -21,6 +21,7 @@ $ ->
     'review'
     'contents'
     'timecrowd'
+    'nortification'
     'heatmap'
     'start_buttons'
     'doing_title'
@@ -87,6 +88,7 @@ $ ->
   initChatting()
   initStart()
   initTimecrowd() if location.href.match(/timecrowd=/)
+  initNortification()
   initHeatmap() if location.href.match(/heatmap=/)
   initDoing()
   initDone()
@@ -102,6 +104,26 @@ $ ->
       window.current_user = user
       #initCalendar()
     )
+    
+initNortification = () ->
+  if Parse.User.current()
+    if !Notify.needsPermission || Notify.isSupported()
+      $('#nortification').html("""
+        <input id="show-nortification" type="checkbox" style="display:inline">
+        <label for="show-nortification"> デスクトップ通知を利用する</label>
+      """)
+      
+      # チェック時に通知の許可要求
+      $('#show-nortification').on('change', () ->
+        if $(this).prop('checked') && Notify.needsPermission
+          Notify.requestPermission(() ->
+            # 成功時(何もしない)
+            console.log('nortification permitted')
+          , () ->
+            # 失敗時はcheckboxを元に戻す
+            $(this).prop('checked', false)
+          )
+      )
 
 initHeatmap = () ->
   if Parse.User.current()
@@ -758,6 +780,13 @@ complete = () ->
   $complete = $('#complete')
   $complete.html('')
   initComments()
+  
+  # nortification
+  if $('#show-nortification').prop('checked')
+    new Notify('作業時間が終了しました！', {
+      body: '245cloud'
+      icon: '//placehold.jp/100x100.png'
+    }).show()
 
 window.initWantedly = () ->
   companies = [
@@ -871,6 +900,14 @@ window.updateUnreads = (room_id, count) ->
 window.finish = () ->
   console.log 'finish'
   @syncWorkload('finish')
+  
+  # nortification
+  if $('#show-nortification').prop('checked')
+    new Notify('休憩時間が終了しました！', {
+      body: '245cloud'
+      icon: '//placehold.jp/100x100.png'
+    }).show()
+  
   if location.href.match(/auto_close=/)
     window.open(location, '_self', '')
     window.close()
