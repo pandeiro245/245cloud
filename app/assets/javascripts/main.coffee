@@ -244,58 +244,34 @@ initStart = () ->
  
     #text = 'この曲で集中'
     $('#fixedstart').hide()
-    fixed_text = [
-      'https://ruffnote.com/attachments/24921'
-      'https://ruffnote.com/attachments/24922'
-    ]
     id = location.hash.split(':')[1]
     if location.hash.match(/soundcloud/)
       Soundcloud.fetch(id, @env.sc_client_id, (track) ->
-        artwork_url = artworkUrlWithNoimage(track['artwork_url'])
-        txt = "<h5 title='#{track['title']}'>#{track['title']}</h5>"
-        $('#fixedstart').append(txt)
-        txt = "<img src='#{artwork_url}' class='jacket'>"
-        $('#fixedstart').append(txt)
-        Util.addButton('start', $('#fixedstart'), fixed_text, start_hash)
-        $('#fixedstart').fadeIn()
-        $('#random').removeClass("col-sm-offset-#{getOffset(2)}")
-        $('#random').addClass("col-sm-offset-#{getOffset(3)}")
+        renderFixedStart(
+          track.title,
+          artworkUrlWithNoimage(track['artwork_url'])
+        )
       )
     if location.hash.match(/mixcloud/)
       Mixcloud.fetch(id, (track) ->
-        artwork_url = artworkUrlWithNoimage(track.pictures.medium)
-        txt = "<h5 title='#{track.name}'>#{track.name}</h5>"
-        $('#fixedstart').append(txt)
-        txt = "<img src='#{artwork_url}' class='jacket'>"
-        $('#fixedstart').append(txt)
-        Util.addButton('start', $('#fixedstart'), fixed_text, start_hash)
-        $('#fixedstart').fadeIn()
-        $('#random').removeClass("col-sm-offset-#{getOffset(2)}")
-        $('#random').addClass("col-sm-offset-#{getOffset(3)}")
+        renderFixedStart(
+          track.name,
+          artworkUrlWithNoimage(track.pictures.medium)
+        )
       )
     if location.hash.match(/nicovideo/)
       Nicovideo.fetch(id, (track) ->
-        artwork_url = artworkUrlWithNoimage(track.artwork_url)
-        txt = "<h5 title='#{track.title}'>#{track.title}</h5>"
-        $('#fixedstart').append(txt)
-        txt = "<img src='#{artwork_url}' class='jacket'>"
-        $('#fixedstart').append(txt)
-        Util.addButton('start', $('#fixedstart'), fixed_text, start_hash)
-        $('#fixedstart').fadeIn()
-        $('#random').removeClass("col-sm-offset-#{getOffset(2)}")
-        $('#random').addClass("col-sm-offset-#{getOffset(3)}")
+        renderFixedStart(
+          track.title,
+          artworkUrlWithNoimage(track.artwork_url)
+        )
       )
     if location.hash.match(/8tracks/)
       EightTracks.fetch(id, @env.et_client_id, (track) ->
-        artwork_url = artworkUrlWithNoimage(track.mix.cover_urls.sq100)
-        txt = "<h5 title='#{track.mix.name}'>#{track.mix.name}</h5>"
-        $('#fixedstart').append(txt)
-        txt = "<img src='#{artwork_url}' class='jacket'>"
-        $('#fixedstart').append(txt)
-        Util.addButton('start', $('#fixedstart'), fixed_text, start_hash)
-        $('#fixedstart').fadeIn()
-        $('#random').removeClass("col-sm-offset-#{getOffset(2)}")
-        $('#random').addClass("col-sm-offset-#{getOffset(3)}")
+        renderFixedStart(
+          track.mix.name,
+          artworkUrlWithNoimage(track.mix.cover_urls.sq100)
+        )
       )
 
     #text = '無音で24分集中'
@@ -998,7 +974,7 @@ initRanking = () ->
   $item.css("color", '#b2b2b2')
 
   $item.html("""
-   <h5 title='#{title}'>#{title} </h5>
+   <h5 title='#{title}' data-toggle='tooltip' data-placement='top'>#{title} </h5>
    <span>#{jacket}</span>
    <span>#{user_img}</span>
    <div class='disp'>#{disp}</div>
@@ -1006,6 +982,7 @@ initRanking = () ->
    <div>#{stars}</div>
    <div>#{review}</div>
   """)
+  $('[data-toggle="tooltip"]').tooltip()
 
   unless dom == '#done'
     $("#chatting .user_#{user_id}").remove()
@@ -1257,5 +1234,24 @@ initYou = () ->
       disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.attributes.number}回目）"
       addWorkload("#you", workload, disp)
   null, 24)
+
+renderFixedStart = (title, icon) ->
+  fixed_text = [
+    'https://ruffnote.com/attachments/24921'
+    'https://ruffnote.com/attachments/24922'
+  ]
+  $('#fixedstart').append(txt)
+  txt = "<h5 title='#{title}' data-toggle='tooltip' data-placement='top'>#{title}</h5>"
+  $('#fixedstart').append(txt)
+  txt = "<img src='#{icon}' class='jacket'>"
+  $('#fixedstart').append(txt)
+  Util.addButton('start', $('#fixedstart'), fixed_text, start_hash)
+  $('#fixedstart').fadeIn()
+  $('#random').removeClass("col-sm-offset-#{getOffset(2)}")
+  $('#random').addClass("col-sm-offset-#{getOffset(3)}")
+  $('[data-toggle="tooltip"]').tooltip()
+
+
+
 
 
