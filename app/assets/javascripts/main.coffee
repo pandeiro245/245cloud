@@ -87,7 +87,7 @@ $ ->
   initChatting()
   initStart()
   initTimecrowd() if location.href.match(/timecrowd=/)
-  initHeatmap() if location.href.match(/heatmap=/)
+  initHeatmap()
   initDoing()
   initDone()
   initRanking()
@@ -104,40 +104,40 @@ $ ->
     )
 
 initHeatmap = () ->
-  if Parse.User.current()
-    cal = new CalHeatMap()
-    now = new Date()
-    startDate = new Date(now.getFullYear() - 1, now.getMonth() + 1)
+  return unless Parse.User.current()
+  cal = new CalHeatMap()
+  now = new Date()
+  startDate = new Date(now.getFullYear() - 1, now.getMonth() + 1)
 
-    cal.init({
-      itemSelector: '#heatmap'
-      domain: 'month'
-      start: startDate
-      subDomain: 'day'
-      subDomainDateFormat: (date) -> Util.yearMonthDay(date)
-      subDomainTitleFormat:
-        empty: '{date}<br>0 ぽも'
-        filled: '{date}<br>{count} ぽも'
-      cellSize: 15
-      highlight: 'now'
-      tooltip: true
-      legend: [2, 4, 6, 8]
-      displayLegend: false
-      range: 12
-      afterLoad: () ->
+  cal.init({
+    itemSelector: '#heatmap'
+    domain: 'month'
+    start: startDate
+    subDomain: 'day'
+    subDomainDateFormat: (date) -> Util.yearMonthDay(date)
+    subDomainTitleFormat:
+      empty: '{date}<br>0 ぽも'
+      filled: '{date}<br>{count} ぽも'
+    cellSize: 15
+    highlight: 'now'
+    tooltip: true
+    legend: [2, 4, 6, 8]
+    displayLegend: false
+    range: 12
+    afterLoad: () ->
+      pomos = {}
+      ParseParse.where('Workload', [
+        ['is_done', true]
+        ['user', Parse.User.current()]
+        ['createdAt', '>', startDate]
+      ], (workloads) ->
         pomos = {}
-        ParseParse.where('Workload', [
-          ['is_done', true]
-          ['user', Parse.User.current()]
-          ['createdAt', '>', startDate]
-        ], (workloads) ->
-          pomos = {}
-          for i in [0...workloads.length]
-            pomos[+workloads[i].createdAt / 1000] = 1
-          cal.update(pomos)
-          cal.options.data = pomos
-        , null, 99999)
-    })
+        for i in [0...workloads.length]
+          pomos[+workloads[i].createdAt / 1000] = 1
+        cal.update(pomos)
+        cal.options.data = pomos
+      , null, 99999)
+  })
 
 initTimecrowd = () ->
   console.log 'initTimecrowd'
