@@ -43,28 +43,33 @@ class Util
       min  = time.getMinutes()
       "#{Util.zero(month)}/#{Util.zero(day)} #{Util.zero(hour)}:#{Util.zero(min)}"
 
-  @timeImg: (mtime) ->
-    @time(mtime).split(':').map((str) ->
-      str.split('').map((num) ->
-        Util.int2img(num)
-      ).join('')
-    ).join('<img src="https://ruffnote.com/attachments/24965" />')
+  STR_NUM_MAP =
+    ':': 24965
+    '0': 24953
+    '1': 24954
+    '2': 24955
+    '3': 24956
+    '4': 24958
+    '5': 24959
+    '6': 24960
+    '7': 24961
+    '8': 24962
+    '9': 24963
 
-  @int2img: (int) ->
-    int = parseInt(int)
-    num = {
-      0:  24953
-      1:  24954
-      2:  24955
-      3:  24956
-      4:  24958
-      5:  24959
-      6:  24960
-      7:  24961
-      8:  24962
-      9:  24963
-    }[int]
-    return "<img src=\"https://ruffnote.com/attachments/#{num}\" />"
+  @preloadImg: ->
+    for char of STR_NUM_MAP
+      img = new Image()
+      img.src = Util.charToImgURL(char)
+
+  @timeImg: (mtime) ->
+    @time(mtime).replace(/[0-9:]/g, (char) ->
+      url = Util.charToImgURL(char)
+      "<img src = '#{url}' />"
+    )
+
+  @charToImgURL: (char) ->
+    num = STR_NUM_MAP[char]
+    "https://ruffnote.com/attachments/#{num}"
 
   @monthDay: (time) ->
     date = new Date(time)
@@ -97,6 +102,7 @@ class Util
       started = (new Date()).getTime()
     past = (new Date()).getTime() - started
 
+    Util.preloadImg()
     $('.countdown2').show()
 
     if duration > past # yet end
