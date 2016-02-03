@@ -566,6 +566,7 @@ start = () ->
     initComments()
     @initSelectRooms()
 
+  Util.preloadImg()
   Util.countDown(@env.pomotime*60*1000, complete)
 
 window.youtubeDurationSec = (key)  ->

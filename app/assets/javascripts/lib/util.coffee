@@ -102,7 +102,6 @@ class Util
       started = (new Date()).getTime()
     past = (new Date()).getTime() - started
 
-    Util.preloadImg()
     $('.countdown2').show()
 
     if duration > past # yet end
