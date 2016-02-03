@@ -43,7 +43,7 @@ class Util
       min  = time.getMinutes()
       "#{Util.zero(month)}/#{Util.zero(day)} #{Util.zero(hour)}:#{Util.zero(min)}"
 
-  STR_NUM_MAP =
+  TIMER_IMG_NUM_MAP =
     ':': 24965
     '0': 24953
     '1': 24954
@@ -57,7 +57,7 @@ class Util
     '9': 24963
 
   @preloadImg: ->
-    for char of STR_NUM_MAP
+    for char of TIMER_IMG_NUM_MAP
       img = new Image()
       img.src = Util.charToImgURL(char)
 
@@ -68,7 +68,7 @@ class Util
     )
 
   @charToImgURL: (char) ->
-    num = STR_NUM_MAP[char]
+    num = TIMER_IMG_NUM_MAP[char]
     "https://ruffnote.com/attachments/#{num}"
 
   @monthDay: (time) ->
