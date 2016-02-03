@@ -144,6 +144,19 @@ input#track {
   padding: 9px 10px;
 }
 
+.timer-remain { display: inline-block; width: 80px; height: 31px; margin-top: 8px; background: url(https://ruffnote.com/attachments/24966) no-repeat; }
+.timer-colon  { display: inline-block; width: 10px; height: 31px; margin-top: 8px; background: url(https://ruffnote.com/attachments/24965) no-repeat; }
+.timer-num0   { display: inline-block; width: 25px; height: 31px; margin-top: 8px; background: url(https://ruffnote.com/attachments/24953) no-repeat; }
+.timer-num1   { display: inline-block; width: 25px; height: 31px; margin-top: 8px; background: url(https://ruffnote.com/attachments/24954) no-repeat; }
+.timer-num2   { display: inline-block; width: 25px; height: 31px; margin-top: 8px; background: url(https://ruffnote.com/attachments/24955) no-repeat; }
+.timer-num3   { display: inline-block; width: 25px; height: 31px; margin-top: 8px; background: url(https://ruffnote.com/attachments/24956) no-repeat; }
+.timer-num4   { display: inline-block; width: 25px; height: 31px; margin-top: 8px; background: url(https://ruffnote.com/attachments/24958) no-repeat; }
+.timer-num5   { display: inline-block; width: 25px; height: 31px; margin-top: 8px; background: url(https://ruffnote.com/attachments/24959) no-repeat; }
+.timer-num6   { display: inline-block; width: 25px; height: 31px; margin-top: 8px; background: url(https://ruffnote.com/attachments/24960) no-repeat; }
+.timer-num7   { display: inline-block; width: 25px; height: 31px; margin-top: 8px; background: url(https://ruffnote.com/attachments/24961) no-repeat; }
+.timer-num8   { display: inline-block; width: 25px; height: 31px; margin-top: 8px; background: url(https://ruffnote.com/attachments/24962) no-repeat; }
+.timer-num9   { display: inline-block; width: 25px; height: 31px; margin-top: 8px; background: url(https://ruffnote.com/attachments/24963) no-repeat; }
+
 .socialbutton {
   position: absolute;
   right: 0;
