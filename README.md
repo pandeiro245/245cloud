@@ -2,7 +2,7 @@
 
 ```
 $ cp config/database.yml.sample config/database.yml
-$ vim confi/database.yml
+$ vim config/database.yml
 $ bundle install
 $ bundle exec rake db:setup
 $ bundle exec rails s -p 3001
