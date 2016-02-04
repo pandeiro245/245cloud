@@ -60,7 +60,7 @@ class Util
     # FIXME: dom上に一時的にでも埋め込まない方法に変更したい
     #   $("<img src = '#{Util.charToImgURL(char)}'/>")だけではcompleteのときに
     #   プリローディングすることができなかった
-    # NOTE: 待ち時間が短すぎるとぷりローディングされない
+    # NOTE: 待ち時間が短すぎるとプリローディングされない
     #       表示に影響のないようにstyleで画面外に配置
     waitRemove = 5000
     for char of TIMER_IMG_NUM_MAP
