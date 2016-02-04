@@ -43,24 +43,33 @@ class Util
       min  = time.getMinutes()
       "#{Util.zero(month)}/#{Util.zero(day)} #{Util.zero(hour)}:#{Util.zero(min)}"
 
-  TIMER_CLASS_MAP =
-    ':': 'timer-colon'
-    '0': 'timer-num0'
-    '1': 'timer-num1'
-    '2': 'timer-num2'
-    '3': 'timer-num3'
-    '4': 'timer-num4'
-    '5': 'timer-num5'
-    '6': 'timer-num6'
-    '7': 'timer-num7'
-    '8': 'timer-num8'
-    '9': 'timer-num9'
+  TIMER_IMG_NUM_MAP =
+    ':': 24965
+    '0': 24953
+    '1': 24954
+    '2': 24955
+    '3': 24956
+    '4': 24958
+    '5': 24959
+    '6': 24960
+    '7': 24961
+    '8': 24962
+    '9': 24963
 
-  # NOTE: Timer dispalayed via css background-image
+  @preloadImg: ->
+    for char of TIMER_IMG_NUM_MAP
+      img = new Image()
+      img.src = Util.charToImgURL(char)
+
   @timeImg: (mtime) ->
     @time(mtime).replace(/[0-9:]/g, (char) ->
-      "<span class='#{TIMER_CLASS_MAP[char]}' />"
+      url = Util.charToImgURL(char)
+      "<img src = '#{url}' />"
     )
+
+  @charToImgURL: (char) ->
+    num = TIMER_IMG_NUM_MAP[char]
+    "https://ruffnote.com/attachments/#{num}"
 
   @monthDay: (time) ->
     date = new Date(time)
@@ -111,7 +120,7 @@ class Util
         $('title').html(remain2)
         $dom = $('.countdown')
       #$dom.html("あと#{remain2}")
-      $dom.html("<span class='timer-remain' />#{remain2_img}")
+      $dom.html("<img src='https://ruffnote.com/attachments/24966' />#{remain2_img}")
 
       if callback == 'reload'
         setTimeout("Util.countDown(#{duration}, null, #{started}, #{JSON.stringify(params)})", 1000)
