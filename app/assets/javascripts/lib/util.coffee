@@ -61,9 +61,9 @@ class Util
     #   $("<img src = '#{Util.charToImgURL(char)}'/>")だけではcompleteのときに
     #   プリローディングすることができなかった
     # NOTE: 待ち時間が短すぎるとぷりローディングされない
-    waitRemove = 1000
+    waitRemove = 5000
     for char of TIMER_IMG_NUM_MAP
-      $el = $("<img src = '#{Util.charToImgURL(char)}'/>")
+      $el = $("<img src='#{Util.charToImgURL(char)}' style='position:absolute; top: -9999px;'/>")
       $('body').append($el)
       setTimeout(do($el) =>
         -> $el.remove()
