@@ -61,6 +61,7 @@ class Util
     #   $("<img src = '#{Util.charToImgURL(char)}'/>")だけではcompleteのときに
     #   プリローディングすることができなかった
     # NOTE: 待ち時間が短すぎるとぷりローディングされない
+    #       表示に影響のないようにstyleで画面外に配置
     waitRemove = 5000
     for char of TIMER_IMG_NUM_MAP
       $el = $("<img src='#{Util.charToImgURL(char)}' style='position:absolute; top: -9999px;'/>")
@@ -73,7 +74,7 @@ class Util
     @time(mtime).replace(/[0-9:]/g, (char) ->
       url = Util.charToImgURL(char)
       className = if char == ':' then "colon" else 'num'
-      "<img src = '#{url}' class = '#{className}' />"
+      "<img src='#{url}' class='#{className}' />"
     )
 
   @charToImgURL: (char) ->
