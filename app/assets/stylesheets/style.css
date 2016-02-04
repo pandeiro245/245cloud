@@ -144,6 +144,13 @@ input#track {
   padding: 9px 10px;
 }
 
+.countdown .colon{
+  width: 10px;
+}
+.countdown .num{
+  width: 25px;
+}
+
 .socialbutton {
   position: absolute;
   right: 0;

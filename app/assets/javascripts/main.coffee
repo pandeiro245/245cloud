@@ -658,6 +658,7 @@ complete = () ->
 
   @syncWorkload('chatting')
   window.is_hato = false
+  Util.preloadImg()
   Util.countDown(@env.chattime*60*1000, 'finish')
   $('#header').hide()
   $('#otukare').fadeIn()

@@ -57,14 +57,23 @@ class Util
     '9': 24963
 
   @preloadImg: ->
+    # FIXME: dom上に一時的にでも埋め込まない方法に変更したい
+    #   $("<img src = '#{Util.charToImgURL(char)}'/>")だけではcompleteのときに
+    #   プリローディングすることができなかった
+    # NOTE: 待ち時間が短すぎるとぷりローディングされない
+    waitRemove = 1000
     for char of TIMER_IMG_NUM_MAP
-      img = new Image()
-      img.src = Util.charToImgURL(char)
+      $el = $("<img src = '#{Util.charToImgURL(char)}'/>")
+      $('body').append($el)
+      setTimeout(do($el) =>
+        -> $el.remove()
+      , waitRemove)
 
   @timeImg: (mtime) ->
     @time(mtime).replace(/[0-9:]/g, (char) ->
       url = Util.charToImgURL(char)
-      "<img src = '#{url}' />"
+      className = if char == ':' then "colon" else 'num'
+      "<img src = '#{url}' class = '#{className}' />"
     )
 
   @charToImgURL: (char) ->
