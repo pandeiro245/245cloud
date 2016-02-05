@@ -566,6 +566,7 @@ start = () ->
     initComments()
     @initSelectRooms()
 
+  Util.preloadImg()
   Util.countDown(@env.pomotime*60*1000, complete)
 
 window.youtubeDurationSec = (key)  ->
@@ -657,6 +658,7 @@ complete = () ->
 
   @syncWorkload('chatting')
   window.is_hato = false
+  Util.preloadImg()
   Util.countDown(@env.chattime*60*1000, 'finish')
   $('#header').hide()
   $('#otukare').fadeIn()

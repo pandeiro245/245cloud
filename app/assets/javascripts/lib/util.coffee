@@ -43,28 +43,43 @@ class Util
       min  = time.getMinutes()
       "#{Util.zero(month)}/#{Util.zero(day)} #{Util.zero(hour)}:#{Util.zero(min)}"
 
-  @timeImg: (mtime) ->
-    @time(mtime).split(':').map((str) ->
-      str.split('').map((num) ->
-        Util.int2img(num)
-      ).join('')
-    ).join('<img src="https://ruffnote.com/attachments/24965" />')
+  TIMER_IMG_NUM_MAP =
+    ':': 24965
+    '0': 24953
+    '1': 24954
+    '2': 24955
+    '3': 24956
+    '4': 24958
+    '5': 24959
+    '6': 24960
+    '7': 24961
+    '8': 24962
+    '9': 24963
 
-  @int2img: (int) ->
-    int = parseInt(int)
-    num = {
-      0:  24953
-      1:  24954
-      2:  24955
-      3:  24956
-      4:  24958
-      5:  24959
-      6:  24960
-      7:  24961
-      8:  24962
-      9:  24963
-    }[int]
-    return "<img src=\"https://ruffnote.com/attachments/#{num}\" />"
+  @preloadImg: ->
+    # FIXME: dom上に一時的にでも埋め込まない方法に変更したい
+    #   $("<img src = '#{Util.charToImgURL(char)}'/>")だけではcompleteのときに
+    #   プリローディングすることができなかった
+    # NOTE: 待ち時間が短すぎるとプリローディングされない
+    #       表示に影響のないようにstyleで画面外に配置
+    waitRemove = 5000
+    for char of TIMER_IMG_NUM_MAP
+      $el = $("<img src='#{Util.charToImgURL(char)}' style='position:absolute; top: -9999px;'/>")
+      $('body').append($el)
+      setTimeout(do($el) =>
+        -> $el.remove()
+      , waitRemove)
+
+  @timeImg: (mtime) ->
+    @time(mtime).replace(/[0-9:]/g, (char) ->
+      url = Util.charToImgURL(char)
+      className = if char == ':' then "colon" else 'num'
+      "<img src='#{url}' class='#{className}' />"
+    )
+
+  @charToImgURL: (char) ->
+    num = TIMER_IMG_NUM_MAP[char]
+    "https://ruffnote.com/attachments/#{num}"
 
   @monthDay: (time) ->
     date = new Date(time)
