@@ -11,15 +11,15 @@ class Util
     for str in params
       arr = str.split(':')
       id  = arr[0]
-      attr = arr[1]
+      attrs = if arr[1] then arr[1].split('&') else []
       $item = $('<div></div>')
       $item.attr('id', id)
-      unless (attr && attr == 'now_row')
+      unless 'now_row' in attrs
         $item.addClass('row')
-      if attr && attr == 'hidden'
+      if 'hidden' in attrs
         $item.hide()
       $contents.append($item)
-      if attr && attr == 'init'
+      if 'init' in attrs
         capitalizedId = id.charAt(0).toUpperCase() + id.slice(1)
         res.initials.push("init#{capitalizedId}")
     res
