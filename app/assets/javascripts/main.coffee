@@ -11,88 +11,41 @@ $ ->
       $(".icon_#{user.id}").attr('src', img)
   )
   ParseParse.addAccesslog()
-  elements = [
-    ['header', {is_row: false}]
-    'news'
-    ['otukare', {is_hide: true}]
-  ]
-  elements +=  '''
-  ad contents timecrowd nortification heatmap start_buttons
-  doing_title
-  doing
-  chatting_title
-  chatting
-  done
-  you_title
-  you
-  calendar_title
-  calendar
-  search_title
-  search
-  ranking_title
-  ranking
-  8tracks_title
-  8tracks
-  kimiya_title
-  kimiya
-  naotake_title
-  naotake
-  playing
-  complete
-  select_rooms
-  rooms_title
-  rooms
-  whatis_title
-  '''.replace(/$ */g,'').replace(/$/g,' ').replace(/\n/g,' ').split(' ')
-  elements += [
-    ['whatis', {is_row: false}]
-    'wantedly'
-    'footer'
-    ['otukare_services', {is_hide: true}]
-    'hatopoppo'
-  ]
-  window.hoge = elements
-  console.log elements
-  Util.scaffolds(elements)
-  Util.realtime()
-  ruffnote(23854, 'header')
-  ruffnote(18004, 'news')
-  ruffnote(13477, 'footer')
-  ruffnote(17758, 'search_title')
-  ruffnote(17498, 'otukare')
+  scaffolds = Util.scaffolds('''
+  header:no_row news otukare:hidden
+  ad contents timecrowd nortification heatmap:init start_buttons
+  doing_title doing:init chatting_title chatting:init done:init
+  you_title you:init calendar_title calendar
+  search_title search:init
+  ranking_title ranking:init
+  8tracks_title 8tracks:init
+  kimiya_title kimiya:init
+  naotake_title naotake:init
+  playing complete select_rooms
+  rooms_title rooms
+  whatis_title whatis:no_row&init
+  wantedly footer hatopoppo:init
+  ''')
+  for key in scaffolds.initials
+    eval("#{key}()")
 
-  window.services = [
-    ['ingress', 'https://www.ingress.com/intel']
-    ['togetter', 'http://togetter.com/']
-    ['newspicks', 'https://newspicks.com/top-news']
-    ['itoicom', 'http://www.1101.com/home.html']
+  Util.realtime()
+  for arr in [
+    [23854, 'header']
+    [18004, 'news']
+    [13477, 'footer']
+    [17758, 'search_title']
+    [17498, 'otukare']
+    [17661, 'music_ranking']
   ]
+    ruffnote(arr[0], arr[1])
 
   $('#selectRoomButton').hide()
 
-  for service in window.services
-    if location.href.match("#{service[0]}=")
-      initService($('#otukare_services'), service[1])
-
-  ruffnote(17661, 'music_ranking')
-
-  initSearch()
-  init8tracks()
-  initNaotake()
-  initKimiya()
-  initChatting()
   initStart()
   initTimecrowd() if location.href.match(/timecrowd=/)
-  initHeatmap()
   initNortification() if location.href.match(/notification=/)
-  initDoing()
-  initDone()
-  initRanking()
   initFixedStart()
-  #ParseBatch.repeat()
-  initHatopoppo()
-  initWhatis()
-  initYou()
   
   if user = Parse.User.current()
     ParseParse.find('User', user.id, (user)->
@@ -653,7 +606,6 @@ complete = () ->
   Util.countDown(@env.chattime*60*1000, 'finish')
   $('#header').hide()
   $('#otukare').fadeIn()
-  $("#otukare_services").fadeIn()
   $("#playing").fadeOut()
   $("#search").fadeOut()
   $("#playing").html('') # for stopping
@@ -1106,9 +1058,7 @@ initHatopoppo = () ->
   $('#hatopoppo').css('width', '1px')
   $audio = $('<audio></audio>')
   $audio.attr('id', 'hato')
-  # thanks for http://musicisvfr.com/free/se/clock01.html
   $audio.attr('src', '/audio/Zihou01-4.mp3')
-  #$audio.attr('src', '/audio/20141231_shion_poppo.m4a')
   $('#hatopoppo').append($audio)
 
 getOffset = (all_count) ->
