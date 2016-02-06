@@ -1,6 +1,5 @@
 @env.is_doing = false
 @env.is_done = false
-
 @nomusic_url = 'https://ruffnote.com/attachments/24985'
 
 $ ->
@@ -12,97 +11,45 @@ $ ->
       $(".icon_#{user.id}").attr('src', img)
   )
   ParseParse.addAccesslog()
-  Util.scaffolds([
-    ['header', {is_row: false}]
-    'news'
-    ['otukare', {is_hide: true}]
-    'ad'
-    'livechat'
-    'review'
-    'contents'
-    'timecrowd'
-    'nortification'
-    'heatmap'
-    'start_buttons'
-    'doing_title'
-    'doing'
-    'chatting_title'
-    'chatting'
-    'done'
-    'you_title'
-    'you'
-    'calendar_title'
-    'calendar'
-    'search_title'
-    'search'
-    'ranking_title'
-    'ranking'
-    '8tracks_title'
-    '8tracks'
-    'kimiya_title'
-    'kimiya'
-    'naotake_title'
-    'naotake'
-    'playing'
-    'complete'
-    'select_rooms'
-    'rooms_title'
-    'rooms'
-    'whatis_title'
-    ['whatis', {is_row: false}]
-    #'mlkcca_title'
-    #'mlkcca'
-    'wantedly'
-    'footer'
-    ['otukare_services', {is_hide: true}]
-    'hatopoppo'
-  ])
-  Util.realtime()
-  #ruffnote(13475, 'header')
-  ruffnote(23854, 'header')
-  ruffnote(18004, 'news')
-  ruffnote(13477, 'footer')
-  ruffnote(17758, 'search_title')
-  #ruffnote(17762, 'ranking_title')
-  ruffnote(17498, 'otukare')
+  scaffolds = Util.scaffolds('''
+  header:no_row news otukare:hidden
+  ad contents timecrowd nortification heatmap:init start_buttons
+  doing_title doing:init chatting_title chatting:init done:init
+  you_title you:init calendar_title calendar
+  search_title search:init
+  ranking_title ranking:init
+  8tracks_title 8tracks:init
+  kimiya_title kimiya:init
+  naotake_title naotake:init
+  playing complete select_rooms
+  rooms_title rooms
+  whatis_title whatis:no_row&init
+  wantedly footer hatopoppo:init
+  ''')
+  for key in scaffolds.initials
+    eval("#{key}()")
 
-  window.services = [
-    ['ingress', 'https://www.ingress.com/intel']
-    ['togetter', 'http://togetter.com/']
-    ['newspicks', 'https://newspicks.com/top-news']
-    ['itoicom', 'http://www.1101.com/home.html']
+  Util.realtime()
+  for arr in [
+    [23854, 'header']
+    [18004, 'news']
+    [13477, 'footer']
+    [17758, 'search_title']
+    [17498, 'otukare']
+    [17661, 'music_ranking']
   ]
+    ruffnote(arr[0], arr[1])
 
   $('#selectRoomButton').hide()
 
-  for service in window.services
-    if location.href.match("#{service[0]}=")
-      initService($('#otukare_services'), service[1])
-
-  ruffnote(17661, 'music_ranking')
-
-  initSearch()
-  init8tracks()
-  initNaotake()
-  initKimiya()
-  initChatting()
   initStart()
   initTimecrowd() if location.href.match(/timecrowd=/)
-  initHeatmap()
   initNortification() if location.href.match(/notification=/)
-  initDoing()
-  initDone()
-  initRanking()
   initFixedStart()
-  #ParseBatch.repeat()
-  initHatopoppo()
-  initWhatis()
-  initYou()
   
   if user = Parse.User.current()
     ParseParse.find('User', user.id, (user)->
       window.current_user = user
-      #initCalendar()
     )
     
 initNortification = () ->
@@ -250,7 +197,6 @@ initStart = () ->
       <div id='nomusic' class='col-sm-2'></div>
     """)
 
-    #text = '曲おまかせで24分間集中する！'
     text = [
       'https://ruffnote.com/attachments/24919'
       'https://ruffnote.com/attachments/24920'
@@ -260,11 +206,9 @@ initStart = () ->
     $random.html("""<h5>おまかせ</h5>
       <img src="\https://ruffnote.com/attachments/24982\" class='jacket'/>
     """)
-    #Util.addButton('start', $random, text, start_random, tooltip)
     Util.addButton('start', $random, text, start_random)
     $random.addClass("col-sm-offset-#{getOffset(2)}")
  
-    #text = 'この曲で集中'
     $('#fixedstart').hide()
     id = location.hash.split(':')[1]
     if location.hash.match(/soundcloud/)
@@ -306,17 +250,7 @@ initStart = () ->
 
     $nomusic.html('<h5>無音</h5>')
     $nomusic.append(Util.tag('img', 'https://ruffnote.com/attachments/24981', {class: 'jacket'}))
-    #Util.addButton('start', $nomusic, text, start_nomusic, tooltip)
     Util.addButton('start', $nomusic, text, start_nomusic)
-
-    if location.href.match('review=')
-      attrs = {
-        id: 'input_review_before'
-        style: 'margin:0 auto; width: 100%;'
-      }
-      $before = Util.tag('input', "今から24分間集中するにあたって一言（公開されます） 例：24分で企画書のたたき台を作る！", attrs)
-      $review = Util.tag('div', $before, {style: 'text-align: center;'})
-      $('#contents').append($review)
 
   else
     text = 'facebookログイン'
@@ -325,8 +259,6 @@ initStart = () ->
 initSearch = () ->
   $track = $("<input />").attr('id', 'track').attr('placeholder', 'ここにアーティスト名や曲名を入れてね')
   localStorage['search_music_title'] = '作業BGM' unless localStorage['search_music_title']
-  #if localStorage['search_music_title'].length > 1
-  #  $track.attr('value', localStorage['search_music_title'])
 
   $tracks = $("<div></div>").attr('id', 'tracks')
 
@@ -337,7 +269,6 @@ initSearch = () ->
     $(this).select()
   )
   $('#search input').focus()
-  #searchMusics()
 
   $('#track').keypress((e) ->
     if e.which == 13 #enter
@@ -527,15 +458,6 @@ window.start_nomusic = () ->
 createWorkload = (params = {}, callback) ->
   params.host = location.host
 
-  if location.href.match('review=')
-    if location.href.match('sparta=')
-      review = prompt("今から24分間集中するにあたって一言（公開されます）", '24分間頑張るぞ！')
-    else
-      review = $('#input_review_before').val()
-
-    if review.length
-      params['review_before'] = review
-
   ParseParse.create("Workload", params, (workload) ->
     @workload = workload
     callback()
@@ -684,12 +606,10 @@ complete = () ->
   Util.countDown(@env.chattime*60*1000, 'finish')
   $('#header').hide()
   $('#otukare').fadeIn()
-  $("#otukare_services").fadeIn()
   $("#playing").fadeOut()
   $("#search").fadeOut()
   $("#playing").html('') # for stopping
   initWantedly()
-  ruffnote(23777, 'livechat')
   unless @env.is_kakuhen
     @initSelectRooms()
 
@@ -734,26 +654,6 @@ complete = () ->
     workload.set('is_done', true)
     workload.save()
   , workload)
-
-  # 開始29分前〜開始時間
-  cond = [
-    ['createdAt', '>', Util.minAgo(@env.pomotime, workload.createdAt)]
-    ['createdAt', '<', workload.createdAt]
-  ]
-  ParseParse.where('Workload', cond, (workload, workloads2) ->
-    workload.set('synchro_start', workloads2.length + 1)
-    workload.save()
-  , workload, 99999)
-
-  # 終了29分前〜終了時間
-  cond = [
-    ['createdAt', '>', workload.createdAt]
-    ['createdAt', '<', Util.minAgo(-1 * @env.pomotime, workload.createdAt)]
-  ]
-  ParseParse.where('Workload', cond, (workload, workloads3) ->
-    workload.set('synchro_end', workloads3.length + 0)
-    workload.save()
-  , workload, 9999)
 
   $complete = $('#complete')
   $complete.html('')
@@ -967,22 +867,6 @@ initRanking = () ->
     w = workload
     user_id = w.user.objectId
 
-  review = ""
-  stars = ""
-
-  if location.href.match('review=')
-    if w.review_before
-      review += "<div class=\"review\">【前】#{w.review_before}</div>"
-    if w.review_after
-      review += "<div class=\"review\">【後】#{w.review_after}</div>"
-    
-    if w.point
-      if w.point < 5
-        for i in [1..(5-w.point)]
-          stars += "☆"
-      for i in [1..w.point]
-        stars += "★"
-
   if w.title
     href = '#'
     if w.sc_id
@@ -1018,8 +902,6 @@ initRanking = () ->
    <span>#{user_img}</span>
    <div class='disp'>#{disp}</div>
    <div>#{fixed}</div>
-   <div>#{stars}</div>
-   <div>#{review}</div>
   """)
   $('[data-toggle="tooltip"]').tooltip()
 
@@ -1076,8 +958,6 @@ initService = ($dom, url) ->
   else
     c = comment
   user = c.user
-
-
 
   t = new Date()
   hour = t.getHours()
@@ -1178,9 +1058,7 @@ initHatopoppo = () ->
   $('#hatopoppo').css('width', '1px')
   $audio = $('<audio></audio>')
   $audio.attr('id', 'hato')
-  # thanks for http://musicisvfr.com/free/se/clock01.html
   $audio.attr('src', '/audio/Zihou01-4.mp3')
-  #$audio.attr('src', '/audio/20141231_shion_poppo.m4a')
   $('#hatopoppo').append($audio)
 
 getOffset = (all_count) ->
@@ -1289,8 +1167,4 @@ renderFixedStart = (title, icon) ->
   $('#random').removeClass("col-sm-offset-#{getOffset(2)}")
   $('#random').addClass("col-sm-offset-#{getOffset(3)}")
   $('[data-toggle="tooltip"]').tooltip()
-
-
-
-
 

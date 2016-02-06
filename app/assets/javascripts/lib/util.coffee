@@ -3,23 +3,26 @@ class Util
     date = new Date() unless date
     new Date(date.getTime() - min*60*1000)
 
-  @scaffolds: (params, key='nc') ->
-    $body = $("##{key}")
-    $body.html('') # remove contents for SEO
-    for param in params
-      attr = null
-      if typeof(param) == 'object'
-        id = param[0]
-        attr = param[1]
-      else
-        id = param
+  @scaffolds: (string, key='nc') ->
+    res = {initials: []}
+    params = string.replace(/$ */g,'').replace(/$/g,' ').replace(/\n/g,' ').split(' ')
+    $contents = $("##{key}")
+    $contents.html('') # remove contents that is for SEO
+    for str in params
+      arr = str.split(':')
+      id  = arr[0]
+      attr = arr[1]
       $item = $('<div></div>')
       $item.attr('id', id)
-      unless (attr && attr.is_row == false)
+      unless (attr && attr == 'now_row')
         $item.addClass('row')
-      if attr && attr.is_hide == true
+      if attr && attr == 'hidden'
         $item.hide()
-      $body.append($item)
+      $contents.append($item)
+      if attr && attr == 'init'
+        capitalizedId = id.charAt(0).toUpperCase() + id.slice(1)
+        res.initials.push("init#{capitalizedId}")
+    res
 
   @time: (mtime) ->
     if mtime < 24 * 3600 * 1000
