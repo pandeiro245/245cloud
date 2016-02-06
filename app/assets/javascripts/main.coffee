@@ -12,22 +12,26 @@ $ ->
   )
   ParseParse.addAccesslog()
   scaffolds = Util.scaffolds('''
-  header:no_row news otukare:hidden
-  ad contents timecrowd nortification heatmap:init start_buttons
-  doing_title doing:init chatting_title chatting:init done:init
+  header:no_row&stay news otukare:hidden&stay
+  ad:stay contents:stay
+  timecrowd nortification heatmap:init start_buttons
+  doing_title:stay doing:init&stay
+  chatting_title:stay chatting:init:stay
+  done:init
   you_title you:init calendar_title calendar
   search_title search:init
   ranking_title ranking:init
   8tracks_title 8tracks:init
   kimiya_title kimiya:init
   naotake_title naotake:init
-  playing complete select_rooms
-  rooms_title rooms
+  playing complete:stay select_rooms:stay
+  rooms_title:stay rooms:stay
   whatis_title whatis:no_row&init
-  wantedly footer hatopoppo:init
+  wantedly:stay footer hatopoppo:init&stay
   ''')
   for key in scaffolds.initials
     eval("#{key}()")
+  window.stays = scaffolds.stays
 
   Util.realtime()
   for arr in [
@@ -36,7 +40,6 @@ $ ->
     [13477, 'footer']
     [17758, 'search_title']
     [17498, 'otukare']
-    [17661, 'music_ranking']
   ]
     ruffnote(arr[0], arr[1])
 
@@ -474,34 +477,9 @@ start = () ->
     }
     $.post('/timecrowd/start', params)
 
-  $("#done").hide()
-  $("#search").hide()
+  for div in $("#nc div.scaffold")
+    $(div).hide() unless $(div).attr('id') in window.stays
   $("input").hide()
-  $(".fixed_start").hide()
-  $("#music_ranking").hide()
-  $('#heatmap').hide()
-  doms = [
-    'timecrowd'
-    'start_buttons'
-    'fixedstart_artwork'
-    '8tracks'
-    '8tracks_title'
-    'kimiya_title'
-    'kimiya'
-    'naotake_title'
-    'naotake'
-    'search_title'
-    'ranking_title'
-    'ranking'
-    'whatis_title'
-    'whatis'
-    'you_title'
-    'you'
-    'news'
-    'footer'
-  ]
-  for dom in doms
-    $("##{dom}").hide()
 
   @env.is_doing = true
   @syncWorkload('doing')

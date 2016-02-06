@@ -4,7 +4,7 @@ class Util
     new Date(date.getTime() - min*60*1000)
 
   @scaffolds: (string, key='nc') ->
-    res = {initials: []}
+    res = {initials: [], stays: []}
     params = string.replace(/$ */g,'').replace(/$/g,' ').replace(/\n/g,' ').split(' ')
     $contents = $("##{key}")
     $contents.html('') # remove contents that is for SEO
@@ -13,6 +13,7 @@ class Util
       id  = arr[0]
       attrs = if arr[1] then arr[1].split('&') else []
       $item = $('<div></div>')
+      $item.addClass('scaffold')
       $item.attr('id', id)
       unless 'now_row' in attrs
         $item.addClass('row')
@@ -22,6 +23,8 @@ class Util
       if 'init' in attrs
         capitalizedId = id.charAt(0).toUpperCase() + id.slice(1)
         res.initials.push("init#{capitalizedId}")
+      if 'stay' in attrs
+        res.stays.push(id)
     res
 
   @time: (mtime) ->
