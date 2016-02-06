@@ -14,7 +14,7 @@ $ ->
   scaffolds = Util.scaffolds('''
   header:no_row&stay news otukare:hidden&stay
   ad:stay contents:stay
-  timecrowd nortification heatmap:init start_buttons
+  timecrowd toggl nortification heatmap:init start_buttons
   doing_title:stay doing:init&stay
   chatting_title:stay chatting:init:stay
   done:init
@@ -47,6 +47,7 @@ $ ->
 
   initStart()
   initTimecrowd() if location.href.match(/timecrowd=/)
+  initToggl() if location.href.match(/toggl=/)
   initNortification() if location.href.match(/notification=/)
   initFixedStart()
   
@@ -151,6 +152,12 @@ initTimecrowd = () ->
         $(e.currentTarget).find('input').prop('checked', true)
       )
   )
+
+initToggl = () ->
+  console.log 'initToggl'
+  $('#toggl').html("""
+  <h2>Toggl</h2>
+  """)
 
 entryItem = (entry) ->
   """
@@ -476,6 +483,8 @@ start = () ->
       task_id: task_id
     }
     $.post('/timecrowd/start', params)
+  if location.href.match(/toggl=/)
+    $.post('/toggl/start', {token: localStorage['toggl_token']})
 
   for div in $("#nc div.scaffold")
     $(div).hide() unless $(div).attr('id') in window.stays
@@ -576,7 +585,9 @@ window.play_repeat = (key, duration) ->
 complete = () ->
   console.log 'complete'
   if location.href.match(/timecrowd=/)
-    $.get('/timecrowd/stop')
+    $.post('/timecrowd/stop')
+  if location.href.match(/toggl=/)
+    $.post('/toggl/stop', {token: localStorage['toggl_token']} )
 
   @syncWorkload('chatting')
   window.is_hato = false
