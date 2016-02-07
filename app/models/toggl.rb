@@ -6,22 +6,26 @@ class Toggl
     @workspace_id = @workspaces.first['id']
   end
 
-  def recent
+  def working
     @toggl.get_current_time_entry
   end
 
+  def last
+    @toggl.get_time_entries.last
+  end
+
   def start
-    @toggl.create_time_entry({
-      'description' => recent['description'],
+    return if working # 既に動いていたら実行しない 
+    @toggl.start_time_entry({
+      'description' => last['description'],
       'wid' => @workspace_id,
-      'duration' => 1200,
       'start' => Time.now,
       'created_with' => "http://245cloud.com"
     })
   end
 
   def stop
-    @toggl.stop_time_entry(recent['id'])
+    @toggl.stop_time_entry(working['id'])
   end
 end
 

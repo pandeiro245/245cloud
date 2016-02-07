@@ -484,7 +484,7 @@ start = () ->
     }
     $.post('/timecrowd/start', params)
   if location.href.match(/toggl=/)
-    $.post('/toggl/start', {token: localStorage['toggl_token']})
+    postWithToken('/toggl/start', 'toggl_token')
 
   for div in $("#nc div.scaffold")
     $(div).hide() unless $(div).attr('id') in window.stays
@@ -582,12 +582,27 @@ window.play_repeat = (key, duration) ->
     Nicovideo.play(id, $("#playing"))
   setTimeout("play_repeat\(\"#{key}\"\, #{duration})", duration)
 
+
+postWithToken = (url, key, is_again=false) ->
+  console.log 'is_again', is_again
+  if is_again
+    token = prompt('Toggl API keyが無効のようです。再度入力してください', '')
+    localStorage[key] = token
+  unless token = localStorage[key]
+    token = prompt('TogglのAPI keyを入力してください', '')
+    localStorage[key] = token
+  $.post(url, {token: token}).done((data)->
+    console.log(data) 
+  ).fail(()->
+    postWithToken(url, key, true)
+  )
+
 complete = () ->
   console.log 'complete'
   if location.href.match(/timecrowd=/)
     $.post('/timecrowd/stop')
   if location.href.match(/toggl=/)
-    $.post('/toggl/stop', {token: localStorage['toggl_token']} )
+    postWithToken('/toggl/stop', 'toggl_token')
 
   @syncWorkload('chatting')
   window.is_hato = false

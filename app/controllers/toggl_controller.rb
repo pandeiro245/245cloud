@@ -5,7 +5,6 @@ class TogglController < ApplicationController
   end
 
   def start
-    token = 
     Toggl.new(params[:token]).start
     render json: 'ok'
   end
