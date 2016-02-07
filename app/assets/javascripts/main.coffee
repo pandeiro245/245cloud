@@ -24,7 +24,7 @@ $ ->
   8tracks_title 8tracks:init
   kimiya_title kimiya:init
   naotake_title naotake:init
-  playing complete:stay select_rooms:stay
+  playing:stay complete:stay select_rooms:stay
   rooms_title:stay rooms:stay
   whatis_title whatis:no_row&init
   wantedly:stay footer hatopoppo:init&stay
