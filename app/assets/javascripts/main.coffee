@@ -157,7 +157,9 @@ initToggl = () ->
   console.log 'initToggl'
   $('#toggl').html("""
   <h2>Toggl</h2>
+  <div id='toggl_description'></div>
   """)
+  ruffnote(24715, 'toggl_description')
 
 entryItem = (entry) ->
   """
