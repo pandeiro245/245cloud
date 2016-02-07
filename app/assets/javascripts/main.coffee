@@ -157,6 +157,18 @@ initToggl = () ->
   console.log 'initToggl'
   $('#toggl').html("""
   <h2>Toggl</h2>
+  <p>
+  <a href='https://toggl.com/app/profile' target='_blank'>https://toggl.com/app/profile</a>
+  の一番下の「API token」をコピーして
+  ブラウザのJS consoleから
+  <pre>
+  localStorage['toggl_token'] = 'hogehoge'
+  </pre>
+  みたいにして入れたら使えるはず。<br>
+  引き続き下記で開発進めます。（PR絶賛募集中）<br>
+  <a href='https://github.com/pandeiro245/245cloud/issues/204' target='_blank'>https://github.com/pandeiro245/245cloud/issues/204</a>
+  </p>
+  <hr />
   """)
 
 entryItem = (entry) ->
