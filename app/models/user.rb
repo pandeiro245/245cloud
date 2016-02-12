@@ -9,5 +9,11 @@ class User < ActiveRecord::Base
   def password_required?
     false
   end
+
+  def new_parsecom_password
+    ParsecomUser.update_password(
+      facebook_id
+    )
+  end
 end
 

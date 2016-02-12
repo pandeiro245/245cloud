@@ -19,7 +19,7 @@ class FacebookController < ApplicationController
   end
 
   def parse_login
-
+    @login = current_user.new_parsecom_password
   end
 end
 

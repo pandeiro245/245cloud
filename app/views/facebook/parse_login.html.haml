@@ -1,2 +1,8 @@
 :javascript
-  
+  var data = #{@login.to_json};
+  Parse.User.logIn(data.username, data.password).done(function(){
+    location.href = '/'
+  }).fail(function(){
+    alert('ログインできませんでした。お手数ですがpandeiro245までご連絡ください...');
+    location.href = '/'
+  });
