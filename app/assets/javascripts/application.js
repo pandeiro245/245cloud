@@ -12,6 +12,7 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require lib/parsecom
 //= require lib/config
 //= require d3.min
 //= require_tree .
