@@ -12,4 +12,5 @@ Rails.application.routes.draw do
   post '/toggl/start' => 'toggl#start'
   post '/toggl/stop'  => 'toggl#stop'
 
+  get '/auth/facebook/callback', to: 'facebook#login'
 end

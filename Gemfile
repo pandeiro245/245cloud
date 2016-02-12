@@ -44,4 +44,3 @@ gem 'awesome_print'
 gem 'togglv8'
 
 gem 'devise'
-
