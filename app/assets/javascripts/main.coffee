@@ -441,8 +441,7 @@ initDone = () ->
   , null, 24 * 4)
  
 login = () ->
-  console.log 'login'
-  window.fbAsyncInit()
+  location.href = '/auth/facebook'
 
 start_random = () ->
   console.log 'start_random'
