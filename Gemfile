@@ -27,6 +27,7 @@ group :development do
   gem 'chatwork'
   gem 'capistrano-pending', require: false
   gem 'gem_reloader'
+  gem 'rspec-rails', '~> 2.14.0'
 end
 
 gem 'haml'
@@ -41,3 +42,6 @@ gem 'omniauth-timecrowd', github: 'pandeiro245/omniauth-timecrowd', branch: 'iss
 gem 'rb-readline'
 gem 'awesome_print'
 gem 'togglv8'
+
+gem 'devise'
+
