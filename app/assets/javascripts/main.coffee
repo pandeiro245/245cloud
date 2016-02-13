@@ -1,15 +1,5 @@
-@env.is_doing = false
-@env.is_done = false
-@nomusic_url = 'https://ruffnote.com/attachments/24985'
-
 $ ->
   return unless $('#nc').length
-  ParseParse.all("User", (users) ->
-    for user in users
-      img = "https://graph.facebook.com/#{user.get('facebook_id_str')}/picture?height=40&width=40"
-      localStorage["icon_#{user.id}"] = img if img
-      $(".icon_#{user.id}").attr('src', img)
-  )
   ParseParse.addAccesslog()
   scaffolds = Util.scaffolds('''
   header:no_row&stay news otukare:hidden&stay
@@ -56,24 +46,24 @@ $ ->
     )
     
 initNortification = () ->
-  if Parse.User.current()
-    if !Notify.needsPermission || Notify.isSupported()
-      $('#nortification').html("""
-        <input id="show-nortification" type="checkbox" style="display:inline">
-        <label for="show-nortification"> デスクトップ通知を利用する</label>
-      """)
-      
-      # チェック時に通知の許可要求
-      $('#show-nortification').on('change', () ->
-        if $(this).prop('checked') && Notify.needsPermission
-          Notify.requestPermission(() ->
-            # 成功時(何もしない)
-            console.log('nortification permitted')
-          , () ->
-            # 失敗時はcheckboxを元に戻す
-            $(this).prop('checked', false)
-          )
-      )
+  return unless Parse.User.current()
+  if !Notify.needsPermission || Notify.isSupported()
+    $('#nortification').html("""
+      <input id="show-nortification" type="checkbox" style="display:inline">
+      <label for="show-nortification"> デスクトップ通知を利用する</label>
+    """)
+    
+    # チェック時に通知の許可要求
+    $('#show-nortification').on('change', () ->
+      if $(this).prop('checked') && Notify.needsPermission
+        Notify.requestPermission(() ->
+          # 成功時(何もしない)
+          console.log('nortification permitted')
+        , () ->
+          # 失敗時はcheckboxを元に戻す
+          $(this).prop('checked', false)
+        )
+    )
 
 initHeatmap = () ->
   return unless Parse.User.current()
@@ -864,7 +854,7 @@ initRanking = () ->
     title = '無音'
     fixed = "<a href=\"#\" class='fixed_start'><img src='https://ruffnote.com/attachments/24926' /></a>"
     jacket = "<img src=\"https://ruffnote.com/attachments/24981\" class='jacket'/>"
-  user_img = "<img class='icon icon_#{user_id} img-thumbnail' src='#{userIdToIconUrl(user_id)}' />"
+  user_img = "<img class='icon img-thumbnail' src='#{w.icon_url}' />"
 
   $item = Util.tag('div', null, {class: 'inborder'})
   $item.css("border", '4px solid #eadba0')
@@ -946,8 +936,7 @@ initService = ($dom, url) ->
     <tr>
     <td>
     <a class='facebook_#{user.id}' target='_blank'>
-    <img class='icon icon_#{user.id}' src='#{userIdToIconUrl(c.user.objectId)}' />
-    <!--<div class='facebook_name_#{user.id}'></div>-->
+    <img class='icon' src='#{c.icon_url}' />
     </a>
     <td>
     <td>#{Util.parseHttp(c.body)}</td>
@@ -960,21 +949,8 @@ initService = ($dom, url) ->
         $comments.prepend(html)
       else
         $comments.append(html)
-      ParseParse.fetch("user", comment, (ent, user) ->
-        img = "https://graph.facebook.com/#{user.get('facebook_id_str')}/picture?height=40&width=40"
-
-        $(".icon_#{user.id}").attr('src', img)
-        if user.get('facebook_id_str')
-          href = "https://facebook.com/#{user.get('facebook_id_str')}"
-          $(".facebook_#{user.id}").attr('href', href)
-        if name = user.get('name')
-          $(".facebook_name_#{user.id}").html(name)
-      )
     else
       $comments.prepend(html)
-
-userIdToIconUrl = (userId) ->
-  localStorage["icon_#{userId}"] || ""
 
 getUnreadsCount = (room_id, total_count) ->
   return total_count unless Parse.User.current()
