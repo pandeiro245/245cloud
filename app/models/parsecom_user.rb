@@ -10,6 +10,7 @@ class ParsecomUser
   # NOTICE: MasterKeyを使った更新処理なので取扱注意
   def self.update_password facebook_id
     user = self.find_by_facebook_id facebook_id
+    user = self.create!(facebook_id) unless user
     id = user['objectId']
     username = user['username']
     password = SecureRandom.hex(16)
@@ -29,12 +30,24 @@ class ParsecomUser
     --data-urlencode 'username=#{username}' \
     --data-urlencode 'password=#{password}' \
     https://api.parse.com/1/login`
-    raise 'データ不整合が発生したので西小倉までご連絡ください' if JSON.parse(user)['authData']['facebook']['id'].to_i  != facebook_id.to_i
+
+    # facebook_id_strが偽の値だったとき対策
+    # raise 'データ不整合が発生したので西小倉までご連絡ください' if JSON.parse(user)['authData']['facebook']['id'].to_i  != facebook_id.to_i
     {
       username: username,
       password: password,
       res: JSON.parse(res) # 成功した場合updatedAtだけが返る
     }
+  end
+
+  def self.create! facebook_id
+    `curl -X POST \
+      -H "X-Parse-Application-Id: #{ENV['PARSE_APP_ID']}" \
+      -H "X-Parse-MASTER-Key: #{ENV['PARSE_MASTER_KEY']}"\
+      -H "Content-Type: application/json" \
+      -d '{"facebook_id_str": "#{facebook_id}", "password": "thispasswordwillbechangedsoon", "username": "fa#{facebook_id}"}'\
+      https://api.parse.com/1/users`
+    self.find_by_facebook_id facebook_id
   end
 
   def self.find_by_facebook_id facebook_id
@@ -53,6 +66,5 @@ class ParsecomUser
       https://api.parse.com/1/users/#{id}`
     JSON.parse(res)
   end
-
 end
 
