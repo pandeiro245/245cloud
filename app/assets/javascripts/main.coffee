@@ -4,12 +4,6 @@
 
 $ ->
   return unless $('#nc').length
-  ParseParse.all("User", (users) ->
-    for user in users
-      img = "https://graph.facebook.com/#{user.get('facebook_id_str')}/picture?height=40&width=40"
-      localStorage["icon_#{user.id}"] = img if img
-      $(".icon_#{user.id}").attr('src', img)
-  )
   ParseParse.addAccesslog()
   scaffolds = Util.scaffolds('''
   header:no_row&stay news otukare:hidden&stay
@@ -17,7 +11,7 @@ $ ->
   timecrowd toggl nortification heatmap:init start_buttons
   doing_title:stay doing:init&stay
   chatting_title:stay chatting:init:stay
-  done:init
+  done_title done:init
   you_title you:init calendar_title calendar
   search_title search:init
   ranking_title ranking:init
@@ -51,11 +45,6 @@ $ ->
   initNortification() if location.href.match(/notification=/)
   initFixedStart()
   
-  if user = Parse.User.current()
-    ParseParse.find('User', user.id, (user)->
-      window.current_user = user
-    )
-    
 initNortification = () ->
   if Parse.User.current()
     if !Notify.needsPermission || Notify.isSupported()
@@ -427,19 +416,13 @@ initDoing = () ->
 
 initDone = () ->
   console.log 'initDone'
-  cond = [
-    ["is_done", true]
-    ["createdAt", '<', Util.minAgo(@env.pomotime + @env.chattime)]
-  ]
-  ParseParse.where("Workload", cond, (workloads) ->
-    return unless workloads.length > 0
-    $("#done").append("<h2 class='status'><img src='https://ruffnote.com/attachments/24937' /></h2>")
+  $.get('/api/dones', (workloads) ->
+    ruffnote(17769, 'done_title')
     for workload in workloads
-      continue unless workload.attributes.user
-      disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.attributes.number}回目）"
-      @addWorkload("#done", workload, disp)
-  , null, 24 * 4)
- 
+      disp = "#{Util.hourMin(workload.created_at, '開始')}（#{workload.number}回目）"
+      window.addWorkload("#done", workload, disp)
+  )
+
 login = () ->
   location.href = '/auth/facebook'
 
@@ -865,25 +848,28 @@ initRanking = () ->
   @addWorkload("#chatting", workload, disp)
 
 @addWorkload = (dom, workload, disp) ->
-  if workload.attributes
-    w = workload.attributes
-    user_id = w.user.id
-  else
-    w = workload
-    user_id = w.user.objectId
+  w = workload
+  #if workload.attributes
+  #  w = workload.attributes
+  #  user_id = w.user.id
+  #else
+  #  w = workload
+  #  user_id = w.user.objectId
 
   if w.title
-    href = '#'
-    if w.sc_id
-      href += "soundcloud:#{w.sc_id}"
-    if w.yt_id
-      href += "youtube:#{w.yt_id}"
-    if w.mc_id
-      href += "mixcloud:#{w.mc_id}"
-    if w.et_id
-      href += "8tracks:#{w.et_id}"
-    if w.sm_id
-      href += "nicovideo:#{w.sm_id}"
+    #href = '#'
+    #if w.sc_id
+    #  href += "soundcloud:#{w.sc_id}"
+    #if w.yt_id
+    #  href += "youtube:#{w.yt_id}"
+    #if w.mc_id
+    #  href += "mixcloud:#{w.mc_id}"
+    #if w.et_id
+    #  href += "8tracks:#{w.et_id}"
+    #if w.sm_id
+    #  href += "nicovideo:#{w.sm_id}"
+    href = "##{workload.key}"
+
     fixed = "<a href=\"#{href}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24921' /></a>"
     jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" class=\"jacket\" />' else "<img src=\"#{@nomusic_url}\" class=\"jacket\" />"}"
     title = w.title
@@ -891,7 +877,7 @@ initRanking = () ->
     title = '無音'
     fixed = "<a href=\"#\" class='fixed_start'><img src='https://ruffnote.com/attachments/24926' /></a>"
     jacket = "<img src=\"https://ruffnote.com/attachments/24981\" class='jacket'/>"
-  user_img = "<img class='icon icon_#{user_id} img-thumbnail' src='#{userIdToIconUrl(user_id)}' />"
+  user_img = "<img class='icon img-thumbnail' src='https://graph.facebook.com/#{workload.facebook_id}/picture?height=40&width=40' />"
 
   $item = Util.tag('div', null, {class: 'inborder'})
   $item.css("border", '4px solid #eadba0')
@@ -917,7 +903,6 @@ initRanking = () ->
     $("#{dom} .user_#{user_id}").html($item)
   else
     $workload = $('<div></div>')
-    $workload.addClass("user_#{user_id}")
     $workload.addClass("workload")
     $workload.addClass("col-sm-2")
     $workload.css("min-height", '180px')
@@ -934,6 +919,8 @@ initRanking = () ->
 
   $("#{dom}").hide()
   $("#{dom}").fadeIn()
+
+window.addWorkload = @addWorkload
 
 initFixedStart = () ->
   $(document).on('click', '.fixed_start', () ->
@@ -1144,7 +1131,7 @@ initWhatis = () ->
 
 initYou = () ->
   return unless Parse.User.current()
-  ruffnote(17769, 'you_title')
+  ruffnote(22876, 'you_title')
   cond = [
     ["user", Parse.User.current()]
     ["is_done", true]

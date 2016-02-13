@@ -14,4 +14,6 @@ Rails.application.routes.draw do
 
   get '/auth/facebook/callback', to: 'facebook#login'
   get '/parse_login', to: 'facebook#parse_login'
+
+  get '/api/dones', to: 'workloads#dones'
 end
