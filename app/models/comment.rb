@@ -1,4 +1,4 @@
-class Workload < ParseResource::Base
+class Comment < ParseResource::Base
   fields :facebook_id
 
   def self.sync
@@ -12,7 +12,7 @@ class Workload < ParseResource::Base
       end
       data[user_id] = facebook_id
     end
-    Workload.limit(99999).each do |w|
+    Comment.limit(99999).each do |w|
       begin
         user_id = w.attributes['user']['objectId']
         w.facebook_id = data[user_id]
