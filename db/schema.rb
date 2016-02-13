@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160213144026) do
+ActiveRecord::Schema.define(version: 20160213153033) do
 
   create_table "comments", force: :cascade do |t|
     t.integer  "facebook_id", limit: 8
@@ -45,6 +45,7 @@ ActiveRecord::Schema.define(version: 20160213144026) do
     t.datetime "created_at",              null: false
     t.datetime "updated_at",              null: false
     t.integer  "number",      limit: 4
+    t.string   "artwork_url", limit: 255
   end
 
 end
