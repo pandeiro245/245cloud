@@ -15,5 +15,14 @@ class User < ActiveRecord::Base
       facebook_id
     )
   end
+
+  def self.sync
+    ParsecomUser.all.each do |u|
+      self.find_or_create_by(
+        facebook_id: u['facebook_id_str']
+      )
+    end
+    puts 'done'
+  end
 end
 

@@ -40,6 +40,15 @@ class ParsecomUser
     }
   end
 
+  def self.all
+    res = `curl -X GET \
+      -H "X-Parse-Application-Id: #{ENV['PARSE_APP_ID']}" \
+      -H "X-Parse-MASTER-Key: #{ENV['PARSE_MASTER_KEY']}"\
+      --data-urlencode 'limit=9999' \
+      https://api.parse.com/1/users`
+    JSON.parse(res)['results']
+  end
+
   def self.create! facebook_id
     `curl -X POST \
       -H "X-Parse-Application-Id: #{ENV['PARSE_APP_ID']}" \
