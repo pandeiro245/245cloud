@@ -15,7 +15,8 @@ class FacebookController < ApplicationController
       user.save!
     end
     sign_in(user)
-    redirect_to '/parse_login'
+    #redirect_to '/parse_login'
+    redirect_to '/'
   end
 
   def parse_login
