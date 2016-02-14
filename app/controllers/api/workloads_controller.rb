@@ -16,6 +16,14 @@ class Api::WorkloadsController < ApplicationController
     }
   end
 
+  def yours
+    render json: Workload.yours(current_user).map{|w|
+      hash = JSON.parse(w.to_json)
+      hash['created_at'] = w.created_at.to_i * 1000 # JSはマイクロ秒
+      hash
+    }
+  end
+
   def create
     workload = Workload.create(
       facebook_id: current_user.facebook_id,

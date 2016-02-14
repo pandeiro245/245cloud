@@ -847,25 +847,8 @@ initRanking = () ->
 
 @addWorkload = (dom, workload, disp) ->
   w = workload
-  #if workload.attributes
-  #  w = workload.attributes
-  #  user_id = w.user.id
-  #else
-  #  w = workload
-  #  user_id = w.user.objectId
-
+  facebook_id = w.facebook_id
   if w.title
-    #href = '#'
-    #if w.sc_id
-    #  href += "soundcloud:#{w.sc_id}"
-    #if w.yt_id
-    #  href += "youtube:#{w.yt_id}"
-    #if w.mc_id
-    #  href += "mixcloud:#{w.mc_id}"
-    #if w.et_id
-    #  href += "8tracks:#{w.et_id}"
-    #if w.sm_id
-    #  href += "nicovideo:#{w.sm_id}"
     href = "##{workload.key}"
 
     fixed = "<a href=\"#{href}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24921' /></a>"
@@ -895,10 +878,10 @@ initRanking = () ->
   $('[data-toggle="tooltip"]').tooltip()
 
   unless dom == '#done'
-    $("#chatting .user_#{user_id}").remove()
-    $("#doing .user_#{user_id}").remove()
-  if (dom == '#doing' or dom == '#chatting') and $("#{dom} .user_#{user_id}").length
-    $("#{dom} .user_#{user_id}").html($item)
+    $("#chatting .user_#{facebook_id}").remove()
+    $("#doing .user_#{facebook_id}").remove()
+  if (dom == '#doing' or dom == '#chatting') and $("#{dom} .user_#{facebook_id}").length
+    $("#{dom} .user_#{facebook_id}").html($item)
   else
     $workload = $('<div></div>')
     $workload.addClass("workload")
@@ -1101,19 +1084,14 @@ initWhatis = () ->
   $('#whatis').html($kokuban)
 
 initYou = () ->
+  console.log 'initYou'
   return unless Parse.User.current()
-  ruffnote(22876, 'you_title')
-  cond = [
-    ["user", Parse.User.current()]
-    ["is_done", true]
-    ["createdAt", '<', Util.minAgo(@env.pomotime + @env.chattime)]
-  ]
-  ParseParse.where('Workload', cond, (workloads) ->
+  $.get('/api/yours', (workloads) ->
+    ruffnote(22876, 'you_title')
     for workload in workloads
-      continue unless workload.attributes.user
-      disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.attributes.number}回目）"
-      addWorkload("#you", workload, disp)
-  null, 24)
+      disp = "#{Util.hourMin(workload.created_at, '開始')}（#{workload.number}回目）"
+      window.addWorkload("#you", workload, disp)
+  )
 
 renderFixedStart = (title, icon) ->
   fixed_text = [

@@ -7,6 +7,13 @@ class Workload < ActiveRecord::Base
     ParsecomWorkload.sync(skip)
   end
 
+  def self.yours user, limit=48
+    Workload.where(
+      is_done: true,
+      facebook_id: user.facebook_id
+    ).limit(limit).order('created_at desc')
+  end
+
   def self.dones limit=48
     Workload.where(is_done: true).limit(limit).order('created_at desc')
   end

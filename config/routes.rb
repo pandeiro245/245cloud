@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   namespace :api do
     get '/complete', to: 'workloads#complete'
     get '/dones', to: 'workloads#dones'
+    get '/yours', to: 'workloads#yours'
     resources :workloads, only: [:create]
     resources :comments, only: [:index, :create]
   end
