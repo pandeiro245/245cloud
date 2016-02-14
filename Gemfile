@@ -44,3 +44,4 @@ gem 'awesome_print'
 gem 'togglv8'
 
 gem 'devise'
+gem 'activerecord-import'

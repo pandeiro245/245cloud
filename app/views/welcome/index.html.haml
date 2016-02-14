@@ -5,15 +5,6 @@
 #nc
   %h1 245cloud（ニシコクラウド）で24分間集中しましょう
 #fb-root
-#selectRoomModal.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "selectRoomModalLabel", :role => "dialog", :tabindex => "-1"}
-  .modal-dialog
-    .modal-content
-      .modal-header
-        %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
-          %span{"aria-hidden" => "true"} &times;
-        %h4#selectRoomModalLabel.modal-title その他の部屋選択
-      .modal-body
-      .modal-footer
-        %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} キャンセル
-%button#selectRoomButton.btn.btn-primary.btn-lg{"data-target" => "#selectRoomModal", "data-toggle" => "modal", :style => "display:hidden; ", :type => "button"}
-
+- if current_user
+  :javascript
+    window.facebook_id = "#{current_user.facebook_id}";

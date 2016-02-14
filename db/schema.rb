@@ -11,7 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160212153115) do
+ActiveRecord::Schema.define(version: 20160214132033) do
+
+  create_table "comments", force: :cascade do |t|
+    t.string   "facebook_id", limit: 255
+    t.integer  "parent_id",   limit: 4
+    t.text     "body",        limit: 65535
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+  end
 
   create_table "users", force: :cascade do |t|
     t.string   "email",                  limit: 255, default: "", null: false
@@ -26,7 +34,18 @@ ActiveRecord::Schema.define(version: 20160212153115) do
     t.string   "last_sign_in_ip",        limit: 255
     t.datetime "created_at",                                      null: false
     t.datetime "updated_at",                                      null: false
-    t.integer  "facebook_id",            limit: 8
+    t.string   "facebook_id",            limit: 255
+  end
+
+  create_table "workloads", force: :cascade do |t|
+    t.string   "facebook_id", limit: 255
+    t.string   "key",         limit: 255
+    t.string   "title",       limit: 255
+    t.boolean  "is_done",     limit: 1
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+    t.integer  "number",      limit: 4
+    t.string   "artwork_url", limit: 255
   end
 
 end

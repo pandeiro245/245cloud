@@ -1,26 +1,51 @@
-class Workload < ParseResource::Base
-  fields :facebook_id
+class Workload < ActiveRecord::Base
+  def self.pomotime
+    24.minutes
+  end
 
-  def self.sync
-    data = {}
-    ParsecomUser.all.each do |u|
-      user_id = u['objectId']
-      if u['authData'] and u['authData']['facebook']
-        facebook_id = u['authData']['facebook']['id']
-      else
-        facebook_id = u['facebook_id_str']
-      end
-      data[user_id] = facebook_id
-    end
-    Workload.limit(99999).each do |w|
-      begin
-        user_id = w.attributes['user']['objectId']
-        w.facebook_id = data[user_id]
-      rescue
-        w.facebook_id = 10152403406713381
-      end
-      w.facebook_id ||= 10152403406713381
-      w.save
-    end
+  def self.chattime
+    5.minutes
+  end
+  def self.sync(skip=0)
+    ParsecomWorkload.sync(skip)
+  end
+
+  def self.yours user, limit=48
+    Workload.where(
+      is_done: true,
+      facebook_id: user.facebook_id
+    ).limit(limit).order('created_at desc')
+  end
+
+  def self.playings
+    limit = 200
+    from = Time.now - self.pomotime
+    to   = Time.now
+    Workload.where(
+      created_at: from..to,
+    ).limit(limit).order('created_at desc')
+  end
+
+  def self.chattings
+    limit = 200
+    from = Time.now - self.pomotime - self.chattime
+    to   = Time.now-self.pomotime
+    Workload.where(
+      is_done: true,
+      created_at: from..to,
+    ).limit(limit).order('created_at desc')
+  end
+
+
+  def self.dones limit=48
+    Workload.where(is_done: true).limit(limit).order('created_at desc')
+  end
+
+  def next_number
+    Workload.where(
+      facebook_id: facebook_id,
+      created_at: Date.today.beginning_of_day..Time.now,
+      is_done: true
+    ).count + 1
   end
 end

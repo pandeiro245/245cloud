@@ -5,14 +5,14 @@ mlkcca = new MilkCocoa("#{@env.milkcocoa}.mlkcca.com")
   console.log 'mlkcca', params
   params = params.value
   if params.type == 'comment'
-    # 自分の投稿だけはMilkcocoaを経由させない 
-    unless params.comment.user.objectId == Parse.User.current().id
-      @addComment(params.room_id, params.comment, params.is_countup)
+    #unless params.comment.facebook_id == window.facebook_id
+    if true
+      @addComment(params.room_id, params.comment)
   else if params.type == 'doing'
     @addDoing(params.workload)
   else if params.type == 'chatting'
     @addChatting(params.workload)
   else if params.type == 'finish'
-    @stopUser(params.workload.user.objectId)
+    @stopUser(params.workload.facebook_id)
 )
 

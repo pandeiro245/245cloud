@@ -1,13 +1,18 @@
-#class ParsecomUser < ParseUser
-#  fields :name, :facebook_id_str, :user_id
-#end
-
-# deviseのUserとバッティングしているっぽいので
-# parse_resource使わずにREST APIで動かす
-# https://parse.com/docs/rest/guide#users-retrieving-users
 class ParsecomUser
-  # TODO: エラーハンドリング
-  # NOTICE: MasterKeyを使った更新処理なので取扱注意
+  def self.user2facebook
+    data = {}
+    self.all.each do |u|
+      user_id = u['objectId']
+      if u['authData'] and u['authData']['facebook']
+        facebook_id = u['authData']['facebook']['id']
+      else
+        facebook_id = u['facebook_id_str']
+      end
+      data[user_id] = facebook_id
+    end
+    data
+  end
+
   def self.update_password facebook_id
     user = self.find_by_facebook_id facebook_id
     user = self.create!(facebook_id) unless user
