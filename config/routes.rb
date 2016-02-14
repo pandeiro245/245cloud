@@ -15,6 +15,8 @@ Rails.application.routes.draw do
   get '/auth/facebook/callback', to: 'facebook#login'
   get '/parse_login', to: 'facebook#parse_login'
 
-  get '/api/dones', to: 'workloads#dones'
-  get '/api/comments', to: 'comments#index'
+  namespace :api do
+    get '/dones', to: 'workloads#dones'
+    resources :comments, only: [:index, :create]
+  end
 end

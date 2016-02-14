@@ -793,16 +793,25 @@ window.createComment = (room_id) ->
 
   params = {body: body}
 
-  if room_id != '3'
-    params.room_id = room_id
-  ParseParse.create('Comment', params, (comment)->
+  params.room_id = room_id
+  #ParseParse.create('Comment', params, (comment)->
+  #  updateRoomCommentsCount(room_id)
+
+  #  # 自分の投稿を自分の画面に
+  #  @addComment(room_id, comment, true, true)
+
+  #  # 自分の投稿を他人の画面に
+  #  syncComment(room_id, comment, true)
+  #)
+
+  $.post('/api/comments', params, (comment) ->
     updateRoomCommentsCount(room_id)
 
     # 自分の投稿を自分の画面に
-    @addComment(room_id, comment, true, true)
+    @addComment(room_id, comment)
 
     # 自分の投稿を他人の画面に
-    syncComment(room_id, comment, true)
+    syncComment(room_id, comment)
   )
 
 initRanking = () ->
@@ -948,10 +957,6 @@ initService = ($dom, url) ->
   $comments = $("#room_#{room_id} .comments")
   console.log comment
   c = comment
-
-  t = new Date()
-  hour = t.getHours()
-  min = t.getMinutes()
 
   if c.body
     img = "https://graph.facebook.com/#{c.facebook_id}/picture?height=40&width=40"

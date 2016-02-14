@@ -1,4 +1,4 @@
-class WorkloadsController < ApplicationController
+class Api::WorkloadsController < ApplicationController
   def dones
     render json: Workload.where(is_done: true).limit(48).order('created_at desc').map{|w|
       hash = JSON.parse(w.to_json)
