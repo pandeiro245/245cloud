@@ -679,6 +679,8 @@ window.createComment = (room_id) ->
   )
 
 initRanking = () ->
+  return
+
   now = new Date()
   year = now.getYear() + 1900 - 1
   month = now.getMonth()
