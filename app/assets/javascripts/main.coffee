@@ -279,7 +279,7 @@ initSearch = () ->
 
   $.get('/api/comments', (rooms) ->
     for room in rooms
-      link = "<a href='#' class='room_link' data-values=\"#{room.id}:#{room.body}\">#{room.body}</a><br>"
+      link = "<a style='margin: 5px;' href='#' class='room_link' data-values=\"#{room.id}:#{room.body}\">#{room.body}</a>"
       $('#select_rooms').append(link)
 
     $(document).on('click', ".room_link", (e) ->
