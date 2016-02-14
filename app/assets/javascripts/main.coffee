@@ -450,13 +450,16 @@ window.start_nomusic = () ->
   createWorkload({}, start)
 
 createWorkload = (params = {}, callback) ->
-  params.host = location.host
-
-  ParseParse.create("Workload", params, (workload) ->
+  #ParseParse.create("Workload", params, (workload) ->
+  #  @workload = workload
+  #  callback()
+  #)
+  $.post('/api/workloads', params, (workload) ->
     @workload = workload
     callback()
   )
-  
+
+
 start = () ->
   console.log 'start'
   if location.href.match(/timecrowd=/)
@@ -626,22 +629,7 @@ complete = () ->
       )
     )
 
-  workload = @workload
-  w = workload.attributes
-  first = new Date(workload.createdAt)
-  first = first.getTime() - first.getHours()*60*60*1000 - first.getMinutes()*60*1000 - first.getSeconds() * 1000
-  first = new Date(first)
-  cond = [
-    ["is_done", true]
-    ['user', w.user]
-    ["createdAt", '<', workload.createdAt]
-    ["createdAt", '>', first]
-  ]
-  ParseParse.where("Workload", cond, (workload, data) ->
-    workload.set('number', data.length + 1)
-    workload.set('is_done', true)
-    workload.save()
-  , workload)
+  $.get('/api/complete')
 
   $complete = $('#complete')
   $complete.html('')
@@ -845,7 +833,7 @@ initRanking = () ->
 
 @addDoing = (workload) ->
   $("#doing_title").show()
-  t = new Date(workload.createdAt)
+  t = new Date(workload.created_at)
   end_time = @env.pomotime*60*1000 + t.getTime()
   disp = "#{Util.hourMin(workload.createdAt, '開始')}（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
   @addWorkload("#doing", workload, disp)

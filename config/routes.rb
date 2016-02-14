@@ -16,7 +16,9 @@ Rails.application.routes.draw do
   get '/parse_login', to: 'facebook#parse_login'
 
   namespace :api do
+    get '/complete', to: 'workloads#complete'
     get '/dones', to: 'workloads#dones'
+    resources :workloads, only: [:create]
     resources :comments, only: [:index, :create]
   end
 end

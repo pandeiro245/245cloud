@@ -11,7 +11,7 @@ class Api::CommentsController < ApplicationController
   end
 
   def create
-    render json: Comment.create!(
+    render json: Comment.create(
       facebook_id: current_user.facebook_id,
       parent_id: params[:room_id],
       body: params[:body]
