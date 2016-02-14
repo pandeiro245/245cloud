@@ -289,7 +289,7 @@ initSearch = () ->
     on2= 'https://ruffnote.com/attachments/24831'
     off2= 'https://ruffnote.com/attachments/24832'
     $img = Util.tag('img', on2)
-    $img.attr('data-values', "default:いつもの部屋")
+    $img.attr('data-values', "3:いつもの部屋")
     $img.tooltip({title: 'いつもの部屋はログが流れやすいよ', placement: 'bottom'})
     $img.addClass('col-sm-2 room_icon room_link')
     $img.addClass('on')
@@ -722,7 +722,7 @@ window.initWantedly = () ->
 window.initComments = () ->
   initRoom()
 
-window.initRoom = (id = 'default', title='いつもの部屋') ->
+window.initRoom = (id = '3', title='いつもの部屋') ->
   console.log "initRoom: #{id}, #{title}"
 
   $(".room").hide()
@@ -743,18 +743,19 @@ window.initRoom = (id = 'default', title='いつもの部屋') ->
 
     $('#rooms').append($room)
     
-    search_id = if id == 'default' then null else id
-    limit = if id == 'default' then 100 else 10000
-
-    ParseParse.where("Comment", [['room_id', search_id]], (comments) ->
+    search_id = if id == '3' then null else id
+    limit = if id == '3' then 100 else 10000
+      
+    $.get('/api/comments', (comments) ->
       $("#room_#{id} .create_comment").keypress((e) ->
         if e.which == 13 #enter
           window.createComment(id)
       )
       for comment in comments
-        @addComment(id, comment)
+        window.addComment(id, comment)
       window.updateUnreads(search_id, comments.length)
-    , null, limit)
+    )
+
 
 window.updateUnreads = (room_id, count) ->
   unreads = Parse.User.current().get("unreads")
@@ -792,7 +793,7 @@ window.createComment = (room_id) ->
 
   params = {body: body}
 
-  if room_id != 'default'
+  if room_id != '3'
     params.room_id = room_id
   ParseParse.create('Comment', params, (comment)->
     updateRoomCommentsCount(room_id)
@@ -945,47 +946,29 @@ initService = ($dom, url) ->
 
 @addComment = (room_id, comment, is_countup=false, is_prepend=false) ->
   $comments = $("#room_#{room_id} .comments")
-  if typeof(comment.attributes) != 'undefined'
-    c = comment.attributes
-  else
-    c = comment
-  user = c.user
+  console.log comment
+  c = comment
 
   t = new Date()
   hour = t.getHours()
   min = t.getMinutes()
 
-  if user && c.body
+  if c.body
+    img = "https://graph.facebook.com/#{c.facebook_id}/picture?height=40&width=40"
     html = """
     <tr>
     <td>
-    <a class='facebook_#{user.id}' target='_blank'>
-    <img class='icon icon_#{user.id}' src='#{userIdToIconUrl(c.user.objectId)}' />
-    <!--<div class='facebook_name_#{user.id}'></div>-->
+    <a href='https://facebook.com/#{c.facebook_id}' target='_blank'>
+    <img class='icon' src='#{img}' />
     </a>
     <td>
     <td>#{Util.parseHttp(c.body)}</td>
-    <td>#{Util.hourMin(comment.createdAt)}</td>
+    <td>#{Util.hourMin(c.created_at)}</td>
     </tr>
     """
+    $comments.append(html)
 
-    if typeof(comment.attributes) != 'undefined'
-      if is_prepend
-        $comments.prepend(html)
-      else
-        $comments.append(html)
-      ParseParse.fetch("user", comment, (ent, user) ->
-        img = "https://graph.facebook.com/#{user.get('facebook_id_str')}/picture?height=40&width=40"
-
-        $(".icon_#{user.id}").attr('src', img)
-        if user.get('facebook_id_str')
-          href = "https://facebook.com/#{user.get('facebook_id_str')}"
-          $(".facebook_#{user.id}").attr('href', href)
-        if name = user.get('name')
-          $(".facebook_name_#{user.id}").html(name)
-      )
-    else
-      $comments.prepend(html)
+window.addComment = @addComment
 
 userIdToIconUrl = (userId) ->
   localStorage["icon_#{userId}"] || ""

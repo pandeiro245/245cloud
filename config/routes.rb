@@ -16,4 +16,5 @@ Rails.application.routes.draw do
   get '/parse_login', to: 'facebook#parse_login'
 
   get '/api/dones', to: 'workloads#dones'
+  get '/api/comments', to: 'comments#index'
 end

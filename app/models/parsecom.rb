@@ -4,6 +4,8 @@ class Parsecom
     ActiveRecord::Base.connection.execute('ALTER TABLE users AUTO_INCREMENT = 0')
     Workload.delete_all
     ActiveRecord::Base.connection.execute('ALTER TABLE workloads AUTO_INCREMENT = 0')
+    Comment.delete_all
+    ActiveRecord::Base.connection.execute('ALTER TABLE comments AUTO_INCREMENT = 0')
     self.fetch_zip zip_path if zip_path
     self.new.import
   end
@@ -71,7 +73,6 @@ class Parsecom
 
     queue = []
     workloads.each do |workload|
-     
       next unless workload['user']
       user = @user_hashs[workload['user']['objectId']]
 
@@ -94,21 +95,23 @@ class Parsecom
   end
 
   def import_rooms
-    @default_room = Room.create_default_room
+    #@default_room = Room.create_default_room
+    @default_room = Comment.create!(body: 'いつもの部屋')
     JSON.parse(File.open(@room_path).read)['results'].each do |room|
-      room2 = Room.create!(
-        title: room['title'],
+      comment = Comment.create!(
+        body: room['title'],
         created_at: room['createdAt'],
-        image_off: room['img_off'],
-        image_on: room['img_on'],
+        #image_off: room['img_off'],
+        #image_on: room['img_on'],
       )
-      @room_ids[room['objectId']] = room2.id
+      @room_ids[room['objectId']] = comment.id
     end
   end
 
   def import_comments
+    queue = []
     comments = JSON.parse(File.open(@comment_path).read)['results']
-    comments.select!{|c| c['createdAt'].to_time > @from} if @from
+
     comments.each do |comment|
       user_hash = comment['user'] ? comment['user']['objectId'] : "eAYx93GzJ8"
       user = @user_hashs[user_hash]
@@ -119,18 +122,18 @@ class Parsecom
         room_id = @default_room.id
       end
 
-      comment2 = Comment.find_or_initialize_by(
-        parsecomhash: comment['objectId']
+      comment2 = Comment.new(
+        body: comment['body'],
+        created_at: comment['createdAt'],
+        facebook_id:  user.facebook_id,
+        parent_id: room_id
       )
-      unless comment2.id
-        puts comment['body']
-        comment2.content = comment['body']
-        comment2.created_at = comment['createdAt']
-        comment2.user_id = user.id if user
-        comment2.room_id = room_id
-        comment2.save!
-        puts "done: comment.id = #{comment2.id}"
+      queue.push(comment2)
+      if queue.count > 1000
+        Comment.import queue
+        queue = []
       end
     end
+    Comment.import queue
   end
 end
