@@ -1,7 +1,7 @@
 class Api::CommentsController < ApplicationController
   def index
-    @room = Comment.find_by(parent_id: nil)
-    @comments = Comment.where(parent_id: @room.id).limit(48).order('created_at desc')
+    parent_id = params[:room_id] || nil
+    @comments = Comment.where(parent_id: params[:parent_id]).limit(48).order('created_at desc')
 
     render json: @comments.map{|c|
       hash = JSON.parse(c.to_json)

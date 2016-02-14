@@ -38,8 +38,6 @@ $ ->
   ]
     ruffnote(arr[0], arr[1])
 
-  $('#selectRoomButton').hide()
-
   initStart()
   initTimecrowd() if location.href.match(/timecrowd=/)
   initToggl() if location.href.match(/toggl=/)
@@ -283,92 +281,17 @@ initSearch = () ->
   $('#select_rooms').html(Util.tag('h2', Util.tag('img', 'https://ruffnote.com/attachments/24967'), {class: 'status'}))
   $('#select_rooms').append(Util.tag('div', null, {class: 'imgs'}))
 
-  ParseParse.all("Room", (rooms) ->
-    $('#select_rooms .imgs').html('')
-
-    # いつも部屋
-    on2= 'https://ruffnote.com/attachments/24831'
-    off2= 'https://ruffnote.com/attachments/24832'
-    $img = Util.tag('img', on2)
-    $img.attr('data-values', "3:いつもの部屋")
-    $img.tooltip({title: 'いつもの部屋はログが流れやすいよ', placement: 'bottom'})
-    $img.addClass('col-sm-2 room_icon room_link')
-    $img.addClass('on')
-    $img.css('cursor', 'pointer')
-    $img.attr('data-on', "#{on2}")
-    $img.attr('data-off', "#{off2}")
-    $('#select_rooms .imgs').append($img)
-
-    $('.modal-body').html('')
-
-    # DB部屋
+  $.get('/api/comments', (rooms) ->
     for room in rooms
-      r = room.attributes
-      room_id = room.id
-      total_count = r.comments_count
-      unread_count = getUnreadsCount(room.id, total_count)
-      if r.img_on
-        on2= r.img_on
-        off2= r.img_off
-        $img = Util.tag('img', off2)
-        $img.attr('data-values', "#{room_id}:#{r.title}")
-        $img.tooltip({title: "未読数：#{unread_count} / 投稿数：#{total_count}", placement: 'bottom'})
-        $img.addClass('col-sm-2 room_icon room_link')
-        $img.css('cursor', 'pointer')
-        $img.attr('data-on', "#{on2}")
-        $img.attr('data-off', "#{off2}")
-        $('#select_rooms .imgs').append($img)
-      else
-        $('.modal-body').append(
-          "<a class='room_link' style='cursor: pointer; display:block;'  data-values=\"#{room.id}:#{room.attributes.title}\">#{room.attributes.title} (#{unread_count}/#{total_count})</option>"
-        )
+      link = "<a href='#' class='room_link' data-values=\"#{room.id}:#{room.body}\">#{room.body}</a><br>"
+      $('#select_rooms').append(link)
+
+    $(document).on('click', ".room_link", (e) ->
+      e.preventDefault()
       
-    #  その他
-    on2= 'https://ruffnote.com/attachments/24855'
-    off2= 'https://ruffnote.com/attachments/24854'
-    $img = Util.tag('img', off2)
-    $img.tooltip({title: 'その他の部屋を見たい場合はここをクリックしてね', placement: 'bottom'})
-    $img.addClass('col-sm-2')
-    $img.addClass('room_icon sonota room_link')
-    $img.css('cursor', 'pointer')
-    $img.attr('data-toggle', 'modal')
-    $img.attr('data-target', '#selectRoomModal')
-    $img.attr('data-on', "#{on2}")
-    $img.attr('data-off', "#{off2}")
-
-    $('#select_rooms .imgs').append($img)
-
-    $(document).on('click', ".room_link", () ->
       $self = $(this)
-
-      # 画像部屋を押したらその部屋だけ開くようにする
-      if $self.hasClass('room_icon')
-        for i in $('.on')
-          $(i).attr('src', $(i).attr('data-off'))
-          $(i).removeClass('on')
-        $self.addClass('on')
-        $self.attr('src', $self.attr('data-on'))
-
-      # 押したのがその他だったらモーダルを開く
-      if $self.hasClass('sonota')
-        if $('#selectRoomModal').attr('style').match(/hidden/)
-          $('#selectRoomButton').click()
-      # そうでなければその部屋を開いてモーダルを閉じる
-      else
-        vals = $self.attr('data-values').split(':')
-        initRoom(vals[0], vals[1])
-        $('.modal-header .close').click()
-    )
-
-    $(document).on('mouseover', ".room_icon", () ->
-      $self = $(this)
-      $self.attr('src', $self.attr('data-on'))
-    )
-
-    $(document).on('mouseout', ".room_icon", () ->
-      $self = $(this)
-      unless $self.hasClass('on')
-        $self.attr('src', $self.attr('data-off'))
+      vals = $self.attr('data-values').split(':')
+      initRoom(vals[0], vals[1])
     )
   )
 
@@ -713,7 +636,7 @@ window.initRoom = (id = '3', title='いつもの部屋') ->
     search_id = if id == '3' then null else id
     limit = if id == '3' then 100 else 10000
       
-    $.get('/api/comments', (comments) ->
+    $.get("/api/comments?parent_id=#{id}", (comments) ->
       $("#room_#{id} .create_comment").keypress((e) ->
         if e.which == 13 #enter
           window.createComment(id)
