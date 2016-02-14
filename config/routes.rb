@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  devise_for :users
   root 'welcome#index'
   resources :nicoinfo, only: [:show], constraints: {id: /sm[0-9]+/}
   get '/pitch' => 'welcome#pitch'
@@ -11,4 +12,6 @@ Rails.application.routes.draw do
   post '/toggl/start' => 'toggl#start'
   post '/toggl/stop'  => 'toggl#stop'
 
+  get '/auth/facebook/callback', to: 'facebook#login'
+  get '/parse_login', to: 'facebook#parse_login'
 end
