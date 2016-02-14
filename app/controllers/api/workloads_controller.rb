@@ -5,6 +5,9 @@ class Api::WorkloadsController < ApplicationController
       workload.number = workload.next_number
       workload.is_done = true
       workload.save!
+      hash = JSON.parse(workload.to_json)
+      hash['created_at'] = workload['created_at'].to_i * 1000
+      workload = hash
     end
     render json: workload
   end
@@ -30,8 +33,9 @@ class Api::WorkloadsController < ApplicationController
       facebook_id: current_user.facebook_id,
     )
     if workload
-      workload = JSON.parse(workload.to_json)
-      workload['created_at'] = workload['created_at'].to_i * 1000
+      hash = JSON.parse(workload.to_json)
+      hash['created_at'] = workload['created_at'].to_i * 1000
+      workload = hash
     end
     render json: workload
   end

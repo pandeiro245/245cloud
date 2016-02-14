@@ -452,7 +452,7 @@ window.start_nomusic = () ->
 
 createWorkload = (params = {}, callback) ->
   $.post('/api/workloads', params, (workload) ->
-    @workload = workload
+    window.workload = workload
     callback()
   )
 
@@ -822,14 +822,14 @@ initRanking = () ->
   $("#doing_title").show()
   t = new Date(workload.created_at)
   end_time = @env.pomotime*60*1000 + t.getTime()
-  disp = "#{Util.hourMin(workload.createdAt, '開始')}（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
+  disp = "#{Util.hourMin(workload.created_at, '開始')}（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
   @addWorkload("#doing", workload, disp)
 
 @addChatting = (workload) ->
   $("#chatting_title").show()
-  t = new Date(workload.createdAt)
+  t = new Date(workload.created_at)
   end_time = @env.pomotime*60*1000 + @env.chattime*60*1000 + t.getTime()
-  disp = "#{Util.hourMin(workload.createdAt, '開始')}（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
+  disp = "#{Util.hourMin(workload.created_at, '開始')}（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
   @addWorkload("#chatting", workload, disp)
 
 @addWorkload = (dom, workload, disp) ->
@@ -865,13 +865,14 @@ initRanking = () ->
   $('[data-toggle="tooltip"]').tooltip()
 
   unless dom == '#done'
-    $("#chatting .user_#{facebook_id}").remove()
-    $("#doing .user_#{facebook_id}").remove()
-  if (dom == '#doing' or dom == '#chatting') and $("#{dom} .user_#{facebook_id}").length
+    $("#chatting .facebook_#{facebook_id}").remove()
+    $("#doing .facebook_#{facebook_id}").remove()
+  if (dom == '#doing' or dom == '#chatting') and $("#{dom} .facebook_#{facebook_id}").length
     $("#{dom} .user_#{facebook_id}").html($item)
   else
     $workload = $('<div></div>')
     $workload.addClass("workload")
+    $workload.addClass("facebook_#{facebook_id}")
     $workload.addClass("col-sm-2")
     $workload.css("min-height", '180px')
     $workload.html($item)
@@ -882,6 +883,9 @@ initRanking = () ->
 
   $("#{dom}").hide()
   $("#{dom}").fadeIn()
+  renderWorkloads('#playing')
+  renderWorkloads('#chatting')
+  renderWorkloads('#doing')
 
 window.addWorkload = @addWorkload
 
@@ -952,7 +956,7 @@ updateRoomCommentsCount = (room_id) ->
 @syncWorkload = (type) ->
   @socket.push({
     type: type
-    workload: @workload
+    workload: window.workload
   })
 
 syncComment = (room_id, comment, is_countup=false) ->
@@ -1004,7 +1008,6 @@ getOffset = (all_count) ->
   data[all_count]
 
 renderWorkloads = (dom) ->
-  console.log 'renderWorkloads'
   $dom = $("#{dom}")
   $items = $("#{dom} .workload")
   $first = $("#{dom} .workload:first")
