@@ -608,7 +608,7 @@ window.initWantedly = () ->
 window.initComments = () ->
   initRoom()
 
-window.initRoom = (id = '3', title='いつもの部屋') ->
+window.initRoom = (id = '1', title='いつもの部屋') ->
   console.log "initRoom: #{id}, #{title}"
 
   $(".room").hide()
@@ -629,8 +629,8 @@ window.initRoom = (id = '3', title='いつもの部屋') ->
 
     $('#rooms').append($room)
     
-    search_id = if id == '3' then null else id
-    limit = if id == '3' then 100 else 10000
+    search_id = if id == '1' then null else id
+    limit = if id == '1' then 100 else 10000
       
     $.get("/api/comments?parent_id=#{id}", (comments) ->
       $("#room_#{id} .create_comment").keypress((e) ->
