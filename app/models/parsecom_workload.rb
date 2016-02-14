@@ -36,7 +36,7 @@ class ParsecomWorkload
     elsif w['mc_id']
       key = URI.decode("mixcloud:#{w['mc_id']}")
     elsif w['yt_id']
-      key = "mixcloud:#{w['yt_id']}"
+      key = "youtube:#{w['yt_id']}"
     elsif w['et_id']
       key = "8tracks:#{w['et_id']}"
     elsif w['sm_id']
