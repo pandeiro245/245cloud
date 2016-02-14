@@ -182,7 +182,7 @@ initStart = () ->
   text = "24分やり直しでも大丈夫ですか？"
   Util.beforeunload(text, 'env.is_doing')
   
-  if Parse.User.current()
+  if window.facebook_id
     $('#contents').append("""
       <div class='countdown2' >
       <div class='countdown' ></div>
@@ -790,7 +790,7 @@ window.addWorkload = @addWorkload
 
 initFixedStart = () ->
   $(document).on('click', '.fixed_start', () ->
-    if Parse.User.current()
+    if window.facebook_id
       hash = $(this).attr('href').replace(/^#/, '')
       location.hash = hash
       start_hash()
@@ -925,7 +925,7 @@ artworkUrlWithNoimage = (artwork_url) ->
 
 initYou = () ->
   console.log 'initYou'
-  return unless Parse.User.current()
+  return unless window.facebook_id
   $.get('/api/yours', (workloads) ->
     ruffnote(22876, 'you_title')
     for workload in workloads
