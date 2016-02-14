@@ -45,7 +45,7 @@ $ ->
   initFixedStart()
   
 initNortification = () ->
-  if Parse.User.current()
+  if window.facebook_id
     if !Notify.needsPermission || Notify.isSupported()
       $('#nortification').html("""
         <input id="show-nortification" type="checkbox" style="display:inline">
@@ -65,7 +65,7 @@ initNortification = () ->
       )
 
 initHeatmap = () ->
-  return unless Parse.User.current()
+  return unless window.facebook_id
   cal = new CalHeatMap()
   now = new Date()
   startDate = new Date(now.getFullYear() - 1, now.getMonth() + 1)
@@ -87,17 +87,13 @@ initHeatmap = () ->
     range: 12
     afterLoad: () ->
       pomos = {}
-      ParseParse.where('Workload', [
-        ['is_done', true]
-        ['user', Parse.User.current()]
-        ['createdAt', '>', startDate]
-      ], (workloads) ->
+      $.get('/api/yours?limit=99999', (workloads) ->
         pomos = {}
         for i in [0...workloads.length]
-          pomos[+workloads[i].createdAt / 1000] = 1
+          pomos[+workloads[i].created_at / 1000] = 1
         cal.update(pomos)
         cal.options.data = pomos
-      , null, 99999)
+      )
   })
 
 initTimecrowd = () ->
@@ -643,15 +639,7 @@ window.initRoom = (id = '3', title='いつもの部屋') ->
       )
       for comment in comments
         window.addComment(id, comment)
-      window.updateUnreads(search_id, comments.length)
     )
-
-window.updateUnreads = (room_id, count) ->
-  unreads = Parse.User.current().get("unreads")
-  unreads = {} unless unreads
-  unreads[room_id] = count
-  Parse.User.current().set("unreads", unreads)
-  Parse.User.current().save()
 
 window.finish = () ->
   console.log 'finish'
@@ -830,25 +818,12 @@ initService = ($dom, url) ->
 
 window.addComment = @addComment
 
-userIdToIconUrl = (userId) ->
-  localStorage["icon_#{userId}"] || ""
-
-getUnreadsCount = (room_id, total_count) ->
-  return total_count unless Parse.User.current()
-  return total_count unless Parse.User.current().get("unreads")
-  if count = Parse.User.current().get("unreads")[room_id]
-    res = total_count - count
-    if res < 0 then 0  else res
-  else
-    return total_count
-
 updateRoomCommentsCount = (room_id) ->
   console.log "updateRoomCommentsCount room_id is #{room_id}"
   ParseParse.find('Room', room_id, (room) ->
     ParseParse.where('Comment', [['room_id', room_id]], (room, comments)->
       room.set('comments_count', comments.length)
       room.save()
-      window.updateUnreads(room_id, comments.length)
     , room)
   )
 
