@@ -763,11 +763,7 @@ window.createComment = (room_id) ->
 
   $.post('/api/comments', params, (comment) ->
     updateRoomCommentsCount(room_id)
-
-    # 自分の投稿を自分の画面に
-    window.addComment(room_id, comment, true)
-
-    # 自分の投稿を他人の画面に
+    #window.addComment(room_id, comment)
     syncComment(room_id, comment)
   )
 
@@ -838,7 +834,7 @@ window.addChatting = (workload) ->
   $item.css("color", '#b2b2b2')
 
   $item.html("""
-   <h5 title='#{title}' data-toggle='tooltip' data-placement='top'>#{title} </h5>
+   <h5 title='#{title}' data-toggle='tooltip' data-placement='top'>#{title}</h5>
    <span>#{jacket}</span>
    <span>#{user_img}</span>
    <div class='disp'>#{disp}</div>
@@ -948,11 +944,11 @@ syncComment = (room_id, comment, is_countup=false) ->
     is_countup: is_countup
   })
 
-@stopUser = (user_id) ->
-  $("#chatting .user_#{user_id}").remove()
+@stopUser = (facebook_id) ->
+  $("#chatting .user_#{facebook_id}").remove()
   if $("#chatting div").length < 1
     $("#chatting_title").hide()
-  $("#doing .user_#{user_id}").remove()
+  $("#doing .user_#{facebook_id}").remove()
   if $("#doing div").length < 1
     $("#doing_title").hide()
 

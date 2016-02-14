@@ -83,7 +83,8 @@ class Parsecom
         artwork_url: workload['artwork_url'],
         created_at: workload['createdAt'].to_time,
         number: workload['number'],
-        is_done: workload['is_done']
+        is_done: workload['is_done'],
+        key: ParsecomWorkload.get_key(workload)
       )
       queue.push(workload2)
       if queue.count > 1000
