@@ -410,7 +410,7 @@ window.play = (key) ->
   id = key.split(':')[1]
   if key.match(/^soundcloud/)
     Soundcloud.fetch(id, @env.sc_client_id, (track) ->
-      params['sc_id'] = parseInt(id)
+      params['key'] = "soundcloud:#{id}"
       for k in ['title', 'artwork_url']
         params[k] = track[k]
       createWorkload(params, start)
@@ -419,7 +419,7 @@ window.play = (key) ->
   else if key.match(/^youtube/)
     Youtube.fetch(id, (data) ->
       track = data['items'][0]['snippet']
-      params['yt_id'] = id
+      params['key'] = "youtube:#{id}"
       params['title'] = track['title']
       params['artwork_url'] = track['thumbnails']['default']['url']
       createWorkload(params, start)
@@ -432,7 +432,7 @@ window.play = (key) ->
     )
   else if key.match(/^mixcloud/)
     Mixcloud.fetch(id, (track) ->
-      params['mc_id'] = id
+      params['key'] = "mixcloud:#{id}"
       params['title'] = track.name
       params['artwork_url'] = track.pictures.medium
       createWorkload(params, start)
@@ -448,7 +448,7 @@ window.play = (key) ->
     Nicovideo.play(id, $("#playing"))
   if key.match(/^8tracks/)
     EightTracks.fetch(id, @env.et_client_id, (track) ->
-      params['et_id'] = parseInt(id)
+      params['key'] = "8tracks:#{id}"
       params.title = track.mix.name
       params.artwork_url = track.mix.cover_urls.sq100
       createWorkload(params, start)

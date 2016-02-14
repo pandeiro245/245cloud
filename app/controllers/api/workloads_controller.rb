@@ -51,9 +51,14 @@ class Api::WorkloadsController < ApplicationController
   end
 
   def create
+    key = params['key'] || nil
     workload = Workload.create(
       facebook_id: current_user.facebook_id,
     )
+    workload.key = params['key'].presence
+    workload.title = params['title'].presence
+    workload.artwork_url = params['artwork_url'].presence
+
     if workload
       hash = JSON.parse(workload.to_json)
       hash['created_at'] = workload['created_at'].to_i * 1000
