@@ -1,8 +1,8 @@
 class Api::WorkloadsController < ApplicationController
   def complete
     workload = Workload.where(facebook_id: current_user.facebook_id).order('created_at desc').first
-    #if workload.created_at + 24.minutes <= Time.now #TODO
-    if true
+    if workload.created_at + Workload.pomotime <= Time.now
+      workload.number = workload.next_number
       workload.is_done = true
       workload.save!
     end

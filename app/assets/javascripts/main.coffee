@@ -905,12 +905,7 @@ initRanking = () ->
     $workload.addClass("col-sm-2")
     $workload.css("min-height", '180px')
     $workload.html($item)
-    if workload.attributes # init
-      $("#{dom}").append($workload)
-    else # with PubNub
-      $("#{dom}").prepend($workload)
-      renderWorkloads('#doing')
-      renderWorkloads('#chatting')
+  $("#{dom}").append($workload)
 
   if @env.is_doing || @env.is_done
     $(".fixed_start").hide()
