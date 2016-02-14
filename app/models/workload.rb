@@ -42,11 +42,7 @@ class Workload < ActiveRecord::Base
   end
 
   def next_number
-    # 暫定対応 refs #226
-    # from = Date.today.beginning_of_day
-    now = Time.now
-    from = now - now.hour.hours - now.min.minutes - now.sec.seconds
-
+    from = Date.today.beginning_of_day + 1.day
     Workload.where(
       facebook_id: facebook_id,
       created_at: from..Time.now,
