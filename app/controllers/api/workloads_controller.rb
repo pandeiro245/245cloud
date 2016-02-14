@@ -6,6 +6,7 @@ class Api::WorkloadsController < ApplicationController
       workload.is_done = true
       workload.save!
     end
+    render json: workload
   end
 
   def dones

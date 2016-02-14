@@ -20,9 +20,10 @@ $ ->
   naotake_title naotake:init
   playing:stay complete:stay select_rooms:stay
   rooms_title:stay rooms:stay
-  whatis_title whatis:no_row&init
+  whatis_title whatis:no_row
   wantedly:stay footer hatopoppo:init&stay
   ''')
+  window.initWhatis()
   for key in scaffolds.initials
     eval("#{key}()")
   window.stays = scaffolds.stays
@@ -450,10 +451,6 @@ window.start_nomusic = () ->
   createWorkload({}, start)
 
 createWorkload = (params = {}, callback) ->
-  #ParseParse.create("Workload", params, (workload) ->
-  #  @workload = workload
-  #  callback()
-  #)
   $.post('/api/workloads', params, (workload) ->
     @workload = workload
     callback()
@@ -744,7 +741,6 @@ window.initRoom = (id = '3', title='いつもの部屋') ->
       window.updateUnreads(search_id, comments.length)
     )
 
-
 window.updateUnreads = (room_id, count) ->
   unreads = Parse.User.current().get("unreads")
   unreads = {} unless unreads
@@ -782,21 +778,12 @@ window.createComment = (room_id) ->
   params = {body: body}
 
   params.room_id = room_id
-  #ParseParse.create('Comment', params, (comment)->
-  #  updateRoomCommentsCount(room_id)
-
-  #  # 自分の投稿を自分の画面に
-  #  @addComment(room_id, comment, true, true)
-
-  #  # 自分の投稿を他人の画面に
-  #  syncComment(room_id, comment, true)
-  #)
 
   $.post('/api/comments', params, (comment) ->
     updateRoomCommentsCount(room_id)
 
     # 自分の投稿を自分の画面に
-    @addComment(room_id, comment)
+    window.addComment(room_id, comment, true)
 
     # 自分の投稿を他人の画面に
     syncComment(room_id, comment)
@@ -919,9 +906,8 @@ window.ruffnote = (id, dom, callback=null) ->
 initService = ($dom, url) ->
   $dom.append("<iframe src='#{url}' width='85%' height='900px'></iframe>")
 
-@addComment = (room_id, comment, is_countup=false, is_prepend=false) ->
+@addComment = (room_id, comment) ->
   $comments = $("#room_#{room_id} .comments")
-  console.log comment
   c = comment
 
   if c.body
@@ -937,7 +923,7 @@ initService = ($dom, url) ->
     <td>#{Util.hourMin(c.created_at)}</td>
     </tr>
     """
-    $comments.append(html)
+    $comments.prepend(html)
 
 window.addComment = @addComment
 
@@ -1034,54 +1020,6 @@ start_unless_doing = ()->
 
 artworkUrlWithNoimage = (artwork_url) ->
   artwork_url || @nomusic_url
-
-initWhatis = () ->
-  $("#whatis_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24942' /></h2>")
-  now = new Date()
-  month = now.getMonth() + 1
-  day = now.getDate()
-  youbi = now.getDay()
-  numbers = {}
-  for i in [1..31]
-    i2 = 24371 + i
-    numbers[i] = "https://ruffnote.com/attachments/#{i2}"
-  youbis = {}
-  for i in [1..5]
-    i2 = 24358 + i
-    youbis[i] = "https://ruffnote.com/attachments/#{i2}"
-  youbis[0] = "https://ruffnote.com/attachments/24465" #日曜日
-  youbis[6] = "https://ruffnote.com/attachments/24464" #土曜日
-
-  $kokuban = $('<div></div>')
-  $kokuban.css('position', 'relative')
-  $kokuban.css('background', 'url(https://ruffnote.com/attachments/24501)')
-  $kokuban.css('width', '735px')
-  $kokuban.css('height', '483px')
-  $kokuban.css('margin', '0 auto')
-
-  $month = $('<img />')
-  $month.attr('src', numbers[month])
-  $month.css('position', 'absolute')
-  $month.css('right', '69px')
-  $month.css('top', '36px')
-
-  $day = $('<img />')
-  $day.attr('src', numbers[day])
-  $day.css('position', 'absolute')
-  $day.css('right', '70px')
-  $day.css('top', '88px')
-
-  $youbi = $('<img />')
-  $youbi.attr('src', youbis[youbi])
-  $youbi.css('position', 'absolute')
-  $youbi.css('right', '70px')
-  $youbi.css('top', '138px')
-
-  $kokuban.append($month)
-  $kokuban.append($day)
-  $kokuban.append($youbi)
-  $('#whatis').css('text-align', 'center')
-  $('#whatis').html($kokuban)
 
 initYou = () ->
   console.log 'initYou'
