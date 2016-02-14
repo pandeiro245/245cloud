@@ -12,12 +12,32 @@ class Api::WorkloadsController < ApplicationController
     render json: workload
   end
 
+  def chattings
+    res = Workload.chattings.map{|w|
+      hash = JSON.parse(w.to_json)
+      hash['created_at'] = w.created_at.to_i * 1000 # JSはマイクロ秒
+      #hash['created_at'] = (Time.now - 25.minutes).to_i * 1000
+      hash
+    }.reverse
+    render json: res
+  end
+
+  def playings
+    res = Workload.playings.map{|w|
+      hash = JSON.parse(w.to_json)
+      hash['created_at'] = w.created_at.to_i * 1000 # JSはマイクロ秒
+      #hash['created_at'] = (Time.now - 10.minutes).to_i * 1000
+      hash
+    }.reverse!
+    render json: res
+  end
+
   def dones
     render json: Workload.dones.map{|w|
       hash = JSON.parse(w.to_json)
       hash['created_at'] = w.created_at.to_i * 1000 # JSはマイクロ秒
       hash
-    }
+    }.reverse!
   end
 
   def yours
@@ -25,7 +45,7 @@ class Api::WorkloadsController < ApplicationController
       hash = JSON.parse(w.to_json)
       hash['created_at'] = w.created_at.to_i * 1000 # JSはマイクロ秒
       hash
-    }
+    }.reverse!
   end
 
   def create

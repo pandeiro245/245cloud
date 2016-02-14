@@ -374,45 +374,27 @@ initSearch = () ->
 
 initChatting = () ->
   console.log 'initChatting'
-  $("#chatting_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24938' /></h2>")
-
-  cond = [
-    ["is_done", true]
-    ["createdAt", '>', Util.minAgo(@env.pomotime + @env.chattime)]
-    ["createdAt", '<', Util.minAgo(@env.pomotime)]
-  ]
+  ruffnote(22878, 'chatting_title')
   $("#chatting_title").hide()
-  ParseParse.where("Workload", cond, (workloads) ->
+
+  $.get('/api/chattings', (workloads) ->
     return unless workloads.length > 0
     $("#chatting_title").show()
-    for workload, i in workloads
-      continue unless workload.attributes.user
-
-      @addChatting(workload)
-    renderWorkloads('#chatting')
-    renderWorkloads('#doing')
+    for workload in workloads
+      window.addChatting(workload)
   )
+
 
 initDoing = () ->
   console.log 'initDoing'
-  $("#doing_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24939' /></h2>")
+  ruffnote(22877, 'doing_title')
   $("#doing_title").hide()
 
-  cond = [
-    ["is_done", null]
-    ["createdAt", '>', Util.minAgo(@env.pomotime)]
-  ]
-  ParseParse.where("Workload", cond, (workloads) ->
+  $.get('/api/playings', (workloads) ->
     return unless workloads.length > 0
     $("#doing_title").show()
-    user_keys = {}
-    user_count = 0
-    for workload, i in workloads
-      continue unless workload.attributes.user
-      unless user_keys[workload.attributes.user.id]
-        @addDoing(workload)
-        user_keys[workload.attributes.user.id] = true
-    renderWorkloads('#doing')
+    for workload in workloads
+      window.addDoing(workload)
   )
 
 initDone = () ->
@@ -818,14 +800,14 @@ initRanking = () ->
       @addWorkload("#ranking", workload, disp)
   , null, 24 *500)
 
-@addDoing = (workload) ->
+window.addDoing = (workload) ->
   $("#doing_title").show()
   t = new Date(workload.created_at)
   end_time = @env.pomotime*60*1000 + t.getTime()
   disp = "#{Util.hourMin(workload.created_at, '開始')}（あと<span class='realtime' data-countdown='#{end_time}'></span>）"
   @addWorkload("#doing", workload, disp)
 
-@addChatting = (workload) ->
+window.addChatting = (workload) ->
   $("#chatting_title").show()
   t = new Date(workload.created_at)
   end_time = @env.pomotime*60*1000 + @env.chattime*60*1000 + t.getTime()
@@ -863,27 +845,25 @@ initRanking = () ->
    <div>#{fixed}</div>
   """)
   $('[data-toggle="tooltip"]').tooltip()
-
+  
+  # dones以外は１ユーザにつき１つしか表示しないので他の$itemは消去
   unless dom == '#done'
     $("#chatting .facebook_#{facebook_id}").remove()
     $("#doing .facebook_#{facebook_id}").remove()
-  if (dom == '#doing' or dom == '#chatting') and $("#{dom} .facebook_#{facebook_id}").length
-    $("#{dom} .user_#{facebook_id}").html($item)
-  else
-    $workload = $('<div></div>')
-    $workload.addClass("workload")
-    $workload.addClass("facebook_#{facebook_id}")
-    $workload.addClass("col-sm-2")
-    $workload.css("min-height", '180px')
-    $workload.html($item)
-  $("#{dom}").append($workload)
 
+  $workload = $('<div></div>')
+  $workload.addClass("workload")
+  $workload.addClass("facebook_#{facebook_id}")
+  $workload.addClass("col-sm-2")
+  $workload.css("min-height", '180px')
+  $workload.html($item)
+
+  $("#{dom}").prepend($workload)
+
+  # 活動中に追加される$itemには集中ボタンは不要
   if @env.is_doing || @env.is_done
     $(".fixed_start").hide()
 
-  $("#{dom}").hide()
-  $("#{dom}").fadeIn()
-  renderWorkloads('#playing')
   renderWorkloads('#chatting')
   renderWorkloads('#doing')
 

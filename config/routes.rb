@@ -19,6 +19,8 @@ Rails.application.routes.draw do
     get '/complete', to: 'workloads#complete'
     get '/dones', to: 'workloads#dones'
     get '/yours', to: 'workloads#yours'
+    get '/chattings', to: 'workloads#chattings'
+    get '/playings', to: 'workloads#playings'
     resources :workloads, only: [:create]
     resources :comments, only: [:index, :create]
   end
