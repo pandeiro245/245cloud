@@ -42,9 +42,14 @@ class Workload < ActiveRecord::Base
   end
 
   def next_number
+    # 暫定対応 refs #226
+    now = Time.now
+    from = now - now.hour.hours - now.min.minutes - now.sec.seconds
+
+    puts from.to_s
     Workload.where(
       facebook_id: facebook_id,
-      created_at: Date.today.beginning_of_day..Time.now,
+      created_at: from..Time.now,
       is_done: true
     ).count + 1
   end
