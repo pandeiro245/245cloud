@@ -439,7 +439,9 @@ window.play = (key) ->
     )
   else if key.match(/^nicovideo/)
     Nicovideo.fetch(id, (track) ->
-      createWorkload(track, start)
+      params = track
+      params['key'] = "nicovideo:#{id}"
+      createWorkload(params, start)
     )
     Nicovideo.play(id, $("#playing"))
   if key.match(/^8tracks/)
