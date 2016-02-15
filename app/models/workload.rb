@@ -1,13 +1,27 @@
 class Workload < ActiveRecord::Base
+  def self.sync
+    url = 'http://245cloud.com/api/dones.json?limit=1000'
+    uri = URI.parse(url)
+    json = Net::HTTP.get(uri)
+    JSON.parse(json).each do |w|
+      created_at = Time.at(w['created_at']/1000)
+      workload = Workload.find_or_create_by(
+        created_at: created_at,
+        facebook_id: w['facebook_id']
+      )
+      %w(is_done key title artwork_url).each do |key|
+        workload.send("#{key}=", w[key])
+      end
+      workload.save!
+    end
+  end
+
   def self.pomotime
     24.minutes
   end
 
   def self.chattime
     5.minutes
-  end
-  def self.sync(skip=0)
-    ParsecomWorkload.sync(skip)
   end
 
   def self.yours user, limit=48
@@ -60,6 +74,28 @@ class Workload < ActiveRecord::Base
   def self.update_numbers
     self.where(is_done: true).order('created_at desc').each do |w|
       w.update_number!
+    end
+  end
+
+  def self.wrongs
+    self.where('title is not null').where(key: nil)
+  end
+
+  def self.recover!
+    self.wrongs.each do |w|
+      if w.artwork_url.match(/smilevideo.jp/)
+        Nicovideo.search(w.title).each do |item|
+          if item.thumbnail_url == w.artwork_url
+            w.key = "nicovideo:#{item.cmsid}"
+          end
+        end
+        unless w.key
+          id =  w.artwork_url.split('smilevideo.jp/smile?i=').last
+          w.key = "nicovideo:sm#{id}"
+          puts w.key
+        end
+        w.save!
+      end
     end
   end
 end

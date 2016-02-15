@@ -34,7 +34,8 @@ class Api::WorkloadsController < ApplicationController
   end
 
   def dones
-    render json: Workload.dones.map{|w|
+    limit = params[:limit] || 48
+    render json: Workload.dones(limit).map{|w|
       hash = JSON.parse(w.to_json)
       hash['created_at'] = w.created_at.to_i * 1000 # JSはマイクロ秒
       hash

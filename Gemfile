@@ -45,3 +45,4 @@ gem 'togglv8'
 
 gem 'devise'
 gem 'activerecord-import'
+gem 'nico_search_snapshot'
