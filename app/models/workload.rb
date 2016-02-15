@@ -1,13 +1,27 @@
 class Workload < ActiveRecord::Base
+  def self.sync
+    url = 'http://245cloud.com/api/dones.json'
+    uri = URI.parse(url)
+    json = Net::HTTP.get(uri)
+    JSON.parse(json).each do |w|
+      created_at = Time.at(w['created_at']/1000)
+      workload = Workload.find_or_create_by(
+        created_at: created_at,
+        facebook_id: w['facebook_id']
+      )
+      %w(is_done key title artwork_url).each do |key|
+        workload.send("#{key}=", w[key])
+      end
+      workload.save!
+    end
+  end
+
   def self.pomotime
     24.minutes
   end
 
   def self.chattime
     5.minutes
-  end
-  def self.sync(skip=0)
-    ParsecomWorkload.sync(skip)
   end
 
   def self.yours user, limit=48
