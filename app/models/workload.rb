@@ -1,6 +1,6 @@
 class Workload < ActiveRecord::Base
   def self.sync
-    url = 'http://245cloud.com/api/dones.json'
+    url = 'http://245cloud.com/api/dones.json?limit=1000'
     uri = URI.parse(url)
     json = Net::HTTP.get(uri)
     JSON.parse(json).each do |w|
@@ -74,6 +74,28 @@ class Workload < ActiveRecord::Base
   def self.update_numbers
     self.where(is_done: true).order('created_at desc').each do |w|
       w.update_number!
+    end
+  end
+
+  def self.wrongs
+    self.where('title is not null').where(key: nil)
+  end
+
+  def self.recover!
+    self.wrongs.each do |w|
+      if w.artwork_url.match(/smilevideo.jp/)
+        Nicovideo.search(w.title).each do |item|
+          if item.thumbnail_url == w.artwork_url
+            w.key = "nicovideo:#{item.cmsid}"
+          end
+        end
+        unless w.key
+          id =  w.artwork_url.split('smilevideo.jp/smile?i=').last
+          w.key = "nicovideo:sm#{id}"
+          puts w.key
+        end
+        w.save!
+      end
     end
   end
 end
