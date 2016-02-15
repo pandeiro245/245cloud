@@ -42,11 +42,24 @@ class Workload < ActiveRecord::Base
   end
 
   def next_number
-    from = Date.today.beginning_of_day + 1.day
+    to = created_at || Time.now
+    to -= Workload.pomotime
+    from = to.to_date.beginning_of_day
     Workload.where(
       facebook_id: facebook_id,
-      created_at: from..Time.now,
+      created_at: from..to,
       is_done: true
     ).count + 1
+  end
+
+  def update_number!
+    self.number = next_number
+    self.save!
+  end
+
+  def self.update_numbers
+    self.where(is_done: true).order('created_at desc').each do |w|
+      w.update_number!
+    end
   end
 end
