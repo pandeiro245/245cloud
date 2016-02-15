@@ -29,14 +29,15 @@ $ ->
   window.stays = scaffolds.stays
 
   Util.realtime()
-  for arr in [
+  ruffnote_contents = [
     [23854, 'header']
     [18004, 'news']
     [13477, 'footer']
     [17758, 'search_title']
     [17498, 'otukare']
   ]
-    ruffnote(arr[0], arr[1])
+  for content in ruffnote_contents
+    ruffnote(content[0], content[1])
 
   initStart()
   initTimecrowd() if location.href.match(/timecrowd=/)
