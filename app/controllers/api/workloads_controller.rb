@@ -17,7 +17,6 @@ class Api::WorkloadsController < ApplicationController
     res = Workload.chattings.map{|w|
       hash = JSON.parse(w.to_json)
       hash['created_at'] = w.created_at.to_i * 1000 # JSはマイクロ秒
-      #hash['created_at'] = (Time.now - 25.minutes).to_i * 1000
       hash
     }.reverse
     render json: res
@@ -27,7 +26,6 @@ class Api::WorkloadsController < ApplicationController
     res = Workload.playings.map{|w|
       hash = JSON.parse(w.to_json)
       hash['created_at'] = w.created_at.to_i * 1000 # JSはマイクロ秒
-      #hash['created_at'] = (Time.now - 10.minutes).to_i * 1000
       hash
     }.reverse!
     render json: res
@@ -51,20 +49,24 @@ class Api::WorkloadsController < ApplicationController
     }.reverse!
   end
 
-  def create
-    workload = Workload.new(
-      facebook_id: current_user.facebook_id,
-    )
-    workload.key = params['key'].presence
-    workload.title = params['title'].presence
-    workload.artwork_url = params['artwork_url'].presence
-    workload.save!
+  def your_bests
+    limit = params[:limit] || 48
+    render json: Workload.your_bests(current_user, limit).map{|w|
+      hash = JSON.parse(w.to_json)
+      hash['created_at'] = w.created_at.to_i * 1000 # JSはマイクロ秒
+      hash
+    }.reverse!
+  end
 
-    if workload
-      hash = JSON.parse(workload.to_json)
-      hash['created_at'] = workload['created_at'].to_i * 1000
-      workload = hash
-    end
+  def create
+    workload = Workload.create!(
+      facebook_id: current_user.facebook_id,
+      music_key: params['music_key'].presence,
+      title: params['title'].presence,
+      artwork_url: params['artwork_url'].presence
+    )
+    workload = JSON.parse(workload.to_json)
+    workload['created_at'] = workload['created_at'].to_i * 1000
     render json: workload
   end
 end
