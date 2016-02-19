@@ -357,7 +357,6 @@ createWorkload = (params = {}, callback) ->
     callback()
   )
 
-
 start = () ->
   console.log 'start'
   if location.href.match(/timecrowd=/)
@@ -406,7 +405,7 @@ window.play = (key) ->
   id = key.split(':')[1]
   if key.match(/^soundcloud/)
     Soundcloud.fetch(id, @env.sc_client_id, (track) ->
-      params['key'] = "soundcloud:#{id}"
+      params['music_key'] = "soundcloud:#{id}"
       for k in ['title', 'artwork_url']
         params[k] = track[k]
       createWorkload(params, start)
@@ -415,7 +414,7 @@ window.play = (key) ->
   else if key.match(/^youtube/)
     Youtube.fetch(id, (data) ->
       track = data['items'][0]['snippet']
-      params['key'] = "youtube:#{id}"
+      params['music_key'] = "youtube:#{id}"
       params['title'] = track['title']
       params['artwork_url'] = track['thumbnails']['default']['url']
       createWorkload(params, start)
@@ -428,7 +427,7 @@ window.play = (key) ->
     )
   else if key.match(/^mixcloud/)
     Mixcloud.fetch(id, (track) ->
-      params['key'] = "mixcloud:#{id}"
+      params['music_key'] = "mixcloud:#{id}"
       params['title'] = track.name
       params['artwork_url'] = track.pictures.medium
       createWorkload(params, start)
@@ -440,13 +439,13 @@ window.play = (key) ->
   else if key.match(/^nicovideo/)
     Nicovideo.fetch(id, (track) ->
       params = track
-      params['key'] = "nicovideo:#{id}"
+      params['music_key'] = "nicovideo:#{id}"
       createWorkload(params, start)
     )
     Nicovideo.play(id, $("#playing"))
   if key.match(/^8tracks/)
     EightTracks.fetch(id, @env.et_client_id, (track) ->
-      params['key'] = "8tracks:#{id}"
+      params['music_key'] = "8tracks:#{id}"
       params.title = track.mix.name
       params.artwork_url = track.mix.cover_urls.sq100
       createWorkload(params, start)
@@ -729,7 +728,7 @@ window.addChatting = (workload) ->
   w = workload
   facebook_id = w.facebook_id
   if w.title
-    href = "##{workload.key}"
+    href = "##{workload.music_key}"
 
     fixed = "<a href=\"#{href}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24921' /></a>"
     jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" class=\"jacket\" />' else "<img src=\"#{@nomusic_url}\" class=\"jacket\" />"}"
@@ -905,12 +904,20 @@ artworkUrlWithNoimage = (artwork_url) ->
 initYou = () ->
   console.log 'initYou'
   return unless window.facebook_id
-  $.get('/api/yours', (workloads) ->
-    ruffnote(22876, 'you_title')
-    for workload in workloads
-      disp = "#{Util.hourMin(workload.created_at, '開始')}（#{workload.number}回目）"
-      window.addWorkload("#you", workload, disp)
-  )
+  if location.href.match(/best=/)
+    $.get('/api/your_bests', (workloads) ->
+      ruffnote(22876, 'you_title')
+      for workload in workloads
+        disp = "累計#{workload.number}回"
+        window.addWorkload("#you", workload, disp)
+    )
+  else
+    $.get('/api/yours', (workloads) ->
+      ruffnote(22876, 'you_title')
+      for workload in workloads
+        disp = "#{Util.hourMin(workload.created_at, '開始')}（#{workload.number}回目）"
+        window.addWorkload("#you", workload, disp)
+    )
 
 renderFixedStart = (title, icon) ->
   fixed_text = [

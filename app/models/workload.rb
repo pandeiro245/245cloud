@@ -9,11 +9,17 @@ class Workload < ActiveRecord::Base
         created_at: created_at,
         facebook_id: w['facebook_id']
       )
-      %w(is_done key title artwork_url).each do |key|
-        workload.send("#{key}=", w[key])
+      puts "key is #{w['key']}"
+      %w(is_done music_key title artwork_url number).each do |key|
+        if key == 'music_key'
+          workload.music_key = w['key']
+        else
+          workload.send("#{key}=", w[key])
+        end
       end
       workload.save!
     end
+    puts 'done'
   end
 
   def self.pomotime
@@ -22,6 +28,22 @@ class Workload < ActiveRecord::Base
 
   def self.chattime
     5.minutes
+  end
+
+  def self.your_bests user, limit=48
+    Workload.where(
+      is_done: true,
+      facebook_id: user.facebook_id
+    ).where.not(music_key: '').group(:music_key).order(
+      'count_music_key desc'
+    ).count('music_key').to_a.map{|music_key, count| 
+      w = Workload.find_by(
+        facebook_id: user.facebook_id,
+        music_key: music_key
+      )
+      w.number = count
+      w
+    }
   end
 
   def self.yours user, limit=48
@@ -78,7 +100,7 @@ class Workload < ActiveRecord::Base
   end
 
   def self.wrongs
-    self.where('title is not null').where(key: nil)
+    self.where('title is not null').where(music_key: nil)
   end
 
   def self.recover!
@@ -86,13 +108,13 @@ class Workload < ActiveRecord::Base
       if w.artwork_url.match(/smilevideo.jp/)
         Nicovideo.search(w.title).each do |item|
           if item.thumbnail_url == w.artwork_url
-            w.key = "nicovideo:#{item.cmsid}"
+            w.music_key = "nicovideo:#{item.cmsid}"
           end
         end
-        unless w.key
+        unless w.music_key
           id =  w.artwork_url.split('smilevideo.jp/smile?i=').last
-          w.key = "nicovideo:sm#{id}"
-          puts w.key
+          w.music_key = "nicovideo:sm#{id}"
+          puts w.music_key
         end
         w.save!
       end
