@@ -1,4 +1,7 @@
 class Workload < ActiveRecord::Base
+  scope :created, -> { order('workloads.created_at DESC') }
+  scope :dones, -> { where(is_done: true).created }
+
   def self.sync
     url = 'http://245cloud.com/api/dones.json?limit=1000'
     uri = URI.parse(url)
@@ -9,13 +12,8 @@ class Workload < ActiveRecord::Base
         created_at: created_at,
         facebook_id: w['facebook_id']
       )
-      puts "key is #{w['key']}"
       %w(is_done music_key title artwork_url number).each do |key|
-        if key == 'music_key'
-          workload.music_key = w['key']
-        else
-          workload.send("#{key}=", w[key])
-        end
+        workload.send("#{key}=", w[key])
       end
       workload.save!
     end
@@ -47,10 +45,9 @@ class Workload < ActiveRecord::Base
   end
 
   def self.yours user, limit=48
-    Workload.where(
-      is_done: true,
+    Workload.dones.where(
       facebook_id: user.facebook_id
-    ).limit(limit).order('created_at desc')
+    ).limit(limit)
   end
 
   def self.playings
@@ -72,11 +69,6 @@ class Workload < ActiveRecord::Base
     ).limit(limit).order('created_at desc')
   end
 
-
-  def self.dones limit=48
-    Workload.where(is_done: true).limit(limit).order('created_at desc')
-  end
-
   def next_number
     to = created_at || Time.now
     to -= Workload.pomotime
@@ -94,30 +86,15 @@ class Workload < ActiveRecord::Base
   end
 
   def self.update_numbers
-    self.where(is_done: true).order('created_at desc').each do |w|
+    self.dones.each do |w|
       w.update_number!
     end
   end
-
-  def self.wrongs
-    self.where('title is not null').where(music_key: nil)
-  end
-
-  def self.recover!
-    self.wrongs.each do |w|
-      if w.artwork_url.match(/smilevideo.jp/)
-        Nicovideo.search(w.title).each do |item|
-          if item.thumbnail_url == w.artwork_url
-            w.music_key = "nicovideo:#{item.cmsid}"
-          end
-        end
-        unless w.music_key
-          id =  w.artwork_url.split('smilevideo.jp/smile?i=').last
-          w.music_key = "nicovideo:sm#{id}"
-          puts w.music_key
-        end
-        w.save!
-      end
-    end
+  
+  def to_api
+    hash = JSON.parse(self.to_json)
+    hash['created_at'] = created_at.to_i * 1000
+    hash
   end
 end
+

@@ -6,56 +6,31 @@ class Api::WorkloadsController < ApplicationController
       workload.number = workload.next_number
       workload.is_done = true
       workload.save!
-      hash = JSON.parse(workload.to_json)
-      hash['created_at'] = workload['created_at'].to_i * 1000
-      workload = hash
     end
-    render json: workload
+    render json: workload.to_api
   end
 
   def chattings
-    res = Workload.chattings.map{|w|
-      hash = JSON.parse(w.to_json)
-      hash['created_at'] = w.created_at.to_i * 1000 # JSはマイクロ秒
-      hash
-    }.reverse
-    render json: res
+    render json: Workload.chattings.map{|w|w.to_api}.reverse
   end
 
   def playings
-    res = Workload.playings.map{|w|
-      hash = JSON.parse(w.to_json)
-      hash['created_at'] = w.created_at.to_i * 1000 # JSはマイクロ秒
-      hash
-    }.reverse!
-    render json: res
+    render json: Workload.playings.map{|w|w.to_api}.reverse
   end
 
   def dones
     limit = params[:limit] || 48
-    render json: Workload.dones(limit).map{|w|
-      hash = JSON.parse(w.to_json)
-      hash['created_at'] = w.created_at.to_i * 1000 # JSはマイクロ秒
-      hash
-    }.reverse!
+    render json: Workload.dones.limit(limit).map{|w|w.to_api}.reverse
   end
 
   def yours
     limit = params[:limit] || 48
-    render json: Workload.yours(current_user, limit).map{|w|
-      hash = JSON.parse(w.to_json)
-      hash['created_at'] = w.created_at.to_i * 1000 # JSはマイクロ秒
-      hash
-    }.reverse!
+    render json: Workload.yours(current_user, limit).map{|w|w.to_api}.reverse
   end
 
   def your_bests
     limit = params[:limit] || 48
-    render json: Workload.your_bests(current_user, limit).map{|w|
-      hash = JSON.parse(w.to_json)
-      hash['created_at'] = w.created_at.to_i * 1000 # JSはマイクロ秒
-      hash
-    }.reverse!
+    render json: Workload.your_bests(current_user, limit).map{|w|w.to_api}.reverse
   end
 
   def create
@@ -68,6 +43,12 @@ class Api::WorkloadsController < ApplicationController
     workload = JSON.parse(workload.to_json)
     workload['created_at'] = workload['created_at'].to_i * 1000
     render json: workload
+  end
+
+  def to_api
+    hash = JSON.parse(self.to_json)
+    hash['created_at'] = hash['created_at'].to_i * 1000
+    hash
   end
 end
 
