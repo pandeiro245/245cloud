@@ -1,6 +1,7 @@
 class Api::WorkloadsController < ApplicationController
   def index
     type = params[:type]
+    limit = params[:limit] || 48
     scope = Workload.of_type(type)
     scope = scope.his(params[:facebook_id]).dones if fid = params[:facebook_id]
     scope = scope.limit(48) if scope.limit_value.nil?
