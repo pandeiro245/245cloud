@@ -88,7 +88,7 @@ initHeatmap = () ->
     range: 12
     afterLoad: () ->
       pomos = {}
-      $.get("/api/workloads?facebook_id=#{window.facebook_id}limit=99999", (workloads) ->
+      $.get("/api/users/#{window.facebook_id}/workloads?limit=99999", (workloads) ->
         pomos = {}
         for i in [0...workloads.length]
           pomos[+workloads[i].created_at / 1000] = 1
