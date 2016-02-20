@@ -6,7 +6,7 @@ class Workload < ActiveRecord::Base
     order('workloads.created_at DESC')
   }
   scope :dones, -> {
-    where(is_done: true).created.reverse_order
+    where(is_done: true)
   }
   scope :his_dones, -> (facebook_id) {
     dones.where(
@@ -16,7 +16,7 @@ class Workload < ActiveRecord::Base
   scope :bests, ->  { select(
     '*, count(music_key) as music_key_count'
   ).where.not(music_key: '').group(:music_key).order(
-      'music_key_count desc'
+      'music_key_count DESC'
     )
   }
   scope :today, -> {
@@ -30,18 +30,26 @@ class Workload < ActiveRecord::Base
   scope :chattings, -> {
     from = Time.now - POMOTIME - CHATTIME
     to   = Time.now - POMOTIME
-    by_range(from..to).created.reverse_order
+    by_range(from..to)
   }
   scope :playings, -> {
     from = Time.now - POMOTIME
     to   = Time.now
-    by_range(from..to).created.reverse_order
+    by_range(from..to)
   }
   scope :by_range, -> range {
-    dones(
-      created_at: from..to
+    where(
+      created_at: range
     )
   }
+  scope :of_type, -> type {
+    raise if type && !active_type?(type)
+    type ? public_send(type) : dones
+  }
+
+  def self.active_type? type
+    %w(dones chattings playings all).include?(type)
+  end
 
   def update_number!
     self.number = next_number

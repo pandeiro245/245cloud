@@ -904,7 +904,7 @@ initYou = () ->
   console.log 'initYou'
   return unless window.facebook_id
   if location.href.match(/best=/)
-    $.get("/api/users/#{window.facebook_id}/workloads?type=bests", (workloads) ->
+    $.get("/api/users/#{window.facebook_id}/workloads?best=1", (workloads) ->
       ruffnote(22876, 'you_title')
       for workload in workloads
         disp = "累計#{workload.music_key_count}回"

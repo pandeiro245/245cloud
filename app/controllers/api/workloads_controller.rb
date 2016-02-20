@@ -1,29 +1,17 @@
 class Api::WorkloadsController < ApplicationController
   def index
-    workloads = Workload.dones
-    if fid = params[:facebook_id]
-      workloads = Workload.his_dones(fid)
-    elsif type = params[:type]
-      case type
-      when 'playing'
-        workloads = Workload.playings
-      when 'chatting'
-        workloads = Workload.chattings
-      else
-        workloads = Workload.dones
-      end
-    else
-      workloads = Workload.dones
-    end
-    if params[:best]
-      #workloads = workloads.bests.limit(999)
-      workloads = Workload.his_dones(fid).bests.limit(999)
-    end
-    render json: workloads.decorate
+    type = params[:type]
+    scope = Workload.of_type(type)
+    scope = scope.his_dones(params[:facebook_id]) if fid = params[:facebook_id]
+    scope = scope.limit(48) if scope.limit_value.nil?
+    scope = (params[:best] ? scope.bests : scope.created).decorate.reverse
+    render json: scope
   end
 
   def complete # PUT update にする
-    workload = Workload.where(facebook_id: current_user.facebook_id).order('created_at desc').first
+    workload = Workload.where(
+      facebook_id: current_user.facebook_id
+    ).order('created_at desc').first
     #if workload.created_at + Workload.pomotime <= Time.now
     if true
       workload.number = workload.next_number
