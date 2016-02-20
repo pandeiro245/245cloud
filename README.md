@@ -8,18 +8,30 @@ $ bundle exec rake db:setup
 $ bundle exec rails s -p 3001
 ```
 
+## Facebook app id を開発用に取得
+
+https://developers.facebook.com/
+
+- FACEBOOK_KEY: app id
+- FACEBOOK_SECRET: app secret
+
 ## powで動かす場合
 
 `.env`に
 ```
-FACEBOOK_KEY='363848477150475'
-FACEBOOK_SECRET='27430a3ade3e794bca483467c9f9c09e'
+FACEBOOK_KEY='1234567890'
+FACEBOOK_SECRET='1234567890ABCDEF12345'
 ```
 と書いて http://245cloud.dev/ で動かせばOK
 
 ## webrickで動かす場合
 
-（後で書くつもりだけPR Welcome）
+起動前に環境変数に設定
+
+```
+export FACEBOOK_KEY='1234567890'
+export FACEBOOK_SECRET='1234567890ABCDEF12345'
+```
 
 # see also  
 https://ruffnote.com/pandeiro245/245cloud
