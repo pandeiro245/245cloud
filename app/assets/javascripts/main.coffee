@@ -4,7 +4,7 @@
 
 $ ->
   return unless $('#nc').length
-  ParseParse.addAccesslog()
+  $.get('/access_log')
   scaffolds = Util.scaffolds('''
   header:no_row&stay news otukare:hidden&stay
   ad:stay contents:stay
