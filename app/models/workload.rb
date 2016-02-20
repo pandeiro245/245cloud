@@ -1,6 +1,6 @@
 class Workload < ActiveRecord::Base
   scope :created, -> { order('workloads.created_at DESC') }
-  scope :dones, -> { where(is_done: true).created }
+  scope :dones, -> (limit) { where(is_done: true).limit(limit).created.decorate.reverse }
 
   def self.sync
     url = 'http://245cloud.com/api/dones.json?limit=1000'
@@ -47,7 +47,7 @@ class Workload < ActiveRecord::Base
   def self.yours user, limit=48
     Workload.dones.where(
       facebook_id: user.facebook_id
-    ).limit(limit)
+    ).limit(limit).decorate.reverse
   end
 
   def self.playings
@@ -56,7 +56,7 @@ class Workload < ActiveRecord::Base
     to   = Time.now
     Workload.where(
       created_at: from..to,
-    ).limit(limit).order('created_at desc')
+    ).limit(limit).created.decorate.reverse
   end
 
   def self.chattings
@@ -66,7 +66,7 @@ class Workload < ActiveRecord::Base
     Workload.where(
       is_done: true,
       created_at: from..to,
-    ).limit(limit).order('created_at desc')
+    ).limit(limit).created.decorate.reverse
   end
 
   def next_number
@@ -89,12 +89,6 @@ class Workload < ActiveRecord::Base
     self.dones.each do |w|
       w.update_number!
     end
-  end
-  
-  def to_api
-    hash = JSON.parse(self.to_json)
-    hash['created_at'] = created_at.to_i * 1000
-    hash
   end
 end
 

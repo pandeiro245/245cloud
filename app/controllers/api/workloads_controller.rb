@@ -7,30 +7,30 @@ class Api::WorkloadsController < ApplicationController
       workload.is_done = true
       workload.save!
     end
-    render json: workload.to_api
+    render json: workload.decorate
   end
 
   def chattings
-    render json: Workload.chattings.map{|w|w.to_api}.reverse
+    render json: Workload.chattings
   end
 
   def playings
-    render json: Workload.playings.map{|w|w.to_api}.reverse
+    render json: Workload.playings
   end
 
   def dones
     limit = params[:limit] || 48
-    render json: Workload.dones.limit(limit).map{|w|w.to_api}.reverse
+    render json: Workload.dones(limit)
   end
 
   def yours
     limit = params[:limit] || 48
-    render json: Workload.yours(current_user, limit).map{|w|w.to_api}.reverse
+    render json: Workload.yours(current_user, limit)
   end
 
   def your_bests
     limit = params[:limit] || 48
-    render json: Workload.your_bests(current_user, limit).map{|w|w.to_api}.reverse
+    render json: Workload.your_bests(current_user, limit)
   end
 
   def create
@@ -43,12 +43,6 @@ class Api::WorkloadsController < ApplicationController
     workload = JSON.parse(workload.to_json)
     workload['created_at'] = workload['created_at'].to_i * 1000
     render json: workload
-  end
-
-  def to_api
-    hash = JSON.parse(self.to_json)
-    hash['created_at'] = hash['created_at'].to_i * 1000
-    hash
   end
 end
 
