@@ -13,16 +13,13 @@ Rails.application.routes.draw do
   post '/toggl/stop'  => 'toggl#stop'
 
   get '/auth/facebook/callback', to: 'facebook#login'
-  get '/parse_login', to: 'facebook#parse_login'
+
+  get '/:id', to: 'users#show'
 
   namespace :api do
     get '/complete', to: 'workloads#complete'
-    get '/dones', to: 'workloads#dones'
-    get '/yours', to: 'workloads#yours'
-    get '/your_bests', to: 'workloads#your_bests'
-    get '/chattings', to: 'workloads#chattings'
-    get '/playings', to: 'workloads#playings'
-    resources :workloads, only: [:create]
+    get '/users/:facebook_id/workloads', to: 'workloads#index'
+    resources :workloads, only: [:index, :create]
     resources :comments, only: [:index, :create]
   end
 end

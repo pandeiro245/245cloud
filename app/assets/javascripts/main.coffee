@@ -88,7 +88,7 @@ initHeatmap = () ->
     range: 12
     afterLoad: () ->
       pomos = {}
-      $.get('/api/yours?limit=99999', (workloads) ->
+      $.get("/api/workloads?facebook_id=#{window.facebook_id}limit=99999", (workloads) ->
         pomos = {}
         for i in [0...workloads.length]
           pomos[+workloads[i].created_at / 1000] = 1
@@ -297,7 +297,7 @@ initChatting = () ->
   ruffnote(22878, 'chatting_title')
   $("#chatting_title").hide()
 
-  $.get('/api/chattings', (workloads) ->
+  $.get('/api/workloads?type=chattings', (workloads) ->
     return unless workloads.length > 0
     $("#chatting_title").show()
     for workload in workloads
@@ -310,7 +310,7 @@ initDoing = () ->
   ruffnote(22877, 'doing_title')
   $("#doing_title").hide()
 
-  $.get('/api/playings', (workloads) ->
+  $.get('/api/workloads?type=playings', (workloads) ->
     return unless workloads.length > 0
     $("#doing_title").show()
     for workload in workloads
@@ -319,7 +319,7 @@ initDoing = () ->
 
 initDone = () ->
   console.log 'initDone'
-  $.get('/api/dones', (workloads) ->
+  $.get('/api/workloads?type=dones', (workloads) ->
     ruffnote(17769, 'done_title')
     for workload in workloads
       disp = "#{Util.hourMin(workload.created_at, '開始')}（#{workload.number}回目）"
@@ -904,14 +904,14 @@ initYou = () ->
   console.log 'initYou'
   return unless window.facebook_id
   if location.href.match(/best=/)
-    $.get('/api/your_bests', (workloads) ->
+    $.get("/api/users/#{window.facebook_id}/workloads?type=bests", (workloads) ->
       ruffnote(22876, 'you_title')
       for workload in workloads
-        disp = "累計#{workload.number}回"
+        disp = "累計#{workload.music_key_count}回"
         window.addWorkload("#you", workload, disp)
     )
   else
-    $.get('/api/yours', (workloads) ->
+    $.get("/api/users/#{window.facebook_id}/workloads", (workloads) ->
       ruffnote(22876, 'you_title')
       for workload in workloads
         disp = "#{Util.hourMin(workload.created_at, '開始')}（#{workload.number}回目）"

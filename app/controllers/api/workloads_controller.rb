@@ -1,5 +1,28 @@
 class Api::WorkloadsController < ApplicationController
-  def complete
+  def index
+    workloads = Workload.dones
+    if fid = params[:facebook_id]
+      workloads = Workload.his_dones(fid)
+    elsif type = params[:type]
+      case type
+      when 'playing'
+        workloads = Workload.playings
+      when 'chatting'
+        workloads = Workload.chattings
+      else
+        workloads = Workload.dones
+      end
+    else
+      workloads = Workload.dones
+    end
+    if params[:best]
+      #workloads = workloads.bests.limit(999)
+      workloads = Workload.his_dones(fid).bests.limit(999)
+    end
+    render json: workloads.decorate
+  end
+
+  def complete # PUT update にする
     workload = Workload.where(facebook_id: current_user.facebook_id).order('created_at desc').first
     #if workload.created_at + Workload.pomotime <= Time.now
     if true
@@ -10,38 +33,13 @@ class Api::WorkloadsController < ApplicationController
     render json: workload.decorate
   end
 
-  def chattings
-    render json: Workload.chattings
-  end
-
-  def playings
-    render json: Workload.playings
-  end
-
-  def dones
-    limit = params[:limit] || 48
-    render json: Workload.dones(limit)
-  end
-
-  def yours
-    limit = params[:limit] || 48
-    render json: Workload.yours(current_user, limit)
-  end
-
-  def your_bests
-    limit = params[:limit] || 48
-    render json: Workload.your_bests(current_user, limit)
-  end
-
   def create
     workload = Workload.create!(
       facebook_id: current_user.facebook_id,
       music_key: params['music_key'].presence,
       title: params['title'].presence,
       artwork_url: params['artwork_url'].presence
-    )
-    workload = JSON.parse(workload.to_json)
-    workload['created_at'] = workload['created_at'].to_i * 1000
+    ).decorate
     render json: workload
   end
 end
