@@ -1,4 +1,4 @@
-class Sync
+class Util
   def self.sync
     url = 'http://245cloud.com/api/dones.json?limit=1000'
     uri = URI.parse(url)
