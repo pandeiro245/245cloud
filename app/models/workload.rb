@@ -15,11 +15,12 @@ class Workload < ActiveRecord::Base
   }
   scope :bests, ->  { select(
     '*, count(music_key) as music_key_count'
-  ).where.not(music_key: '').group(:music_key).order(
+  ).where.not(music_key: ''
+  ).group(:music_key).order(
       'music_key_count DESC'
     )
   }
-  scope :today, -> {
+  scope :today, -> (created_at = nil) {
     to = created_at || Time.now
     to -= POMOTIME
     from = to.to_date.beginning_of_day
@@ -63,7 +64,7 @@ class Workload < ActiveRecord::Base
   end
 
   def next_number
-    Workload.his_dones(self).today.count + 1
+    Workload.his_dones(self).today(created_at).count + 1
   end
 end
 
