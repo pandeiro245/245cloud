@@ -1,0 +1,7 @@
+= link_to 'TOP', :root
+%hr
+= facebook_image_tag @user, 200
+%hr
+- @user.workloads.each do |workload|
+  = link_to image_tag(workload.artwork_url), workload.music_path
+

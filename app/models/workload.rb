@@ -20,6 +20,13 @@ class Workload < ActiveRecord::Base
       'music_key_count DESC'
     )
   }
+  scope :best_listeners, -> (music_key) { select(
+    '*, count(facebook_id) as facebook_id_count'
+  ).where(music_key: music_key
+  ).group(:facebook_id).order(
+      'facebook_id_count DESC'
+    )
+  }
   scope :today, -> (created_at = nil) {
     to = created_at || Time.now
     to -= POMOTIME
@@ -75,6 +82,11 @@ class Workload < ActiveRecord::Base
 
   def next_number
     Workload.his(self).dones.today(created_at).count + 1
+  end
+
+  def music_path
+    key = music_key.gsub(/:/, '/')
+    "/musics/#{key}"
   end
 end
 
