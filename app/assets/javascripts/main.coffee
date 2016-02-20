@@ -3,8 +3,8 @@
 @nomusic_url = 'https://ruffnote.com/attachments/24985'
 
 $ ->
+  $.post('/api/access_logs', {url: location.href})
   return unless $('#nc').length
-  $.get('/access_log')
   scaffolds = Util.scaffolds('''
   header:no_row&stay news otukare:hidden&stay
   ad:stay contents:stay

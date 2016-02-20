@@ -32,7 +32,7 @@ class ParsecomAccessLog
       -H "X-Parse-Application-Id: #{ENV['PARSE_APP_ID']}" \
       -H "X-Parse-MASTER-Key: #{ENV['PARSE_MASTER_KEY']}"\
       --data-urlencode 'count=1' \
-      https://api.parse.com/1/classes/AccessLog`
+      https://api.parse.com/1/classes/Accesslog`
     JSON.parse(res)['count']
   end
 
@@ -43,7 +43,7 @@ class ParsecomAccessLog
       -H "X-Parse-MASTER-Key: #{ENV['PARSE_MASTER_KEY']}"\
       --data-urlencode 'limit=1000' \
       --data-urlencode 'skip=#{skip}' \
-      https://api.parse.com/1/classes/AccessLog`
+      https://api.parse.com/1/classes/Accesslog`
     JSON.parse(res)['results']
   end
 end

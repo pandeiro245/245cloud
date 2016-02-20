@@ -23,5 +23,6 @@ Rails.application.routes.draw do
     get '/users/:facebook_id/workloads', to: 'workloads#index'
     resources :workloads, only: [:index, :create]
     resources :comments, only: [:index, :create]
+    resources :access_logs, only: [:create]
   end
 end
