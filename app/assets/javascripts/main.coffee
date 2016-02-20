@@ -731,12 +731,13 @@ window.addChatting = (workload) ->
 
     fixed = "<a href=\"#{href}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24921' /></a>"
     jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" class=\"jacket\" />' else "<img src=\"#{@nomusic_url}\" class=\"jacket\" />"}"
+    jacket = "<a href='/musics/#{w.music_key.replace(':', '/')}'>#{jacket}</a>" if w.music_key
     title = w.title
   else
     title = '無音'
     fixed = "<a href=\"#\" class='fixed_start'><img src='https://ruffnote.com/attachments/24926' /></a>"
     jacket = "<img src=\"https://ruffnote.com/attachments/24981\" class='jacket'/>"
-  user_img = "<img class='icon img-thumbnail' src='https://graph.facebook.com/#{workload.facebook_id}/picture?height=40&width=40' />"
+  user_img = "<a href='/#{workload.facebook_id}'><img class='icon img-thumbnail' src='https://graph.facebook.com/#{workload.facebook_id}/picture?height=40&width=40' /></a>"
 
   $item = Util.tag('div', null, {class: 'inborder'})
   $item.css("border", '4px solid #eadba0')
@@ -748,7 +749,7 @@ window.addChatting = (workload) ->
 
   $item.html("""
    <h5 title='#{title}' data-toggle='tooltip' data-placement='top'>#{title}</h5>
-   <span>#{jacket}</span>
+   <span>#{jacket}</a></span>
    <span>#{user_img}</span>
    <div class='disp'>#{disp}</div>
    <div>#{fixed}</div>
