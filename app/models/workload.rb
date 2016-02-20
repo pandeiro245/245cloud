@@ -8,8 +8,8 @@ class Workload < ActiveRecord::Base
   scope :dones, -> {
     where(is_done: true)
   }
-  scope :his_dones, -> (facebook_id) {
-    dones.where(
+  scope :his, -> (facebook_id) {
+    where(
       facebook_id: facebook_id
     )
   }
@@ -48,6 +48,16 @@ class Workload < ActiveRecord::Base
     type ? public_send(type) : dones
   }
 
+  def to_done!
+    #if workload.created_at + Workload.pomotime <= Time.now
+    if true
+      self.number = next_number
+      self.is_done = true
+      self.save!
+    end
+    self
+  end
+
   def self.active_type? type
     %w(dones chattings playings all).include?(type)
   end
@@ -64,7 +74,7 @@ class Workload < ActiveRecord::Base
   end
 
   def next_number
-    Workload.his_dones(self).today(created_at).count + 1
+    Workload.his(self).dones.today(created_at).count + 1
   end
 end
 
