@@ -1,3 +1,4 @@
+@import url(https://fonts.googleapis.com/css?family=Mallanna);
 body {
   text-align: center;
 }
@@ -144,11 +145,16 @@ input#track {
   padding: 9px 10px;
 }
 
-.countdown .colon{
-  width: 10px;
-}
-.countdown .num{
-  width: 25px;
+.countdown .time{
+  font-family: 'Mallanna';
+  font-size: 42px;
+  color: #fff;
+  line-height: 42px;
+  font-style: italic;
+  font-weight: bold;
+  display: inline-block;
+  vertical-align: bottom;
+  height: 41px;
 }
 
 .socialbutton {

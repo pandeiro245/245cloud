@@ -49,40 +49,6 @@ class Util
       min  = time.getMinutes()
       "#{Util.zero(month)}/#{Util.zero(day)} #{Util.zero(hour)}:#{Util.zero(min)}"
 
-  TIMER_IMG_NUM_MAP =
-    ':': 24965
-    '0': 24953
-    '1': 24954
-    '2': 24955
-    '3': 24956
-    '4': 24958
-    '5': 24959
-    '6': 24960
-    '7': 24961
-    '8': 24962
-    '9': 24963
-
-  @preloadImg: ->
-    # FIXME: dom上に一時的にでも埋め込まない方法に変更したい
-    #   $("<img src = '#{Util.charToImgURL(char)}'/>")だけではcompleteのときに
-    #   プリローディングすることができなかった
-    # NOTE: 待ち時間が短すぎるとプリローディングされない
-    #       表示に影響のないようにstyleで画面外に配置
-    waitRemove = 5000
-    for char of TIMER_IMG_NUM_MAP
-      $el = $("<img src='#{Util.charToImgURL(char)}' style='position:absolute; top: -9999px;'/>")
-      $('body').append($el)
-      setTimeout(do($el) =>
-        -> $el.remove()
-      , waitRemove)
-
-  @timeImg: (mtime) ->
-    @time(mtime).replace(/[0-9:]/g, (char) ->
-      url = Util.charToImgURL(char)
-      className = if char == ':' then "colon" else 'num'
-      "<img src='#{url}' class='#{className}' />"
-    )
-
   @charToImgURL: (char) ->
     num = TIMER_IMG_NUM_MAP[char]
     "https://ruffnote.com/attachments/#{num}"
@@ -129,14 +95,13 @@ class Util
         window.is_hato = true
 
       remain2 = Util.time(remain)
-      remain2_img = Util.timeImg(remain)
       if dom = params.dom
         $dom = $(dom)
       else
         $('title').html(remain2)
         $dom = $('.countdown')
       #$dom.html("あと#{remain2}")
-      $dom.html("<img src='https://ruffnote.com/attachments/24966' />#{remain2_img}")
+      $dom.html("<img src='https://ruffnote.com/attachments/24966' /><span class='time'>#{remain2}</span>")
 
       if callback == 'reload'
         setTimeout("Util.countDown(#{duration}, null, #{started}, #{JSON.stringify(params)})", 1000)
