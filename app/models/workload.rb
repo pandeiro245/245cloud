@@ -75,13 +75,13 @@ class Workload < ActiveRecord::Base
   end
 
   def self.update_numbers
-    self.dones.each do |w|
+    self.created.dones.each do |w|
       w.update_number!
     end
   end
 
   def next_number
-    Workload.his(self).dones.today(created_at).count + 1
+    Workload.his(facebook_id).dones.today(created_at).count + 1
   end
 
   def music_path
