@@ -12,8 +12,8 @@ $ bundle exec rails s -p 3001
 
 https://developers.facebook.com/
 
-FACEBOOK_KEY: app id
-FACEBOOK_SECRET: app secret
+- FACEBOOK_KEY: app id
+- FACEBOOK_SECRET: app secret
 
 ## powで動かす場合
 
