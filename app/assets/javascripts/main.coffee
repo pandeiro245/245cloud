@@ -736,7 +736,9 @@ window.addChatting = (workload) ->
     title = w.title
     href = "##{workload.music_key}"
     fixed = "<a href=\"#{href}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24921' /></a>"
-    jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" class=\"jacket\" />' else "<img src=\"#{@nomusic_url}\" class=\"jacket\" />"}"
+    #icon = w.artwork_url
+    icon = musicKey2icon(w.music_key)
+    jacket = "#{if icon then '<img src=\"' + icon + '\" class=\"jacket\" />' else "<img src=\"#{@nomusic_url}\" class=\"jacket\" />"}"
     jacket = "<a href='/musics/#{w.music_key.replace(':', '/')}'>#{jacket}</a>" if w.music_key
     provider = w.music_key.split(':')[0]
     icon_name = if provider == 'nicovideo' then 'television'  else provider
@@ -746,7 +748,7 @@ window.addChatting = (workload) ->
     title = '無音'
     fixed = "<a href=\"#\" class='fixed_start'><img src='https://ruffnote.com/attachments/24926' /></a>"
     jacket = "<img src=\"https://ruffnote.com/attachments/24981\" class='jacket'/>"
-  user_img = "<a href='/#{workload.facebook_id}'><img class='icon img-thumbnail' src='https://graph.facebook.com/#{workload.facebook_id}/picture?height=40&width=40' /></a>"
+  user_img = "<a href='/#{workload.facebook_id}'><img class='icon img-thumbnail' src='#{facebookIcon(workload.facebook_id)}' /></a>"
 
   $item = Util.tag('div', null, {class: 'inborder'})
   $item.css("border", '4px solid #eadba0')
@@ -819,7 +821,7 @@ initService = ($dom, url) ->
   c = comment
 
   if c.body
-    img = "https://graph.facebook.com/#{c.facebook_id}/picture?height=40&width=40"
+    img = facebookIcon(c.facebook_id)
     html = """
     <tr>
     <td>
@@ -953,3 +955,11 @@ renderFixedStart = (title, icon) ->
   $('#random').addClass("col-sm-offset-#{getOffset(3)}")
   $('[data-toggle="tooltip"]').tooltip()
 
+facebookIcon = (facebook_id) ->
+  if false
+    "https://graph.facebook.com/#{facebook_id}/picture?height=40&width=40"
+  else
+    "/ruffnotes?facebook_id=#{facebook_id}"
+
+musicKey2icon = (music_key) ->
+  "/ruffnotes?music_key=#{music_key.replace(/\//g,'_')}"

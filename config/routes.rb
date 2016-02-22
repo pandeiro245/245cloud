@@ -2,6 +2,8 @@ Rails.application.routes.draw do
   devise_for :users
   root 'welcome#index'
   resources :nicoinfo, only: [:show], constraints: {id: /sm[0-9]+/}
+  resources :ruffnotes, only: [:index]
+
   get '/pitch' => 'welcome#pitch'
 
   get '/auth/timecrowd/callback', to: 'timecrowd#login'

@@ -6,10 +6,19 @@ class @Ruffnote
         callback()
     else
       is_callback = true
-    url = "https://ruffnote.com/#{path}/download.json?callback=?"
+    if false
+      url = "https://ruffnote.com/#{path}/download.json?callback=?"
+    else
+      url = "ruffnotes?page=#{path}"
     $.getJSON(url, (data) ->
-      localStorage["ruffnote_#{name}"] = data.content
-      $("##{name}").html(data.content)
+      content = data.content
+      return unless content
+      content = content.replace(
+        'https://ruffnote.com/attachments/',
+        '/ruffnotes?attachment_id='
+      )
+      localStorage["ruffnote_#{name}"] = content
+      $("##{name}").html(content)
       if is_calback?
         callback()
     )
