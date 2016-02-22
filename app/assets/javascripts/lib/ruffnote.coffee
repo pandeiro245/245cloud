@@ -1,7 +1,7 @@
 class @Ruffnote
   @fetch: (path, name, callback=null) ->
-    if cache = localStorage["ruffnote_#{name}"]
-      $("##{name}").html(cache)
+    if cached_content = localStorage["ruffnote_#{name}"]
+      $("##{name}").html(cached_content)
       if callback?
         callback()
     else

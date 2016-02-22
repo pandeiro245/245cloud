@@ -3,7 +3,7 @@ class Api::WorkloadsController < ApplicationController
     type = params[:type]
     limit = params[:limit] || 48
     scope = Workload.of_type(type)
-    scope = scope.his(params[:facebook_id]).dones if fid = params[:facebook_id]
+    scope = scope.his(params[:facebook_id]).dones if params[:facebook_id]
     scope = scope.limit(limit) if scope.limit_value.nil?
     scope = (params[:best] ? scope.bests : scope.created).decorate.reverse
     render json: scope
