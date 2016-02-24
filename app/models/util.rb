@@ -30,5 +30,21 @@ class Util
     end
     puts 'done'
   end
+ 
+  def self.exist? key
+    File.exist?("/tmp/#{key}")
+  end
+
+  def self.size key
+    File.size("/tmp/#{key}")
+  end
+
+  def self.get key
+    File.open("/tmp/#{key}", 'r').read
+  end
+
+  def self.save key, val
+    File.open("/tmp/#{key}", 'w') { |file| file.write(val) }
+  end
 end
 

@@ -9,11 +9,11 @@ class @Ruffnote
     if false
       url = "https://ruffnote.com/#{path}/download.json?callback=?"
     else
-      url = "ruffnotes?page=#{path}"
+      url = "/ruffnotes?page=#{path}"
     $.getJSON(url, (data) ->
-      content = data.content
-      return unless content
-      content = content.replace(
+      data = data.content || data[0]
+      data = JSON.parse(data.replace(/^\?\(/,'').replace(/\);$/,''))
+      content = data.content.replace(
         'https://ruffnote.com/attachments/',
         '/ruffnotes?attachment_id='
       )
@@ -22,3 +22,11 @@ class @Ruffnote
       if is_calback?
         callback()
     )
+  @attachment: (id, id2=null) ->
+    if false
+      "https://ruffnote.com/attachments/#{id}"
+    else
+      val1 = "/ruffnotes?attachment_id=#{id}"
+      val2 = "/ruffnotes?attachment_id=#{id2}"
+      if id2 then [val1, val2] else val1
+

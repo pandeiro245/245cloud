@@ -6,13 +6,22 @@ class RuffnotesController < ApplicationController
       render json: json
     else
       if id = params[:attachment_id]
-        attachment = File.open("tmp/ruffnote/attachments/#{id}", 'r')
+        key = "ruffnote/attachments/#{id}"
+        url = "https://ruffnote.com/attachments/#{id}"
       elsif id = params[:facebook_id]
-        attachment = File.open("tmp/facebook/icons/#{id}", 'r')
+        key = "facebook/icons/#{id}"
       elsif id = params[:music_key]
-        attachment = File.open("tmp/musics/icons/#{id}", 'r')
+        key = "musics/icons/#{id}"
       end
-      send_data attachment.read
+      send_data find_or_create(key, url)
     end
+  end
+
+  def find_or_create(key, url=nil)
+    raise url.inspect
+    if url && !(Util.exist?(key) && Util.size(key) > 10)
+      `wget -O tmp/#{key} #{url}`
+    end
+    Util.get(key)
   end
 end

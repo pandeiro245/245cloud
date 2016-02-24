@@ -5,7 +5,8 @@ body {
 }
 
 h2.status, hr.status {
-  background: repeat-x url('https://ruffnote.com/attachments/24944')
+  /* background: repeat-x url('https://ruffnote.com/attachments/24944') */
+  background: repeat-x url('/ruffnotes?attachment_id=24944')
 }
 
 hr.status{
