@@ -98,7 +98,7 @@ class @Youtube
             href = "youtube:#{id}"
             $dom.append("""
               <div class='col-lg-2' style='min-height: 200px;'>
-                <a href='#{url}' target='_blank'>#{title}</a>
+                (Y)<a href='#{url}' target='_blank'>#{title}</a>
                 <!--(#{Util.time(duration)})<br />-->
                 <br />
                 #{artwork}

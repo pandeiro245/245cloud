@@ -24,7 +24,7 @@ class @Mixcloud
           href = "mixcloud:#{track.key}"
           $dom.append("""
             <div class='col-lg-2' style='min-height: 200px;'>
-              <a href='#{track.url}' target='_blank'>#{track.name}</a>
+              (MC)<a href='#{track.url}' target='_blank'>#{track.name}</a>
               (#{Util.time(track.audio_length*1000)})<br />
               <br />
               #{artwork}

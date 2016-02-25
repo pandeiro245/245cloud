@@ -67,7 +67,7 @@ class @Nicovideo
 
               $dom.append("""
                 <div class='col-lg-2' style='min-height: 200px;'>
-                  <a href='#{url}' target='_blank'>#{title}</a>
+                  (NN)<a href='#{url}' target='_blank'>#{title}</a>
                   (#{Util.time(duration)})<br />
                   <br />
                   <img src=\"#{artwork_url}\" width='100px'/>
