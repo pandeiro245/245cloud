@@ -18,20 +18,14 @@ class @Mixcloud
     $.getJSON(url, (tracks) ->
       if tracks.data
         for track in tracks.data
-          artwork = "<img src=\"https://ruffnote.com/attachments/24162\" width='100px'/>"
+          artwork_url = "https://ruffnote.com/attachments/24162"
           if track.pictures.medium
-            artwork = "<img src=\"#{track.pictures.medium}\" width='100px'/>"
+            artwork_url = track.pictures.medium
           href = "mixcloud:#{track.key}"
-          $dom.append("""
-            <div class='col-lg-2' style='min-height: 200px;'>
-              (MC)<a href='#{track.url}' target='_blank'>#{track.name}</a>
-              (#{Util.time(track.audio_length*1000)})<br />
-              <br />
-              #{artwork}
-              <a href=\"##{href}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24353' /></a>
-              <!--<a href=\"#\" class='add_playlist btn btn-default'>追加</a>-->
-            </div>
-          """)
+          duration = track.audio_length*1000
+          $dom.append(
+            Util.renderTrack('mixcloud', track.url, track.name, artwork_url, href, Util.time(duration))
+          )
         callback() if callback
       else
         $dom.append("<div>「#{q}」MixCloudはで24分前後の曲はまだ出てないようです...。他のキーワードで探してみてください！</div>")

@@ -1,4 +1,24 @@
 class Util
+  @renderTrack: (fa_icon_name, source_url, track_title, artwork_url, button_url, duration = '') ->
+    """
+      <div class='track_item col-lg-2' style='min-height: 200px;'>
+        <div class='track_item-title'>
+          <i class="fa fa-#{fa_icon_name}"></i>
+          <a href='#{source_url}' target='_blank'>#{track_title}</a>
+          (#{duration})<br />
+        </div>
+        <br />
+        <div class='track_item-body'>
+          <div class='track_item-thumb'>
+            <img src=\"#{artwork_url}\" width='100px'/>
+          </div>
+          <a href=\"##{button_url}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24353' /></a>
+          <!--<a href=\"#\" class='add_playlist btn btn-default'>追加</a>-->
+        </div>
+      </div>
+    """
+
+
   @minAgo: (min, date=null) ->
     date = new Date() unless date
     new Date(date.getTime() - min*60*1000)
