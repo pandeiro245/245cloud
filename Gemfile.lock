@@ -124,6 +124,8 @@ GEM
     execjs (2.5.2)
     faraday (0.9.1)
       multipart-post (>= 1.2, < 3)
+    font-awesome-sass (4.5.0)
+      sass (>= 3.2)
     gem_reloader (0.0.2)
     globalid (0.3.6)
       activesupport (>= 4.1.0)
@@ -315,6 +317,7 @@ DEPENDENCIES
   devise
   dotenv-rails
   draper
+  font-awesome-sass
   gem_reloader
   haml
   jbuilder (~> 2.0)
