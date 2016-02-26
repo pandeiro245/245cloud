@@ -190,3 +190,15 @@ table.comments .icon{
   margin-left: auto;
   margin-right: auto;
 }
+.track_item-title {
+  margin-top: 10px;
+  height: 40px;
+}
+.track_item-body {
+  vertical-align: bottom;
+  padding-top: auto;
+  padding-bottom: 0px;
+}
+.track_item-thumb {
+  height: 110px;
+}

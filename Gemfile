@@ -33,6 +33,7 @@ end
 gem 'haml'
 gem 'dotenv-rails'
 gem 'settingslogic'
+gem 'font-awesome-sass'
 
 gem 'parse_resource', git: 'git@github.com:pandeiro245/parse_resource.git', branch: 'issue-1'
 

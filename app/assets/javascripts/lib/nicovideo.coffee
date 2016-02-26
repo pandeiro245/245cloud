@@ -64,18 +64,9 @@ class @Nicovideo
               artwork_url = sm.thumbnail_url
               url = "http://www.nicovideo.jp/watch/#{sm_id}"
               href = "nicovideo:#{sm_id}"
-
-              $dom.append("""
-                <div class='col-lg-2' style='min-height: 200px;'>
-                  <a href='#{url}' target='_blank'>#{title}</a>
-                  (#{Util.time(duration)})<br />
-                  <br />
-                  <img src=\"#{artwork_url}\" width='100px'/>
-                  <a href=\"##{href}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24353' /></a>
-                  <!--<a href=\"#\" class='add_playlist btn btn-default'>追加</a>-->
-                </div>
-              """)
-
+              $dom.append(
+                Util.renderTrack('television', url, title, artwork_url, href, Util.time(duration))
+              )
           callback() if callback
         catch
           console.error('server error or parse error')

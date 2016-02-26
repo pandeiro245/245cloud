@@ -89,23 +89,16 @@ class @Youtube
             url = "https://www.youtube.com/watch?v=#{id}"
             track = data['snippet']
             title = track['title']
-            artwork_url = artworkUrlWithNoimage(track['thumbnails']['default']['url'])
+            thumbnail_url = artworkUrlWithNoimage(track['thumbnails']['default']['url'])
             #duration = youtubeDurationSec(data) * 1000
             duration = 1000
-            artwork = "<img src=\"https://ruffnote.com/attachments/24162\" width='100px'/>"
-            if artwork_url
-              artwork = "<img src=\"#{artwork_url}\" width='100px'/>"
+            artwork_url = "https://ruffnote.com/attachments/24162"
+            if thumbnail_url
+              artwork_url = thumbnail_url
             href = "youtube:#{id}"
-            $dom.append("""
-              <div class='col-lg-2' style='min-height: 200px;'>
-                <a href='#{url}' target='_blank'>#{title}</a>
-                <!--(#{Util.time(duration)})<br />-->
-                <br />
-                #{artwork}
-                <a href=\"##{href}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24353' /></a>
-                <!--<a href=\"#\" class='add_playlist btn btn-default'>追加</a>-->
-              </div>
-            """)
+            $dom.append(
+              Util.renderTrack('youtube', url, title, artwork_url, href, Util.time(duration))
+            )
           callback() if callback
         else
           $dom.append("<div>「#{keyword}」YouTubeCloudにはで24分前後の曲はまだ出てないようです...。他のキーワードで探してみてください！</div>")
