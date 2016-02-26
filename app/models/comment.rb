@@ -1,4 +1,8 @@
 class Comment < ActiveRecord::Base
+  scope :roots, -> {
+    where(parent_id: nil)
+  }
+
   def self.sync
     self.fetch.each do |room|
       self.sync_one(room)

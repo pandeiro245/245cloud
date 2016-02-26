@@ -1,6 +1,6 @@
 class Bunsan
   def self.export
-    Util.save('bunsan.json', {musics: self.musics}.to_json)
+    Util.save('bunsan.json', {musics: self.musics, comments: comments}.to_json)
     puts 'done'
   end
 
@@ -13,6 +13,15 @@ class Bunsan
       musics[w.music_key][w.facebook_id][w.created_at] = w.is_done
     end
     musics
+  end
+
+  def self.comments
+    comments = {}
+    Comment.roots.each do |root|
+      root = root.decorate
+
+      # FIXME
+    end
   end
 
   def self.import
