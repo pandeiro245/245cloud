@@ -724,6 +724,7 @@ window.addChatting = (workload) ->
   @addWorkload("#chatting", workload, disp)
 
 @addWorkload = (dom, workload, disp) ->
+  provider_icon = ''
   w = workload
   facebook_id = w.facebook_id
   if w.title
@@ -732,7 +733,15 @@ window.addChatting = (workload) ->
     fixed = "<a href=\"#{href}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24921' /></a>"
     jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" class=\"jacket\" />' else "<img src=\"#{@nomusic_url}\" class=\"jacket\" />"}"
     jacket = "<a href='/musics/#{w.music_key.replace(':', '/')}'>#{jacket}</a>" if w.music_key
+
+
+    title = "#{w.title}"
+    provider = w.music_key.split(':')[0]
+    icon_name = if provider == 'nicovideo' then 'television'  else provider
     title = w.title
+    unless provider == '8tracks'
+      provider_icon = "<i class='fa fa-#{icon_name}' title='#{provider}' data-toggle='tooltip' data-placement='top' ></i>"
+
   else
     title = '無音'
     fixed = "<a href=\"#\" class='fixed_start'><img src='https://ruffnote.com/attachments/24926' /></a>"
@@ -748,7 +757,12 @@ window.addChatting = (workload) ->
   $item.css("color", '#b2b2b2')
 
   $item.html("""
-   <h5 title='#{title}' data-toggle='tooltip' data-placement='top'>#{title}</h5>
+   <h5>
+   #{provider_icon}
+   <span title='#{title}' data-toggle='tooltip' data-placement='top'>
+   #{title}
+   </span>
+   </h5>
    <span>#{jacket}</a></span>
    <span>#{user_img}</span>
    <div class='disp'>#{disp}</div>
@@ -860,12 +874,16 @@ searchMusics = () ->
   localStorage['search_music_title'] = q
 
   $tracks = $('#tracks')
-  Youtube.search(q, $tracks)
-  Nicovideo.search(q, $tracks)
-  Soundcloud.search(q, @env.sc_client_id, $tracks)
-  Mixcloud.search(q, $tracks)
+ 
+
+  Youtube.search(q, $tracks, initTooltip)
+  Nicovideo.search(q, $tracks, initTooltip)
+  Soundcloud.search(q, @env.sc_client_id, $tracks, initTooltip)
+  Mixcloud.search(q, $tracks, initTooltip)
   #EightTracks.search(q, $tracks)
 
+initTooltip = () ->
+  $('[data-toggle="tooltip"]').tooltip()
 
 initHatopoppo = () ->
   $('#hatopoppo').css('width', '1px')
