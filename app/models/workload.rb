@@ -2,6 +2,8 @@ class Workload < ActiveRecord::Base
   POMOTIME = 24.minutes
   CHATTIME = 5.minutes
 
+  before_save :set_music_key
+
   scope :created, -> {
     order('workloads.created_at DESC')
   }
@@ -54,6 +56,10 @@ class Workload < ActiveRecord::Base
     raise if type && !active_type?(type)
     type ? public_send(type) : dones
   }
+
+  def set_music_key
+    self.music_key = URI.decode(self.music_key)
+  end
 
   def to_done!
     #if workload.created_at + Workload.pomotime <= Time.now
