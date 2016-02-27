@@ -727,7 +727,8 @@ window.addChatting = (workload) ->
   provider_icon = ''
   w = workload
   facebook_id = w.facebook_id
-  if title = w.title
+  if w.music_key.length
+    title = w.title
     href = "##{workload.music_key}"
     fixed = "<a href=\"#{href}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24921' /></a>"
     jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" class=\"jacket\" />' else "<img src=\"#{@nomusic_url}\" class=\"jacket\" />"}"
@@ -736,7 +737,6 @@ window.addChatting = (workload) ->
     icon_name = if provider == 'nicovideo' then 'television'  else provider
     unless provider == '8tracks'
       provider_icon = "<i class='fa fa-#{icon_name}' title='#{provider}' data-toggle='tooltip' data-placement='top' ></i>"
-
   else
     title = '無音'
     fixed = "<a href=\"#\" class='fixed_start'><img src='https://ruffnote.com/attachments/24926' /></a>"
