@@ -678,41 +678,9 @@ window.createComment = (room_id) ->
   params.room_id = room_id
 
   $.post('/api/comments', params, (comment) ->
-    updateRoomCommentsCount(room_id)
     window.addComment(room_id, comment)
     syncComment(room_id, comment)
   )
-
-initRanking = () ->
-  return
-
-  now = new Date()
-  year = now.getYear() + 1900 - 1
-  month = now.getMonth()
-  day = now.getDate()
-
-  to_now = new Date(now.getTime() + 24*3600*1000)
-  to_year = to_now.getYear() + 1900 - 1
-  to_month = to_now.getMonth()
-  to_day = to_now.getDate()
-
-  $('#ranking_title').html("<h2>#{year}年#{month+1}月#{day}日に再生された曲</h2>")
-  cond = [
-    ["is_done", true]
-    ["createdAt", '>', new Date(year, month, day)]
-    ["createdAt", '<', new Date(to_year, to_month, to_day)]
-  ]
-  titles = {}
-  ParseParse.where("Workload", cond, (workloads) ->
-    return unless workloads.length > 0
-    for workload in workloads
-      continue unless workload.attributes.user
-      continue unless workload.attributes.title
-      continue if titles[workload.attributes.title]
-      titles[workload.attributes.title] = true
-      disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.number}/#{workload.weekly_number}）"
-      @addWorkload("#ranking", workload, disp)
-  , null, 24 *500)
 
 window.addDoing = (workload) ->
   $("#doing_title").show()
@@ -840,15 +808,6 @@ initService = ($dom, url) ->
 
 window.addComment = @addComment
 
-updateRoomCommentsCount = (room_id) ->
-  console.log "updateRoomCommentsCount room_id is #{room_id}"
-  ParseParse.find('Room', room_id, (room) ->
-    ParseParse.where('Comment', [['room_id', room_id]], (room, comments)->
-      room.set('comments_count', comments.length)
-      room.save()
-    , room)
-  )
-
 @syncWorkload = (type) ->
   @socket.push({
     type: type
@@ -963,6 +922,4 @@ facebookIcon = (facebook_id) ->
 
 musicKey2icon = (music_key) ->
   "/ruffnotes?music_key=#{music_key.replace(/\//g,'_')}"
-
-
 

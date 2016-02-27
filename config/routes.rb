@@ -4,8 +4,6 @@ Rails.application.routes.draw do
   resources :nicoinfo, only: [:show], constraints: {id: /sm[0-9]+/}
   resources :ruffnotes, only: [:index]
 
-  get '/pitch' => 'welcome#pitch'
-
   get '/auth/timecrowd/callback', to: 'timecrowd#login'
   get '/timecrowd/recents' => 'timecrowd#recents'
   post '/timecrowd/start' => 'timecrowd#start'
