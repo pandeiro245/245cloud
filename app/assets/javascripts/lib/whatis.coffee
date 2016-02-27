@@ -21,7 +21,7 @@ window.initWhatis = () ->
   $kokuban = $('<div></div>')
   $kokuban.css('position', 'relative')
   imgurl = @ruffnoteAttachment(24501)
-  $kokuban.css("background', 'url(#{imgurl})")
+  $kokuban.css('background', "url(#{imgurl})")
   $kokuban.css('width', '735px')
   $kokuban.css('height', '483px')
   $kokuban.css('margin', '0 auto')
