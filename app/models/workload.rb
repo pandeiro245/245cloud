@@ -93,7 +93,6 @@ class Workload < ActiveRecord::Base
     return unless music_key
     if music_key.match(/^mixcloud:/)
       puts music_key
-      self.music_key = self.music_key.gsub(/^mixcloud:\//, 'mixcloud:')
       self.music_key = URI.decode(self.music_key)
       self.save!
     end
