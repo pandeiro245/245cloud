@@ -1,9 +1,10 @@
 class Util
-  @renderTrack: (fa_icon_name, source_url, track_title, artwork_url, button_url, duration = '') ->
+  @renderTrack: (provider_name, source_url, track_title, artwork_url, button_url, duration = '', fa_icon_name=null) ->
+    fa_icon_name = provider_name unless fa_icon_name
     """
       <div class='track_item col-lg-2' style='min-height: 200px;'>
         <div class='track_item-title'>
-          <i class="fa fa-#{fa_icon_name}" title='#{source_url.split('/')[2]}' data-toggle='tooltip' data-placement='top'></i>
+          <i class="fa fa-#{fa_icon_name}" title='#{provider_name}' data-toggle='tooltip' data-placement='top'></i>
           <a href='#{source_url}' target='_blank'>#{track_title}</a>
           (#{duration})<br />
         </div>
@@ -17,7 +18,6 @@ class Util
         </div>
       </div>
     """
-
 
   @minAgo: (min, date=null) ->
     date = new Date() unless date

@@ -65,7 +65,7 @@ class @Nicovideo
               url = "http://www.nicovideo.jp/watch/#{sm_id}"
               href = "nicovideo:#{sm_id}"
               $dom.append(
-                Util.renderTrack('television', url, title, artwork_url, href, Util.time(duration))
+                Util.renderTrack('nicovideo', url, title, artwork_url, href, Util.time(duration), 'television')
               )
           callback() if callback
         catch
