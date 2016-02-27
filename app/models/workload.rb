@@ -88,5 +88,15 @@ class Workload < ActiveRecord::Base
     key = music_key.gsub(/:/, '/')
     "/musics/#{key}"
   end
+
+  def repair!
+    return unless music_key
+    if music_key.match(/^mixcloud:/)
+      puts music_key
+      self.music_key = self.music_key.gsub(/^mixcloud:\//, 'mixcloud:')
+      self.music_key = URI.decode(self.music_key)
+      self.save!
+    end
+  end
 end
 

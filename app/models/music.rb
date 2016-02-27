@@ -33,4 +33,11 @@ class Music
     end
     return true # FIXME
   end
+
+  def self.repairs!
+    Workload.all.each do |w|
+      w.repair!
+    end
+  end
 end
+
