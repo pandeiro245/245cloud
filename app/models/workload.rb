@@ -114,7 +114,7 @@ class Workload < ActiveRecord::Base
   end
 
   def music_path
-    key = music_key.gsub(/:/, '/')
+    key = music_key.gsub(/:/, '/').gsub(/^\//,'')
     "/musics/#{key}"
   end
 

@@ -3,6 +3,7 @@ class Util
     facebook_ids = {} # facebook_id => true
     music_icons = {} # music_key => artwork_url
     url = 'http://245cloud.com/api/workloads.json?limit=1000&type=dones'
+    url = 'http://245cloud.com/api/workloads.json?limit=10&type=dones'
     uri = URI.parse(url)
     json = Net::HTTP.get(uri)
     JSON.parse(json).each do |w|
@@ -20,13 +21,22 @@ class Util
       workload.save!
     end
     facebook_ids.keys.each do |facebook_id|
-      `wget -O tmp/facebook/icons/#{facebook_id} https://graph.facebook.com/#{facebook_id}/picture?height=40&width=40`
+      user = User.find_or_create_by(
+        facebook_id: facebook_id
+      )
+      icon = "https://graph.facebook.com/#{facebook_id}/picture?height=40&width=40"
+      user.icon = Base64.strict_encode64(open(icon).read)
+      user.save!
     end
     music_icons.each do |music_key, artwork_url|
       puts artwork_url
       next unless music_key
-      music_key = music_key.gsub(/\//, '_')
-      `wget -O tmp/musics/icons/#{music_key} #{artwork_url}`
+      music = Music.find_or_create_by(
+        key: music_key
+      )
+      music.artwork_url = artwork_url
+      music.icon = Base64.strict_encode64(open(artwork_url).read)
+      music.save!
     end
     puts 'done'
   end
