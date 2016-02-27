@@ -18,12 +18,12 @@ $ ->
   done_title done:init
   you_title you:init calendar_title calendar
   search_title search:init
-  ranking_title ranking:init
   playing:stay complete:stay select_rooms:stay
   rooms_title:stay rooms:stay
   whatis_title whatis:no_row
   wantedly:stay footer hatopoppo:init&stay
   ''')
+  #ranking_title ranking:init
   #8tracks_title 8tracks:init
   #kimiya_title kimiya:init
   #naotake_title naotake:init
@@ -705,8 +705,7 @@ window.addChatting = (workload) ->
     href = "##{workload.music_key}"
     imgurl = @ruffnoteAttachment(24921)
     fixed = "<a href=\"#{href}\" class='fixed_start'><img src='#{imgurl}' /></a>"
-    #icon = w.artwork_url
-    icon = musicKey2icon(w.music_key)
+    icon = w.artwork_url
     jacket = "#{if icon then '<img src=\"' + icon + '\" class=\"jacket\" />' else "<img src=\"#{@nomusic_url}\" class=\"jacket\" />"}"
     jacket = "<a href='/musics/#{w.music_key.replace(':', '/')}'>#{jacket}</a>" if w.music_key
     provider = w.music_key.split(':')[0]
@@ -919,7 +918,4 @@ facebookIcon = (facebook_id) ->
     "https://graph.facebook.com/#{facebook_id}/picture?height=40&width=40"
   else
     "/ruffnotes?facebook_id=#{facebook_id}"
-
-musicKey2icon = (music_key) ->
-  "/ruffnotes?music_key=#{music_key.replace(/\//g,'_')}"
 

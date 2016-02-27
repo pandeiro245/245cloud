@@ -14,7 +14,7 @@ class Api::WorkloadsController < ApplicationController
       scope = scope.created
     end
     scope = scope.decorate.reverse
-    render json: scope
+    render json: scope.map{|w| w.artwork_url = "data:image/png;base64,#{w.music.icon}" if w.music; w}
   end
 
   def complete # TODO: PUT update にする

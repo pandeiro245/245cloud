@@ -1,9 +1,10 @@
 class Util
   def self.sync
+    Workload.delete_all
+    Music.delete_all
     facebook_ids = {} # facebook_id => true
     music_icons = {} # music_key => artwork_url
     url = 'http://245cloud.com/api/workloads.json?limit=1000&type=dones'
-    url = 'http://245cloud.com/api/workloads.json?limit=10&type=dones'
     uri = URI.parse(url)
     json = Net::HTTP.get(uri)
     JSON.parse(json).each do |w|
@@ -32,7 +33,7 @@ class Util
       puts artwork_url
       next unless music_key
       music = Music.find_or_create_by(
-        key: music_key
+        key: URI.encode(music_key)
       )
       music.artwork_url = artwork_url
       music.icon = Base64.strict_encode64(open(artwork_url).read)
