@@ -322,7 +322,7 @@ initDone = () ->
   $.get('/api/workloads?type=dones', (workloads) ->
     ruffnote(17769, 'done_title')
     for workload in workloads
-      disp = "#{Util.hourMin(workload.created_at, '開始')}（#{workload.number}回目）"
+      disp = "#{Util.hourMin(workload.created_at, '')} #{workload.number}回目(今週#{workload.weekly_number}回)"
       window.addWorkload("#done", workload, disp)
   )
 
@@ -705,7 +705,7 @@ initRanking = () ->
       continue unless workload.attributes.title
       continue if titles[workload.attributes.title]
       titles[workload.attributes.title] = true
-      disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.attributes.number}回目）"
+      disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.number}/#{workload.weekly_number}）"
       @addWorkload("#ranking", workload, disp)
   , null, 24 *500)
 
@@ -727,7 +727,7 @@ window.addChatting = (workload) ->
   provider_icon = ''
   w = workload
   facebook_id = w.facebook_id
-  if w.music_key.length
+  if w.music_key
     title = w.title
     href = "##{workload.music_key}"
     fixed = "<a href=\"#{href}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24921' /></a>"
@@ -928,7 +928,7 @@ initYou = () ->
     $.get("/api/users/#{window.facebook_id}/workloads", (workloads) ->
       ruffnote(22876, 'you_title')
       for workload in workloads
-        disp = "#{Util.hourMin(workload.created_at, '開始')}（#{workload.number}回目）"
+        disp = "#{Util.hourMin(workload.created_at, '')} #{workload.number}回目(今週#{workload.weekly_number}回)"
         window.addWorkload("#you", workload, disp)
     )
 

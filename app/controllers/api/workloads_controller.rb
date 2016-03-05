@@ -3,13 +3,21 @@ class Api::WorkloadsController < ApplicationController
     type = params[:type]
     limit = params[:limit] || 48
     scope = Workload.of_type(type)
-    scope = scope.his(params[:facebook_id]).dones if params[:facebook_id]
+    id = params[:facebook_id]
+    scope = scope.his(id).dones if id 
     scope = scope.limit(limit) if scope.limit_value.nil?
-    scope = (params[:best] ? scope.bests : scope.created).decorate.reverse
+    if params[:best]
+      scope = scope.bests
+    elsif params[:weekly_ranking]
+      scope = scope.weekly_ranking
+    else
+      scope = scope.created
+    end
+    scope = scope.decorate.reverse
     render json: scope
   end
 
-  def complete # PUT update にする
+  def complete # TODO: PUT update にする
     render json: Workload.his(
       current_user.facebook_id
     ).created.first.to_done!.decorate

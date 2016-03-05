@@ -37,6 +37,19 @@ class Workload < ActiveRecord::Base
       created_at: from..to
     )
   }
+  scope :thisweek, -> (created_at = nil) {
+    to = created_at || Time.now
+    to -= POMOTIME
+    from = to.to_date.beginning_of_day
+    from = if created_at.wday == 0 # sunday
+      from - 6.day
+    else
+      from - (created_at.wday - 1).day
+    end
+    where(
+      created_at: from..to
+    )
+  }
   scope :chattings, -> {
     from = Time.now - POMOTIME - CHATTIME
     to   = Time.now - POMOTIME
@@ -58,6 +71,7 @@ class Workload < ActiveRecord::Base
   }
 
   def set_music_key
+    return nil if self.music_key.nil?
     self.music_key = URI.decode(self.music_key)
   end
 
@@ -65,6 +79,7 @@ class Workload < ActiveRecord::Base
     #if workload.created_at + Workload.pomotime <= Time.now
     if true
       self.number = next_number
+      self.weekly_number = next_number(:weekly)
       self.is_done = true
       self.save!
     end
@@ -77,6 +92,7 @@ class Workload < ActiveRecord::Base
 
   def update_number!
     self.number = next_number
+    self.weekly_number = next_number(:weekly)
     self.save!
   end
 
@@ -86,8 +102,15 @@ class Workload < ActiveRecord::Base
     end
   end
 
-  def next_number
-    Workload.his(facebook_id).dones.today(created_at).count + 1
+  def next_number type=nil
+    scope = Workload.his(facebook_id).dones
+    scope = case type
+    when :weekly
+      scope.thisweek(created_at)
+    else
+      scope.today(created_at)
+    end
+    scope.count + 1
   end
 
   def music_path
