@@ -322,7 +322,7 @@ initDone = () ->
   $.get('/api/workloads?type=dones', (workloads) ->
     ruffnote(17769, 'done_title')
     for workload in workloads
-      disp = "#{Util.hourMin(workload.created_at, '')} #{workload.number}回目(今週#{workload.weekly_number}回)"
+      disp = "#{Util.hourMin(workload.created_at, '')} #{workload.number}回目(週#{workload.weekly_number}回)"
       window.addWorkload("#done", workload, disp)
   )
 
@@ -928,7 +928,7 @@ initYou = () ->
     $.get("/api/users/#{window.facebook_id}/workloads", (workloads) ->
       ruffnote(22876, 'you_title')
       for workload in workloads
-        disp = "#{Util.hourMin(workload.created_at, '')} #{workload.number}回目(今週#{workload.weekly_number}回)"
+        disp = "#{Util.hourMin(workload.created_at, '')} #{workload.number}回目(週#{workload.weekly_number}回)"
         window.addWorkload("#you", workload, disp)
     )
 
