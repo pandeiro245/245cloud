@@ -673,7 +673,7 @@ window.createComment = (room_id) ->
 
   $.post('/api/comments', params, (comment) ->
     updateRoomCommentsCount(room_id)
-    #window.addComment(room_id, comment)
+    window.addComment(room_id, comment)
     syncComment(room_id, comment)
   )
 
