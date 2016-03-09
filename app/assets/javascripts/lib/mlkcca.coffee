@@ -5,8 +5,7 @@ mlkcca = new MilkCocoa("#{@env.milkcocoa}.mlkcca.com")
   console.log 'mlkcca', params
   params = params.value
   if params.type == 'comment'
-    #unless params.comment.facebook_id == window.facebook_id
-    if true
+    unless params.comment.facebook_id == window.facebook_id
       @addComment(params.room_id, params.comment)
   else if params.type == 'doing'
     @addDoing(params.workload)
