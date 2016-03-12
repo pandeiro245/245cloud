@@ -48,6 +48,7 @@ $ ->
  
 initSettings = () ->
   for key of window.settings
+    continue unless key in ['alert', 'timecrowd']
     $('#settings').append("<div><a href='/?cancel=#{key}'>#{key}をやめる</a></div>")
 
 initNortification = () ->
