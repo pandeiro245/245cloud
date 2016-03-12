@@ -8,7 +8,7 @@ class WelcomeController < ApplicationController
       end
     end
     if params[:cancel]
-      Setting.del cookies, params[:cancel]
+      cookies[:settings] = Setting.del cookies, params[:cancel]
       is_redirect = true
     end
     redirect_to :root if is_redirect
