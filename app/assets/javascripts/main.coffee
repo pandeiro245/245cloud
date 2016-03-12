@@ -8,6 +8,7 @@ $ ->
   scaffolds = Util.scaffolds('''
   header:no_row&stay news otukare:hidden&stay
   ad:stay contents:stay
+  settings:init
   timecrowd toggl nortification heatmap:init start_buttons
   doing_title:stay doing:init&stay
   chatting_title:stay chatting:init:stay
@@ -40,11 +41,15 @@ $ ->
     ruffnote(content[0], content[1])
 
   initStart()
-  initTimecrowd() if location.href.match(/timecrowd=/)
+  initTimecrowd() if window.settings.timecrowd
   initToggl() if location.href.match(/toggl=/)
   initNortification() if location.href.match(/notification=/)
   initFixedStart()
-  
+ 
+initSettings = () ->
+  for key of window.settings
+    $('#settings').append("<div><a href='/?cancel=#{key}'>#{key}をやめる</a></div>")
+
 initNortification = () ->
   if window.facebook_id
     if !Notify.needsPermission || Notify.isSupported()
@@ -359,7 +364,7 @@ createWorkload = (params = {}, callback) ->
 
 start = () ->
   console.log 'start'
-  if location.href.match(/timecrowd=/)
+  if window.settings.timecrowd
     task_id = $("input[name='timecrowd_task']:checked").val()
     team_id = $("input[name='timecrowd_task']:checked").attr('data-team-id')
     params = {
@@ -484,7 +489,7 @@ postWithToken = (url, key, is_again=false) ->
 
 complete = () ->
   console.log 'complete'
-  if location.href.match(/timecrowd=/)
+  if window.settings.timecrowd
     $.post('/timecrowd/stop')
   if location.href.match(/toggl=/)
     postWithToken('/toggl/stop', 'toggl_token')
@@ -501,7 +506,7 @@ complete = () ->
   unless @env.is_kakuhen
     @initSelectRooms()
 
-  alert '24分間お疲れ様でした！5分間交換日記ができます☆' if location.href.match('alert') unless @env.is_done
+  alert '24分間お疲れ様でした！5分間交換日記ができます☆' if window.settings.alert unless @env.is_done
 
   @env.is_doing = false
   @env.is_done = true
