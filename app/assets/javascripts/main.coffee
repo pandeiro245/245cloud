@@ -8,6 +8,7 @@ $ ->
   scaffolds = Util.scaffolds('''
   header:no_row&stay news otukare:hidden&stay
   ad:stay contents:stay
+  settings:init
   timecrowd toggl nortification heatmap:init start_buttons
   doing_title:stay doing:init&stay
   chatting_title:stay chatting:init:stay
@@ -44,7 +45,11 @@ $ ->
   initToggl() if location.href.match(/toggl=/)
   initNortification() if location.href.match(/notification=/)
   initFixedStart()
-  
+ 
+initSettings = () ->
+  for key of window.settings
+    $('#settings').append("<div><a href='/?cancel=#{key}'>#{key}をやめる</a></div>")
+
 initNortification = () ->
   if window.facebook_id
     if !Notify.needsPermission || Notify.isSupported()
