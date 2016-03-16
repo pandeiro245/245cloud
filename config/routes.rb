@@ -24,5 +24,6 @@ Rails.application.routes.draw do
     resources :workloads, only: [:index, :create]
     resources :comments, only: [:index, :create]
     resources :access_logs, only: [:create]
+    resources :servers, only: [:index]
   end
 end
