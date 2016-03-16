@@ -1,6 +1,9 @@
+@ruffnoteAttachment = (id, id2=null) ->
+  Ruffnote.attachment(id, id2)
+
 @env.is_doing = false
 @env.is_done = false
-@nomusic_url = 'https://ruffnote.com/attachments/24985'
+@nomusic_url = @ruffnoteAttachment(24985)
 
 $ ->
   $.post('/api/access_logs', {url: location.href})
@@ -15,15 +18,15 @@ $ ->
   done_title done:init
   you_title you:init calendar_title calendar
   search_title search:init
-  ranking_title ranking:init
-  8tracks_title 8tracks:init
-  kimiya_title kimiya:init
-  naotake_title naotake:init
   playing:stay complete:stay select_rooms:stay
   rooms_title:stay rooms:stay
   whatis_title whatis:no_row
   wantedly:stay footer hatopoppo:init&stay
   ''')
+  #ranking_title ranking:init
+  #8tracks_title 8tracks:init
+  #kimiya_title kimiya:init
+  #naotake_title naotake:init
   window.initWhatis()
   for key in scaffolds.initials
     eval("#{key}()")
@@ -199,14 +202,12 @@ initStart = () ->
       <div id='nomusic' class='col-sm-2'></div>
     """)
 
-    text = [
-      'https://ruffnote.com/attachments/24919'
-      'https://ruffnote.com/attachments/24920'
-    ]
+    text = @ruffnoteAttachment(24919, 24920)
     tooltip = '現在はSoundcloudの人気曲からランダム再生ですが今後もっと賢くなっていくはず'
     $random = $('#start_buttons #random')
+    imgurl = @ruffnoteAttachment(24982)
     $random.html("""<h5>おまかせ</h5>
-      <img src="\https://ruffnote.com/attachments/24982\" class='jacket'/>
+      <img src=\"#{imgurl}\" class='jacket'/>
     """)
     Util.addButton('start', $random, text, start_random)
     $random.addClass("col-sm-offset-#{getOffset(2)}")
@@ -242,16 +243,13 @@ initStart = () ->
         )
       )
 
-    #text = '無音で24分集中'
-    text = [
-      'https://ruffnote.com/attachments/24926'
-      'https://ruffnote.com/attachments/24927'
-    ]
+    text = @ruffnoteAttachment(24926, 24927)
     tooltip = '無音ですが終了直前にはとぽっぽが鳴ります'
     $nomusic = $('#start_buttons #nomusic')
 
     $nomusic.html('<h5>無音</h5>')
-    $nomusic.append(Util.tag('img', 'https://ruffnote.com/attachments/24981', {class: 'jacket'}))
+    imgurl = @ruffnoteAttachment(24981)
+    $nomusic.append(Util.tag('img', imgurl, {class: 'jacket'}))
     Util.addButton('start', $nomusic, text, start_nomusic)
 
   else
@@ -279,8 +277,10 @@ initSearch = () ->
 
 @initSelectRooms = () ->
   console.log 'initSelectRooms'
-  $('#rooms_title').html(Util.tag('h2', Util.tag('img', 'https://ruffnote.com/attachments/24968'), {class: 'status'}))
-  $('#select_rooms').html(Util.tag('h2', Util.tag('img', 'https://ruffnote.com/attachments/24967'), {class: 'status'}))
+  imgurl = @ruffnoteAttachment(24968)
+  $('#rooms_title').html(Util.tag('h2', Util.tag('img', imgurl), {class: 'status'}))
+  imgurl = @ruffnoteAttachment(24967)
+  $('#select_rooms').html(Util.tag('h2', Util.tag('img', imgurl), {class: 'status'}))
   $('#select_rooms').append(Util.tag('div', null, {class: 'imgs'}))
 
   $.get('/api/comments', (rooms) ->
@@ -678,41 +678,9 @@ window.createComment = (room_id) ->
   params.room_id = room_id
 
   $.post('/api/comments', params, (comment) ->
-    updateRoomCommentsCount(room_id)
     window.addComment(room_id, comment)
     syncComment(room_id, comment)
   )
-
-initRanking = () ->
-  return
-
-  now = new Date()
-  year = now.getYear() + 1900 - 1
-  month = now.getMonth()
-  day = now.getDate()
-
-  to_now = new Date(now.getTime() + 24*3600*1000)
-  to_year = to_now.getYear() + 1900 - 1
-  to_month = to_now.getMonth()
-  to_day = to_now.getDate()
-
-  $('#ranking_title').html("<h2>#{year}年#{month+1}月#{day}日に再生された曲</h2>")
-  cond = [
-    ["is_done", true]
-    ["createdAt", '>', new Date(year, month, day)]
-    ["createdAt", '<', new Date(to_year, to_month, to_day)]
-  ]
-  titles = {}
-  ParseParse.where("Workload", cond, (workloads) ->
-    return unless workloads.length > 0
-    for workload in workloads
-      continue unless workload.attributes.user
-      continue unless workload.attributes.title
-      continue if titles[workload.attributes.title]
-      titles[workload.attributes.title] = true
-      disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.number}/#{workload.weekly_number}）"
-      @addWorkload("#ranking", workload, disp)
-  , null, 24 *500)
 
 window.addDoing = (workload) ->
   $("#doing_title").show()
@@ -735,8 +703,10 @@ window.addChatting = (workload) ->
   if w.music_key
     title = w.title
     href = "##{workload.music_key}"
-    fixed = "<a href=\"#{href}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24921' /></a>"
-    jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" class=\"jacket\" />' else "<img src=\"#{@nomusic_url}\" class=\"jacket\" />"}"
+    imgurl = @ruffnoteAttachment(24921)
+    fixed = "<a href=\"#{href}\" class='fixed_start'><img src='#{imgurl}' /></a>"
+    icon = w.artwork_url
+    jacket = "#{if icon then '<img src=\"' + icon + '\" class=\"jacket\" />' else "<img src=\"#{@nomusic_url}\" class=\"jacket\" />"}"
     jacket = "<a href='/musics/#{w.music_key.replace(':', '/')}'>#{jacket}</a>" if w.music_key
     provider = w.music_key.split(':')[0]
     icon_name = if provider == 'nicovideo' then 'television'  else provider
@@ -744,9 +714,11 @@ window.addChatting = (workload) ->
       provider_icon = "<i class='fa fa-#{icon_name}' title='#{provider}' data-toggle='tooltip' data-placement='top' ></i>"
   else
     title = '無音'
-    fixed = "<a href=\"#\" class='fixed_start'><img src='https://ruffnote.com/attachments/24926' /></a>"
-    jacket = "<img src=\"https://ruffnote.com/attachments/24981\" class='jacket'/>"
-  user_img = "<a href='/#{workload.facebook_id}'><img class='icon img-thumbnail' src='https://graph.facebook.com/#{workload.facebook_id}/picture?height=40&width=40' /></a>"
+    imgurl = @ruffnoteAttachment(24926)
+    fixed = "<a href=\"#\" class='fixed_start'><img src='#{imgurl}' /></a>"
+    imgurl = @ruffnoteAttachment(24981)
+    jacket = "<img src=\"#{imgurl}\" class='jacket'/>"
+  user_img = "<a href='/#{workload.facebook_id}'><img class='icon img-thumbnail' src='#{facebookIcon(workload.facebook_id)}' /></a>"
 
   $item = Util.tag('div', null, {class: 'inborder'})
   $item.css("border", '4px solid #eadba0')
@@ -819,7 +791,7 @@ initService = ($dom, url) ->
   c = comment
 
   if c.body
-    img = "https://graph.facebook.com/#{c.facebook_id}/picture?height=40&width=40"
+    img = facebookIcon(c.facebook_id)
     html = """
     <tr>
     <td>
@@ -834,15 +806,6 @@ initService = ($dom, url) ->
     $comments.prepend(html)
 
 window.addComment = @addComment
-
-updateRoomCommentsCount = (room_id) ->
-  console.log "updateRoomCommentsCount room_id is #{room_id}"
-  ParseParse.find('Room', room_id, (room) ->
-    ParseParse.where('Comment', [['room_id', room_id]], (room, comments)->
-      room.set('comments_count', comments.length)
-      room.save()
-    , room)
-  )
 
 @syncWorkload = (type) ->
   @socket.push({
@@ -938,10 +901,7 @@ initYou = () ->
     )
 
 renderFixedStart = (title, icon) ->
-  fixed_text = [
-    'https://ruffnote.com/attachments/24921'
-    'https://ruffnote.com/attachments/24922'
-  ]
+  fixed_text = @ruffnoteAttachment(24921, 24922)
   $('#fixedstart').append(txt)
   txt = "<h5 title='#{title}' data-toggle='tooltip' data-placement='top'>#{title}</h5>"
   $('#fixedstart').append(txt)
@@ -952,4 +912,10 @@ renderFixedStart = (title, icon) ->
   $('#random').removeClass("col-sm-offset-#{getOffset(2)}")
   $('#random').addClass("col-sm-offset-#{getOffset(3)}")
   $('[data-toggle="tooltip"]').tooltip()
+
+facebookIcon = (facebook_id) ->
+  if false
+    "https://graph.facebook.com/#{facebook_id}/picture?height=40&width=40"
+  else
+    "/ruffnotes?facebook_id=#{facebook_id}"
 

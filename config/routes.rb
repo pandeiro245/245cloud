@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   devise_for :users
   root 'welcome#index'
   resources :nicoinfo, only: [:show], constraints: {id: /sm[0-9]+/}
-  get '/pitch' => 'welcome#pitch'
+  resources :ruffnotes, only: [:index]
 
   get '/auth/timecrowd/callback', to: 'timecrowd#login'
   get '/timecrowd/recents' => 'timecrowd#recents'
@@ -24,5 +24,6 @@ Rails.application.routes.draw do
     resources :workloads, only: [:index, :create]
     resources :comments, only: [:index, :create]
     resources :access_logs, only: [:create]
+    resources :servers, only: [:index]
   end
 end

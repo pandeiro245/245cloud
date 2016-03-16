@@ -1,5 +1,8 @@
+@ruffnoteAttachment = (id, id2=null) ->
+  Ruffnote.attachment(id, id2)
+
 window.initWhatis = () ->
-  $("#whatis_title").html("<h2 class='status'><img src='https://ruffnote.com/attachments/24942' /></h2>")
+  $("#whatis_title").html("<h2 class='status'><img src='#{@ruffnoteAttachment(24942)}' /></h2>")
   now = new Date()
   month = now.getMonth() + 1
   day = now.getDate()
@@ -7,17 +10,18 @@ window.initWhatis = () ->
   numbers = {}
   for i in [1..31]
     i2 = 24371 + i
-    numbers[i] = "https://ruffnote.com/attachments/#{i2}"
+    numbers[i] = @ruffnoteAttachment(i2)
   youbis = {}
   for i in [1..5]
     i2 = 24358 + i
-    youbis[i] = "https://ruffnote.com/attachments/#{i2}"
-  youbis[0] = "https://ruffnote.com/attachments/24465" #日曜日
-  youbis[6] = "https://ruffnote.com/attachments/24464" #土曜日
+    youbis[i] = @ruffnoteAttachment(i2)
+  youbis[0] = @ruffnoteAttachment(24465) #日
+  youbis[6] = @ruffnoteAttachment(24465) #土
 
   $kokuban = $('<div></div>')
   $kokuban.css('position', 'relative')
-  $kokuban.css('background', 'url(https://ruffnote.com/attachments/24501)')
+  imgurl = @ruffnoteAttachment(24501)
+  $kokuban.css('background', "url(#{imgurl})")
   $kokuban.css('width', '735px')
   $kokuban.css('height', '483px')
   $kokuban.css('margin', '0 auto')

@@ -1,9 +1,10 @@
 = link_to 'TOP', :root
 %hr
-= image_tag @music.artwork_url
+= image_tag base64(@music.icon)
 %h1=@music.title
 = link_to image_tag('https://ruffnote.com/attachments/24921'), "/##{@music.key}"
 %hr
 - @music.users.each do |workload|
-  = link_to facebook_image_tag(workload, 100), "/#{workload.facebook_id}"
+  - user = workload.user
+  = link_to facebook_image_tag(user, 100), "/#{user.facebook_id}"
 

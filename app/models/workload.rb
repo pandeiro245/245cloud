@@ -22,11 +22,12 @@ class Workload < ActiveRecord::Base
       'music_key_count DESC'
     )
   }
-  scope :best_listeners, -> (music_key) { select(
+  scope :best_listeners, -> (music_key) {
+    select(
     '*, count(facebook_id) as facebook_id_count'
-  ).where(music_key: music_key
-  ).group(:facebook_id).order(
-      'facebook_id_count DESC'
+    ).where(music_key: music_key
+    ).group(:facebook_id).order(
+        'facebook_id_count DESC'
     )
   }
   scope :today, -> (created_at = nil) {
@@ -113,8 +114,17 @@ class Workload < ActiveRecord::Base
     scope.count + 1
   end
 
+  def user
+    User.find_by(facebook_id: facebook_id)
+  end
+
+  def music
+    return nil unless self.music_key
+    Music.find_by(key: URI.decode(self.music_key))
+  end
+
   def music_path
-    key = music_key.gsub(/:/, '/')
+    key = music_key.gsub(/:/, '/').gsub(/^\//,'')
     "/musics/#{key}"
   end
 
