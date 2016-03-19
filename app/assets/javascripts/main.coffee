@@ -45,7 +45,7 @@ $ ->
   initToggl() if location.href.match(/toggl=/)
   initNortification() if location.href.match(/notification=/)
   initFixedStart()
- 
+
 initSettings = () ->
   for key of window.settings
     continue unless key in ['alert', 'timecrowd']
@@ -58,7 +58,7 @@ initNortification = () ->
         <input id="show-nortification" type="checkbox" style="display:inline">
         <label for="show-nortification"> デスクトップ通知を利用する</label>
       """)
-      
+
       # チェック時に通知の許可要求
       $('#show-nortification').on('change', () ->
         if $(this).prop('checked') && Notify.needsPermission
@@ -183,14 +183,14 @@ initStart = () ->
 
   text = "24分やり直しでも大丈夫ですか？"
   Util.beforeunload(text, 'env.is_doing')
-  
+
   if window.facebook_id
     $('#contents').append("""
       <div class='countdown2' >
       <div class='countdown' ></div>
       </div>
     """)
-      
+
     $('#contents').append("<br>")
 
     $('#start_buttons').html("""
@@ -210,7 +210,7 @@ initStart = () ->
     """)
     Util.addButton('start', $random, text, start_random)
     $random.addClass("col-sm-offset-#{getOffset(2)}")
- 
+
     $('#fixedstart').hide()
     id = location.hash.split(':')[1]
     if location.hash.match(/soundcloud/)
@@ -290,7 +290,7 @@ initSearch = () ->
 
     $(document).on('click', ".room_link", (e) ->
       e.preventDefault()
-      
+
       $self = $(this)
       vals = $self.attr('data-values').split(':')
       initRoom(vals[0], vals[1])
@@ -342,7 +342,7 @@ start_random = () ->
     location.hash = "soundcloud:#{sc_id}"
     window.play("soundcloud:#{sc_id}")
   )
-  
+
 window.start_hash = (key = null) ->
   console.log 'start_hash'
   unless key
@@ -382,7 +382,7 @@ start = () ->
 
   @env.is_doing = true
   @syncWorkload('doing')
-  
+
   if @env.is_kakuhen
     initComments()
     @initSelectRooms()
@@ -483,7 +483,7 @@ postWithToken = (url, key, is_again=false) ->
     token = prompt('TogglのAPI keyを入力してください', '')
     localStorage[key] = token
   $.post(url, {token: token}).done((data)->
-    console.log(data) 
+    console.log(data)
   ).fail(()->
     postWithToken(url, key, true)
   )
@@ -537,7 +537,7 @@ complete = () ->
   $complete = $('#complete')
   $complete.html('')
   initComments()
-  
+
   # nortification
   if $('#show-nortification').prop('checked')
     new Notify('作業時間が終了しました！', {
@@ -598,7 +598,7 @@ window.initWantedly = () ->
   <div class="wantedly-visit-button" data-visit-button-id="#{company[3]}" data-width="270" data-height="60"></div>
   </div>
   """)
- 
+
   d = document
   s = 'script'
   id = 'wantedly-visit-buttons-wjs'
@@ -628,15 +628,15 @@ window.initRoom = (id = '1', title='いつもの部屋') ->
     $room.attr('id', "room_#{id}")
     $createComment = $('<input />').addClass('create_comment').attr('placeholder', "「#{title}」に書き込む")
     $room.append($createComment)
-  
+
     $comments = $("<table></table>").addClass('table comments')
     $room.append($comments)
 
     $('#rooms').append($room)
-    
+
     search_id = if id == '1' then null else id
     limit = if id == '1' then 100 else 10000
-      
+
     $.get("/api/comments?parent_id=#{id}", (comments) ->
       $("#room_#{id} .create_comment").keypress((e) ->
         if e.which == 13 #enter
@@ -649,14 +649,14 @@ window.initRoom = (id = '1', title='いつもの部屋') ->
 window.finish = () ->
   console.log 'finish'
   @syncWorkload('finish')
-  
+
   # nortification
   if $('#show-nortification').prop('checked')
     new Notify('休憩時間が終了しました！', {
       body: '245cloud'
       icon: '//placehold.jp/100x100.png'
     }).show()
-  
+
   if location.href.match(/auto_close=/)
     window.open(location, '_self', '')
     window.close()
@@ -666,11 +666,11 @@ window.finish = () ->
 window.createComment = (room_id) ->
   console.log 'createComment'
   $createComment = $("#room_#{room_id} .create_comment")
-  
+
   body = $createComment.val()
 
   $createComment.val('')
-  
+
   return if body.length < 1
 
   params = {body: body}
@@ -769,7 +769,7 @@ window.addChatting = (workload) ->
    <div>#{fixed}</div>
   """)
   $('[data-toggle="tooltip"]').tooltip()
-  
+
   # dones以外は１ユーザにつき１つしか表示しないので他の$itemは消去
   unless dom == '#done'
     $("#chatting .facebook_#{facebook_id}").remove()
@@ -874,7 +874,7 @@ searchMusics = () ->
   localStorage['search_music_title'] = q
 
   $tracks = $('#tracks')
- 
+
 
   Youtube.search(q, $tracks, initTooltip)
   Nicovideo.search(q, $tracks, initTooltip)
