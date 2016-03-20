@@ -1,4 +1,4 @@
-class IMG_URLS
+class ImgURLs
   @visual_header             : "https://ruffnote.com/attachments/24010"
   @visual_whatis             : "https://ruffnote.com/attachments/24501"
   @visual_whatis245cloud     : "https://ruffnote.com/attachments/24942"
@@ -28,12 +28,12 @@ class IMG_URLS
     img_no = 24371 + day
     "https://ruffnote.com/attachments/#{img_no}"
   @youbi_map: [
-    IMG_URLS.youbi_sunday
-    IMG_URLS.youbi_monday
-    IMG_URLS.youbi_tuesday
-    IMG_URLS.youbi_wednesday
-    IMG_URLS.youbi_thursday
-    IMG_URLS.youbi_friday
-    IMG_URLS.youbi_saturday
+    ImgURLs.youbi_sunday
+    ImgURLs.youbi_monday
+    ImgURLs.youbi_tuesday
+    ImgURLs.youbi_wednesday
+    ImgURLs.youbi_thursday
+    ImgURLs.youbi_friday
+    ImgURLs.youbi_saturday
   ]
-window.IMG_URLS = IMG_URLS
+window.ImgURLs = ImgURLs

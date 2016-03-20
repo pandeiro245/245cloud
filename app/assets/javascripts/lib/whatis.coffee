@@ -1,18 +1,18 @@
 window.initWhatis = () ->
-  $("#whatis_title").html("<h2 class='status'><img src='#{IMG_URLS.visual_whatis245cloud}' /></h2>")
+  $("#whatis_title").html("<h2 class='status'><img src='#{ImgURLs.visual_whatis245cloud}' /></h2>")
   now = new Date()
   month = now.getMonth() + 1
   day = now.getDate()
   youbi = now.getDay()
 
   youbis = {}
-  month_img_url = IMG_URLS.generate_number_img(month)
-  day_img_url   = IMG_URLS.generate_number_img(day)
-  youbi_img_url = IMG_URLS.youbi_map[youbi]
+  month_img_url = ImgURLs.generate_number_img(month)
+  day_img_url   = ImgURLs.generate_number_img(day)
+  youbi_img_url = ImgURLs.youbi_map[youbi]
 
   $kokuban = $('<div></div>')
   $kokuban.css('position', 'relative')
-  $kokuban.css('background', "url(#{IMG_URLS.visual_whatis})")
+  $kokuban.css('background', "url(#{ImgURLs.visual_whatis})")
   $kokuban.css('width', '735px')
   $kokuban.css('height', '483px')
   $kokuban.css('margin', '0 auto')

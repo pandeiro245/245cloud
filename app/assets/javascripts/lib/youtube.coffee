@@ -20,8 +20,8 @@ class @Youtube
       )
 
   fixed_text = [
-    IMG_URLS.button_play_this_history
-    IMG_URLS.button_play_this_hover
+    ImgURLs.button_play_this_history
+    ImgURLs.button_play_this_hover
   ]
 
   getOffset = (all_count) ->
@@ -92,7 +92,7 @@ class @Youtube
             thumbnail_url = artworkUrlWithNoimage(track['thumbnails']['default']['url'])
             #duration = youtubeDurationSec(data) * 1000
             duration = 1000
-            artwork_url = IMG_URLS.track_noimage
+            artwork_url = ImgURLs.track_noimage
             if thumbnail_url
               artwork_url = thumbnail_url
             href = "youtube:#{id}"
