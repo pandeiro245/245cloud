@@ -1,6 +1,5 @@
 @env.is_doing = false
 @env.is_done = false
-@nomusic_url = 'https://ruffnote.com/attachments/24985'
 
 $ ->
   $.post('/api/access_logs', {url: location.href})
@@ -200,13 +199,13 @@ initStart = () ->
     """)
 
     text = [
-      'https://ruffnote.com/attachments/24919'
-      'https://ruffnote.com/attachments/24920'
+      IMG_URLS.button_play_omakase
+      IMG_URLS.button_play_omakase_hover
     ]
     tooltip = '現在はSoundcloudの人気曲からランダム再生ですが今後もっと賢くなっていくはず'
     $random = $('#start_buttons #random')
     $random.html("""<h5>おまかせ</h5>
-      <img src="\https://ruffnote.com/attachments/24982\" class='jacket'/>
+      <img src="#{IMG_URLS.track_omakase}" class='jacket'/>
     """)
     Util.addButton('start', $random, text, start_random)
     $random.addClass("col-sm-offset-#{getOffset(2)}")
@@ -244,14 +243,14 @@ initStart = () ->
 
     #text = '無音で24分集中'
     text = [
-      'https://ruffnote.com/attachments/24926'
-      'https://ruffnote.com/attachments/24927'
+      IMG_URLS.button_paly_nomusic
+      IMG_URLS.button_paly_nomusic_hover
     ]
     tooltip = '無音ですが終了直前にはとぽっぽが鳴ります'
     $nomusic = $('#start_buttons #nomusic')
 
     $nomusic.html('<h5>無音</h5>')
-    $nomusic.append(Util.tag('img', 'https://ruffnote.com/attachments/24981', {class: 'jacket'}))
+    $nomusic.append(Util.tag('img', IMG_URLS.track_nomusic, {class: 'jacket'}))
     Util.addButton('start', $nomusic, text, start_nomusic)
 
   else
@@ -279,8 +278,8 @@ initSearch = () ->
 
 @initSelectRooms = () ->
   console.log 'initSelectRooms'
-  $('#rooms_title').html(Util.tag('h2', Util.tag('img', 'https://ruffnote.com/attachments/24968'), {class: 'status'}))
-  $('#select_rooms').html(Util.tag('h2', Util.tag('img', 'https://ruffnote.com/attachments/24967'), {class: 'status'}))
+  $('#rooms_title').html(Util.tag('h2', Util.tag('img', IMG_URLS.title_comments), {class: 'status'}))
+  $('#select_rooms').html(Util.tag('h2', Util.tag('img', IMG_URLS.title_rooms), {class: 'status'}))
   $('#select_rooms').append(Util.tag('div', null, {class: 'imgs'}))
 
   $.get('/api/comments', (rooms) ->
@@ -735,8 +734,8 @@ window.addChatting = (workload) ->
   if w.music_key
     title = w.title
     href = "##{workload.music_key}"
-    fixed = "<a href=\"#{href}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24921' /></a>"
-    jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" class=\"jacket\" />' else "<img src=\"#{@nomusic_url}\" class=\"jacket\" />"}"
+    fixed = "<a href=\"#{href}\" class='fixed_start'><img src='#{IMG_URLS.button_play_this_history}' /></a>"
+    jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" class=\"jacket\" />' else "<img src=\"#{IMG_URLS.track_noimage_hover}\" class=\"jacket\" />"}"
     jacket = "<a href='/musics/#{w.music_key.replace(':', '/')}'>#{jacket}</a>" if w.music_key
     provider = w.music_key.split(':')[0]
     icon_name = if provider == 'nicovideo' then 'television'  else provider
@@ -744,8 +743,8 @@ window.addChatting = (workload) ->
       provider_icon = "<i class='fa fa-#{icon_name}' title='#{provider}' data-toggle='tooltip' data-placement='top' ></i>"
   else
     title = '無音'
-    fixed = "<a href=\"#\" class='fixed_start'><img src='https://ruffnote.com/attachments/24926' /></a>"
-    jacket = "<img src=\"https://ruffnote.com/attachments/24981\" class='jacket'/>"
+    fixed = "<a href=\"#\" class='fixed_start'><img src='#{IMG_URLS.button_paly_nomusic}' /></a>"
+    jacket = "<img src='#{IMG_URLS.track_nomusic}' class='jacket'/>"
   user_img = "<a href='/#{workload.facebook_id}'><img class='icon img-thumbnail' src='https://graph.facebook.com/#{workload.facebook_id}/picture?height=40&width=40' /></a>"
 
   $item = Util.tag('div', null, {class: 'inborder'})
@@ -917,7 +916,7 @@ start_unless_doing = ()->
     start_hash()
 
 artworkUrlWithNoimage = (artwork_url) ->
-  artwork_url || @nomusic_url
+  artwork_url || IMG_URLS.track_noimage_hover
 
 initYou = () ->
   console.log 'initYou'
@@ -939,8 +938,8 @@ initYou = () ->
 
 renderFixedStart = (title, icon) ->
   fixed_text = [
-    'https://ruffnote.com/attachments/24921'
-    'https://ruffnote.com/attachments/24922'
+    IMG_URLS.button_play_this_history
+    IMG_URLS.button_play_this_hover
   ]
   $('#fixedstart').append(txt)
   txt = "<h5 title='#{title}' data-toggle='tooltip' data-placement='top'>#{title}</h5>"

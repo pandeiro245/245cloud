@@ -13,7 +13,7 @@ class Util
           <div class='track_item-thumb'>
             <img src=\"#{artwork_url}\" width='100px'/>
           </div>
-          <a href=\"##{button_url}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24353' /></a>
+          <a href=\"##{button_url}\" class='fixed_start'><img src='#{IMG_URLS.button_play_this_result}' /></a>
           <!--<a href=\"#\" class='add_playlist btn btn-default'>追加</a>-->
         </div>
       </div>
@@ -121,7 +121,7 @@ class Util
         $('title').html(remain2)
         $dom = $('.countdown')
       #$dom.html("あと#{remain2}")
-      $dom.html("<img src='https://ruffnote.com/attachments/24966' /><span class='time'>#{remain2}</span>")
+      $dom.html("<img src='#{IMG_URLS.whitespace}' /><span class='time'>#{remain2}</span>")
 
       if callback == 'reload'
         setTimeout("Util.countDown(#{duration}, null, #{started}, #{JSON.stringify(params)})", 1000)
