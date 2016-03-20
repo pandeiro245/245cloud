@@ -69,10 +69,6 @@ class Util
       min  = time.getMinutes()
       "#{Util.zero(month)}/#{Util.zero(day)} #{Util.zero(hour)}:#{Util.zero(min)}"
 
-  @charToImgURL: (char) ->
-    num = TIMER_IMG_NUM_MAP[char]
-    "https://ruffnote.com/attachments/#{num}"
-
   @monthDay: (time) ->
     date = new Date(time)
     month = date.getMonth() + 1
