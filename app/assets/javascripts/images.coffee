@@ -24,10 +24,10 @@ class IMG_URLS
   @youbi_saturday            : "https://ruffnote.com/attachments/24464"
   @dotline                   : "https://ruffnote.com/attachments/24944"
   @whitespace                : "https://ruffnote.com/attachments/24966"
-  @generate_number_img           : (day)->
+  @generate_number_img: (day)->
     img_no = 24371 + day
     "https://ruffnote.com/attachments/#{img_no}"
-  @youbi_map                 : [
+  @youbi_map: [
     IMG_URLS.youbi_sunday
     IMG_URLS.youbi_monday
     IMG_URLS.youbi_tuesday
