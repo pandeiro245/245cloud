@@ -203,3 +203,16 @@ table.comments .icon{
 .track_item-thumb {
   height: 110px;
 }
+
+#topbar {
+  position: fixed;
+  z-index: 99999;
+  background-color: white;
+  top: 0;
+  left: 20px;
+  padding: 10px;
+  border-radius: 0px 0px 10px 10px;
+  border: 4px solid #eadba0;
+  border-top: 0;
+}
+
