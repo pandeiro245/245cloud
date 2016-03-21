@@ -5,8 +5,8 @@ $ ->
   $.post('/api/access_logs', {url: location.href})
   return unless $('#nc').length
   scaffolds = Util.scaffolds('''
-  topbar:init&stay&topbar
   header:no_row&stay news otukare:hidden&stay
+  topbar:init
   ad:stay contents:stay
   settings:init
   timecrowd toggl nortification heatmap:init start_buttons
@@ -57,8 +57,13 @@ initTopbar = () ->
   $topbar.css('border-radius', '0px 0px 10px 10px')
   $topbar.css('border', '4px solid #eadba0')
   $topbar.css('border-top', '0')
-  $a = $("<div><a href='#'><i class='fa fa-arrow-up'></i></a>|<a href='#search_title'><i class='fa fa-search'></i></a></div>")
-  $topbar.html($a)
+  $topbar_content = $("""
+    <div>
+      <a href='#'><i class='fa fa-arrow-up'></i></a>
+       | <a href='#search_title'><i class='fa fa-search'></i></a>
+    </div>
+  """)
+  $topbar.html($topbar_content)
 initSettings = () ->
   for key of window.settings
     continue unless key in ['alert', 'timecrowd']
