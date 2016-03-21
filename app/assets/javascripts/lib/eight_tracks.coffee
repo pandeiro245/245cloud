@@ -22,7 +22,7 @@ class @EightTracks
     $.get(url, (tracks) ->
       if tracks[0]
         for track in tracks
-          artwork = "<img src=\"https://ruffnote.com/attachments/24162\" width='100px'/>"
+          artwork = "<img src='#{ImgURLs.track_noimage}' width='100px'/>"
           if track.artwork_url
             artwork = "<img src=\"#{track.artwork_url}\" width='100px'/>"
           href = "soundcloud:#{track.id}"
@@ -46,7 +46,7 @@ class @EightTracks
     $.get(url, (tracks) ->
       if tracks.mixes[0]
         for track in tracks.mixes
-          artwork = "<img src=\"https://ruffnote.com/attachments/24162\" width='100px'/>"
+          artwork = "<img src='#{ImgURLs.track_noimage}' width='100px'/>"
           if a = track.cover_urls
             artwork = "<img src=\"#{a.sq100}\" width='100px'/>"
           href = "8tracks:#{track.id}"
@@ -56,7 +56,7 @@ class @EightTracks
               (#{Util.time(track.duration * 1000)})<br />
               <br />
               #{artwork}
-              <a href=\"##{href}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24353' /></a>
+              <a href=\"##{href}\" class='fixed_start'><img src='#{ImgURLs.button_play_this}' /></a>
               <!--<a href=\"#\" class='add_playlist btn btn-default'>追加</a>-->
             </div>
           """)

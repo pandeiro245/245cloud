@@ -70,7 +70,7 @@ class @Soundcloud
     $.get(url, (tracks) ->
       if tracks[0]
         for track in tracks
-          artwork = "<img src=\"https://ruffnote.com/attachments/24162\" width='100px'/>"
+          artwork = "<img src='#{ImgURLs.track_noimage}' width='100px'/>"
           href = "soundcloud:#{track.id}"
           $dom.append(
             Util.renderTrack('soundcloud', track.permalink_url, track.title, track.artwork_url, href, Util.time(track.duration))

@@ -18,7 +18,7 @@ class @Mixcloud
     $.getJSON(url, (tracks) ->
       if tracks.data
         for track in tracks.data
-          artwork_url = "https://ruffnote.com/attachments/24162"
+          artwork_url = ImgURLs.track_noimage
           if track.pictures.medium
             artwork_url = track.pictures.medium
           href = "mixcloud:#{track.key}"

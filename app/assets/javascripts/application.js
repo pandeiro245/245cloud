@@ -13,5 +13,6 @@
 //= require jquery
 //= require jquery_ujs
 //= require lib/config
+//= require images
 //= require d3.min
 //= require_tree .

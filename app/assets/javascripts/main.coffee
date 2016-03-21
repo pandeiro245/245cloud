@@ -1,6 +1,5 @@
 @env.is_doing = false
 @env.is_done = false
-@nomusic_url = 'https://ruffnote.com/attachments/24985'
 
 $ ->
   $.post('/api/access_logs', {url: location.href})
@@ -45,7 +44,7 @@ $ ->
   initToggl() if location.href.match(/toggl=/)
   initNortification() if location.href.match(/notification=/)
   initFixedStart()
- 
+
 initSettings = () ->
   for key of window.settings
     continue unless key in ['alert', 'timecrowd']
@@ -58,7 +57,7 @@ initNortification = () ->
         <input id="show-nortification" type="checkbox" style="display:inline">
         <label for="show-nortification"> デスクトップ通知を利用する</label>
       """)
-      
+
       # チェック時に通知の許可要求
       $('#show-nortification').on('change', () ->
         if $(this).prop('checked') && Notify.needsPermission
@@ -183,14 +182,14 @@ initStart = () ->
 
   text = "24分やり直しでも大丈夫ですか？"
   Util.beforeunload(text, 'env.is_doing')
-  
+
   if window.facebook_id
     $('#contents').append("""
       <div class='countdown2' >
       <div class='countdown' ></div>
       </div>
     """)
-      
+
     $('#contents').append("<br>")
 
     $('#start_buttons').html("""
@@ -200,17 +199,17 @@ initStart = () ->
     """)
 
     text = [
-      'https://ruffnote.com/attachments/24919'
-      'https://ruffnote.com/attachments/24920'
+      ImgURLs.button_play_omakase
+      ImgURLs.button_play_omakase_hover
     ]
     tooltip = '現在はSoundcloudの人気曲からランダム再生ですが今後もっと賢くなっていくはず'
     $random = $('#start_buttons #random')
     $random.html("""<h5>おまかせ</h5>
-      <img src="\https://ruffnote.com/attachments/24982\" class='jacket'/>
+      <img src="#{ImgURLs.track_omakase}" class='jacket'/>
     """)
     Util.addButton('start', $random, text, start_random)
     $random.addClass("col-sm-offset-#{getOffset(2)}")
- 
+
     $('#fixedstart').hide()
     id = location.hash.split(':')[1]
     if location.hash.match(/soundcloud/)
@@ -244,14 +243,14 @@ initStart = () ->
 
     #text = '無音で24分集中'
     text = [
-      'https://ruffnote.com/attachments/24926'
-      'https://ruffnote.com/attachments/24927'
+      ImgURLs.button_paly_nomusic
+      ImgURLs.button_paly_nomusic_hover
     ]
     tooltip = '無音ですが終了直前にはとぽっぽが鳴ります'
     $nomusic = $('#start_buttons #nomusic')
 
     $nomusic.html('<h5>無音</h5>')
-    $nomusic.append(Util.tag('img', 'https://ruffnote.com/attachments/24981', {class: 'jacket'}))
+    $nomusic.append(Util.tag('img', ImgURLs.track_nomusic, {class: 'jacket'}))
     Util.addButton('start', $nomusic, text, start_nomusic)
 
   else
@@ -279,8 +278,8 @@ initSearch = () ->
 
 @initSelectRooms = () ->
   console.log 'initSelectRooms'
-  $('#rooms_title').html(Util.tag('h2', Util.tag('img', 'https://ruffnote.com/attachments/24968'), {class: 'status'}))
-  $('#select_rooms').html(Util.tag('h2', Util.tag('img', 'https://ruffnote.com/attachments/24967'), {class: 'status'}))
+  $('#rooms_title').html(Util.tag('h2', Util.tag('img', ImgURLs.title_comments), {class: 'status'}))
+  $('#select_rooms').html(Util.tag('h2', Util.tag('img', ImgURLs.title_rooms), {class: 'status'}))
   $('#select_rooms').append(Util.tag('div', null, {class: 'imgs'}))
 
   $.get('/api/comments', (rooms) ->
@@ -290,7 +289,7 @@ initSearch = () ->
 
     $(document).on('click', ".room_link", (e) ->
       e.preventDefault()
-      
+
       $self = $(this)
       vals = $self.attr('data-values').split(':')
       initRoom(vals[0], vals[1])
@@ -342,7 +341,7 @@ start_random = () ->
     location.hash = "soundcloud:#{sc_id}"
     window.play("soundcloud:#{sc_id}")
   )
-  
+
 window.start_hash = (key = null) ->
   console.log 'start_hash'
   unless key
@@ -382,7 +381,7 @@ start = () ->
 
   @env.is_doing = true
   @syncWorkload('doing')
-  
+
   if @env.is_kakuhen
     initComments()
     @initSelectRooms()
@@ -483,7 +482,7 @@ postWithToken = (url, key, is_again=false) ->
     token = prompt('TogglのAPI keyを入力してください', '')
     localStorage[key] = token
   $.post(url, {token: token}).done((data)->
-    console.log(data) 
+    console.log(data)
   ).fail(()->
     postWithToken(url, key, true)
   )
@@ -537,7 +536,7 @@ complete = () ->
   $complete = $('#complete')
   $complete.html('')
   initComments()
-  
+
   # nortification
   if $('#show-nortification').prop('checked')
     new Notify('作業時間が終了しました！', {
@@ -598,7 +597,7 @@ window.initWantedly = () ->
   <div class="wantedly-visit-button" data-visit-button-id="#{company[3]}" data-width="270" data-height="60"></div>
   </div>
   """)
- 
+
   d = document
   s = 'script'
   id = 'wantedly-visit-buttons-wjs'
@@ -628,15 +627,15 @@ window.initRoom = (id = '1', title='いつもの部屋') ->
     $room.attr('id', "room_#{id}")
     $createComment = $('<input />').addClass('create_comment').attr('placeholder', "「#{title}」に書き込む")
     $room.append($createComment)
-  
+
     $comments = $("<table></table>").addClass('table comments')
     $room.append($comments)
 
     $('#rooms').append($room)
-    
+
     search_id = if id == '1' then null else id
     limit = if id == '1' then 100 else 10000
-      
+
     $.get("/api/comments?parent_id=#{id}", (comments) ->
       $("#room_#{id} .create_comment").keypress((e) ->
         if e.which == 13 #enter
@@ -649,14 +648,14 @@ window.initRoom = (id = '1', title='いつもの部屋') ->
 window.finish = () ->
   console.log 'finish'
   @syncWorkload('finish')
-  
+
   # nortification
   if $('#show-nortification').prop('checked')
     new Notify('休憩時間が終了しました！', {
       body: '245cloud'
       icon: '//placehold.jp/100x100.png'
     }).show()
-  
+
   if location.href.match(/auto_close=/)
     window.open(location, '_self', '')
     window.close()
@@ -666,11 +665,11 @@ window.finish = () ->
 window.createComment = (room_id) ->
   console.log 'createComment'
   $createComment = $("#room_#{room_id} .create_comment")
-  
+
   body = $createComment.val()
 
   $createComment.val('')
-  
+
   return if body.length < 1
 
   params = {body: body}
@@ -735,8 +734,8 @@ window.addChatting = (workload) ->
   if w.music_key
     title = w.title
     href = "##{workload.music_key}"
-    fixed = "<a href=\"#{href}\" class='fixed_start'><img src='https://ruffnote.com/attachments/24921' /></a>"
-    jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" class=\"jacket\" />' else "<img src=\"#{@nomusic_url}\" class=\"jacket\" />"}"
+    fixed = "<a href=\"#{href}\" class='fixed_start'><img src='#{ImgURLs.button_play_this}' /></a>"
+    jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" class=\"jacket\" />' else "<img src=\"#{ImgURLs.track_noimage_hover}\" class=\"jacket\" />"}"
     jacket = "<a href='/musics/#{w.music_key.replace(':', '/')}'>#{jacket}</a>" if w.music_key
     provider = w.music_key.split(':')[0]
     icon_name = if provider == 'nicovideo' then 'television'  else provider
@@ -744,8 +743,8 @@ window.addChatting = (workload) ->
       provider_icon = "<i class='fa fa-#{icon_name}' title='#{provider}' data-toggle='tooltip' data-placement='top' ></i>"
   else
     title = '無音'
-    fixed = "<a href=\"#\" class='fixed_start'><img src='https://ruffnote.com/attachments/24926' /></a>"
-    jacket = "<img src=\"https://ruffnote.com/attachments/24981\" class='jacket'/>"
+    fixed = "<a href=\"#\" class='fixed_start'><img src='#{ImgURLs.button_paly_nomusic}' /></a>"
+    jacket = "<img src='#{ImgURLs.track_nomusic}' class='jacket'/>"
   user_img = "<a href='/#{workload.facebook_id}'><img class='icon img-thumbnail' src='https://graph.facebook.com/#{workload.facebook_id}/picture?height=40&width=40' /></a>"
 
   $item = Util.tag('div', null, {class: 'inborder'})
@@ -769,7 +768,7 @@ window.addChatting = (workload) ->
    <div>#{fixed}</div>
   """)
   $('[data-toggle="tooltip"]').tooltip()
-  
+
   # dones以外は１ユーザにつき１つしか表示しないので他の$itemは消去
   unless dom == '#done'
     $("#chatting .facebook_#{facebook_id}").remove()
@@ -874,7 +873,7 @@ searchMusics = () ->
   localStorage['search_music_title'] = q
 
   $tracks = $('#tracks')
- 
+
 
   Youtube.search(q, $tracks, initTooltip)
   Nicovideo.search(q, $tracks, initTooltip)
@@ -917,7 +916,7 @@ start_unless_doing = ()->
     start_hash()
 
 artworkUrlWithNoimage = (artwork_url) ->
-  artwork_url || @nomusic_url
+  artwork_url || ImgURLs.track_noimage_hover
 
 initYou = () ->
   console.log 'initYou'
@@ -939,8 +938,8 @@ initYou = () ->
 
 renderFixedStart = (title, icon) ->
   fixed_text = [
-    'https://ruffnote.com/attachments/24921'
-    'https://ruffnote.com/attachments/24922'
+    ImgURLs.button_play_this
+    ImgURLs.button_play_this_hover
   ]
   $('#fixedstart').append(txt)
   txt = "<h5 title='#{title}' data-toggle='tooltip' data-placement='top'>#{title}</h5>"

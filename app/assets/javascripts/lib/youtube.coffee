@@ -20,8 +20,8 @@ class @Youtube
       )
 
   fixed_text = [
-    'https://ruffnote.com/attachments/24921'
-    'https://ruffnote.com/attachments/24922'
+    ImgURLs.button_play_this
+    ImgURLs.button_play_this_hover
   ]
 
   getOffset = (all_count) ->
@@ -92,7 +92,7 @@ class @Youtube
             thumbnail_url = artworkUrlWithNoimage(track['thumbnails']['default']['url'])
             #duration = youtubeDurationSec(data) * 1000
             duration = 1000
-            artwork_url = "https://ruffnote.com/attachments/24162"
+            artwork_url = ImgURLs.track_noimage
             if thumbnail_url
               artwork_url = thumbnail_url
             href = "youtube:#{id}"
