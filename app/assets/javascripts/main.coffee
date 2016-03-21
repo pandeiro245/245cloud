@@ -48,22 +48,18 @@ $ ->
 
 initTopbar = () ->
   $topbar = $('#topbar')
-  $topbar.css("position", 'fixed')
-  $topbar.css('z-index', '99999')
-  $topbar.css('background-color', 'white')
-  $topbar.css('top', '0')
-  $topbar.css('left', '20px')
-  $topbar.css('padding', '10px')
-  $topbar.css('border-radius', '0px 0px 10px 10px')
-  $topbar.css('border', '4px solid #eadba0')
-  $topbar.css('border-top', '0')
   $topbar_content = $("""
     <div>
       <a href='#'><i class='fa fa-arrow-up'></i></a>
-       | <a href='#search_title'><i class='fa fa-search'></i></a>
+       | <a href='#search_title' class='to_search'><i class='fa fa-search'></i></a>
     </div>
   """)
   $topbar.html($topbar_content)
+  $(document).on('click', '.to_search', (e) ->
+    e.preventDefault() # location.hash の変更を阻止
+    $('#search input').focus()
+  )
+
 initSettings = () ->
   for key of window.settings
     continue unless key in ['alert', 'timecrowd']
