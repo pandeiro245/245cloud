@@ -734,7 +734,7 @@ window.addChatting = (workload) ->
   if w.music_key
     title = w.title
     href = "##{workload.music_key}"
-    fixed = "<a href=\"#{href}\" class='fixed_start'><img src='#{ImgURLs.button_play_this_history}' /></a>"
+    fixed = "<a href=\"#{href}\" class='fixed_start'><img src='#{ImgURLs.button_play_this}' /></a>"
     jacket = "#{if w.artwork_url then '<img src=\"' + w.artwork_url + '\" class=\"jacket\" />' else "<img src=\"#{ImgURLs.track_noimage_hover}\" class=\"jacket\" />"}"
     jacket = "<a href='/musics/#{w.music_key.replace(':', '/')}'>#{jacket}</a>" if w.music_key
     provider = w.music_key.split(':')[0]
@@ -938,7 +938,7 @@ initYou = () ->
 
 renderFixedStart = (title, icon) ->
   fixed_text = [
-    ImgURLs.button_play_this_history
+    ImgURLs.button_play_this
     ImgURLs.button_play_this_hover
   ]
   $('#fixedstart').append(txt)

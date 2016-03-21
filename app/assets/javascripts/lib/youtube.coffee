@@ -20,7 +20,7 @@ class @Youtube
       )
 
   fixed_text = [
-    ImgURLs.button_play_this_history
+    ImgURLs.button_play_this
     ImgURLs.button_play_this_hover
   ]
 

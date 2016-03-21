@@ -13,7 +13,7 @@ class Util
           <div class='track_item-thumb'>
             <img src=\"#{artwork_url}\" width='100px'/>
           </div>
-          <a href=\"##{button_url}\" class='fixed_start'><img src='#{ImgURLs.button_play_this_result}' /></a>
+          <a href=\"##{button_url}\" class='fixed_start'><img src='#{ImgURLs.button_play_this}' /></a>
           <!--<a href=\"#\" class='add_playlist btn btn-default'>追加</a>-->
         </div>
       </div>
