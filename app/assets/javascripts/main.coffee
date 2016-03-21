@@ -5,6 +5,7 @@ $ ->
   $.post('/api/access_logs', {url: location.href})
   return unless $('#nc').length
   scaffolds = Util.scaffolds('''
+  topbar:init&stay&topbar
   header:no_row&stay news otukare:hidden&stay
   ad:stay contents:stay
   settings:init
@@ -45,6 +46,19 @@ $ ->
   initNortification() if location.href.match(/notification=/)
   initFixedStart()
 
+initTopbar = () ->
+  $topbar = $('#topbar')
+  $topbar.css("position", 'fixed')
+  $topbar.css('z-index', '99999')
+  $topbar.css('background-color', 'white')
+  $topbar.css('top', '0')
+  $topbar.css('left', '20px')
+  $topbar.css('padding', '10px')
+  $topbar.css('border-radius', '0px 0px 10px 10px')
+  $topbar.css('border', '4px solid #eadba0')
+  $topbar.css('border-top', '0')
+  $a = $("<div><a href='#'><i class='fa fa-arrow-up'></i></a>|<a href='#search_title'><i class='fa fa-search'></i></a></div>")
+  $topbar.html($a)
 initSettings = () ->
   for key of window.settings
     continue unless key in ['alert', 'timecrowd']
@@ -363,6 +377,7 @@ createWorkload = (params = {}, callback) ->
   )
 
 start = () ->
+  $('#topbar').hide()
   console.log 'start'
   if window.settings.timecrowd
     task_id = $("input[name='timecrowd_task']:checked").val()
@@ -498,6 +513,7 @@ complete = () ->
   window.is_hato = false
   Util.countDown(@env.chattime*60*1000, 'finish')
   $('#header').hide()
+  $('#topbar').hide()
   $('#otukare').fadeIn()
   $("#playing").fadeOut()
   $("#search").fadeOut()
