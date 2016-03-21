@@ -18,9 +18,5 @@ class FacebookController < ApplicationController
     #redirect_to '/parse_login'
     redirect_to '/'
   end
-
-  def parse_login
-    @login = current_user.new_parsecom_password
-  end
 end
 
