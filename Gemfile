@@ -34,6 +34,8 @@ group 'test' do
   gem 'capybara-webkit'
   gem 'launchy'
   gem 'factory_girl_rails'
+  gem 'poltergeist'
+  gem 'database_rewinder'
 end
 gem 'haml'
 gem 'dotenv-rails'
