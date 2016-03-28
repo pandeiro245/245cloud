@@ -32,6 +32,7 @@ end
 group 'test' do
   gem 'rspec-rails'
   gem 'capybara-webkit'
+  gem 'launchy'
 end
 gem 'haml'
 gem 'dotenv-rails'
