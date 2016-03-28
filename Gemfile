@@ -27,9 +27,11 @@ group :development do
   gem 'chatwork'
   gem 'capistrano-pending', require: false
   gem 'gem_reloader'
-  gem 'rspec-rails', '~> 2.14.0'
 end
 
+group 'test' do
+  gem 'rspec-rails', '~> 2.14.0'
+end
 gem 'haml'
 gem 'dotenv-rails'
 gem 'settingslogic'
