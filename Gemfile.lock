@@ -133,6 +133,8 @@ GEM
       request_store (~> 1.0)
     erubis (2.7.0)
     execjs (2.5.2)
+    factory_girl (4.5.0)
+      activesupport (>= 3.0.0)
     faraday (0.9.1)
       multipart-post (>= 1.2, < 3)
     font-awesome-sass (4.5.0)
@@ -338,6 +340,7 @@ DEPENDENCIES
   devise
   dotenv-rails
   draper
+  factory_girl
   font-awesome-sass
   gem_reloader
   haml
