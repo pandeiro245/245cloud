@@ -7,6 +7,20 @@ require 'spec_helper'
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 
+require 'capybara/poltergeist'
+
+# Setting for capybara
+Capybara.register_driver :poltergeist do |app|
+  Capybara::Poltergeist::Driver.new(app, { js_errors: false })
+end
+
+Capybara::Webkit.configure do |config|
+  config.skip_image_loading
+  config.allow_url("*")
+end
+Capybara.javascript_driver = :poltergeist
+Capybara.default_driver = :webkit
+
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
 # run as spec files by default. This means that files in spec/support that end
@@ -27,6 +41,14 @@ require 'rspec/rails'
 ActiveRecord::Migration.maintain_test_schema!
 
 RSpec.configure do |config|
+
+  config.before :suite do
+    DatabaseRewinder.clean_all
+  end
+  config.after :each do
+    DatabaseRewinder.clean
+  end
+
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
 
