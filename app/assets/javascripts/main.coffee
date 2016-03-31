@@ -133,6 +133,11 @@ initTwitter = () ->
       <a href='/auth/twitter'>ログイン</a>
       """)
     else
+        $('#twitter table').append("""
+          <tr>  
+          <td colspan='2'>やる気が出るかもしれない言葉</td>
+          </tr>  
+        """)
       for tweet in data
         $('#twitter table').append("""
           <tr>  
