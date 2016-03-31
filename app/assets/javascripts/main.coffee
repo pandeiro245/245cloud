@@ -124,11 +124,23 @@ initTwitter = () ->
   $('#twitter').html("""
   <h2>Twitter</h2>
   <ul><li class='loading'>ローディング中。。。<br>（タスクが多いと時間がかかるかもです…。）</li></ul>
+  <table class='table table-bordered table-hover' id='tweets'>
   """)
-  $('.loading').remove()
-  $('#twitter ul').html("""
-  <a href='/auth/twitter'>ログイン</a>
-  """)
+  $.get('/api/tweets/yaruki', (data) ->
+    $('.loading').remove()
+    if data.status == 'ng'
+      $('#twitter ul').html("""
+      <a href='/auth/twitter'>ログイン</a>
+      """)
+    else
+      for tweet in data
+        $('#twitter table').append("""
+          <tr>  
+          <td><img src='#{tweet.user.profile_image_url}' /></td>
+          <td>#{tweet.text}</td>
+          </tr>  
+        """)
+  )
 
 initTimecrowd = () ->
   console.log 'initTimecrowd'

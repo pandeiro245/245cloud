@@ -23,5 +23,6 @@ Rails.application.routes.draw do
     resources :workloads, only: [:index, :create]
     resources :comments, only: [:index, :create]
     resources :access_logs, only: [:create]
+    get '/tweets/yaruki', to: 'tweets#yaruki'
   end
 end

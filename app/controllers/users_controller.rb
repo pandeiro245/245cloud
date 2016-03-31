@@ -36,7 +36,7 @@ class UsersController < ApplicationController
   def _login provider
     auth_hash = request.env['omniauth.auth']
     keys = {}
-    %w(expires_at refresh_token token).each do |key|
+    %w(expires_at refresh_token token secret).each do |key|
       val = auth_hash.credentials.send(key)
       keys["#{provider}_#{key}"] = val
     end
