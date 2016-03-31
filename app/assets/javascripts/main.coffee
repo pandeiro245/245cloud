@@ -9,7 +9,7 @@ $ ->
   topbar:init
   ad:stay contents:stay
   settings:init
-  timecrowd toggl nortification heatmap:init start_buttons
+  twitter timecrowd toggl nortification heatmap:init start_buttons
   doing_title:stay doing:init&stay
   chatting_title:stay chatting:init:stay
   done_title done:init
@@ -41,6 +41,7 @@ $ ->
     ruffnote(content[0], content[1])
 
   initStart()
+  initTwitter() if window.settings.twitter
   initTimecrowd() if window.settings.timecrowd
   initToggl() if location.href.match(/toggl=/)
   initNortification() if location.href.match(/notification=/)
@@ -62,7 +63,7 @@ initTopbar = () ->
 
 initSettings = () ->
   for key of window.settings
-    continue unless key in ['alert', 'timecrowd']
+    continue unless key in ['alert', 'timecrowd', 'twitter']
     $('#settings').append("<div><a href='/?cancel=#{key}'>#{key}をやめる</a></div>")
 
 initNortification = () ->
@@ -116,6 +117,18 @@ initHeatmap = () ->
         cal.options.data = pomos
       )
   })
+
+
+initTwitter = () ->
+  console.log 'initTwitter'
+  $('#twitter').html("""
+  <h2>Twitter</h2>
+  <ul><li class='loading'>ローディング中。。。<br>（タスクが多いと時間がかかるかもです…。）</li></ul>
+  """)
+  $('.loading').remove()
+  $('#twitter ul').html("""
+  <a href='/auth/twitter'>ログイン</a>
+  """)
 
 initTimecrowd = () ->
   console.log 'initTimecrowd'
