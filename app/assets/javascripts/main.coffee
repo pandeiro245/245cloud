@@ -64,7 +64,7 @@ initTopbar = () ->
 initSettings = () ->
   for key of window.settings
     continue unless key in ['alert', 'timecrowd', 'twitter']
-    $('#settings').append("<div><a href='/?cancel=#{key}'>#{key}をやめる</a></div>")
+    $('#settings').append("<div><a href='/?cancel=#{key}' class='btn btn-warning'>#{key}をやめる</a></div>")
 
 initNortification = () ->
   if window.facebook_id
@@ -124,7 +124,7 @@ initTwitter = () ->
   $('#twitter').html("""
   <h2>Twitter</h2>
   <ul><li class='loading'>ローディング中。。。<br>（タスクが多いと時間がかかるかもです…。）</li></ul>
-  <table class='table table-bordered table-hover' id='tweets'>
+  <table class='table table-bordered table-hover' id='tweets' style='margin-bottom: 20px;'>
   """)
   $.get('/api/tweets/yaruki', (data) ->
     $('.loading').remove()
