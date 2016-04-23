@@ -12,6 +12,7 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require underscore-min
 //= require lib/config
 //= require images
 //= require d3.min
