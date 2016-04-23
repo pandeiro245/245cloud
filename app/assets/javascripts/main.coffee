@@ -843,7 +843,7 @@ initService = ($dom, url) ->
     <img class='icon' src='#{img}' />
     </a>
     <td>
-    <td>#{Util.parseHttp(c.body)}</td>
+    <td>#{Util.parseHttp(_.escape(c.body))}</td>
     <td>#{Util.hourMin(c.created_at)}</td>
     </tr>
     """
