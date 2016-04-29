@@ -426,7 +426,7 @@ window.start_nomusic = () ->
   createWorkload({}, start)
 
 createWorkload = (params = {}, callback) ->
-  params.issue_id = window.issue_id
+  params.issue_id = $("input[name='timecrowd_task']:checked").attr('data-issue-id')
   $.post('/api/workloads', params, (workload) ->
     window.workload = workload
     callback()
