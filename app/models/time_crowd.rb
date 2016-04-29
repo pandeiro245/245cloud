@@ -68,6 +68,10 @@ class TimeCrowd
     access_token.get("/api/v1/teams/#{team_id}/tasks?state=#{state}").parsed
   end
 
+  def team_task(team_id, task_id)
+    access_token.get("/api/v1/teams/#{team_id}/tasks/#{task_id}").parsed
+  end
+
   def update_team_task(team_id, id, body)
     access_token.put("/api/v1/teams/#{team_id}/tasks/#{id}", body: body).parsed
   end
