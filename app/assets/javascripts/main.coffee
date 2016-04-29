@@ -156,6 +156,12 @@ initTimecrowd = () ->
   <div style='display:none; width:100%; text-align:center;'><input placeholder='タスク追加' style='width:100%;' id='timecrowd_add_task'/></div>
   <ul><li class='loading'>ローディング中。。。<br>（タスクが多いと時間がかかるかもです…。）</li></ul>
   <table class='table table-bordered table-hover' id='timecrowd_select_task'>
+  <tr>
+  <th>&nbsp;</th>
+  <th>タスク名</th>
+  <th>実績</th>
+  <th>見積</th>
+  <th>締切</th>
   </table>
   """)
   $('#timecrowd_add_task').keypress((e) ->
@@ -181,7 +187,7 @@ initTimecrowd = () ->
         task_ids[entry.task.id] = true
         $('#timecrowd table').append(entryItem(entry))
 
-      $('#timecrowd table tr:first input').attr('checked', 'checked')
+      $('#timecrowd table tr:nth-child(2) input').attr('checked', 'checked')
       $('#timecrowd table tr').click((e) ->
         console.log e
         $('#timecrowd table input').removeAttr('checked')
@@ -203,7 +209,9 @@ entryItem = (entry) ->
       <label>
       <td><input type='radio' name='timecrowd_task' data-team-id='#{entry.task.team_id}' value='#{entry.task.id}' /></td>
       <td><a href='#{entry.task.url}' target='_blank'>#{entry.task.title}</a></td>
-      <td>#{Util.time(entry.started_at)}</td>
+      <td>#{entry.worked || 0}</td>
+      <td>#{entry.estimated || '未設定'}</td>
+      <td>#{entry.deadline || '未設定'}</td>
       </label>
     </tr>
   """

@@ -5,6 +5,16 @@ class TimecrowdController < ApplicationController
       recents = t.recents
       cookies['timecrowd'] = t.refresh_keys_json
       recents['status'] = 'ok'
+      recents[:entries].map do |entry|
+        issue = Issue.find_or_create_by(
+          key: "timecrowd:#{entry['task']['team_id']}-#{entry['task']['id']}",
+          user: current_user
+        )
+        entry[:estimated] = issue.estimated
+        entry[:worked] = issue.worked
+        entry[:deadline] = issue.deadline.to_s
+        entry
+      end
     rescue
       recents = {status: 'ng'}
     end

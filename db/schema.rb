@@ -29,6 +29,28 @@ ActiveRecord::Schema.define(version: 20160611175825) do
     t.integer  "num",         limit: 4,     default: 0
   end
 
+  create_table "issue_workloads", force: :cascade do |t|
+    t.integer  "issue_id",    limit: 4
+    t.integer  "workload_id", limit: 4
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
+  end
+
+  add_index "issue_workloads", ["issue_id"], name: "index_issue_workloads_on_issue_id", using: :btree
+  add_index "issue_workloads", ["workload_id"], name: "index_issue_workloads_on_workload_id", using: :btree
+
+  create_table "issues", force: :cascade do |t|
+    t.integer  "user_id",    limit: 4
+    t.string   "key",        limit: 255
+    t.integer  "estimated",  limit: 4
+    t.integer  "worked",     limit: 4
+    t.datetime "deadline"
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
+
+  add_index "issues", ["user_id"], name: "index_issues_on_user_id", using: :btree
+
   create_table "musics", force: :cascade do |t|
     t.string   "title",       limit: 255
     t.string   "key",         limit: 255
@@ -68,4 +90,7 @@ ActiveRecord::Schema.define(version: 20160611175825) do
     t.integer  "weekly_number", limit: 4
   end
 
+  add_foreign_key "issue_workloads", "issues"
+  add_foreign_key "issue_workloads", "workloads"
+  add_foreign_key "issues", "users"
 end

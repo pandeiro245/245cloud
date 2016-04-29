@@ -11,7 +11,8 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'unicorn'
 
 group :development, :test do
-  gem 'mysql2'
+  #gem 'mysql2'
+  gem 'mysql2', '~> 0.3.20'
   gem 'byebug'
   gem 'web-console', '~> 2.0'
   gem 'spring'
@@ -37,6 +38,7 @@ gem 'font-awesome-sass'
 
 gem 'parse_resource', git: 'git@github.com:pandeiro245/parse_resource.git', branch: 'issue-1'
 
+gem 'omniauth-oauth2', '1.3.1'
 gem 'omniauth-facebook'
 gem 'omniauth-timecrowd', github: 'pandeiro245/omniauth-timecrowd', branch: 'issue-1'
 gem 'omniauth-twitter'
