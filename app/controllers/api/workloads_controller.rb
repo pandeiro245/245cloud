@@ -30,14 +30,16 @@ class Api::WorkloadsController < ApplicationController
       title: params['title'].presence,
       artwork_url: params['artwork_url'].presence
     )
-    issue = Issue.find(params['issue_id'])
-    raise unless issue.user.id == current_user.id
-    IssueWorkload.create!(
-      issue: issue,
-      workload: workload
-    )
-    issue.worked = IssueWorkload.where(issue: issue).count
-    issue.save!
+    if params['issue_id']
+      issue = Issue.find(params['issue_id'])
+      raise unless issue.user.id == current_user.id
+      IssueWorkload.create!(
+        issue: issue,
+        workload: workload
+      )
+      issue.worked = issue.workloads.select{|w| w.is_done}.count
+      issue.save!
+    end
     render json: workload.decorate
   end
 end
