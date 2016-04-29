@@ -207,7 +207,7 @@ entryItem = (entry) ->
   """
     <tr>
       <label>
-      <td><input type='radio' name='timecrowd_task' data-team-id='#{entry.task.team_id}' value='#{entry.task.id}' /></td>
+      <td><input type='radio' name='timecrowd_task' data-team-id='#{entry.task.team_id}' value='#{entry.task.id}' data-issue-id='#{entry.issue_id}' /></td>
       <td><a href='#{entry.task.url}' target='_blank'>#{entry.task.title}</a></td>
       <td>#{entry.worked || 0}</td>
       <td>#{entry.estimated || '未設定'}</td>
@@ -426,6 +426,7 @@ window.start_nomusic = () ->
   createWorkload({}, start)
 
 createWorkload = (params = {}, callback) ->
+  params.issue_id = window.issue_id
   $.post('/api/workloads', params, (workload) ->
     window.workload = workload
     callback()

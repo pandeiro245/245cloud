@@ -13,6 +13,7 @@ class TimecrowdController < ApplicationController
         entry[:estimated] = issue.estimated
         entry[:worked] = issue.worked
         entry[:deadline] = issue.deadline.to_s
+        entry[:issue_id] = issue.id
         entry
       end
     rescue

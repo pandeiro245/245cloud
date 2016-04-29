@@ -4,6 +4,8 @@ class Workload < ActiveRecord::Base
 
   before_save :set_music_key
 
+  has_one :issue, through: :issue_workload
+
   scope :created, -> {
     order('workloads.created_at DESC')
   }

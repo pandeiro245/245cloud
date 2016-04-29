@@ -29,8 +29,13 @@ class Api::WorkloadsController < ApplicationController
       music_key: params['music_key'].presence,
       title: params['title'].presence,
       artwork_url: params['artwork_url'].presence
-    ).decorate
-    render json: workload
+    )
+    issue = Issue.find(params['issue_id'])
+    IssueWorkload.create!(
+      issue: issue,
+      workload: workload
+    )
+    render json: workload.decorate
   end
 end
 
