@@ -65,7 +65,7 @@ class Util
     if mtime < 24 * 3600 * 1000
       @duration(mtime)
     else
-      time = new Date(mtime * 1000)
+      time = new Date(mtime)
       month = time.getMonth() + 1
       day  = time.getDate()
       hour = time.getHours()

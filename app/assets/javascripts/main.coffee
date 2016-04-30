@@ -1,6 +1,42 @@
 @env.is_doing = false
 @env.is_done = false
 
+window.plans = []
+now = (new Date()).getTime()
+for i in [
+  "2016-1-30-13-30-4" # dummy
+  "2016-4-30-13-30-4"
+  "2016-4-30-16-00-4"
+  "2016-5-1-8-30-4"
+  "2016-5-1-11-00-4"
+  "2016-5-1-17-00-4"
+  "2016-5-2-11-00-4"
+  "2016-5-3-12-30-4"
+  "2016-5-3-15-00-4"
+  "2016-5-3-17-30-4"
+  "2016-5-4-12-30-4"
+  "2016-5-4-15-00-4"
+  "2016-5-4-17-30-4"
+]
+  a = i.split('-')
+  time = new Date(a[0], parseInt(a[1])-1, a[2], a[3], a[4])
+  pomo = parseInt(a[5])
+  start_time = time.getTime()
+  pomo_duration = 30 * 60 * 1000
+  end_time   = start_time + pomo * pomo_duration
+  if now < end_time
+    for i in [1..pomo]
+      if i == 1
+        mtime = time.getTime()
+      else
+        mtime += pomo_duration
+      if now < mtime
+        window.plans.push({
+          start_mtime: mtime
+          end_mtime: mtime + pomo_duration
+          is_charged: false
+        })
+
 $ ->
   $.post('/api/access_logs', {url: location.href})
   return unless $('#nc').length
@@ -16,7 +52,6 @@ $ ->
   done_title done:init
   you_title you:init calendar_title calendar
   search_title search:init
-  ranking_title ranking:init
   8tracks_title 8tracks:init
   kimiya_title kimiya:init
   naotake_title naotake:init
@@ -182,12 +217,18 @@ initTimecrowd = () ->
         working_entry = data.entries[0]
         task_ids[working_entry.task.id] = true
         $('#timecrowd table').append(entryItem(working_entry))
-      remain = 4 * 3 * 2
-      console.log 'data', data
+      remain = 0
+      start_time = null
+      end_time = null
       for entry in data.entries
         if entry.deadline
+          data = getRemain(entry.deadline)
+          console.log data
+          remain += data.remain
           entry.remain = remain
           remain -= (entry.estimated - entry.worked)
+          entry.start = Util.time(data.start_mtime)
+          entry.end = Util.time(data.end_mtime)
         continue if working_entry && entry.id == working_entry.id
         continue if task_ids[entry.task.id]
         task_ids[entry.task.id] = true
@@ -201,6 +242,25 @@ initTimecrowd = () ->
       )
   )
 
+getRemain = (deadline) ->
+  remain = 0
+  start_mtime = null
+  end_mtime   = null
+  now = (new Date()).getTime()
+
+  for plan in window.plans
+    continue if plan.is_charged
+    if plan.end_mtime <= deadline
+      remain += 1
+      plan.is_charged = true
+      start_mtime ||= plan.start_mtime
+      end_mtime = plan.end_mtime
+  {
+    remain: remain
+    start_mtime: start_mtime
+    end_mtime: end_mtime
+  }
+
 initToggl = () ->
   console.log 'initToggl'
   $('#toggl').html("""
@@ -213,7 +273,7 @@ entryItem = (entry) ->
   deadline = "<span class=\"realtime\" data-countdown=\"#{entry.deadline}\"></span>"
   deadline = '未設定' if entry.deadline == 0
   if entry.remain
-    remain = "#{entry.remain}<br> (4/30 11:30)<br>↓<br> #{entry.remain - (entry.estimated - entry.worked)}<br>(5/1 16:00)"
+    remain = "#{entry.remain}<br> (#{entry.start})<br>↓<br> #{entry.remain - (entry.estimated - entry.worked)}<br>(#{entry.end})"
   else
     remain = '未設定'
 
@@ -781,37 +841,6 @@ window.createComment = (room_id) ->
     window.addComment(room_id, comment)
     syncComment(room_id, comment)
   )
-
-initRanking = () ->
-  return
-
-  now = new Date()
-  year = now.getYear() + 1900 - 1
-  month = now.getMonth()
-  day = now.getDate()
-
-  to_now = new Date(now.getTime() + 24*3600*1000)
-  to_year = to_now.getYear() + 1900 - 1
-  to_month = to_now.getMonth()
-  to_day = to_now.getDate()
-
-  $('#ranking_title').html("<h2>#{year}年#{month+1}月#{day}日に再生された曲</h2>")
-  cond = [
-    ["is_done", true]
-    ["createdAt", '>', new Date(year, month, day)]
-    ["createdAt", '<', new Date(to_year, to_month, to_day)]
-  ]
-  titles = {}
-  ParseParse.where("Workload", cond, (workloads) ->
-    return unless workloads.length > 0
-    for workload in workloads
-      continue unless workload.attributes.user
-      continue unless workload.attributes.title
-      continue if titles[workload.attributes.title]
-      titles[workload.attributes.title] = true
-      disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.number}/#{workload.weekly_number}）"
-      @addWorkload("#ranking", workload, disp)
-  , null, 24 *500)
 
 window.addDoing = (workload) ->
   $("#doing_title").show()
