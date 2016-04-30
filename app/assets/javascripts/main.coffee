@@ -162,6 +162,7 @@ initTimecrowd = () ->
   <th>実績</th>
   <th>見積</th>
   <th>締切</th>
+  <th>残数</th>
   </table>
   """)
   $('#timecrowd_add_task').keypress((e) ->
@@ -181,7 +182,12 @@ initTimecrowd = () ->
         working_entry = data.entries[0]
         task_ids[working_entry.task.id] = true
         $('#timecrowd table').append(entryItem(working_entry))
+      remain = 4 * 3 * 2
+      console.log 'data', data
       for entry in data.entries
+        if entry.deadline
+          entry.remain = remain
+          remain -= (entry.estimated - entry.worked)
         continue if working_entry && entry.id == working_entry.id
         continue if task_ids[entry.task.id]
         task_ids[entry.task.id] = true
@@ -204,6 +210,13 @@ initToggl = () ->
   ruffnote(24715, 'toggl_description')
 
 entryItem = (entry) ->
+  deadline = "<span class=\"realtime\" data-countdown=\"#{entry.deadline}\"></span>"
+  deadline = '未設定' if entry.deadline == 0
+  if entry.remain
+    remain = "#{entry.remain}<br> (4/30 11:30)<br>↓<br> #{entry.remain - (entry.estimated - entry.worked)}<br>(5/1 16:00)"
+  else
+    remain = '未設定'
+
   """
     <tr>
       <label>
@@ -211,11 +224,11 @@ entryItem = (entry) ->
       <td><a href='#{entry.task.url}' target='_blank'>#{entry.task.title}</a></td>
       <td>#{entry.worked || 0}</td>
       <td>#{entry.estimated || '未設定'}</td>
-      <td>#{entry.deadline || '未設定'}</td>
+      <td>#{deadline}</td>
+      <td>#{remain}</td>
       </label>
     </tr>
   """
-
 
 init8tracks = () ->
   ruffnote(17763, '8tracks_title')

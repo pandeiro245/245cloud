@@ -2,7 +2,7 @@ class TimecrowdController < ApplicationController
   def recents
     begin
       t = TimeCrowd.new(cookies['timecrowd'])
-      if true
+      if false
         recents = t.recents
         cookies['timecrowd'] = t.refresh_keys_json
         recents['status'] = 'ok'
@@ -13,19 +13,19 @@ class TimecrowdController < ApplicationController
           )
           entry[:estimated] = issue.estimated
           entry[:worked] = issue.worked
-          entry[:deadline] = issue.deadline.to_s
+          entry[:deadline] = issue.deadline.to_i*1000
           entry[:issue_id] = issue.id
           entry
         end
       else
-        entries = Issue.actives(current_user).map do |issue|
+        entries = Issue.actives(current_user).order('deadline IS NULL').order(:deadline).map do |issue|
           keys = issue.key.gsub(/^timecrowd:/,'').split('-')
           team_id = keys[0]
           task_id = keys[1]
           entry = {task: t.team_task(team_id, task_id)}
           entry[:estimated] = issue.estimated
           entry[:worked] = issue.worked
-          entry[:deadline] = issue.deadline.to_s
+          entry[:deadline] = issue.deadline.to_i*1000
           entry[:issue_id] = issue.id
           entry
         end

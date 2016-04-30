@@ -47,20 +47,23 @@ class Util
         res.stays.push(id)
     res
 
+  @duration: (mtime) ->
+    time = parseInt(mtime/1000)
+    min = parseInt(time/60)
+    if min > 60
+      hour = parseInt(min/60)
+      min = min - hour*60
+      sec = time - hour*60*60 - min*60
+    else
+      sec = time - min*60
+    if hour
+      "#{Util.zero(hour)}:#{Util.zero(min)}:#{Util.zero(sec)}"
+    else
+      "#{Util.zero(min)}:#{Util.zero(sec)}"
+
   @time: (mtime) ->
     if mtime < 24 * 3600 * 1000
-      time = parseInt(mtime/1000)
-      min = parseInt(time/60)
-      if min > 60
-        hour = parseInt(min/60)
-        min = min - hour*60
-        sec = time - hour*60*60 - min*60
-      else
-        sec = time - min*60
-      if hour
-        "#{Util.zero(hour)}:#{Util.zero(min)}:#{Util.zero(sec)}"
-      else
-        "#{Util.zero(min)}:#{Util.zero(sec)}"
+      @duration(mtime)
     else
       time = new Date(mtime * 1000)
       month = time.getMonth() + 1
@@ -110,7 +113,7 @@ class Util
         audio.play()
         window.is_hato = true
 
-      remain2 = Util.time(remain)
+      remain2 = Util.duration(remain)
       if dom = params.dom
         $dom = $(dom)
       else
@@ -134,7 +137,7 @@ class Util
     for dom in $('.realtime')
       $dom = $(dom)
       diff = parseInt($dom.attr('data-countdown')) - (new Date()).getTime()
-      disp = Util.time(diff)
+      disp = Util.duration(diff)
       $(dom).html(disp)
 
   @parseHttp: (str) ->
