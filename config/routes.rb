@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   get '/timecrowd/recents' => 'timecrowd#recents'
   post '/timecrowd/start' => 'timecrowd#start'
   post '/timecrowd/stop' => 'timecrowd#stop'
+  post '/timecrowd/tasks' => 'timecrowd#create'
 
   post '/toggl/start' => 'toggl#start'
   post '/toggl/stop'  => 'toggl#stop'

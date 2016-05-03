@@ -207,11 +207,12 @@ initTimecrowd = () ->
   $.get('/timecrowd/recents', (data) ->
     console.log 'GET /timecrowd/recents', data
     $('.loading').remove()
-    if data.status == 'ng'
+    if data.status.match('ng')
       $('#timecrowd ul').html("""
       <a href='/auth/timecrowd'>ログイン</a>
       """)
     else
+      $('#timecrowd table').append("<tr><td colspan='6'><input id='add_timecrowd_task' style='width:100%;' placeholder='新規タスク名' /></td></tr>")
       task_ids = {}
       if data.is_working
         working_entry = data.entries[0]
@@ -239,6 +240,11 @@ initTimecrowd = () ->
         console.log e
         $('#timecrowd table input').removeAttr('checked')
         $(e.currentTarget).find('input').prop('checked', true)
+      )
+      $(document).on('keydown', '#add_timecrowd_task', (e)->
+        if e.keyCode == 13 # enter
+          title = $('#add_timecrowd_task').val()
+          $.post('/timecrowd/tasks', {title: title})
       )
   )
 

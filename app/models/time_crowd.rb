@@ -56,6 +56,12 @@ class TimeCrowd
     access_token.post(url).parsed
   end
 
+  def start(team_id, title) 
+    url = "/api/v1/teams/#{team_id}/tasks"
+    params = {task: {title: title}}
+    access_token.post(url, params).parsed
+  end
+
   def teams(state = nil)
     access_token.get("/api/v1/teams?state=#{state}").parsed
   end

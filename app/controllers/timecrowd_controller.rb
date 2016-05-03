@@ -40,6 +40,18 @@ class TimecrowdController < ApplicationController
     render json: recents
   end
 
+  def create
+    begin
+      t = TimeCrowd.new(cookies['timecrowd'])
+      t.create(params[:team_id], params[:title])
+      cookies['timecrowd'] = t.refresh_keys_json
+      res = {status: 'ok'}
+    rescue
+      res = {status: 'ng'}
+    end
+    render json: res
+  end
+
   def stop
     begin
       t = TimeCrowd.new(cookies['timecrowd'])
