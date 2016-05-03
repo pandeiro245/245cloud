@@ -11,12 +11,30 @@ for i in [
   "2016-5-1-11-00-4"
   "2016-5-1-17-00-4"
   "2016-5-2-11-00-4"
+  "2016-5-3-10-00-4"
   "2016-5-3-12-30-4"
   "2016-5-3-15-00-4"
   "2016-5-3-17-30-4"
+  "2016-5-3-20-00-4"
+  "2016-5-4-10-00-4"
   "2016-5-4-12-30-4"
   "2016-5-4-15-00-4"
   "2016-5-4-17-30-4"
+  "2016-5-5-19-30-4"
+  "2016-5-5-22-00-4"
+  "2016-5-6-11-30-4"
+  "2016-5-6-14-00-4"
+  "2016-5-6-16-30-4"
+  "2016-5-7-11-30-4"
+  "2016-5-7-14-00-4"
+  "2016-5-7-16-30-4"
+  "2016-5-7-19-00-4"
+  "2016-5-7-21-30-4"
+  "2016-5-8-10-00-4"
+  "2016-5-8-12-30-4"
+  "2016-5-8-15-00-4"
+  "2016-5-8-17-30-4"
+  "2016-5-8-20-00-4"
 ]
   a = i.split('-')
   time = new Date(a[0], parseInt(a[1])-1, a[2], a[3], a[4])
@@ -224,7 +242,6 @@ initTimecrowd = () ->
       for entry in data.entries
         if entry.deadline
           data = getRemain(entry.deadline)
-          console.log data
           remain += data.remain
           entry.remain = remain
           remain -= (entry.estimated - entry.worked)
@@ -234,17 +251,32 @@ initTimecrowd = () ->
         continue if task_ids[entry.task.id]
         task_ids[entry.task.id] = true
         $('#timecrowd table').append(entryItem(entry))
+      $('a.estimate').click((e) ->
+        e.preventDefault()
+        $self = $(this)
+        val = $self.html()
+        new_estimate = prompt('見積ポモ数編集', val)
+        $.ajax({
+          method: 'PUT', url: '/timecrowd/issues', data: "estimate=#{val}"
+        }
+        ).done(
+          $self.html(val)
+          location.reload()
+        )
+      )
 
       $('#timecrowd table tr:nth-child(2) input').attr('checked', 'checked')
       $('#timecrowd table tr').click((e) ->
-        console.log e
         $('#timecrowd table input').removeAttr('checked')
         $(e.currentTarget).find('input').prop('checked', true)
       )
       $(document).on('keydown', '#add_timecrowd_task', (e)->
         if e.keyCode == 13 # enter
           title = $('#add_timecrowd_task').val()
-          $.post('/timecrowd/tasks', {title: title})
+          $.post('/timecrowd/tasks', {title: title}, (res) ->
+            #$('#add_timecrowd_task').val('')
+            location.reload()
+          )
       )
   )
 
@@ -287,9 +319,9 @@ entryItem = (entry) ->
     <tr>
       <label>
       <td><input type='radio' name='timecrowd_task' data-team-id='#{entry.task.team_id}' value='#{entry.task.id}' data-issue-id='#{entry.issue_id}' /></td>
-      <td><a href='#{entry.task.url}' target='_blank'>#{entry.task.title}</a></td>
+      <td><a href='#{entry.task.html_url}' target='_blank'>#{entry.task.title}</a></td>
       <td>#{entry.worked || 0}</td>
-      <td>#{entry.estimated || '未設定'}</td>
+      <td><a href='#' class='estimate'>#{entry.estimated || '未設定'}</a></td>
       <td>#{deadline}</td>
       <td>#{remain}</td>
       </label>
