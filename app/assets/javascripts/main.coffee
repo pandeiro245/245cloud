@@ -255,6 +255,7 @@ initTimecrowd = () ->
         continue if task_ids[entry.task.id]
         task_ids[entry.task.id] = true
         $('#timecrowd table').append(entryItem(entry))
+      $('#timecrowd table tr:nth-child(3) input').attr('checked', 'checked')
       $('a.estimated').click((e) ->
         e.preventDefault()
         $self = $(this)
@@ -269,6 +270,28 @@ initTimecrowd = () ->
           $self.html(new_estimated)
           #location.reload()
         )
+      )
+
+      $('a.deadline').click((e) ->
+        e.preventDefault()
+        $self = $(this)
+        now = new Date()
+        new_mon = prompt('期限って何月？', now.getMonth()+1)
+        new_day = prompt('期限って何日？', now.getDate())
+        new_hour = prompt('期限って何時？', now.getHours())
+        if new_mon && new_day && new_hour
+          new_deadline = "2016-#{new_mon}-#{new_day} #{new_hour}:00:00"
+          id = $self.attr('data-issue-id')
+          $.ajax({
+            method: 'PUT',
+            url: "/timecrowd/issues/#{id}",
+            data: "deadline=#{new_deadline}"
+          }).done(
+            $self.html(new_deadline)
+            location.reload()
+          )
+        else
+          alert '正しく期限が入力されなかったので再編集を中止しました'
       )
 
       $('#timecrowd table tr:nth-child(2) input').attr('checked', 'checked')
@@ -321,15 +344,14 @@ entryItem = (entry) ->
     remain = "#{entry.remain}<br> (#{entry.start})<br>↓<br> #{entry.remain - (entry.estimated - entry.worked)}<br>(#{entry.end})"
   else
     remain = '未設定'
-
   """
     <tr>
       <label>
       <td><input type='radio' name='timecrowd_task' data-team-id='#{entry.task.team_id}' value='#{entry.task.id}' data-issue-id='#{entry.issue_id}' /></td>
-      <td><a href='#{entry.task.html_url}' target='_blank'>#{entry.task.title}</a></td>
+      <td><a href='https://timecrowd.net/teams/#{entry.task.team_id}/tasks/#{entry.task.id}/edit' target='_blank'>#{entry.task.title}</a></td>
       <td>#{entry.worked || 0}</td>
       <td><a href='#' data-issue-id='#{entry.issue_id}' class='estimated'>#{entry.estimated || '未設定'}</a></td>
-      <td>#{deadline}</td>
+      <td><a href='#' data-issue-id='#{entry.issue_id}' class='deadline'>#{deadline}</a></td>
       <td>#{remain}</td>
       </label>
     </tr>

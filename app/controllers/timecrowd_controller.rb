@@ -1,4 +1,8 @@
 class TimecrowdController < ApplicationController
+  def info
+    render text: TimeCrowd.new(cookies['timecrowd']).user_info['teams'].select{|t| t['is_personal'] == true}.first['id']
+  end
+
   def recents
     begin
       t = TimeCrowd.new(cookies['timecrowd'])
@@ -43,6 +47,7 @@ class TimecrowdController < ApplicationController
   def update
     issue = Issue.find(params[:id])
     issue.estimated = params[:estimated] if params[:estimated]
+    issue.deadline = params[:deadline] if params[:deadline]
     issue.save!
     render json: issue
   end
@@ -50,7 +55,8 @@ class TimecrowdController < ApplicationController
   def create
     begin
       t = TimeCrowd.new(cookies['timecrowd'])
-      team_id = params[:team_id] || 3
+      team_id = params[:team_id] ||
+      t.user_info['teams'].select{|t| t['is_personal'] == true}.first['id']
       now = Time.now
       deadline = now - (now.min * 60 + now.sec) + 1.day
       estimated = 8
