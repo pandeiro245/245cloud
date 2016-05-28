@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   post '/timecrowd/start' => 'timecrowd#start'
   post '/timecrowd/stop' => 'timecrowd#stop'
   post '/timecrowd/tasks' => 'timecrowd#create'
-  put '/timecrowd/issues' => 'timecrowd#update'
+  put '/timecrowd/issues/:id' => 'timecrowd#update'
 
   post '/toggl/start' => 'toggl#start'
   post '/toggl/stop'  => 'toggl#stop'

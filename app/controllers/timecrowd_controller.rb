@@ -41,14 +41,27 @@ class TimecrowdController < ApplicationController
   end
 
   def update
-    render json: params
+    issue = Issue.find(params[:id])
+    issue.estimated = params[:estimated] if params[:estimated]
+    issue.save!
+    render json: issue
   end
 
   def create
     begin
       t = TimeCrowd.new(cookies['timecrowd'])
       team_id = params[:team_id] || 3
-      t.create(team_id, params[:title])
+      now = Time.now
+      deadline = now - (now.min * 60 + now.sec) + 1.day
+      estimated = 8
+      t.create(
+        current_user,
+        team_id, 
+        params[:title], 
+        deadline,
+        estimated
+      )
+      raise deadline.inspect
       cookies['timecrowd'] = t.refresh_keys_json
       res = {status: 'ok'}
     rescue=>e

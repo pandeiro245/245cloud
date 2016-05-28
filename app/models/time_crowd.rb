@@ -56,11 +56,17 @@ class TimeCrowd
     access_token.post(url).parsed
   end
 
-  def create(team_id, title) 
+  def create(user, team_id, title, deadline=nil, estimated=8) 
+    deadline ||= Time.now
     url = "/api/v1/teams/#{team_id}/tasks"
     params = {body: {task: {title: title}}}
-    res= access_token.post(url, params).parsed
-    Issue.create!(user_id:1, key: "timecrowd:#{team_id}-#{res['id']}", estimated: 10, deadline: Time.local(2016,5,9,9))
+    res = access_token.post(url, params).parsed
+    Issue.create!(
+      user: user, 
+      key: "timecrowd:#{team_id}-#{res['id']}", 
+      estimated: estimated,
+      deadline: deadline
+    )
     res
   end
 
