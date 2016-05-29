@@ -4,7 +4,7 @@ class TimecrowdController < ApplicationController
   end
 
   def recents
-    #begin
+    begin
       t = TimeCrowd.new(cookies['timecrowd'])
       if false
         recents = t.recents
@@ -43,9 +43,9 @@ class TimecrowdController < ApplicationController
           entries: entries
         }
       end
-    #rescue=>e
-    #  recents = {status: "ng: #{e}"}
-    #end
+    rescue=>e
+      recents = {status: "ng: #{e}"}
+    end
     render json: recents
   end
 

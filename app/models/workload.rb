@@ -5,6 +5,7 @@ class Workload < ActiveRecord::Base
   before_save :set_music_key
 
   has_one :issue, through: :issue_workload
+  has_one :issue_workload
 
   scope :created, -> {
     order('workloads.created_at DESC')
@@ -72,6 +73,26 @@ class Workload < ActiveRecord::Base
     type ? public_send(type) : dones
   }
 
+  def self.create_with_issue! user, params
+    ActiveRecord::Base.transaction do
+      workload = Workload.create!(
+        facebook_id: user.facebook_id,
+        music_key: params['music_key'].presence,
+        title: params['title'].presence,
+        artwork_url: params['artwork_url'].presence
+      )
+      if params['issue_id']
+        issue = Issue.find(params['issue_id'])
+        raise unless issue.user.id == user.id
+        IssueWorkload.create!(
+          issue: issue,
+          workload: workload
+        )
+      end
+      workload
+    end
+  end
+
   def set_music_key
     return nil if self.music_key.nil?
     self.music_key = URI.decode(self.music_key)
@@ -84,6 +105,10 @@ class Workload < ActiveRecord::Base
       self.weekly_number = next_number(:weekly)
       self.is_done = true
       self.save!
+    end
+    if self.issue.present?
+      self.issue.worked = self.issue.workloads.dones.count
+      self.issue.save!
     end
     self
   end

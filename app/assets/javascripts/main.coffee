@@ -303,6 +303,7 @@ initTimecrowd = () ->
         if e.keyCode == 13 # enter
           title = $('#add_timecrowd_task').val()
           $.post('/timecrowd/tasks', {title: title}, (res) ->
+            console.log res
             #$('#add_timecrowd_task').val('')
             #location.reload()
           )

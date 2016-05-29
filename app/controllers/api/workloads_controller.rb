@@ -20,29 +20,14 @@ class Api::WorkloadsController < ApplicationController
   def complete # TODO: PUT update にする
     workload = Workload.his(
       current_user.facebook_id
-    ).created.first
-    if workload.issue
-      workload.issue.worked = issue.workloads.select{|w| w.is_done}.count
-      workload.issue.save!
-    end
-    render json: workload.to_done!.decorate
+    ).created.first.to_done!
+    render json: workload.decorate
   end
 
   def create
-    workload = Workload.create!(
-      facebook_id: current_user.facebook_id,
-      music_key: params['music_key'].presence,
-      title: params['title'].presence,
-      artwork_url: params['artwork_url'].presence
+    workload = Workload.create_with_issue!(
+      current_user, params
     )
-    if params['issue_id']
-      issue = Issue.find(params['issue_id'])
-      raise unless issue.user.id == current_user.id
-      IssueWorkload.create!(
-        issue: issue,
-        workload: workload
-      )
-    end
     render json: workload.decorate
   end
 end
