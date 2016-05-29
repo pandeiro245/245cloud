@@ -2,6 +2,8 @@
 @env.is_done = false
 
 window.plans = []
+window.remain = 0
+
 now = (new Date()).getTime()
 for i in [ # dummy
   "2016-5-8-17-30-4"
@@ -13,15 +15,16 @@ for i in [ # dummy
   "2016-5-29-14-00-4"
 ]
   a = i.split('-')
-  time = new Date(a[0], parseInt(a[1])-1, a[2], a[3], a[4])
+  start_time = new Date(a[0], parseInt(a[1])-1, a[2], a[3], a[4]).getTime()
   pomo = parseInt(a[5])
-  start_time = time.getTime()
   pomo_duration = 30 * 60 * 1000
   end_time   = start_time + pomo * pomo_duration
+
+  # 予定ポモを1ポモずつに分けてwindow.plansに入れる
   if now < end_time
     for i in [1..pomo]
       if i == 1
-        mtime = time.getTime()
+        mtime = start_time
       else
         mtime += pomo_duration
       if now < mtime
@@ -210,21 +213,19 @@ initTimecrowd = () ->
         working_entry = data.entries[0]
         task_ids[working_entry.task.id] = true
         $('#timecrowd table').append(entryItem(working_entry))
-      remain = 0
       start_time = null
       end_time = null
       for entry in data.entries
-        if entry.deadline
-          data = getRemain(entry.deadline)
-          remain += data.remain
-          entry.remain = remain
-          if entry.estimated > entry.worked
-            entry.remain -= (entry.estimated - entry.worked)
-          entry.start = Util.time(data.start_mtime)
-          entry.end = Util.time(data.end_mtime)
         continue if working_entry && entry.id == working_entry.id
         continue unless entry.task
         continue if task_ids[entry.task.id]
+        if entry.deadline
+          data = getRemain(entry.deadline)
+          if entry.estimated > entry.worked
+            window.remain -= (entry.estimated - entry.worked)
+          entry.remain = window.remain
+          entry.start = Util.time(data.start_mtime)
+          entry.end = Util.time(data.end_mtime)
         task_ids[entry.task.id] = true
         $('#timecrowd table').append(entryItem(entry))
       $('#timecrowd table tr:nth-child(3) input').attr('checked', 'checked')
@@ -283,7 +284,6 @@ initTimecrowd = () ->
   )
 
 getRemain = (deadline) ->
-  remain = 0
   start_mtime = null
   end_mtime   = null
   now = (new Date()).getTime()
@@ -291,12 +291,11 @@ getRemain = (deadline) ->
   for plan in window.plans
     continue if plan.is_charged
     if plan.end_mtime <= deadline
-      remain += 1
+      window.remain += 1
       plan.is_charged = true
       start_mtime ||= plan.start_mtime
       end_mtime = plan.end_mtime
   {
-    remain: remain
     start_mtime: start_mtime
     end_mtime: end_mtime
   }
