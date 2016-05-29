@@ -3,43 +3,14 @@
 
 window.plans = []
 now = (new Date()).getTime()
-for i in [
-  "2016-1-30-13-30-4" # dummy
-  "2016-4-30-13-30-4"
-  "2016-4-30-16-00-4"
-  "2016-5-1-8-30-4"
-  "2016-5-1-11-00-4"
-  "2016-5-1-17-00-4"
-  "2016-5-2-11-00-4"
-  "2016-5-3-10-00-4"
-  "2016-5-3-12-30-4"
-  "2016-5-3-15-00-4"
-  "2016-5-3-17-30-4"
-  "2016-5-3-20-00-4"
-  "2016-5-4-10-00-4"
-  "2016-5-4-12-30-4"
-  "2016-5-4-15-00-4"
-  "2016-5-4-17-30-4"
-  "2016-5-5-19-30-4"
-  "2016-5-5-22-00-4"
-  "2016-5-6-11-30-4"
-  "2016-5-6-14-00-4"
-  "2016-5-6-16-30-4"
-  "2016-5-7-11-30-4"
-  "2016-5-7-14-00-4"
-  "2016-5-7-16-30-4"
-  "2016-5-7-19-00-4"
-  "2016-5-7-21-30-4"
-  "2016-5-8-10-00-4"
-  "2016-5-8-12-30-4"
-  "2016-5-8-15-00-4"
+for i in [ # dummy
   "2016-5-8-17-30-4"
   "2016-5-8-20-00-4"
   "2016-5-28-13-00-4"
   "2016-5-28-15-30-4"
   "2016-5-29-09-30-3"
   "2016-5-29-12-00-3"
-  "2016-5-29-14-30-3"
+  "2016-5-29-14-00-4"
 ]
   a = i.split('-')
   time = new Date(a[0], parseInt(a[1])-1, a[2], a[3], a[4])
@@ -210,7 +181,7 @@ initTwitter = () ->
 initTimecrowd = () ->
   $('#timecrowd').html("""
   <h2>TimeCrowd</h2>
-  <div style='display:none; width:100%; text-align:center;'><input placeholder='タスク追加' style='width:100%;' id='timecrowd_add_task'/></div>
+  <div style='display:none; width:100%; text-align:center;'><input placeholder='タスク追加' style='width:100%;' id='timecrowd_edd_task'/></div>
   <ul><li class='loading'>ローディング中。。。<br>（タスクが多いと時間がかかるかもです…。）</li></ul>
   <table class='table table-bordered table-hover' id='timecrowd_select_task'>
   <tr>
@@ -247,7 +218,8 @@ initTimecrowd = () ->
           data = getRemain(entry.deadline)
           remain += data.remain
           entry.remain = remain
-          remain -= (entry.estimated - entry.worked)
+          if entry.estimated > entry.worked
+            entry.remain -= (entry.estimated - entry.worked)
           entry.start = Util.time(data.start_mtime)
           entry.end = Util.time(data.end_mtime)
         continue if working_entry && entry.id == working_entry.id
@@ -305,7 +277,7 @@ initTimecrowd = () ->
           $.post('/timecrowd/tasks', {title: title}, (res) ->
             console.log res
             #$('#add_timecrowd_task').val('')
-            #location.reload()
+            location.reload()
           )
       )
   )
@@ -340,7 +312,9 @@ entryItem = (entry) ->
   deadline = "<span class=\"realtime\" data-countdown=\"#{entry.deadline}\"></span>"
   deadline = '未設定' if entry.deadline == 0
   if entry.remain
-    remain = "#{entry.remain}<br> (#{entry.start})<br>↓<br> #{entry.remain - (entry.estimated - entry.worked)}<br>(#{entry.end})"
+    remain_before = entry.remain
+    remain_before += (entry.estimated - entry.worked) if entry.estimated > entry.worked
+    remain = "#{remain_before}<br> (#{entry.start})<br>↓<br> #{entry.remain}<br>(#{entry.end})"
   else
     remain = '未設定'
   """
