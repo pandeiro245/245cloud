@@ -37,8 +37,9 @@ for i in [
   "2016-5-8-20-00-4"
   "2016-5-28-13-00-4"
   "2016-5-28-15-30-4"
-  "2016-5-29-13-00-4"
-  "2016-5-29-15-30-4"
+  "2016-5-29-09-30-3"
+  "2016-5-29-12-00-3"
+  "2016-5-29-14-30-3"
 ]
   a = i.split('-')
   time = new Date(a[0], parseInt(a[1])-1, a[2], a[3], a[4])
@@ -207,7 +208,6 @@ initTwitter = () ->
   )
 
 initTimecrowd = () ->
-  console.log 'initTimecrowd'
   $('#timecrowd').html("""
   <h2>TimeCrowd</h2>
   <div style='display:none; width:100%; text-align:center;'><input placeholder='タスク追加' style='width:100%;' id='timecrowd_add_task'/></div>
@@ -227,7 +227,6 @@ initTimecrowd = () ->
       alert $('#timecrowd_add_task').val()
   )
   $.get('/timecrowd/recents', (data) ->
-    console.log 'GET /timecrowd/recents', data
     $('.loading').remove()
     if data.status.match('ng')
       $('#timecrowd ul').html("""
@@ -252,6 +251,7 @@ initTimecrowd = () ->
           entry.start = Util.time(data.start_mtime)
           entry.end = Util.time(data.end_mtime)
         continue if working_entry && entry.id == working_entry.id
+        continue unless entry.task
         continue if task_ids[entry.task.id]
         task_ids[entry.task.id] = true
         $('#timecrowd table').append(entryItem(entry))
@@ -303,9 +303,8 @@ initTimecrowd = () ->
         if e.keyCode == 13 # enter
           title = $('#add_timecrowd_task').val()
           $.post('/timecrowd/tasks', {title: title}, (res) ->
-            console.log res
             #$('#add_timecrowd_task').val('')
-            location.reload()
+            #location.reload()
           )
       )
   )
@@ -330,7 +329,6 @@ getRemain = (deadline) ->
   }
 
 initToggl = () ->
-  console.log 'initToggl'
   $('#toggl').html("""
   <h2>Toggl</h2>
   <div id='toggl_description'></div>
@@ -472,7 +470,6 @@ initSearch = () ->
   )
 
 window.initSelectRooms = () ->
-  console.log 'initSelectRooms'
   $('#rooms_title').html(Util.tag('h2', Util.tag('img', ImgURLs.title_comments), {class: 'status'}))
   $('#select_rooms').html(Util.tag('h2', Util.tag('img', ImgURLs.title_rooms), {class: 'status'}))
   $('#select_rooms').append(Util.tag('div', null, {class: 'imgs'}))
@@ -506,7 +503,6 @@ window.initSelectRooms = () ->
   )
 
 initChatting = () ->
-  console.log 'initChatting'
   ruffnote(22878, 'chatting_title')
   $("#chatting_title").hide()
 
@@ -519,7 +515,6 @@ initChatting = () ->
 
 
 initDoing = () ->
-  console.log 'initDoing'
   ruffnote(22877, 'doing_title')
   $("#doing_title").hide()
 
@@ -531,7 +526,6 @@ initDoing = () ->
   )
 
 initDone = () ->
-  console.log 'initDone'
   $.get('/api/workloads?type=dones', (workloads) ->
     ruffnote(17769, 'done_title')
     for workload in workloads
@@ -543,7 +537,6 @@ login = () ->
   location.href = '/auth/facebook'
 
 start_random = () ->
-  console.log 'start_random'
   ParseParse.all("Music", (musics) ->
     n = Math.floor(Math.random() * musics.length)
     sc_id = musics[n].attributes.sc_id
@@ -552,7 +545,6 @@ start_random = () ->
   )
 
 window.start_hash = (key = null) ->
-  console.log 'start_hash'
   unless key
     key = location.hash.replace(/#/, '')
 
@@ -562,7 +554,6 @@ window.start_hash = (key = null) ->
      start_nomusic()
 
 window.start_nomusic = () ->
-  console.log 'start_nomusic'
   createWorkload({}, start)
 
 createWorkload = (params = {}, callback) ->
@@ -574,7 +565,6 @@ createWorkload = (params = {}, callback) ->
 
 start = () ->
   $('#topbar').hide()
-  console.log 'start'
   if window.settings.timecrowd
     task_id = $("input[name='timecrowd_task']:checked").val()
     team_id = $("input[name='timecrowd_task']:checked").attr('data-team-id')
@@ -601,8 +591,6 @@ start = () ->
 
 window.youtubeDurationSec = (key)  ->
   duration = key['contentDetails']['duration'].replace(/^PT/, '').replace(/S$/, '')
-
-  console.log duration
   if duration.match(/H/)
     hour = parseInt(duration.split('H')[0])
     d2 = duration.split('H')[1]
@@ -615,7 +603,6 @@ window.youtubeDurationSec = (key)  ->
   parseInt(sec)
 
 window.play = (key) ->
-  console.log 'play', key
   params = {}
   id = key.split(':')[1]
   if key.match(/^soundcloud/)
@@ -668,7 +655,6 @@ window.play = (key) ->
     )
 
 window.play_repeat = (key, duration) ->
-  console.log 'play_repeat'
   return false if @env.is_done
   id = key.split(':')[1]
   if key.match(/^soundcloud/)
@@ -685,7 +671,6 @@ window.play_repeat = (key, duration) ->
 
 
 postWithToken = (url, key, is_again=false) ->
-  console.log 'is_again', is_again
   if is_again
     token = prompt('Toggl API keyが無効のようです。再度入力してください', '')
     localStorage[key] = token
@@ -837,10 +822,7 @@ window.initComments = () ->
   initRoom()
 
 window.initRoom = (id = '1', title='いつもの部屋') ->
-  console.log "initRoom: #{id}, #{title}"
-
   $(".room").hide()
-
   $room = $("#room_#{id}")
 
   if $room.length
@@ -873,7 +855,6 @@ window.initRoom = (id = '1', title='いつもの部屋') ->
     )
 
 window.finish = () ->
-  console.log 'finish'
   @syncWorkload('finish')
 
   # nortification
@@ -890,7 +871,6 @@ window.finish = () ->
     location.reload()
 
 window.createComment = (room_id) ->
-  console.log 'createComment'
   $createComment = $("#room_#{room_id} .create_comment")
 
   body = $createComment.val()
@@ -1032,7 +1012,6 @@ initService = ($dom, url) ->
 window.addComment = @addComment
 
 updateRoomCommentsCount = (room_id) ->
-  console.log "updateRoomCommentsCount room_id is #{room_id}"
   ParseParse.find('Room', room_id, (room) ->
     ParseParse.where('Comment', [['room_id', room_id]], (room, comments)->
       room.set('comments_count', comments.length)
@@ -1047,7 +1026,6 @@ updateRoomCommentsCount = (room_id) ->
   })
 
 syncComment = (room_id, comment, is_countup=false) ->
-  console.log 'syncComment'
   @socket.push({
     type: 'comment'
     comment: comment
@@ -1116,7 +1094,6 @@ artworkUrlWithNoimage = (artwork_url) ->
   artwork_url || ImgURLs.track_noimage_hover
 
 initYou = () ->
-  console.log 'initYou'
   return unless window.facebook_id
   if location.href.match(/best=/)
     $.get("/api/users/#{window.facebook_id}/workloads?best=1", (workloads) ->

@@ -4,7 +4,7 @@ class TimecrowdController < ApplicationController
   end
 
   def recents
-    begin
+    #begin
       t = TimeCrowd.new(cookies['timecrowd'])
       if false
         recents = t.recents
@@ -26,7 +26,12 @@ class TimecrowdController < ApplicationController
           keys = issue.key.gsub(/^timecrowd:/,'').split('-')
           team_id = keys[0]
           task_id = keys[1]
-          entry = {task: t.team_task(team_id, task_id)}
+          entry = {}
+          begin
+            task = t.team_task(team_id, task_id)
+            entry[:task] = task
+          rescue
+          end
           entry[:estimated] = issue.estimated
           entry[:worked] = issue.worked
           entry[:deadline] = issue.deadline.to_i*1000
@@ -38,9 +43,9 @@ class TimecrowdController < ApplicationController
           entries: entries
         }
       end
-    rescue=>e
-      recents = {status: "ng: #{e}"}
-    end
+    #rescue=>e
+    #  recents = {status: "ng: #{e}"}
+    #end
     render json: recents
   end
 
@@ -55,8 +60,7 @@ class TimecrowdController < ApplicationController
   def create
     begin
       t = TimeCrowd.new(cookies['timecrowd'])
-      team_id = params[:team_id] ||
-      t.user_info['teams'].select{|t| t['is_personal'] == true}.first['id']
+      team_id = params[:team_id] || t.user_info['teams'].select{|t| t['is_personal'] == true}.first['id']
       now = Time.now
       deadline = now - (now.min * 60 + now.sec) + 1.day
       estimated = 8
@@ -67,7 +71,6 @@ class TimecrowdController < ApplicationController
         deadline,
         estimated
       )
-      raise deadline.inspect
       cookies['timecrowd'] = t.refresh_keys_json
       res = {status: 'ok'}
     rescue=>e
