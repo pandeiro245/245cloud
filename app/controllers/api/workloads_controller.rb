@@ -18,9 +18,14 @@ class Api::WorkloadsController < ApplicationController
   end
 
   def complete # TODO: PUT update にする
-    render json: Workload.his(
+    workload = Workload.his(
       current_user.facebook_id
-    ).created.first.to_done!.decorate
+    ).created.first
+    if workload.issue
+      workload.issue.worked = issue.workloads.select{|w| w.is_done}.count
+      workload.issue.save!
+    end
+    render json: workload.to_done!.decorate
   end
 
   def create
@@ -37,8 +42,6 @@ class Api::WorkloadsController < ApplicationController
         issue: issue,
         workload: workload
       )
-      issue.worked = issue.workloads.select{|w| w.is_done}.count
-      issue.save!
     end
     render json: workload.decorate
   end
