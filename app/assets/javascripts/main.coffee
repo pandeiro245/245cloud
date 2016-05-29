@@ -4,36 +4,6 @@
 window.plans = []
 window.remain = 0
 
-now = (new Date()).getTime()
-for i in [ # dummy
-  "2016-5-8-17-30-4"
-  "2016-5-8-20-00-4"
-  "2016-5-28-13-00-4"
-  "2016-5-28-15-30-4"
-  "2016-5-29-09-30-3"
-  "2016-5-29-12-00-3"
-  "2016-5-29-14-00-4"
-]
-  a = i.split('-')
-  start_time = new Date(a[0], parseInt(a[1])-1, a[2], a[3], a[4]).getTime()
-  pomo = parseInt(a[5])
-  pomo_duration = 30 * 60 * 1000
-  end_time   = start_time + pomo * pomo_duration
-
-  # 予定ポモを1ポモずつに分けてwindow.plansに入れる
-  if now < end_time
-    for i in [1..pomo]
-      if i == 1
-        mtime = start_time
-      else
-        mtime += pomo_duration
-      if now < mtime
-        window.plans.push({
-          start_mtime: mtime
-          end_mtime: mtime + pomo_duration
-          is_charged: false
-        })
-
 $ ->
   $.post('/api/access_logs', {url: location.href})
   return unless $('#nc').length
@@ -151,7 +121,6 @@ initHeatmap = () ->
       )
   })
 
-
 initTwitter = () ->
   console.log 'initTwitter'
   $('#twitter').html("""
@@ -181,25 +150,64 @@ initTwitter = () ->
         """)
   )
 
+initPlans = (callback) ->
+  now = (new Date()).getTime()
+  url = localStorage.plans_url
+  if !url || url.length < 10
+    url = prompt('ポモ予定スプレッドシートのURL（例：https://docs.google.com/spreadsheets/d/1kqnCl-rIwBH2hbGL30aQQtfzKzoh3Fy_yA5bKFSWgEM/pubhtml）', '')
+    localStorage.plans_url = url
+  if !url || url.length < 10
+    alert 'ポモ予定スプレッドシートのURLが不正です'
+    return
+  key = url.split('#')[0].replace(/\/edit/,'').replace(/\/pubhtml\/?/,'').split('/').pop()
+  req = "https://spreadsheets.google.com/feeds/list/#{key}/od6/public/full?alt=json"
+
+  $.get(req, (data)->
+    for entry in data.feed.entry
+      mdy = entry['gsx$日付']['$t'].split('/')
+      start = entry['gsx$start時間']['$t'].split(':')
+      start_time = new Date(mdy[2], parseInt(mdy[0])-1, mdy[1], start[0], start[1]).getTime()
+      pomo = parseInt(entry['gsx$ポモ数']['$t'])
+      pomo_duration = 30 * 60 * 1000
+      end_time   = start_time + pomo * pomo_duration
+
+      # 予定ポモを1ポモずつに分けてwindow.plansに入れる
+      if now < end_time
+        for i in [1..pomo]
+          if i == 1
+            mtime = start_time
+          else
+            mtime += pomo_duration
+          if now < mtime
+            window.plans.push({
+              start_mtime: mtime
+              end_mtime: mtime + pomo_duration
+              is_charged: false
+            })
+  )
+  #.fail(
+  #  console.log '111'
+  #  if localStorage.plans_url
+  #    localStorage.removeItem('plans_url')
+  #    location.reload()
+  #)
+  callback()
+
 initTimecrowd = () ->
   $('#timecrowd').html("""
   <h2>TimeCrowd</h2>
   <div style='display:none; width:100%; text-align:center;'><input placeholder='タスク追加' style='width:100%;' id='timecrowd_edd_task'/></div>
   <ul><li class='loading'>ローディング中。。。<br>（タスクが多いと時間がかかるかもです…。）</li></ul>
   <table class='table table-bordered table-hover' id='timecrowd_select_task'>
-  <tr>
-  <th>&nbsp;</th>
-  <th>タスク名</th>
-  <th>実績</th>
-  <th>見積</th>
-  <th>締切</th>
-  <th>残数</th>
   </table>
   """)
   $('#timecrowd_add_task').keypress((e) ->
     if e.which == 13 #enter
       alert $('#timecrowd_add_task').val()
   )
+  initPlans(renderTimecrowd)
+
+renderTimecrowd = ()->
   $.get('/timecrowd/recents', (data) ->
     $('.loading').remove()
     if data.status.match('ng')
@@ -207,7 +215,17 @@ initTimecrowd = () ->
       <a href='/auth/timecrowd'>ログイン</a>
       """)
     else
-      $('#timecrowd table').append("<tr><td colspan='6'><input id='add_timecrowd_task' style='width:100%;' placeholder='新規タスク名' /></td></tr>")
+      $('#timecrowd table').append("""
+      <tr><td colspan='6'><input id='add_timecrowd_task' style='width:100%;' placeholder='新規タスク名' /></td></tr>
+      <tr>
+      <th>&nbsp;</th>
+      <th>タスク名</th>
+      <th>ポモ実績</th>
+      <th>ポモ見積</th>
+      <th>期限まで</th>
+      <th>ポモ残数</th>
+      </tr>
+      """)
       task_ids = {}
       if data.is_working
         working_entry = data.entries[0]
@@ -283,6 +301,7 @@ initTimecrowd = () ->
       )
   )
 
+# TODO window.remainを書き換えるので要リファクタリング
 getRemain = (deadline) ->
   start_mtime = null
   end_mtime   = null
@@ -313,7 +332,7 @@ entryItem = (entry) ->
   if entry.remain
     remain_before = entry.remain
     remain_before += (entry.estimated - entry.worked) if entry.estimated > entry.worked
-    remain = "#{remain_before}<br> (#{entry.start})<br>↓<br> #{entry.remain}<br>(#{entry.end})"
+    remain = "#{remain_before}ポモ<br> (#{entry.start})<br>↓<br> #{entry.remain}ポモ<br>(#{entry.end})"
   else
     remain = '未設定'
   """
@@ -321,8 +340,8 @@ entryItem = (entry) ->
       <label>
       <td><input type='radio' name='timecrowd_task' data-team-id='#{entry.task.team_id}' value='#{entry.task.id}' data-issue-id='#{entry.issue_id}' /></td>
       <td><a href='https://timecrowd.net/teams/#{entry.task.team_id}/tasks/#{entry.task.id}/edit' target='_blank'>#{entry.task.title}</a></td>
-      <td>#{entry.worked || 0}</td>
-      <td><a href='#' data-issue-id='#{entry.issue_id}' class='estimated'>#{entry.estimated || '未設定'}</a></td>
+      <td>#{entry.worked || 0}ポモ</td>
+      <td><a href='#' data-issue-id='#{entry.issue_id}' class='estimated'>#{"#{entry.estimated}ポモ" || '未設定'}</a></td>
       <td><a href='#' data-issue-id='#{entry.issue_id}' class='deadline'>#{deadline}</a></td>
       <td>#{remain}</td>
       </label>
