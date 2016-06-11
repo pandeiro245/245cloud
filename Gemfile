@@ -39,6 +39,8 @@ gem 'parse_resource', git: 'git@github.com:pandeiro245/parse_resource.git', bran
 
 gem 'omniauth-facebook'
 gem 'omniauth-timecrowd', github: 'pandeiro245/omniauth-timecrowd', branch: 'issue-1'
+gem 'omniauth-twitter'
+gem 'twitter'
 
 gem 'rb-readline'
 gem 'awesome_print'
@@ -49,3 +51,4 @@ gem 'activerecord-import'
 gem 'nico_search_snapshot'
 
 gem 'draper'
+

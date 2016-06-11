@@ -8,8 +8,9 @@ $ ->
   header:no_row&stay news otukare:hidden&stay
   topbar:init
   ad:stay contents:stay
+  twitter_home:stay
   settings:init
-  timecrowd toggl nortification heatmap:init start_buttons
+  twitter timecrowd toggl nortification heatmap:init start_buttons
   doing_title:stay doing:init&stay
   chatting_title:stay chatting:init:stay
   done_title done:init
@@ -41,6 +42,7 @@ $ ->
     ruffnote(content[0], content[1])
 
   initStart()
+  initTwitter() if window.settings.twitter
   initTimecrowd() if window.settings.timecrowd
   initToggl() if location.href.match(/toggl=/)
   initNortification() if location.href.match(/notification=/)
@@ -62,8 +64,8 @@ initTopbar = () ->
 
 initSettings = () ->
   for key of window.settings
-    continue unless key in ['alert', 'timecrowd']
-    $('#settings').append("<div><a href='/?cancel=#{key}'>#{key}をやめる</a></div>")
+    continue unless key in ['alert', 'timecrowd', 'twitter']
+    $('#settings').append("<div><a href='/?cancel=#{key}' class='btn btn-warning'>#{key}をやめる</a></div>")
 
 initNortification = () ->
   if window.facebook_id
@@ -116,6 +118,36 @@ initHeatmap = () ->
         cal.options.data = pomos
       )
   })
+
+
+initTwitter = () ->
+  console.log 'initTwitter'
+  $('#twitter').html("""
+  <h2>Twitter</h2>
+  <ul><li class='loading'>ローディング中。。。<br>（タスクが多いと時間がかかるかもです…。）</li></ul>
+  <table class='table table-bordered table-hover' id='tweets' style='margin-bottom: 20px;'>
+  """)
+  $.get('/api/tweets/yaruki', (data) ->
+    $('.loading').remove()
+    if data.status == 'ng'
+      $('#twitter ul').html("""
+      <a href='/auth/twitter'>ログイン</a>
+      """)
+    else
+        $('#twitter table').append("""
+          <tr>  
+          <td colspan='2'>やる気が出るかもしれない言葉</td>
+          </tr>  
+        """)
+      for tweet in data
+        console.log tweet
+        $('#twitter table').append("""
+          <tr>  
+          <td><a href='https://twitter.com/#{tweet.user.screen_name}/status/#{tweet.id_str}' target='_blank'><img src='#{tweet.user.profile_image_url}' /></a></td>
+          <td>#{tweet.text}</td>
+          </tr>  
+        """)
+  )
 
 initTimecrowd = () ->
   console.log 'initTimecrowd'
@@ -505,6 +537,19 @@ postWithToken = (url, key, is_again=false) ->
 
 complete = () ->
   console.log 'complete'
+
+  $.get('/api/tweets/home', (data) ->
+    $('#twitter_home').html('<table></table>')
+    for tweet in data
+      $('#twitter_home table').append("""
+        <tr>  
+        <td><a href='https://twitter.com/#{tweet.user.screen_name}' target='_blank'><img src='#{tweet.user.profile_image_url}' /></a></td>
+        <td>#{tweet.text}</td>
+        </tr>  
+      """)
+  )
+
+
   if window.settings.timecrowd
     $.post('/timecrowd/stop')
   if location.href.match(/toggl=/)
