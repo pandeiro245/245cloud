@@ -1,7 +1,11 @@
 class Api::TweetsController < ApplicationController
+  def home
+    @tweets = Tweet.home(cookies['twitter'])
+    render json: @tweets
+  end
+
   def yaruki
     begin
-      #@tweets = Tweet.home(cookies['twitter'])
       @tweets = Tweet.yaruki(cookies['twitter'])
       @tweets = [@tweets[(@tweets.length * rand).to_i]]
     rescue

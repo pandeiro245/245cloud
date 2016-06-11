@@ -24,5 +24,6 @@ Rails.application.routes.draw do
     resources :comments, only: [:index, :create]
     resources :access_logs, only: [:create]
     get '/tweets/yaruki', to: 'tweets#yaruki'
+    get '/tweets/home', to: 'tweets#home'
   end
 end

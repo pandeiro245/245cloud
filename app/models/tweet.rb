@@ -12,12 +12,13 @@ class Tweet
     #@client.search("kintone", result_type: "recent", lang: "ja")
   end
 
+  def self.home keys_json
+    self.client(keys_json).home_timeline
+  end
+
   def self.yaruki keys_json
     name = 'motivation_up8'
     self.client(keys_json).user_timeline(name)
   end
-
-  def self.home keys_json
-    self.client(keys_json).home_timeline
-  end
 end
+

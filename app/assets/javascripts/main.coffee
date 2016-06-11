@@ -8,6 +8,7 @@ $ ->
   header:no_row&stay news otukare:hidden&stay
   topbar:init
   ad:stay contents:stay
+  twitter_home:stay
   settings:init
   twitter timecrowd toggl nortification heatmap:init start_buttons
   doing_title:stay doing:init&stay
@@ -139,9 +140,10 @@ initTwitter = () ->
           </tr>  
         """)
       for tweet in data
+        console.log tweet
         $('#twitter table').append("""
           <tr>  
-          <td><img src='#{tweet.user.profile_image_url}' /></td>
+          <td><a href='https://twitter.com/#{tweet.user.screen_name}/status/#{tweet.id_str}' target='_blank'><img src='#{tweet.user.profile_image_url}' /></a></td>
           <td>#{tweet.text}</td>
           </tr>  
         """)
@@ -535,6 +537,19 @@ postWithToken = (url, key, is_again=false) ->
 
 complete = () ->
   console.log 'complete'
+
+  $.get('/api/tweets/home', (data) ->
+    $('#twitter_home').html('<table></table>')
+    for tweet in data
+      $('#twitter_home table').append("""
+        <tr>  
+        <td><a href='https://twitter.com/#{tweet.user.screen_name}' target='_blank'><img src='#{tweet.user.profile_image_url}' /></a></td>
+        <td>#{tweet.text}</td>
+        </tr>  
+      """)
+  )
+
+
   if window.settings.timecrowd
     $.post('/timecrowd/stop')
   if location.href.match(/toggl=/)
