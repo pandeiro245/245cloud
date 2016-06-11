@@ -10,13 +10,12 @@ class @Ruffnote
     $.getJSON(url, (data) ->
       content = data.content.replace(
         "http://ruffnote.com/?timecrowd=1",
-        "/?timecrowd=1",
-      )
-      content = data.content.replace(
+        "/?timecrowd=1"
+      ).replace(
         "http://ruffnote.com/?twitter=1",
-        "/?twitter=1",
+        "/?twitter=1"
       )
-    localStorage["ruffnote_#{name}"] = content
+      localStorage["ruffnote_#{name}"] = content
       $("##{name}").html(content)
       if is_calback?
         callback()
