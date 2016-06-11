@@ -323,16 +323,18 @@ initSearch = () ->
       searchMusics()
   )
 
-@initSelectRooms = () ->
+window.initSelectRooms = () ->
   console.log 'initSelectRooms'
   $('#rooms_title').html(Util.tag('h2', Util.tag('img', ImgURLs.title_comments), {class: 'status'}))
   $('#select_rooms').html(Util.tag('h2', Util.tag('img', ImgURLs.title_rooms), {class: 'status'}))
   $('#select_rooms').append(Util.tag('div', null, {class: 'imgs'}))
 
   $.get('/api/comments', (rooms) ->
+    html = ''
     for room in rooms
-      link = "<a style='margin: 5px;' href='#' class='room_link' data-values=\"#{room.id}:#{room.body}\">#{room.body}</a>"
-      $('#select_rooms').append(link)
+      html += "<a style='margin: 5px;' href='#' class='room_link' data-values=\"#{room.id}:#{room.body}\">#{room.body}(#{room.num})</a>"
+    html += "<a style='margin: 5px;' href='#' class='add_room'\">部屋追加</a>"
+    $('#select_rooms').html(html)
 
     $(document).on('click', ".room_link", (e) ->
       e.preventDefault()
@@ -340,6 +342,18 @@ initSearch = () ->
       $self = $(this)
       vals = $self.attr('data-values').split(':')
       initRoom(vals[0], vals[1])
+    )
+    $(document).on('click', ".add_room", (e) ->
+      e.preventDefault()
+
+      unless window.room_created
+        name = prompt('部屋の名前を入力してください（例：「サッカーについて語る部屋」）', '')
+      return if !name || name.length < 2
+      window.room_created = true
+      $.post('/api/comments', {body: name}, (comment) ->
+        $('.add_room').fadeOut()
+        window.initSelectRooms()
+      )
     )
   )
 
@@ -432,7 +446,7 @@ start = () ->
 
   if @env.is_kakuhen
     initComments()
-    @initSelectRooms()
+    window.initSelectRooms()
 
   Util.countDown(@env.pomotime*60*1000, complete)
 
@@ -537,18 +551,17 @@ postWithToken = (url, key, is_again=false) ->
 
 complete = () ->
   console.log 'complete'
-
-  $.get('/api/tweets/home', (data) ->
-    $('#twitter_home').html('<table></table>')
-    for tweet in data
-      $('#twitter_home table').append("""
-        <tr>  
-        <td><a href='https://twitter.com/#{tweet.user.screen_name}' target='_blank'><img src='#{tweet.user.profile_image_url}' /></a></td>
-        <td>#{tweet.text}</td>
-        </tr>  
-      """)
-  )
-
+  if window.settings.twitter
+    $.get('/api/tweets/home', (data) ->
+      $('#twitter_home').html('<table></table>')
+      for tweet in data
+        $('#twitter_home table').append("""
+          <tr>  
+          <td><a href='https://twitter.com/#{tweet.user.screen_name}' target='_blank'><img src='#{tweet.user.profile_image_url}' /></a></td>
+          <td><hr>#{tweet.text}</td>
+          </tr>  
+        """)
+    )
 
   if window.settings.timecrowd
     $.post('/timecrowd/stop')
@@ -566,7 +579,7 @@ complete = () ->
   $("#playing").html('') # for stopping
   initWantedly()
   unless @env.is_kakuhen
-    @initSelectRooms()
+    window.initSelectRooms()
 
   alert '24分間お疲れ様でした！5分間交換日記ができます☆' if window.settings.alert unless @env.is_done
 
@@ -701,7 +714,10 @@ window.initRoom = (id = '1', title='いつもの部屋') ->
     $.get("/api/comments?parent_id=#{id}", (comments) ->
       $("#room_#{id} .create_comment").keypress((e) ->
         if e.which == 13 #enter
-          window.createComment(id)
+          if parseInt(id) > 0
+            window.createComment(id)
+          else
+            initRoom(1)
       )
       for comment in comments
         window.addComment(id, comment)
@@ -876,6 +892,7 @@ initService = ($dom, url) ->
   $dom.append("<iframe src='#{url}' width='85%' height='900px'></iframe>")
 
 @addComment = (room_id, comment) ->
+  window.initSelectRooms()
   $comments = $("#room_#{room_id} .comments")
   c = comment
 
