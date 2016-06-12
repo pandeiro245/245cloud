@@ -13,6 +13,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require underscore-min
+//= require images
 //= require lib/config
 //= require lib/bootstrap.min.js
 //= require lib/eight_tracks.coffee
@@ -25,7 +26,6 @@
 //= require lib/util.coffee
 //= require lib/whatis.coffee
 //= require lib/youtube.coffee
-//= require images
 //= require d3.min
 //= require application.js
 //= require cal-heatmap.min.js
