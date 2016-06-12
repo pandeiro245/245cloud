@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-def brwoser_log
+def browser_log
   puts '--- error log ---'
    p page.driver.error_messages
   puts '--- console log ---'
@@ -21,6 +21,7 @@ feature 'TOPページ' do
   scenario 'トップページが表示する' do
     visit '/'
 
+    browser_log
     expect(page).to have_content '245cloudは24分間、自分の作業に集中'
     # Facebookログインボタン
     expect(page).to have_css("input[value='facebookログイン']")
