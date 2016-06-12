@@ -28,7 +28,7 @@ feature 'Facebookでログインする' do
     scenario js: true do
       visit '/'
       login(user)
-      page.save_screenshot 'screenshot.png'
+      page.save_screenshot 'tmp/screenshots/login_1.png'
       brwoser_log
       expect(page).to have_content 'Facebook'
     end
