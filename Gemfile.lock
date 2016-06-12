@@ -64,6 +64,7 @@ GEM
     bcrypt (3.1.10)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
+    buftok (0.2.0)
     builder (3.2.2)
     byebug (5.0.0)
       columnize (= 0.9.0)
@@ -132,6 +133,7 @@ GEM
       activemodel (>= 3.0)
       activesupport (>= 3.0)
       request_store (~> 1.0)
+    equalizer (0.0.10)
     erubis (2.7.0)
     eventmachine (1.0.8)
     execjs (2.5.2)
@@ -154,9 +156,15 @@ GEM
       tilt
     hashie (3.4.2)
     hitimes (1.2.2)
+    http (1.0.3)
+      addressable (~> 2.3)
+      http-cookie (~> 1.0)
+      http-form_data (~> 1.0.1)
+      http_parser.rb (~> 0.6.0)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
-    http_parser.rb (0.5.3)
+    http-form_data (1.0.1)
+    http_parser.rb (0.6.0)
     httpclient (2.7.1)
     i18n (0.7.0)
     jbuilder (2.3.1)
@@ -177,21 +185,25 @@ GEM
       nokogiri (>= 1.5.9)
     mail (2.6.3)
       mime-types (>= 1.16, < 3)
-    mime-types (2.99.1)
-    mini_portile2 (2.0.0)
-    minitest (5.8.4)
+    memoizable (0.4.2)
+      thread_safe (~> 0.3, >= 0.3.1)
+    mime-types (2.6.1)
+    mini_portile (0.6.2)
+    minitest (5.8.0)
     multi_json (1.11.2)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
     mysql2 (0.3.19)
+    naught (1.1.0)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (2.9.2)
     netrc (0.10.3)
     nico_search_snapshot (0.1.1)
       httpclient (>= 2.6.0)
-    nokogiri (1.6.7.2)
-      mini_portile2 (~> 2.0.0.rc2)
+    nokogiri (1.6.6.2)
+      mini_portile (~> 0.6.0)
+    oauth (0.5.1)
     oauth2 (1.0.0)
       faraday (>= 0.8, < 0.10)
       jwt (~> 1.0)
@@ -204,9 +216,15 @@ GEM
       rack (~> 1.0)
     omniauth-facebook (2.0.1)
       omniauth-oauth2 (~> 1.2)
+    omniauth-oauth (1.1.0)
+      oauth
+      omniauth (~> 1.0)
     omniauth-oauth2 (1.3.1)
       oauth2 (~> 1.0)
       omniauth (~> 1.2)
+    omniauth-twitter (1.2.1)
+      json (~> 1.3)
+      omniauth-oauth (~> 1.1)
     orm_adapter (0.5.0)
     poltergeist (1.1.0)
       capybara (~> 2.0, >= 2.0.1)
@@ -288,6 +306,7 @@ GEM
       json (~> 1.0)
       redis (~> 3.2, >= 3.2.1)
       redis-namespace (~> 1.5, >= 1.5.2)
+    simple_oauth (0.3.1)
     spring (1.3.6)
     sprockets (3.2.0)
       rack (~> 1.0)
@@ -311,6 +330,17 @@ GEM
       faraday
       logger
       oj
+    twitter (5.16.0)
+      addressable (~> 2.3)
+      buftok (~> 0.2.0)
+      equalizer (= 0.0.10)
+      faraday (~> 0.9.0)
+      http (~> 1.0)
+      http_parser.rb (~> 0.6.0)
+      json (~> 1.8)
+      memoizable (~> 0.4.0)
+      naught (~> 1.0)
+      simple_oauth (~> 0.3.0)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
     uglifier (2.7.1)
@@ -368,6 +398,7 @@ DEPENDENCIES
   nico_search_snapshot
   omniauth-facebook
   omniauth-timecrowd!
+  omniauth-twitter
   parse_resource!
   poltergeist
   rails (= 4.2.0)
@@ -379,6 +410,7 @@ DEPENDENCIES
   spring
   therubyracer
   togglv8
+  twitter
   uglifier (>= 1.3.0)
   unicorn
   web-console (~> 2.0)

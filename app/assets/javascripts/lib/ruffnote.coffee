@@ -8,8 +8,15 @@ class @Ruffnote
       is_callback = true
     url = "https://ruffnote.com/#{path}/download.json?callback=?"
     $.getJSON(url, (data) ->
-      localStorage["ruffnote_#{name}"] = data.content
-      $("##{name}").html(data.content)
+      content = data.content.replace(
+        "http://ruffnote.com/?timecrowd=1",
+        "/?timecrowd=1"
+      ).replace(
+        "http://ruffnote.com/?twitter=1",
+        "/?twitter=1"
+      )
+      localStorage["ruffnote_#{name}"] = content
+      $("##{name}").html(content)
       if is_calback?
         callback()
     )

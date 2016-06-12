@@ -1,7 +1,7 @@
 class WelcomeController < ApplicationController
   def index
     is_redirect = false
-    [:alert, :timecrowd].each do |sym|
+    [:alert, :timecrowd, :twitter].each do |sym|
       if params[sym]
         cookies[:settings] = Setting.set cookies, sym
         is_redirect = true

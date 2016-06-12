@@ -77,6 +77,6 @@ class @Soundcloud
           )
         callback() if callback
       else
-        $dom.append("<div>「#{q}」SoundCloudにはで24分前後の曲はまだ出てないようです...。他のキーワードで探してみてください！</div>")
+        $dom.append("<div>「#{keyword}」SoundCloudにはで24分前後の曲はまだ出てないようです...。他のキーワードで探してみてください！</div>")
     )
 
