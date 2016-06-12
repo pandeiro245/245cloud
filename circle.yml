@@ -2,8 +2,4 @@ machine:
   timezone:
     Asia/Tokyo
   ruby:
-    version: 2.1.6
-
-test:
-  post:
-    - bundle exec rspec
+    version: 2.2.5
