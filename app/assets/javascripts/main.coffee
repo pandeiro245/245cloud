@@ -336,6 +336,11 @@ initSearch = () ->
   </label>
   </div>
   """)
+
+  $(document).on('click', '#check_services input', (e) ->
+    searchMusics()
+  )
+
   $('#search').append('<div class="results"></div>')
 
   $('#search input').focus(() ->
