@@ -312,6 +312,31 @@ initSearch = () ->
 
   $('#search').append($track)
   $('#search').append($tracks)
+  $('#search').append("""
+ 
+  <div id='check_services'>
+  <label>
+  <i class="fa fa-youtube" title='YouTube' data-toggle='tooltip' data-placement='top' style='display: inline;'></i>
+  <input checked='checked' type='checkbox' style='display: inline;' id='search_yt'  />
+  </label>
+
+  <label>
+  <i class="fa fa-mixcloud" title='Mixcloud' data-toggle='tooltip' data-placement='top' style='display: inline;'></i>
+  <input checked='checked' type='checkbox' style='display: inline;' id='search_mc' />
+  </label>
+
+  <label>
+  <i class="fa fa-soundcloud" title='Soundcloud' data-toggle='tooltip' data-placement='top' style='display: inline;'></i>
+  <input checked='checked' type='checkbox' style='display: inline;' id='search_sc' />
+  </label>
+
+  <label>
+  <i class="fa fa-television" title='Nicovideo' data-toggle='tooltip' data-placement='top' style='display: inline;'></i>
+  <input checked='checked' type='checkbox' style='display: inline;' id='search_sm' />
+  </label>
+  </div>
+  """)
+  $('#search').append('<div class="results"></div>')
 
   $('#search input').focus(() ->
     $(this).select()
@@ -948,16 +973,20 @@ syncComment = (room_id, comment, is_countup=false) ->
 searchMusics = () ->
   q = $('#track').val()
   return if q.length < 1
-  $('#tracks').html('')
+
+  $tracks = $('#search .results')
+
+  $tracks.html('')
   localStorage['search_music_title'] = q
 
-  $tracks = $('#tracks')
-
-
-  Youtube.search(q, $tracks, initTooltip)
-  Nicovideo.search(q, $tracks, initTooltip)
-  Soundcloud.search(q, @env.sc_client_id, $tracks, initTooltip)
-  Mixcloud.search(q, $tracks, initTooltip)
+  if $("#search_yt").prop('checked')
+    Youtube.search(q, $tracks, initTooltip)
+  if $("#search_mc").prop('checked')
+    Mixcloud.search(q, $tracks, initTooltip)
+  if $("#search_sc").prop('checked')
+    Soundcloud.search(q, @env.sc_client_id, $tracks, initTooltip)
+  if $("#search_sm").prop('checked')
+    Nicovideo.search(q, $tracks, initTooltip)
   #EightTracks.search(q, $tracks)
 
 initTooltip = () ->
