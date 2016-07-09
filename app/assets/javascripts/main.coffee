@@ -306,37 +306,29 @@ initStart = () ->
 
 initSearch = () ->
   $track = $("<input />").attr('id', 'track').attr('placeholder', 'ここにアーティスト名や曲名を入れてね')
-  localStorage['search_music_title'] = '作業BGM' unless localStorage['search_music_title']
+  title = localStorage['search_music_title']
+  $track.val(title) if title
 
   $tracks = $("<div></div>").attr('id', 'tracks')
 
   $('#search').append($track)
   $('#search').append($tracks)
-  $('#search').append("""
+
+  services = '<div id=\'check_services\'>'
+  for key, val of {yt: 'youtube', mc: 'mixcloud', sc: 'soundcloud', sm: 'nicovideo'}
+    fa = val
+    fa = 'television' if key == 'sm'
+    checked = 'checked=\'checked\' '
+    checked = '' if localStorage["search_#{key}"]  == 'false'
+    services += """
+    <label>
+    <i class="fa fa-#{fa}" title='#{val}' data-toggle='tooltip' data-placement='top' style='display: inline;'></i>
+    <input #{checked}type='checkbox' style='display: inline;' id='search_#{key}'  />
+    </label>
+    """
+  services += '</div>'
+  $('#search').append(services)
  
-  <div id='check_services'>
-  <label>
-  <i class="fa fa-youtube" title='YouTube' data-toggle='tooltip' data-placement='top' style='display: inline;'></i>
-  <input checked='checked' type='checkbox' style='display: inline;' id='search_yt'  />
-  </label>
-
-  <label>
-  <i class="fa fa-mixcloud" title='Mixcloud' data-toggle='tooltip' data-placement='top' style='display: inline;'></i>
-  <input checked='checked' type='checkbox' style='display: inline;' id='search_mc' />
-  </label>
-
-  <label>
-  <i class="fa fa-soundcloud" title='Soundcloud' data-toggle='tooltip' data-placement='top' style='display: inline;'></i>
-  <input checked='checked' type='checkbox' style='display: inline;' id='search_sc' />
-  </label>
-
-  <label>
-  <i class="fa fa-television" title='Nicovideo' data-toggle='tooltip' data-placement='top' style='display: inline;'></i>
-  <input checked='checked' type='checkbox' style='display: inline;' id='search_sm' />
-  </label>
-  </div>
-  """)
-
   $(document).on('click', '#check_services input', (e) ->
     searchMusics()
   )
@@ -977,20 +969,35 @@ syncComment = (room_id, comment, is_countup=false) ->
 
 searchMusics = () ->
   q = $('#track').val()
+
+
+
+  search_yt = $("#search_yt").prop('checked')
+  search_mc = $("#search_mc").prop('checked')
+  search_sc = $("#search_sc").prop('checked')
+  search_sm = $("#search_sm").prop('checked')
+
+  is_none = false
+  if !search_yt && !search_mc && !search_sc && !search_sm
+    is_none =true
+
+  localStorage['search_yt'] = search_yt
+  localStorage['search_mc'] = search_mc
+  localStorage['search_sc'] = search_sc
+  localStorage['search_sm'] = search_sm
+
   return if q.length < 1
-
   $tracks = $('#search .results')
-
   $tracks.html('')
   localStorage['search_music_title'] = q
 
-  if $("#search_yt").prop('checked')
+  if !is_none && search_yt
     Youtube.search(q, $tracks, initTooltip)
-  if $("#search_mc").prop('checked')
+  if !is_none && search_mc
     Mixcloud.search(q, $tracks, initTooltip)
-  if $("#search_sc").prop('checked')
+  if !is_none && search_sc
     Soundcloud.search(q, @env.sc_client_id, $tracks, initTooltip)
-  if $("#search_sm").prop('checked')
+  if !is_none && search_sm
     Nicovideo.search(q, $tracks, initTooltip)
   #EightTracks.search(q, $tracks)
 
