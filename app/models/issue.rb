@@ -4,6 +4,6 @@ class Issue < ActiveRecord::Base
   has_many :workloads, through: :issue_workloads
 
   scope :actives, -> (user)  {
-    where(user: user).where.not(estimated: nil).where("deadline > ?", Time.now)
+    where(user: user).where.not(estimated: nil).where("deadline > ?", Time.now).order('deadline IS NULL').order(:deadline)
   }
 end

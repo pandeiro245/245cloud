@@ -22,16 +22,13 @@ class TimecrowdController < ApplicationController
           entry
         end
       else
-        entries = Issue.actives(current_user).order('deadline IS NULL').order(:deadline).map do |issue|
+        entries = Issue.actives(current_user).map do |issue|
           keys = issue.key.gsub(/^timecrowd:/,'').split('-')
           team_id = keys[0]
           task_id = keys[1]
           entry = {}
-          begin
-            task = t.team_task(team_id, task_id)
-            entry[:task] = task
-          rescue
-          end
+          task = t.team_task(team_id, task_id)
+          entry[:task] = task
           entry[:estimated] = issue.estimated
           entry[:worked] = issue.worked
           entry[:deadline] = issue.deadline.to_i*1000
@@ -44,7 +41,7 @@ class TimecrowdController < ApplicationController
         }
       end
     rescue=>e
-      recents = {status: "ng: #{e}"}
+      recents = {status: "ng: #{e.inspect}"}
     end
     render json: recents
   end

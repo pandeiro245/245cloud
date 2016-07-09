@@ -234,6 +234,7 @@ renderTimecrowd = ()->
       start_time = null
       end_time = null
       for entry in data.entries
+        console.log working_entry
         continue if working_entry && entry.id == working_entry.id
         continue unless entry.task
         continue if task_ids[entry.task.id]
