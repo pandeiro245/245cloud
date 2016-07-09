@@ -1,7 +1,7 @@
 /.bundle
 /log/*
 /tmp
-
+/screenshot*.png
 /public/assets
 .DS_Store
 *~
