@@ -28,7 +28,6 @@ feature 'TOPページ' do
   end
 
   context 'ログイン前' do
-    skip 'Facebook処理をモックにしないといけないため実装できてない'
     let(:user) { FactoryGirl.create(:user) }
     scenario 'Facebookでログインする' do
       visit '/'

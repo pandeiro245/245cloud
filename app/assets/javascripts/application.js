@@ -18,7 +18,7 @@
 //= require lib/bootstrap.min.js
 //= require lib/eight_tracks.coffee
 //= require lib/mixcloud.coffee
-// require lib/mlkcca.coffee
+//= require lib/mlkcca.coffee
 //= require lib/nicovideo.coffee
 //= require lib/parse_parse.coffee
 //= require lib/ruffnote.coffee
