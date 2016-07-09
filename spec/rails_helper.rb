@@ -12,9 +12,9 @@ require 'capybara/poltergeist'
 # Setting for capybara
 Capybara.register_driver :poltergeist do |app|
   options = {
-      :js_errors => false,
+      :js_errors => true,
       :timeout => 120,
-      :debug => true,
+      :debug => false,
       :phantomjs_options => ['--load-images=no', '--disk-cache=false'],
       :inspector => true,
   }

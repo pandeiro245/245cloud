@@ -12,7 +12,7 @@ end
 def debug_network
   page.driver.network_traffic.each do |a|
     a.response_parts.uniq(&:url).each do |response|
-      puts "\n Responce URL #{response.url}: Status #{response.status}"
+      puts "Responce URL #{response.url}: Status #{response.status}"
     end
   end
 end
@@ -31,7 +31,6 @@ feature 'TOPページ' do
 
     scenario 'Facebookでログインする' do
       visit '/'
-      debug_network
       login(user)
       expect(page).to have_content 'おまかせ'
       expect(page).to have_content '無音'
