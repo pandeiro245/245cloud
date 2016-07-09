@@ -991,13 +991,13 @@ searchMusics = () ->
   $tracks.html('')
   localStorage['search_music_title'] = q
 
-  if !is_none && search_yt
+  if is_none || search_yt
     Youtube.search(q, $tracks, initTooltip)
-  if !is_none && search_mc
+  if is_none || search_mc
     Mixcloud.search(q, $tracks, initTooltip)
-  if !is_none && search_sc
+  if is_none || search_sc
     Soundcloud.search(q, @env.sc_client_id, $tracks, initTooltip)
-  if !is_none && search_sm
+  if is_none || search_sm
     Nicovideo.search(q, $tracks, initTooltip)
   #EightTracks.search(q, $tracks)
 
