@@ -306,12 +306,34 @@ initStart = () ->
 
 initSearch = () ->
   $track = $("<input />").attr('id', 'track').attr('placeholder', 'ここにアーティスト名や曲名を入れてね')
-  localStorage['search_music_title'] = '作業BGM' unless localStorage['search_music_title']
+  title = localStorage['search_music_title']
+  $track.val(title) if title
 
   $tracks = $("<div></div>").attr('id', 'tracks')
 
   $('#search').append($track)
   $('#search').append($tracks)
+
+  services = '<div id=\'check_services\'>'
+  for key, val of {yt: 'youtube', mc: 'mixcloud', sc: 'soundcloud', sm: 'nicovideo'}
+    fa = val
+    fa = 'television' if key == 'sm'
+    checked = 'checked=\'checked\' '
+    checked = '' if localStorage["search_#{key}"]  == 'false'
+    services += """
+    <label>
+    <i class="fa fa-#{fa}" title='#{val}' data-toggle='tooltip' data-placement='top' style='display: inline;'></i>
+    <input #{checked}type='checkbox' style='display: inline;' id='search_#{key}'  />
+    </label>
+    """
+  services += '</div>'
+  $('#search').append(services)
+ 
+  $(document).on('click', '#check_services input', (e) ->
+    searchMusics()
+  )
+
+  $('#search').append('<div class="results"></div>')
 
   $('#search input').focus(() ->
     $(this).select()
@@ -947,17 +969,36 @@ syncComment = (room_id, comment, is_countup=false) ->
 
 searchMusics = () ->
   q = $('#track').val()
+
+
+
+  search_yt = $("#search_yt").prop('checked')
+  search_mc = $("#search_mc").prop('checked')
+  search_sc = $("#search_sc").prop('checked')
+  search_sm = $("#search_sm").prop('checked')
+
+  is_none = false
+  if !search_yt && !search_mc && !search_sc && !search_sm
+    is_none =true
+
+  localStorage['search_yt'] = search_yt
+  localStorage['search_mc'] = search_mc
+  localStorage['search_sc'] = search_sc
+  localStorage['search_sm'] = search_sm
+
   return if q.length < 1
-  $('#tracks').html('')
+  $tracks = $('#search .results')
+  $tracks.html('')
   localStorage['search_music_title'] = q
 
-  $tracks = $('#tracks')
-
-
-  Youtube.search(q, $tracks, initTooltip)
-  Nicovideo.search(q, $tracks, initTooltip)
-  Soundcloud.search(q, @env.sc_client_id, $tracks, initTooltip)
-  Mixcloud.search(q, $tracks, initTooltip)
+  if is_none || search_yt
+    Youtube.search(q, $tracks, initTooltip)
+  if is_none || search_mc
+    Mixcloud.search(q, $tracks, initTooltip)
+  if is_none || search_sc
+    Soundcloud.search(q, @env.sc_client_id, $tracks, initTooltip)
+  if is_none || search_sm
+    Nicovideo.search(q, $tracks, initTooltip)
   #EightTracks.search(q, $tracks)
 
 initTooltip = () ->
