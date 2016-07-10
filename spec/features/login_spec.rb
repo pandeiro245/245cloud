@@ -26,7 +26,7 @@ feature 'TOPページ' do
       expect(page).to have_content '245cloudは24分間、自分の作業に集中'
       # Facebookログインボタン
       expect(page).to have_css("input[value='facebookログイン']")
-      page.save_screenshot 'screenshot0.png'
+      page.save_screenshot 'tmp/screenshots/login0.png'
     end
 
     scenario 'Facebookでログインする' do
@@ -34,7 +34,7 @@ feature 'TOPページ' do
       login(user)
       expect(page).to have_content 'おまかせ'
       expect(page).to have_content '無音'
-      page.save_screenshot 'screenshot1.png'
+      page.save_screenshot 'tmp/screenshots/login1.png'
     end
   end
 end
