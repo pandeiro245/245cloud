@@ -36,3 +36,4 @@
 //= require pitch.coffee
 //= require soundcloud_api.js
 //= require underscore-min.js
+//= require gakkison.coffee
