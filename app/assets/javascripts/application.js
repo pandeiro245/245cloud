@@ -37,3 +37,4 @@
 //= require soundcloud_api.js
 //= require underscore-min.js
 //= require gakkison.coffee
+//= require lib/leap-0.6.4.js
