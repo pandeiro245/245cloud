@@ -1,3 +1,5 @@
+window.is_active = false
+
 $ ->
   if $('#gakkison').length
     for key in ['bd', 'hh', 'sd']
@@ -14,29 +16,52 @@ $ ->
         audio.currentTime = 0
         audio.play()
       )
-  Leap.loop((frame) ->
+      $(document).on('keydown', (e) ->
+        window.is_active = true
+      )
+      $(document).on('keyup', (e) ->
+        window.is_active = false
+      )
 
-    now = new Date()
-    sec8 = now.getTime() % (8 * 1000)
-    msec = now.getMilliseconds()
-    sec = frame.hands.length
-    if sec && msec % (500 / 4 ) < 50 && sec8 < 6 * 1000
-      #audio = document.getElementById('sd')
-      #audio = document.getElementById('bd')
-      audio = document.getElementById('hh')
-      #console.log audio.currentTime
-      audio.pause()
-      audio.currentTime = 0
-      audio.play()
-    if sec && msec % 500 < 50
-      audio = document.getElementById('bd')
-      audio.pause()
-      audio.currentTime = 0
-      audio.play()
-    if sec && (msec + 500) % 1000 < 50 && sec8 < 6 * 1000
-      audio = document.getElementById('sd')
-      audio.pause()
-      audio.currentTime = 0
-      audio.play()
+  #Leap.loop({
+  #  hand: (hand)->
+  #    height = hand.screenPosition()[0]
+  #    console.log height
+  #    exec(height < 1000)
+  #}).use('screenPosition')
 
-  )
+  window.key()
+
+window.key = () ->
+  exec(window.is_active)
+  setTimeout("window.key()", 10)
+
+exec = (is_active=true) ->
+  now = new Date()
+  sec8 = now.getTime() % (8 * 1000)
+  msec = now.getMilliseconds()
+  if msec % (500 / 4 ) < 50 && sec8 < 6 * 1000
+    audio = document.getElementById('hh')
+    audio.pause()
+    audio.currentTime = 0
+    audio.play()
+  #if msec % 500 < 50
+  #  audio = document.getElementById('bd')
+  #  audio.pause()
+  #  audio.currentTime = 0
+  #  audio.play()
+
+  if location.hash == '#bd' && msec % 500 < 50 && is_active
+    audio = document.getElementById('bd')
+    audio.pause()
+    audio.currentTime = 0
+    audio.play()
+
+
+  if location.hash == '#sd' && msec % 500 < 50 && sec8 < 6 * 1000 && is_active
+    audio = document.getElementById('sd')
+    audio.pause()
+    audio.currentTime = 0
+    audio.play()
+
+
