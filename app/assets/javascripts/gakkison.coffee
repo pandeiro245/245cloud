@@ -40,7 +40,7 @@ exec = (is_active=true) ->
   now = new Date()
   sec8 = now.getTime() % (8 * 1000)
   msec = now.getMilliseconds()
-  if msec % (500 / 4 ) < 50 && sec8 < 6 * 1000
+  if location.hash == '#hh' && msec % (500 / 4 ) < 50 && sec8 < 6 * 1000 && is_active
     audio = document.getElementById('hh')
     audio.pause()
     audio.currentTime = 0
