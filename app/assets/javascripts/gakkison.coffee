@@ -1,6 +1,12 @@
 window.is_active = false
 window.dateDiff = 0
 
+hash = location.hash
+if hash.match(/[0-9]/)
+  window.bpm = parseInt(hash.replace(/#/, ''))
+else
+  window.bpm  = 120
+
 window.jsont = (data) ->
   console.log data
   nowDate = Date.now()
@@ -38,36 +44,36 @@ exec = (is_active=true) ->
   is_break = false
 
   #msec = now.getMilliseconds() * window.bpm / 120
-  msec = now.getMilliseconds()
+  #msec = now.getMilliseconds()
+  msec = now.getTime()
 
-  if msec % (500 / 2 ) < 50 && !is_break && is_active
-    console.log 333
+  if msec % (250 * 120 / window.bpm) < 50 && !is_break && is_active
     audio = document.getElementById('hh')
     audio.pause()
     audio.currentTime = 0
     audio.play()
 
-  if msec % 1000 < 50 && is_active
+  if msec % (1000 * 120 / window.bpm) < 50 && is_active
     audio = document.getElementById('bd')
     audio.pause()
     audio.currentTime = 0
     audio.play()
 
-  if (msec + 500) % 1000 < 50 && !is_break && is_active
+  if (msec + 500) % (1000 * 120 / window.bpm) < 50 && !is_break && is_active
     audio = document.getElementById('sd')
     audio.pause()
     audio.currentTime = 0
     audio.play()
 
-exec2 = (is_active=true) ->
-  console.log('exec2', is_active)
-  now = new Date(Date.now() + window.dateDiff)
-  msec = now.getMilliseconds()
-  if msec % 1000 < 50 && is_active
-    audio = document.getElementById('cc')
-    audio.pause()
-    audio.currentTime = 0
-    audio.play()
+#exec2 = (is_active=true) ->
+#  console.log('exec2', is_active)
+#  now = new Date(Date.now() + window.dateDiff)
+#  msec = now.getMilliseconds()
+#  if msec % 1000 < 50 && is_active
+#    audio = document.getElementById('cc')
+#    audio.pause()
+#    audio.currentTime = 0
+#    audio.play()
 
 init = ()->
   if $('#gakkison').length
