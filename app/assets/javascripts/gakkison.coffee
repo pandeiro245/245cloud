@@ -1,5 +1,6 @@
 window.is_active = false
 window.dateDiff = 0
+window.mp = 100.000
 
 hash = location.hash
 if hash.match(/[0-9]/)
@@ -8,10 +9,8 @@ else
   window.bpm  = 120
 
 window.jsont = (data) ->
-  console.log data
   nowDate = Date.now()
   window.dateDiff = ((data.st * 1000) + ((nowDate - (data.it * 1000)) / 2)) - nowDate
-  console.log window.dateDiff
   init()
 
 exactTime = () ->
@@ -31,7 +30,15 @@ $ ->
     exactTime()
 
 window.key = () ->
-  exec(window.is_active)
+  $('#keypressBar').css('width', "#{parseInt(window.mp)}%")
+
+  if window.is_active && window.mp > 0
+    exec(true)
+    window.mp -= 0.05
+  else
+    if !window.is_active && window.mp < 100
+      window.mp += 0.5
+  #console.log window.mp
   setTimeout("window.key()", 1)
 
 exec = (is_active=true) ->
