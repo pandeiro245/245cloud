@@ -30,12 +30,12 @@ group :development do
 end
 
 group 'test' do
-  gem 'rspec-rails'
-  gem 'capybara-webkit'
-  gem 'launchy'
-  gem 'factory_girl_rails'
-  gem 'poltergeist'
-  gem 'database_rewinder'
+  #gem 'rspec-rails'
+  #gem 'capybara-webkit'
+  #gem 'launchy'
+  #gem 'factory_girl_rails'
+  #gem 'poltergeist'
+  #gem 'database_rewinder'
 end
 gem 'haml'
 gem 'dotenv-rails'

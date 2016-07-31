@@ -2,11 +2,12 @@ window.is_active = false
 window.dateDiff = 0
 window.mp = 100.000
 
-hash = location.hash
-if hash.match(/[0-9]/)
-  window.bpm = parseInt(hash.replace(/#/, ''))
-else
-  window.bpm  = 120
+#hash = location.hash
+#if hash.match(/[0-9]/)
+#  window.bpm = parseInt(hash.replace(/#/, ''))
+#else
+#  window.bpm  = 120
+window.bpm  = 131
 
 window.jsont = (data) ->
   nowDate = Date.now()
@@ -34,9 +35,9 @@ window.key = () ->
 
   if window.is_active && window.mp > 0
     exec(true)
-    window.mp -= 0.05
+    window.mp -= 0.07 * Math.random()
   else
-    if !window.is_active && window.mp < 100
+    if !window.is_active && window.mp <= 100
       window.mp += 0.5
   #console.log window.mp
   setTimeout("window.key()", 1)
