@@ -14,11 +14,11 @@ exactTime = () ->
     'http://ntp-a1.nict.go.jp/cgi-bin/jsont',
     'https://ntp-b1.nict.go.jp/cgi-bin/jsont',
     'http://ntp-b1.nict.go.jp/cgi-bin/jsont'
-  ];
+  ]
   scriptE = document.createElement('script')
   serverUrl = serverList[Math.floor(Math.random() * serverList.length)]
-  scriptE.src = serverUrl + '?' + (Date.now() / 1000);
-  document.body.appendChild(scriptE);
+  scriptE.src = serverUrl + '?' + (Date.now() / 1000)
+  document.body.appendChild(scriptE)
 
 $ ->
   if $('#gakkison').length
@@ -60,6 +60,7 @@ exec = (is_active=true) ->
     audio.play()
 
 exec2 = (is_active=true) ->
+  console.log('exec2', is_active)
   now = new Date(Date.now() + window.dateDiff)
   msec = now.getMilliseconds()
   if msec % 1000 < 50 && is_active
@@ -67,8 +68,6 @@ exec2 = (is_active=true) ->
     audio.pause()
     audio.currentTime = 0
     audio.play()
-
-
 
 init = ()->
   if $('#gakkison').length
@@ -93,12 +92,13 @@ init = ()->
         window.is_active = false
       )
 
-  Leap.loop({
-    hand: (hand)->
-      height = hand.screenPosition()[0]
-      console.log height
-      exec2(height < 1000)
-  }).use('screenPosition')
+  #Leap.loop({
+  #  hand: (hand)->
+  #    x = hand.screenPosition()[0]
+  #    console.log x
+  #    #exec2(x < 500)
+  #    exec2(x < 500)
+  #}).use('screenPosition')
 
   window.key()
 
