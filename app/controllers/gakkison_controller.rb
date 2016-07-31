@@ -3,7 +3,8 @@ class GakkisonController < ApplicationController
     @gakkis = {
       bd: 'バスドラ',
       hh: 'ハイハット',
-      sd: 'スネア'
+      sd: 'スネア',
+      cc: 'クラッシュシンバル'
     }
   end
 end

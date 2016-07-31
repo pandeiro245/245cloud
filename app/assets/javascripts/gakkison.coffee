@@ -1,8 +1,78 @@
 window.is_active = false
+window.dateDiff = 0
+
+window.jsont = (data) ->
+  console.log data
+  nowDate = Date.now()
+  window.dateDiff = ((data.st * 1000) + ((nowDate - (data.it * 1000)) / 2)) - nowDate
+  console.log window.dateDiff
+  init()
+
+exactTime = () ->
+  serverList = [
+    'https://ntp-a1.nict.go.jp/cgi-bin/jsont',
+    'http://ntp-a1.nict.go.jp/cgi-bin/jsont',
+    'https://ntp-b1.nict.go.jp/cgi-bin/jsont',
+    'http://ntp-b1.nict.go.jp/cgi-bin/jsont'
+  ];
+  scriptE = document.createElement('script')
+  serverUrl = serverList[Math.floor(Math.random() * serverList.length)]
+  scriptE.src = serverUrl + '?' + (Date.now() / 1000);
+  document.body.appendChild(scriptE);
 
 $ ->
   if $('#gakkison').length
-    for key in ['bd', 'hh', 'sd']
+    exactTime()
+
+window.key = () ->
+  exec(window.is_active)
+  setTimeout("window.key()", 1)
+
+exec = (is_active=true) ->
+  #console.log is_active
+  #now = new Date()
+  now = new Date(Date.now() + window.dateDiff)
+
+  #sec8 = now.getTime() % (8 * 1000)
+  #is_break = sec8 < 6 * 1000
+  is_break = false
+
+  #msec = now.getMilliseconds() * window.bpm / 120
+  msec = now.getMilliseconds()
+
+  if msec % (500 / 2 ) < 50 && !is_break && is_active
+    console.log 333
+    audio = document.getElementById('hh')
+    audio.pause()
+    audio.currentTime = 0
+    audio.play()
+
+  if msec % 1000 < 50 && is_active
+    audio = document.getElementById('bd')
+    audio.pause()
+    audio.currentTime = 0
+    audio.play()
+
+  if (msec + 500) % 1000 < 50 && !is_break && is_active
+    audio = document.getElementById('sd')
+    audio.pause()
+    audio.currentTime = 0
+    audio.play()
+
+exec2 = (is_active=true) ->
+  now = new Date(Date.now() + window.dateDiff)
+  msec = now.getMilliseconds()
+  if msec % 1000 < 50 && is_active
+    audio = document.getElementById('cc')
+    audio.pause()
+    audio.currentTime = 0
+    audio.play()
+
+
+
+init = ()->
+  if $('#gakkison').length
+    for key in ['bd', 'hh', 'sd', 'cc']
       $audio = $('<audio></audio>')
       $audio.css('width', '1px')
       $audio.attr('id', key)
@@ -23,45 +93,12 @@ $ ->
         window.is_active = false
       )
 
-  #Leap.loop({
-  #  hand: (hand)->
-  #    height = hand.screenPosition()[0]
-  #    console.log height
-  #    exec(height < 1000)
-  #}).use('screenPosition')
+  Leap.loop({
+    hand: (hand)->
+      height = hand.screenPosition()[0]
+      console.log height
+      exec2(height < 1000)
+  }).use('screenPosition')
 
   window.key()
-
-window.key = () ->
-  exec(window.is_active)
-  setTimeout("window.key()", 10)
-
-exec = (is_active=true) ->
-  now = new Date()
-  sec8 = now.getTime() % (8 * 1000)
-  msec = now.getMilliseconds()
-  if location.hash == '#hh' && msec % (500 / 4 ) < 50 && sec8 < 6 * 1000 && is_active
-    audio = document.getElementById('hh')
-    audio.pause()
-    audio.currentTime = 0
-    audio.play()
-  #if msec % 500 < 50
-  #  audio = document.getElementById('bd')
-  #  audio.pause()
-  #  audio.currentTime = 0
-  #  audio.play()
-
-  if location.hash == '#bd' && msec % 500 < 50 && is_active
-    audio = document.getElementById('bd')
-    audio.pause()
-    audio.currentTime = 0
-    audio.play()
-
-
-  if location.hash == '#sd' && msec % 500 < 50 && sec8 < 6 * 1000 && is_active
-    audio = document.getElementById('sd')
-    audio.pause()
-    audio.currentTime = 0
-    audio.play()
-
 
