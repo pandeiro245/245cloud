@@ -1,0 +1,140 @@
+  <div id="pNav" style='display:none;'>
+    <div class="inner container">
+      <div class="pBtn volume"><a href="#"><i class="fa fa-volume-down" aria-hidden="true"></i></a></div>
+      <div class="pBtn bpm"><input type="text" class="form-control" placeholder="input BPM" size="10"></div>
+    </div>
+  </div>
+  <div id="gakkison">
+    <div id="logo">
+      <div class="logoInner">
+        <div class="img">
+          <img src="./gakkison/img/logo1000.png" alt="">
+        </div>
+        <div class="text">
+          <img src="./gakkison/img/logotext.png" alt="">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="statusbar" class="container">
+    <div class="progress">
+      <div id="keypressBar" class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="1000" style="width: 20%;">
+        <span class="sr-only">60% Complete</span>
+      </div>
+    </div>
+  </div>
+  <!--
+  <div id="member">
+    <div class="container">
+      <h2 class="text-center memberTitle">MEMBER</h2>
+      <div class="row">
+        <div class="icon col-xs-6 col-sm-4 col-md-2 col-lg-1"><img alt="140x140" data-src="holder.js/140x140" src="https://scontent.fitm1-1.fna.fbcdn.net/v/l/t1.0-1/c12.12.155.155/228945_529142247112491_2018092994_n.jpg?oh=6b677e3736a389197d167c8859091f30&oe=5828383F" class="img-circle" data-holder-rendered="true"></div>
+        <div class="icon col-xs-6 col-sm-4 col-md-2 col-lg-1"><img alt="140x140" data-src="holder.js/140x140" src="https://scontent.fitm1-1.fna.fbcdn.net/v/l/t1.0-1/c12.12.155.155/228945_529142247112491_2018092994_n.jpg?oh=6b677e3736a389197d167c8859091f30&oe=5828383F" class="img-circle" data-holder-rendered="true"></div>
+        <div class="icon col-xs-6 col-sm-4 col-md-2 col-lg-1"><img alt="140x140" data-src="holder.js/140x140" src="https://scontent.fitm1-1.fna.fbcdn.net/v/l/t1.0-1/c12.12.155.155/228945_529142247112491_2018092994_n.jpg?oh=6b677e3736a389197d167c8859091f30&oe=5828383F" class="img-circle" data-holder-rendered="true"></div>
+        <div class="icon col-xs-6 col-sm-4 col-md-2 col-lg-1"><img alt="140x140" data-src="holder.js/140x140" src="https://scontent.fitm1-1.fna.fbcdn.net/v/l/t1.0-1/c12.12.155.155/228945_529142247112491_2018092994_n.jpg?oh=6b677e3736a389197d167c8859091f30&oe=5828383F" class="img-circle" data-holder-rendered="true"></div>
+        <div class="icon col-xs-6 col-sm-4 col-md-2 col-lg-1"><img alt="140x140" data-src="holder.js/140x140" src="https://scontent.fitm1-1.fna.fbcdn.net/v/l/t1.0-1/c12.12.155.155/228945_529142247112491_2018092994_n.jpg?oh=6b677e3736a389197d167c8859091f30&oe=5828383F" class="img-circle" data-holder-rendered="true"></div>
+        <div class="icon col-xs-6 col-sm-4 col-md-2 col-lg-1"><img alt="140x140" data-src="holder.js/140x140" src="https://scontent.fitm1-1.fna.fbcdn.net/v/l/t1.0-1/c12.12.155.155/228945_529142247112491_2018092994_n.jpg?oh=6b677e3736a389197d167c8859091f30&oe=5828383F" class="img-circle" data-holder-rendered="true"></div>
+        <div class="icon col-xs-6 col-sm-4 col-md-2 col-lg-1"><img alt="140x140" data-src="holder.js/140x140" src="https://scontent.fitm1-1.fna.fbcdn.net/v/l/t1.0-1/c12.12.155.155/228945_529142247112491_2018092994_n.jpg?oh=6b677e3736a389197d167c8859091f30&oe=5828383F" class="img-circle" data-holder-rendered="true"></div>
+        <div class="icon col-xs-6 col-sm-4 col-md-2 col-lg-1"><img alt="140x140" data-src="holder.js/140x140" src="https://scontent.fitm1-1.fna.fbcdn.net/v/l/t1.0-1/c12.12.155.155/228945_529142247112491_2018092994_n.jpg?oh=6b677e3736a389197d167c8859091f30&oe=5828383F" class="img-circle" data-holder-rendered="true"></div>
+      </div>
+    </div>
+  </div>
+  -->
+  <script>
+    $(document).ready(function() {
+      $(document).on('keydown', function(e) {
+        $('body').addClass('down');
+      });
+      $(document).on('keyup', function(e) {
+        $('body').removeClass('down');
+      });
+    });
+  </script>
+  <style>
+    html,body {
+      width: 100%;
+      height: 100%;
+    }
+    body {
+      position: relative;
+      background-image: url(/gakkison/img/bg.jpg);
+      -webkit-background-size: cover;
+      background-size: cover;
+      -webkit-webkit-transition: all .3s;
+      -moz-webkit-transition: all .3s;
+      -ms-webkit-transition: all .3s;
+      -o-webkit-transition: all .3s;
+      webkit-transition: all .3s;
+    }
+    body.down {
+      background-image: url(/gakkison/img/bg_down.jpg);
+    }
+    #pNav {
+      position: absolute;
+      width: 100%;
+      right: 0;
+      top: 0;
+    }
+    #pNav a {
+      font-size: 60px;
+      color: #fff;
+    }
+    #pNav .inner {
+      display: -webkit-flex;
+      display: flex;
+      -webkit-flex-direction: row;
+      flex-direction: row;
+      -webkit-flex-wrap: nowrap;
+      flex-wrap: nowrap;
+      -webkit-justify-content: flex-end;
+      justify-content: flex-end;
+      -webkit-align-items: center;
+      align-items: center;
+    }
+    .pBtn {
+      float: right;
+      padding: 0 10px;
+    }
+    .pBtn input[type="text"] {
+      -webkit-webkit-appearance: none;
+      -moz-webkit-appearance: none;
+      -ms-webkit-appearance: none;
+      -o-webkit-appearance: none;
+      webkit-appearance: none;
+      border: none;
+    }
+    #logo {
+      padding-top: 50px;
+      margin-bottom: 50px;
+      width: 300px;
+      max-width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    @media (max-width: 992px) {
+      #logo {
+        padding-top: 100px;
+      }
+    }
+    #logo img {
+      max-width: 100%;
+    }
+    #member {
+      width: 100%;
+    }
+    .memberTitle {
+      color: #fff;
+      font-family: 'Raleway', sans-serif;
+      text-align: center;
+      font-weight: 500;
+      margin-bottom: 30px;
+    }
+    .icon img {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      max-width: 100%;
+      height: auto;
+    }
+  </style>
+
