@@ -10,9 +10,13 @@ import {
 } from 'react-native';
 
 var url = 'http://245cloud.com/api/workloads.json';
-var pomo = 24;
-var chat = 5;
-
+if(true){
+  var pomo = 24;
+  var chat = 5;
+} else {
+  var pomo = 0.1;
+  var chat = 0.1;
+}
 function zero(i) {
   if(i < 0) {
     return "00";
@@ -33,11 +37,28 @@ class NishikoCloud extends Component {
     setInterval(() => {
       now = new Date().getTime();
       //total = pomo * 60 - parseInt((now - this.state.start)/1000);
-      total = pomo * 60 - parseInt((now - start)/1000);
-      min = parseInt(total/60);
-      sec = total - min*60;
-      remain = status == 'playing' ? 'あと' + zero(min) + ':' + zero(sec) : '';
-      this.setState({ remain: remain });
+      total = parseInt(pomo * 60 - (now - start)/1000);
+
+      if(status == 'playing' && total < 0) {
+        status = 'chatting'
+      } else if (status == 'chatting' && total < -1 * chat * 60) {
+        status = 'before'
+      }
+
+      if(status == 'playing') {
+        min = parseInt(total/60);
+        sec = total - min*60;
+        remain = 'あと' + zero(min) + ':' + zero(sec);
+        this.setState({ remain: remain });
+      } else if(status == 'chatting') {
+        total2 = chat * 60 + total
+        min = parseInt(total2/60);
+        sec = total2 - min*60;
+        remain = 'あと' + zero(min) + ':' + zero(sec);
+        this.setState({ remain: remain });
+      } else {
+        this.setState({ remain: '' });
+      }
     }, 1000);
   }
 
