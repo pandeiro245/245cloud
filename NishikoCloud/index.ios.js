@@ -1,52 +1,67 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
 import React, { Component } from 'react';
 import {
   AppRegistry,
   StyleSheet,
   Text,
-  View
+  Image,
+  View,
+  ScrollView
 } from 'react-native';
+
+var url = 'http://245cloud.com/api/workloads.json';
 
 class NishikoCloud extends Component {
   render() {
+    let header = {
+      uri: 'https://ruffnote.com/attachments/24932'
+    };
+    let nomusic = {
+      uri: 'https://ruffnote.com/attachments/24927'
+    };
     return (
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
+        <Text style={styles.header}>
+        <Image source={header} style={{width: 300, height: 150}}/>
+        </Text>
+
+        <Text style={styles.main}>
         <Text style={styles.welcome}>
-          Welcome to 245cloud!
+        245cloudは24分間、自分の作業に集中したら5分間達成した人同士で交換日記ができるサービスです。{'\n'}
+        みんなが聞いている音楽で集中することもできますし、{'\n'}無音も人気です。{'\n'}{'\n'}
         </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.ios.js
+        <Text style={styles.buttons}>
+          <Image source={nomusic} style={{width: 150, height: 30}} />
         </Text>
-        <Text style={styles.instructions}>
-          Press Cmd+R to reload,{'\n'}
-          Cmd+D or shake for dev menu
         </Text>
-      </View>
+      </ScrollView>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: 20,
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    //justifyContent: 'center',
+    //alignItems: 'center',
+  },
+  header: {
+    textAlign: 'center',
+    backgroundColor: '#231809',
+  },
+  main: {
+    //flex: 1,
+    alignSelf: 'stretch',
+    textAlign: 'center',
+    backgroundColor: '#FFFFFF',
   },
   welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
+    fontSize: 13,
+    flex: 1,
+    marginTop: 30
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+  buttons: {
+    flex: 1,
   },
 });
 
