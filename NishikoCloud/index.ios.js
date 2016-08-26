@@ -27,7 +27,7 @@ function zero(i) {
 var start = null;
 var status = 'before';
 
-class NishikoCloud extends Component {
+class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -78,9 +78,9 @@ class NishikoCloud extends Component {
     
     let remain = this.state.remain
     return (
-      <ScrollView style={styles.container}>
+      <View style={styles.container}>
         <Text style={styles.header}>
-        <Image source={header} style={{width: 300, height: 150}}/>
+        <Image source={header} style={styles.headerimage}/>
         </Text>
         <Text style={styles.main}>
         <Text style={styles.welcome}>
@@ -96,21 +96,26 @@ class NishikoCloud extends Component {
           </TouchableHighlight>
         </Text>
         </Text>
-      </ScrollView>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 20,
     flex: 1,
     //justifyContent: 'center',
     //alignItems: 'center',
   },
   header: {
+    marginTop: 20,
     textAlign: 'center',
     backgroundColor: '#231809',
+  },
+  headerimage: {
+    width: 300,
+    height: 150,
+    marginTop: 5
   },
   main: {
     //flex: 1,
@@ -131,4 +136,6 @@ const styles = StyleSheet.create({
   },
 });
 
-AppRegistry.registerComponent('NishikoCloud', () => NishikoCloud);
+
+
+AppRegistry.registerComponent('NishikoCloud', () => App);
