@@ -10,13 +10,10 @@ import {
 } from 'react-native';
 
 var url = 'http://245cloud.com/api/workloads.json';
-if(true){
-  var pomo = 24;
-  var chat = 5;
-} else {
-  var pomo = 0.1;
-  var chat = 0.1;
-}
+var debug = true;
+var pomo = debug ? 0.1 : 24;
+var chat = debug ? 0.1 : 5;
+
 function zero(i) {
   if(i < 0) {
     return "00";
@@ -36,7 +33,6 @@ class App extends Component {
     };
     setInterval(() => {
       now = new Date().getTime();
-      //total = pomo * 60 - parseInt((now - this.state.start)/1000);
       total = parseInt(pomo * 60 - (now - start)/1000);
 
       if(status == 'playing' && total < 0) {
@@ -65,7 +61,6 @@ class App extends Component {
   _onPressButton() {
     start = new Date().getTime();
     status = 'playing';
-    //alert("You tapped the button!");
   }
 
   render() {
@@ -104,8 +99,6 @@ class App extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //justifyContent: 'center',
-    //alignItems: 'center',
   },
   header: {
     marginTop: 20,
@@ -118,7 +111,6 @@ const styles = StyleSheet.create({
     marginTop: 5
   },
   main: {
-    //flex: 1,
     alignSelf: 'stretch',
     textAlign: 'center',
     backgroundColor: '#FFFFFF',
@@ -135,7 +127,5 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
-
-
 
 AppRegistry.registerComponent('NishikoCloud', () => App);
