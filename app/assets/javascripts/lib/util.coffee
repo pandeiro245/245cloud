@@ -77,7 +77,6 @@ class Util
     
   @yearMonthDay: (time) ->
     date = new Date(time)
-    
     "#{date.getFullYear()}年#{Util.monthDay(date)}"
 
   @hourMin: (time, suffix='') ->
