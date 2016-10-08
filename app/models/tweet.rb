@@ -12,8 +12,12 @@ class Tweet
     #@client.search("kintone", result_type: "recent", lang: "ja")
   end
 
+  def self.notifications keys_json
+    self.client(keys_json).retweets_of_me
+  end
+
   def self.home keys_json
-    self.client(keys_json).home_timeline
+    self.client(keys_json).home_timeline(count: 100)
   end
 
   def self.yaruki keys_json

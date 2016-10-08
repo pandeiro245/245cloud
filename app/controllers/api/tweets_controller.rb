@@ -1,4 +1,9 @@
 class Api::TweetsController < ApplicationController
+  def notifications
+    @tweets = Tweet.notifications(cookies['twitter'])
+    render json: @tweets
+  end
+
   def home
     @tweets = Tweet.home(cookies['twitter'])
     render json: @tweets

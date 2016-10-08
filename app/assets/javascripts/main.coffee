@@ -8,6 +8,7 @@ $ ->
   header:no_row&stay news otukare:hidden&stay
   topbar:init
   ad:stay contents:stay
+  twitter_notifications:stay
   twitter_home:stay
   settings:init
   twitter timecrowd toggl nortification heatmap:init start_buttons
@@ -574,13 +575,28 @@ postWithToken = (url, key, is_again=false) ->
 complete = () ->
   console.log 'complete'
   if window.settings.twitter
+
+    $('#twitter_notifications').addClass('twitter')
+    $('#twitter_home').addClass('twitter')
+
+    $.get('/api/tweets/notifications', (data) ->
+      window.notifications = data
+      $('#twitter_notifications').html('<h2>Notifications</h2><table></table>')
+      for tweet in data
+        $('#twitter_notifications table').append("""
+          <tr style='border-bottom: 1px solid #ccc; padding: 5px;'>  
+          <td><a href='https://twitter.com/#{tweet.user.screen_name}' target='_blank'><img src='#{tweet.user.profile_image_url}' /></a></td>
+          <td>#{tweet.text}</td>
+          </tr>  
+        """)
+    )
     $.get('/api/tweets/home', (data) ->
-      $('#twitter_home').html('<table></table>')
+      $('#twitter_home').html('<h2>Home</h2><table></table>')
       for tweet in data
         $('#twitter_home table').append("""
-          <tr>  
+          <tr style='border-bottom: 1px solid #ccc; padding: 5px;'>  
           <td><a href='https://twitter.com/#{tweet.user.screen_name}' target='_blank'><img src='#{tweet.user.profile_image_url}' /></a></td>
-          <td><hr>#{tweet.text}</td>
+          <td>#{tweet.text}</td>
           </tr>  
         """)
     )
@@ -1008,7 +1024,7 @@ initHatopoppo = () ->
   $('#hatopoppo').css('width', '1px')
   $audio = $('<audio></audio>')
   $audio.attr('id', 'hato')
-  $audio.attr('src', '/audio/Zihou01-4.mp3')
+  #$audio.attr('src', '/audio/Zihou01-4.mp3')
   $('#hatopoppo').append($audio)
 
 getOffset = (all_count) ->
