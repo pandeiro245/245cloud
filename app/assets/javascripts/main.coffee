@@ -1024,7 +1024,7 @@ initHatopoppo = () ->
   $('#hatopoppo').css('width', '1px')
   $audio = $('<audio></audio>')
   $audio.attr('id', 'hato')
-  #$audio.attr('src', '/audio/Zihou01-4.mp3')
+  $audio.attr('src', '/audio/Zihou01-4.mp3')
   $('#hatopoppo').append($audio)
 
 getOffset = (all_count) ->
