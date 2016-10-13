@@ -15,7 +15,7 @@ class Tweet
   def notifications
     (@client.retweets_of_me +
     @client.mentions_timeline +
-    @client.favorites).sort { |a, b| b['id'] <=> a['id']}
+    @client.favorites).sort { |a, b| b['id'] <=> a['id'] }
   end
 
   def home
