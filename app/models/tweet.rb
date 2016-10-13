@@ -1,15 +1,12 @@
 class Tweet
   def initialize keys_json
     keys = JSON.parse(keys_json)
-    token = keys['twitter_token']
-    secret = keys['twitter_secret']
     @client = ::Twitter::REST::Client.new do |config|
       config.consumer_key    = ENV['TWITTER_KEY']
       config.consumer_secret = ENV['TWITTER_SECRET']
-      config.access_token    = token 
-      config.access_token_secret = secret
+      config.access_token    = keys['twitter_token']
+      config.access_token_secret = keys['twitter_secret']
     end
-    #@client.search("kintone", result_type: "recent", lang: "ja")
   end
 
   def notifications
