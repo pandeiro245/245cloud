@@ -20,7 +20,7 @@ class TimeCrowd
 
   def refresh_keys_json
     #self.access_token = access_token.refresh! if self.access_token.expired?
-    access_token = self.access_token.refresh!
+    #access_token = self.access_token.refresh!
     keys = {}
     %w(expires_at refresh_token token).each do |key|
       val = access_token.send(key)
