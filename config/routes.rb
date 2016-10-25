@@ -3,11 +3,13 @@ Rails.application.routes.draw do
   root 'welcome#index'
   resources :nicoinfo, only: [:show], constraints: {id: /sm[0-9]+/}
 
+  get '/timecrowd/info' => 'timecrowd#info'
   get '/gakkison', to: 'gakkison#index'
-
   get '/timecrowd/recents' => 'timecrowd#recents'
   post '/timecrowd/start' => 'timecrowd#start'
   post '/timecrowd/stop' => 'timecrowd#stop'
+  post '/timecrowd/tasks' => 'timecrowd#create'
+  put '/timecrowd/issues/:id' => 'timecrowd#update'
 
   post '/toggl/start' => 'toggl#start'
   post '/toggl/stop'  => 'toggl#stop'

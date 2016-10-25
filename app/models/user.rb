@@ -2,6 +2,8 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
+  has_many :issues
+
   def workloads
     Workload.his(facebook_id).bests.limit(48)
   end

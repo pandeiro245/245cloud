@@ -227,3 +227,7 @@ table.comments .icon{
   margin: 3px;
   border-radius: 8px;
 }
+
+#timecrowd_select_task {
+  width: 90%;
+}

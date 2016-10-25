@@ -1,6 +1,9 @@
 @env.is_doing = false
 @env.is_done = false
 
+window.plans = []
+window.remain = 0
+
 $ ->
   $.post('/api/access_logs', {url: location.href})
   return unless $('#nc').length
@@ -16,7 +19,6 @@ $ ->
   done_title done:init
   you_title you:init calendar_title calendar
   search_title search:init
-  ranking_title ranking:init
   8tracks_title 8tracks:init
   kimiya_title kimiya:init
   naotake_title naotake:init
@@ -119,7 +121,6 @@ initHeatmap = () ->
       )
   })
 
-
 initTwitter = () ->
   console.log 'initTwitter'
   $('#twitter').html("""
@@ -149,11 +150,53 @@ initTwitter = () ->
         """)
   )
 
+initPlans = (callback) ->
+  now = (new Date()).getTime()
+  url = localStorage.plans_url
+  if !url || url.length < 10
+    url = prompt('ポモ予定スプレッドシートのURL（例：https://docs.google.com/spreadsheets/d/1kqnCl-rIwBH2hbGL30aQQtfzKzoh3Fy_yA5bKFSWgEM/pubhtml）', '')
+    localStorage.plans_url = url
+  if !url || url.length < 10
+    alert 'ポモ予定スプレッドシートのURLが不正です'
+    return
+  key = url.split('#')[0].replace(/\/edit/,'').replace(/\/pubhtml\/?/,'').split('/').pop()
+  req = "https://spreadsheets.google.com/feeds/list/#{key}/od6/public/full?alt=json"
+
+  $.get(req, (data)->
+    for entry in data.feed.entry
+      mdy = entry['gsx$日付']['$t'].split('/')
+      start = entry['gsx$start時間']['$t'].split(':')
+      start_time = new Date(mdy[2], parseInt(mdy[0])-1, mdy[1], start[0], start[1]).getTime()
+      pomo = parseInt(entry['gsx$ポモ数']['$t'])
+      pomo_duration = 30 * 60 * 1000
+      end_time   = start_time + pomo * pomo_duration
+
+      # 予定ポモを1ポモずつに分けてwindow.plansに入れる
+      if now < end_time
+        for i in [1..pomo]
+          if i == 1
+            mtime = start_time
+          else
+            mtime += pomo_duration
+          if now < mtime
+            window.plans.push({
+              start_mtime: mtime
+              end_mtime: mtime + pomo_duration
+              is_charged: false
+            })
+  )
+  #.fail(
+  #  console.log '111'
+  #  if localStorage.plans_url
+  #    localStorage.removeItem('plans_url')
+  #    location.reload()
+  #)
+  callback()
+
 initTimecrowd = () ->
-  console.log 'initTimecrowd'
   $('#timecrowd').html("""
   <h2>TimeCrowd</h2>
-  <div style='display:none; width:100%; text-align:center;'><input placeholder='タスク追加' style='width:100%;' id='timecrowd_add_task'/></div>
+  <div style='display:none; width:100%; text-align:center;'><input placeholder='タスク追加' style='width:100%;' id='timecrowd_edd_task'/></div>
   <ul><li class='loading'>ローディング中。。。<br>（タスクが多いと時間がかかるかもです…。）</li></ul>
   <table class='table table-bordered table-hover' id='timecrowd_select_task'>
   </table>
@@ -162,35 +205,122 @@ initTimecrowd = () ->
     if e.which == 13 #enter
       alert $('#timecrowd_add_task').val()
   )
+  initPlans(renderTimecrowd)
+
+renderTimecrowd = ()->
   $.get('/timecrowd/recents', (data) ->
-    console.log 'GET /timecrowd/recents', data
     $('.loading').remove()
-    if data.status == 'ng'
+    if data.status.match('ng')
       $('#timecrowd ul').html("""
       <a href='/auth/timecrowd'>ログイン</a>
       """)
     else
+      $('#timecrowd table').append("""
+      <tr><td colspan='6'><input id='add_timecrowd_task' style='width:100%;' placeholder='新規タスク名' /></td></tr>
+      <tr>
+      <th>&nbsp;</th>
+      <th>タスク名</th>
+      <th>ポモ実績</th>
+      <th>ポモ見積</th>
+      <th>期限まで</th>
+      <th>ポモ残数</th>
+      </tr>
+      """)
       task_ids = {}
       if data.is_working
         working_entry = data.entries[0]
         task_ids[working_entry.task.id] = true
         $('#timecrowd table').append(entryItem(working_entry))
+      start_time = null
+      end_time = null
       for entry in data.entries
+        console.log working_entry
         continue if working_entry && entry.id == working_entry.id
+        continue unless entry.task
         continue if task_ids[entry.task.id]
+        if entry.deadline
+          data = getRemain(entry.deadline)
+          if entry.estimated > entry.worked
+            window.remain -= (entry.estimated - entry.worked)
+          entry.remain = window.remain
+          entry.start = Util.time(data.start_mtime)
+          entry.end = Util.time(data.end_mtime)
         task_ids[entry.task.id] = true
         $('#timecrowd table').append(entryItem(entry))
+      $('#timecrowd table tr:nth-child(3) input').attr('checked', 'checked')
+      $('a.estimated').click((e) ->
+        e.preventDefault()
+        $self = $(this)
+        val = $self.html()
+        new_estimated = prompt('見積ポモ数編集', val)
+        id = $self.attr('data-issue-id')
+        $.ajax({
+          method: 'PUT',
+          url: "/timecrowd/issues/#{id}",
+          data: "estimated=#{new_estimated}"
+        }).done(
+          $self.html(new_estimated)
+          #location.reload()
+        )
+      )
 
-      $('#timecrowd table tr:first input').attr('checked', 'checked')
+      $('a.deadline').click((e) ->
+        e.preventDefault()
+        $self = $(this)
+        now = new Date()
+        new_mon = prompt('期限って何月？', now.getMonth()+1)
+        new_day = prompt('期限って何日？', now.getDate())
+        new_hour = prompt('期限って何時？', now.getHours())
+        if new_mon && new_day && new_hour
+          new_deadline = "2016-#{new_mon}-#{new_day} #{new_hour}:00:00"
+          id = $self.attr('data-issue-id')
+          $.ajax({
+            method: 'PUT',
+            url: "/timecrowd/issues/#{id}",
+            data: "deadline=#{new_deadline}"
+          }).done(
+            $self.html(new_deadline)
+            location.reload()
+          )
+        else
+          alert '正しく期限が入力されなかったので再編集を中止しました'
+      )
+
+      $('#timecrowd table tr:nth-child(2) input').attr('checked', 'checked')
       $('#timecrowd table tr').click((e) ->
-        console.log e
         $('#timecrowd table input').removeAttr('checked')
         $(e.currentTarget).find('input').prop('checked', true)
       )
+      $(document).on('keydown', '#add_timecrowd_task', (e)->
+        if e.keyCode == 13 # enter
+          title = $('#add_timecrowd_task').val()
+          $.post('/timecrowd/tasks', {title: title}, (res) ->
+            console.log res
+            #$('#add_timecrowd_task').val('')
+            location.reload()
+          )
+      )
   )
 
+# TODO window.remainを書き換えるので要リファクタリング
+getRemain = (deadline) ->
+  start_mtime = null
+  end_mtime   = null
+  now = (new Date()).getTime()
+
+  for plan in window.plans
+    continue if plan.is_charged
+    if plan.end_mtime <= deadline
+      window.remain += 1
+      plan.is_charged = true
+      start_mtime ||= plan.start_mtime
+      end_mtime = plan.end_mtime
+  {
+    start_mtime: start_mtime
+    end_mtime: end_mtime
+  }
+
 initToggl = () ->
-  console.log 'initToggl'
   $('#toggl').html("""
   <h2>Toggl</h2>
   <div id='toggl_description'></div>
@@ -198,16 +328,26 @@ initToggl = () ->
   ruffnote(24715, 'toggl_description')
 
 entryItem = (entry) ->
+  deadline = "<span class=\"realtime\" data-countdown=\"#{entry.deadline}\"></span>"
+  deadline = '未設定' if entry.deadline == 0
+  if entry.remain
+    remain_before = entry.remain
+    remain_before += (entry.estimated - entry.worked) if entry.estimated > entry.worked
+    remain = "#{remain_before}ポモ<br> (#{entry.start})<br>↓<br> #{entry.remain}ポモ<br>(#{entry.end})"
+  else
+    remain = '未設定'
   """
     <tr>
       <label>
-      <td><input type='radio' name='timecrowd_task' data-team-id='#{entry.task.team_id}' value='#{entry.task.id}' /></td>
-      <td><a href='#{entry.task.url}' target='_blank'>#{entry.task.title}</a></td>
-      <td>#{Util.time(entry.started_at)}</td>
+      <td><input type='radio' name='timecrowd_task' data-team-id='#{entry.task.team_id}' value='#{entry.task.id}' data-issue-id='#{entry.issue_id}' /></td>
+      <td><a href='https://timecrowd.net/teams/#{entry.task.team_id}/tasks/#{entry.task.id}/edit' target='_blank'>#{entry.task.title}</a></td>
+      <td>#{entry.worked || 0}ポモ</td>
+      <td><a href='#' data-issue-id='#{entry.issue_id}' class='estimated'>#{"#{entry.estimated}ポモ" || '未設定'}</a></td>
+      <td><a href='#' data-issue-id='#{entry.issue_id}' class='deadline'>#{deadline}</a></td>
+      <td>#{remain}</td>
       </label>
     </tr>
   """
-
 
 init8tracks = () ->
   ruffnote(17763, '8tracks_title')
@@ -346,7 +486,6 @@ initSearch = () ->
   )
 
 window.initSelectRooms = () ->
-  console.log 'initSelectRooms'
   $('#rooms_title').html(Util.tag('h2', Util.tag('img', ImgURLs.title_comments), {class: 'status'}))
   $('#select_rooms').html(Util.tag('h2', Util.tag('img', ImgURLs.title_rooms), {class: 'status'}))
   $('#select_rooms').append(Util.tag('div', null, {class: 'imgs'}))
@@ -380,7 +519,6 @@ window.initSelectRooms = () ->
   )
 
 initChatting = () ->
-  console.log 'initChatting'
   ruffnote(22878, 'chatting_title')
   $("#chatting_title").hide()
 
@@ -393,7 +531,6 @@ initChatting = () ->
 
 
 initDoing = () ->
-  console.log 'initDoing'
   ruffnote(22877, 'doing_title')
   $("#doing_title").hide()
 
@@ -405,7 +542,6 @@ initDoing = () ->
   )
 
 initDone = () ->
-  console.log 'initDone'
   $.get('/api/workloads?type=dones', (workloads) ->
     ruffnote(17769, 'done_title')
     for workload in workloads
@@ -417,7 +553,6 @@ login = () ->
   location.href = '/auth/facebook'
 
 start_random = () ->
-  console.log 'start_random'
   ParseParse.all("Music", (musics) ->
     n = Math.floor(Math.random() * musics.length)
     sc_id = musics[n].attributes.sc_id
@@ -426,7 +561,6 @@ start_random = () ->
   )
 
 window.start_hash = (key = null) ->
-  console.log 'start_hash'
   unless key
     key = location.hash.replace(/#/, '')
 
@@ -436,10 +570,10 @@ window.start_hash = (key = null) ->
      start_nomusic()
 
 window.start_nomusic = () ->
-  console.log 'start_nomusic'
   createWorkload({}, start)
 
 createWorkload = (params = {}, callback) ->
+  params.issue_id = $("input[name='timecrowd_task']:checked").attr('data-issue-id')
   $.post('/api/workloads', params, (workload) ->
     window.workload = workload
     callback()
@@ -447,7 +581,6 @@ createWorkload = (params = {}, callback) ->
 
 start = () ->
   $('#topbar').hide()
-  console.log 'start'
   if window.settings.timecrowd
     task_id = $("input[name='timecrowd_task']:checked").val()
     team_id = $("input[name='timecrowd_task']:checked").attr('data-team-id')
@@ -474,8 +607,6 @@ start = () ->
 
 window.youtubeDurationSec = (key)  ->
   duration = key['contentDetails']['duration'].replace(/^PT/, '').replace(/S$/, '')
-
-  console.log duration
   if duration.match(/H/)
     hour = parseInt(duration.split('H')[0])
     d2 = duration.split('H')[1]
@@ -488,7 +619,6 @@ window.youtubeDurationSec = (key)  ->
   parseInt(sec)
 
 window.play = (key) ->
-  console.log 'play', key
   params = {}
   id = key.split(':')[1]
   if key.match(/^soundcloud/)
@@ -541,7 +671,6 @@ window.play = (key) ->
     )
 
 window.play_repeat = (key, duration) ->
-  console.log 'play_repeat'
   return false if @env.is_done
   id = key.split(':')[1]
   if key.match(/^soundcloud/)
@@ -558,7 +687,6 @@ window.play_repeat = (key, duration) ->
 
 
 postWithToken = (url, key, is_again=false) ->
-  console.log 'is_again', is_again
   if is_again
     token = prompt('Toggl API keyが無効のようです。再度入力してください', '')
     localStorage[key] = token
@@ -710,10 +838,7 @@ window.initComments = () ->
   initRoom()
 
 window.initRoom = (id = '1', title='いつもの部屋') ->
-  console.log "initRoom: #{id}, #{title}"
-
   $(".room").hide()
-
   $room = $("#room_#{id}")
 
   if $room.length
@@ -746,7 +871,6 @@ window.initRoom = (id = '1', title='いつもの部屋') ->
     )
 
 window.finish = () ->
-  console.log 'finish'
   @syncWorkload('finish')
 
   # nortification
@@ -763,7 +887,6 @@ window.finish = () ->
     location.reload()
 
 window.createComment = (room_id) ->
-  console.log 'createComment'
   $createComment = $("#room_#{room_id} .create_comment")
 
   body = $createComment.val()
@@ -781,37 +904,6 @@ window.createComment = (room_id) ->
     window.addComment(room_id, comment)
     syncComment(room_id, comment)
   )
-
-initRanking = () ->
-  return
-
-  now = new Date()
-  year = now.getYear() + 1900 - 1
-  month = now.getMonth()
-  day = now.getDate()
-
-  to_now = new Date(now.getTime() + 24*3600*1000)
-  to_year = to_now.getYear() + 1900 - 1
-  to_month = to_now.getMonth()
-  to_day = to_now.getDate()
-
-  $('#ranking_title').html("<h2>#{year}年#{month+1}月#{day}日に再生された曲</h2>")
-  cond = [
-    ["is_done", true]
-    ["createdAt", '>', new Date(year, month, day)]
-    ["createdAt", '<', new Date(to_year, to_month, to_day)]
-  ]
-  titles = {}
-  ParseParse.where("Workload", cond, (workloads) ->
-    return unless workloads.length > 0
-    for workload in workloads
-      continue unless workload.attributes.user
-      continue unless workload.attributes.title
-      continue if titles[workload.attributes.title]
-      titles[workload.attributes.title] = true
-      disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.number}/#{workload.weekly_number}）"
-      @addWorkload("#ranking", workload, disp)
-  , null, 24 *500)
 
 window.addDoing = (workload) ->
   $("#doing_title").show()
@@ -936,7 +1028,6 @@ initService = ($dom, url) ->
 window.addComment = @addComment
 
 updateRoomCommentsCount = (room_id) ->
-  console.log "updateRoomCommentsCount room_id is #{room_id}"
   ParseParse.find('Room', room_id, (room) ->
     ParseParse.where('Comment', [['room_id', room_id]], (room, comments)->
       room.set('comments_count', comments.length)
@@ -951,7 +1042,6 @@ updateRoomCommentsCount = (room_id) ->
   })
 
 syncComment = (room_id, comment, is_countup=false) ->
-  console.log 'syncComment'
   @socket.push({
     type: 'comment'
     comment: comment
@@ -1039,7 +1129,6 @@ artworkUrlWithNoimage = (artwork_url) ->
   artwork_url || ImgURLs.track_noimage_hover
 
 initYou = () ->
-  console.log 'initYou'
   return unless window.facebook_id
   if location.href.match(/best=/)
     $.get("/api/users/#{window.facebook_id}/workloads?best=1", (workloads) ->
