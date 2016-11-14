@@ -27,9 +27,11 @@ class @Nicovideo
       $dom.html(msg)
       document.write = document._write
 
+    # append する前に src を設定しちゃうと iframe が head の中に入っちゃう.
+    # …ので、append した後に src を設定する.
     script = document.createElement('script')
-    script.src = "http://ext.nicovideo.jp/thumb_watch/#{sm_id}"
     $dom.append(script)
+    script.src = "http://ext.nicovideo.jp/thumb_watch/#{sm_id}"
 
   @search: (keyword, $dom, callback=null) ->
     url = "http://api.search.nicovideo.jp/api/snapshot/"
