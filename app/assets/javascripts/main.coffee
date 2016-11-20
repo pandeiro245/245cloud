@@ -17,6 +17,7 @@ $ ->
   you_title you:init calendar_title calendar
   search_title search:init
   ranking_title ranking:init
+  okyo_title okyo:init
   8tracks_title 8tracks:init
   kimiya_title kimiya:init
   naotake_title naotake:init
@@ -212,6 +213,10 @@ entryItem = (entry) ->
 init8tracks = () ->
   ruffnote(17763, '8tracks_title')
   EightTracks.attrip($('#8tracks'))
+
+initOkyo = () ->
+  ruffnote(30556, 'okyo_title')
+  setTimeout("Youtube.search('お経 作業BGM', $('#okyo'))", 1000)
 
 initKimiya = () ->
   ruffnote(21800, 'kimiya_title')
