@@ -229,14 +229,14 @@ table.comments .icon{
 }
 
 /* 検索結果のボックスを薄い枠で囲む */
-.track_item {
-  border: 1px solid #ccc;
-  margin: 4px;
-  padding: 0px 2px;
-  border-radius: 4px;
+.track_item_group .col-lg-2{
+    padding: 4px;
 }
-
-.track_item .fixed_start img {
+.track_item_group .track_item {
+  border: 1px solid #ccc;
+  border-radius: 4px;  
+}
+.track_item_group .track_item .fixed_start img {
   margin-bottom: 8px;
 }
 

@@ -2,19 +2,21 @@ class Util
   @renderTrack: (provider_name, source_url, track_title, artwork_url, button_url, duration = '', fa_icon_name=null) ->
     fa_icon_name = provider_name unless fa_icon_name
     """
-      <div class='track_item col-lg-2' style='min-height: 200px;'>
-        <div class='track_item-title'>
-          <i class="fa fa-#{fa_icon_name}" title='#{provider_name}' data-toggle='tooltip' data-placement='top'></i>
-          <a href='#{source_url}' target='_blank'>#{track_title}</a>
-          (#{duration})<br />
-        </div>
-        <br />
-        <div class='track_item-body'>
-          <div class='track_item-thumb'>
-            <img src=\"#{artwork_url}\" width='100px'/>
+      <div class='col-lg-2' style='min-height: 200px;'>
+        <div class='track_item'>
+          <div class='track_item-title'>
+            <i class="fa fa-#{fa_icon_name}" title='#{provider_name}' data-toggle='tooltip' data-placement='top'></i>
+            <a href='#{source_url}' target='_blank'>#{track_title}</a>
+            (#{duration})<br />
           </div>
-          <a href=\"##{button_url}\" class='fixed_start'><img src='#{ImgURLs.button_play_this}' /></a>
-          <!--<a href=\"#\" class='add_playlist btn btn-default'>追加</a>-->
+          <br />
+          <div class='track_item-body'>
+            <div class='track_item-thumb'>
+              <img src=\"#{artwork_url}\" width='100px'/>
+            </div>
+            <a href=\"##{button_url}\" class='fixed_start'><img src='#{ImgURLs.button_play_this}' /></a>
+            <!--<a href=\"#\" class='add_playlist btn btn-default'>追加</a>-->
+          </div>
         </div>
       </div>
     """
@@ -39,6 +41,8 @@ class Util
         $item.addClass('row')
       if 'hidden' in attrs
         $item.hide()
+      if 'track_item_group' in attrs
+        $item.addClass('track_item_group')
       $contents.append($item)
       if 'init' in attrs
         capitalizedId = id.charAt(0).toUpperCase() + id.slice(1)
