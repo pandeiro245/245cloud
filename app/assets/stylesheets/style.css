@@ -250,6 +250,12 @@ table.comments .icon{
   margin-right: 8px;
 }
 
+/* タイトル部の左右は現状維持 */
+#header.scaffold.row {
+  margin-left: -8px;
+  margin-right: -8px;
+}
+
 /* 再生中一覧の枠の左側の隙間は現状を維持。右側にちょっと余裕がないので少し隙間をあける */
 #doing, #chatting, #done, #you {
   margin-left: -8px;
