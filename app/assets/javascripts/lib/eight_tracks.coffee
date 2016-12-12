@@ -27,7 +27,7 @@ class @EightTracks
             artwork = "<img src=\"#{track.artwork_url}\" width='100px'/>"
           href = "soundcloud:#{track.id}"
           $dom.append("""
-            <div class='col-lg-2' style='min-height: 200px;'>
+            <div class='track_item col-lg-2' style='min-height: 200px;'>
               <a href='#{track.permalink_url}' target='_blank'>#{track.title}</a>
               (#{Util.time(track.duration)})<br />
               <br />
@@ -51,7 +51,7 @@ class @EightTracks
             artwork = "<img src=\"#{a.sq100}\" width='100px'/>"
           href = "8tracks:#{track.id}"
           $dom.append("""
-            <div class='col-lg-2' style='min-height: 200px;'>
+            <div class='track_item col-lg-2' style='min-height: 200px;'>
               <a href='#{track.restful_url}' target='_blank'>#{track.name}</a>
               (#{Util.time(track.duration * 1000)})<br />
               <br />

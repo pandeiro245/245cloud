@@ -14,7 +14,7 @@ class @Mixcloud
     """)
 
   @search: (keyword, $dom, callback=null) ->
-    url = "http://api.mixcloud.com/search/?q=#{keyword}&type=cloudcast"
+    url = "//api.mixcloud.com/search/?q=#{keyword}&type=cloudcast"
     $.getJSON(url, (tracks) ->
       if tracks.data
         for track in tracks.data
