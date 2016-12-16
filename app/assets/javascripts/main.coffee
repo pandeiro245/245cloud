@@ -17,10 +17,10 @@ $ ->
   you_title you:init calendar_title calendar
   search_title search:init
   ranking_title ranking:init
-  okyo_title okyo:init
-  8tracks_title 8tracks:init
-  kimiya_title kimiya:init
-  naotake_title naotake:init
+  okyo_title okyo:init&track_item_group
+  8tracks_title 8tracks:init&track_item_group
+  kimiya_title kimiya:init&track_item_group
+  naotake_title naotake:init&track_item_group
   playing:stay complete:stay select_rooms:stay
   rooms_title:stay rooms:stay
   whatis_title whatis:no_row
@@ -338,7 +338,7 @@ initSearch = () ->
     searchMusics()
   )
 
-  $('#search').append('<div class="results"></div>')
+  $('#search').append('<div class="results track_item_group"></div>')
 
   $('#search input').focus(() ->
     $(this).select()
