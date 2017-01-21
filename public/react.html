@@ -6,6 +6,8 @@
     <script src="https://unpkg.com/react@latest/dist/react.js"></script>
     <script src="https://unpkg.com/react-dom@latest/dist/react-dom.js"></script>
     <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <script src="https://wzrd.in/standalone/superagent@latest"></script>
+    <script src="https://wzrd.in/standalone/superagent-jsonp@latest"></script>
     <style>
       * {
         margin: 0;
@@ -15,9 +17,15 @@
     </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root" style='width: 100%; text-align: center;'>
+      <div id="main-visual"></div>
+      <div id="news"></div>
+    </div>
+
     <script type="text/babel">
-      var mountNode = document.getElementById('root');
+      var request = window.superagent;
+      var jsonp = window.superagentJsonp;
+
 
       const ids = {
         main: '24932'
@@ -35,14 +43,36 @@
           var img = image('main');
           var style = {
             background: '#231809',
-            width: '100%',
-            textAlign: 'center',
             height: '340px'
           }
           return <div style={style}><img src={img} /></div>;
         }
       }
+
+      class News extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = {news: 'loading...'};
+        }
+        componentDidMount() {
+          var a = this;
+          var uri = 'https://ruffnote.com/pandeiro245/245cloud/18004/download.json?callback=?';
+          var options = { timeout: 3000, callbackKey: '?' };
+          request.get(uri).use(jsonp(options)).end(function(err, res){
+            console.log('err', err);
+            console.log('res', res);
+            a.setState({news: res.body.content});
+          });
+        }
+        render() {
+          return <div dangerouslySetInnerHTML={{__html: this.state.news}}></div>;
+        }
+      }
+
+      var mountNode = document.getElementById('main-visual');
       ReactDOM.render(<MainVisual />, mountNode);
+      var mountNode = document.getElementById('news');
+      ReactDOM.render(<News />, mountNode);
     </script>
   </body>
 </html>
