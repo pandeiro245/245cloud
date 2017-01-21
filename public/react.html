@@ -43,6 +43,7 @@
           var img = image('main');
           var style = {
             background: '#231809',
+            width: '100%',
             height: '340px'
           }
           return <div style={style}><img src={img} /></div>;
@@ -55,24 +56,27 @@
           this.state = {news: 'loading...'};
         }
         componentDidMount() {
-          var a = this;
-          var uri = 'https://ruffnote.com/pandeiro245/245cloud/18004/download.json?callback=?';
-          var options = { timeout: 3000, callbackKey: '?' };
-          request.get(uri).use(jsonp(options)).end(function(err, res){
-            console.log('err', err);
-            console.log('res', res);
-            a.setState({news: res.body.content});
-          });
+          ruffnote('news', '18004', this);
         }
         render() {
           return <div dangerouslySetInnerHTML={{__html: this.state.news}}></div>;
         }
       }
 
-      var mountNode = document.getElementById('main-visual');
-      ReactDOM.render(<MainVisual />, mountNode);
-      var mountNode = document.getElementById('news');
-      ReactDOM.render(<News />, mountNode);
+      ReactDOM.render(<MainVisual />, document.getElementById('main-visual'));
+      ReactDOM.render(<News />, document.getElementById('news'));
+
+      function ruffnote(state_name, id, target) {
+        var uri = 'https://ruffnote.com/pandeiro245/245cloud/18004/download.json?callback=?';
+        var options = { timeout: 3000, callbackKey: '?' };
+        request.get(uri).use(jsonp(options)).end(function(err, res){
+          console.log('err', err);
+          console.log('res', res);
+          var state = {};
+          state[state_name] = res.body.content;
+          target.setState(state);
+        });
+      }
     </script>
   </body>
 </html>
