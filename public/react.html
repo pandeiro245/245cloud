@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>245cloud</title>
+    <script src="https://unpkg.com/react@latest/dist/react.js"></script>
+    <script src="https://unpkg.com/react-dom@latest/dist/react-dom.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        border: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      var mountNode = document.getElementById('root');
+
+      const ids = {
+        main: '24932'
+      }
+
+      function imgUrl(id) {
+        return 'https://ruffnote.com/attachments/' + id
+      }
+      function image(key) {
+        return imgUrl(ids[key]);
+      }
+
+      class MainVisual extends React.Component {
+        render() {
+          var img = image('main');
+          var style = {
+            background: '#231809',
+            width: '100%',
+            textAlign: 'center',
+            height: '340px'
+          }
+          return <div style={style}><img src={img} /></div>;
+        }
+      }
+      ReactDOM.render(<MainVisual />, mountNode);
+    </script>
+  </body>
+</html>
+
