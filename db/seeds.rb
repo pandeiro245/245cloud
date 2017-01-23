@@ -1,2 +1,2 @@
-Workload.sync
+Util.sync
 Comment.sync
