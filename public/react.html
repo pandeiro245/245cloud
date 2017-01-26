@@ -8,13 +8,8 @@
     <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
     <script src="https://wzrd.in/standalone/superagent@latest"></script>
     <script src="https://wzrd.in/standalone/superagent-jsonp@latest"></script>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        border: 0;
-      }
-    </style>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
   </head>
   <body>
     <div id="root" style='width: 100%; text-align: center;'>
@@ -26,7 +21,6 @@
       var request = window.superagent;
       var jsonp = window.superagentJsonp;
 
-
       const ids = {
         main: '24932'
       }
@@ -34,6 +28,7 @@
       function imgUrl(id) {
         return 'https://ruffnote.com/attachments/' + id
       }
+
       function image(key) {
         return imgUrl(ids[key]);
       }
@@ -67,7 +62,7 @@
       ReactDOM.render(<News />, document.getElementById('news'));
 
       function ruffnote(state_name, id, target) {
-        var uri = 'https://ruffnote.com/pandeiro245/245cloud/18004/download.json?callback=?';
+        var uri = 'https://ruffnote.com/pandeiro245/245cloud/'+id+'/download.json?callback=?';
         var options = { timeout: 3000, callbackKey: '?' };
         request.get(uri).use(jsonp(options)).end(function(err, res){
           console.log('err', err);
