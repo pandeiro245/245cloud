@@ -20,7 +20,6 @@
 //= require lib/mixcloud.coffee
 //= require lib/mlkcca.coffee
 //= require lib/nicovideo.coffee
-//= require lib/parse_parse.coffee
 //= require lib/ruffnote.coffee
 //= require lib/soundcloud.coffee
 //= require lib/util.coffee

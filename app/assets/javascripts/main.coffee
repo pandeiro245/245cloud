@@ -16,7 +16,6 @@ $ ->
   done_title done:init
   you_title you:init calendar_title calendar
   search_title search:init
-  ranking_title ranking:init
   okyo_title okyo:init&track_item_group
   8tracks_title 8tracks:init&track_item_group
   kimiya_title kimiya:init&track_item_group
@@ -423,12 +422,11 @@ login = () ->
 
 start_random = () ->
   console.log 'start_random'
-  ParseParse.all("Music", (musics) ->
-    n = Math.floor(Math.random() * musics.length)
-    sc_id = musics[n].attributes.sc_id
-    location.hash = "soundcloud:#{sc_id}"
-    window.play("soundcloud:#{sc_id}")
-  )
+  sc_ids = [116992736, 21049964, 23093230, 142822858, 130298202, 96907547, 141157287]
+  n = Math.floor(Math.random() * sc_ids.length)
+  sc_id = sc_ids[n]
+  location.hash = "soundcloud:#{sc_id}"
+  window.play("soundcloud:#{sc_id}")
 
 window.start_hash = (key = null) ->
   console.log 'start_hash'
@@ -621,17 +619,6 @@ complete = () ->
       <iframe width=\"560\" height=\"315\" src=\"#{url}\" frameborder=\"0\" allowfullscreen></iframe>
       """
     )
-  else if location.href.match("ad=") and !$('#ad iframe').length
-    ParseParse.all("Ad", (ads) ->
-      n = Math.floor(Math.random() * ads.length)
-      ad = ads[n].attributes
-      $('#ad').html(
-        """
-        <h2><a href=\"#{ad.click_url}?from=245cloud.com\" target=\"_blank\">#{ad.name}</a></h2>
-        <iframe width=\"560\" height=\"315\" src=\"#{ad.movie_url}\" frameborder=\"0\" allowfullscreen></iframe>
-        """
-      )
-    )
 
   $.get('/api/complete')
 
@@ -786,37 +773,6 @@ window.createComment = (room_id) ->
     window.addComment(room_id, comment)
     syncComment(room_id, comment)
   )
-
-initRanking = () ->
-  return
-
-  now = new Date()
-  year = now.getYear() + 1900 - 1
-  month = now.getMonth()
-  day = now.getDate()
-
-  to_now = new Date(now.getTime() + 24*3600*1000)
-  to_year = to_now.getYear() + 1900 - 1
-  to_month = to_now.getMonth()
-  to_day = to_now.getDate()
-
-  $('#ranking_title').html("<h2>#{year}年#{month+1}月#{day}日に再生された曲</h2>")
-  cond = [
-    ["is_done", true]
-    ["createdAt", '>', new Date(year, month, day)]
-    ["createdAt", '<', new Date(to_year, to_month, to_day)]
-  ]
-  titles = {}
-  ParseParse.where("Workload", cond, (workloads) ->
-    return unless workloads.length > 0
-    for workload in workloads
-      continue unless workload.attributes.user
-      continue unless workload.attributes.title
-      continue if titles[workload.attributes.title]
-      titles[workload.attributes.title] = true
-      disp = "#{Util.hourMin(workload.createdAt, '開始')}（#{workload.number}/#{workload.weekly_number}）"
-      @addWorkload("#ranking", workload, disp)
-  , null, 24 *500)
 
 window.addDoing = (workload) ->
   $("#doing_title").show()
