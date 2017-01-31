@@ -769,7 +769,6 @@ window.createComment = (room_id) ->
   params.room_id = room_id
 
   $.post('/api/comments', params, (comment) ->
-    updateRoomCommentsCount(room_id)
     window.addComment(room_id, comment)
     syncComment(room_id, comment)
   )
@@ -895,15 +894,6 @@ initService = ($dom, url) ->
     $comments.prepend(html)
 
 window.addComment = @addComment
-
-updateRoomCommentsCount = (room_id) ->
-  console.log "updateRoomCommentsCount room_id is #{room_id}"
-  ParseParse.find('Room', room_id, (room) ->
-    ParseParse.where('Comment', [['room_id', room_id]], (room, comments)->
-      room.set('comments_count', comments.length)
-      room.save()
-    , room)
-  )
 
 @syncWorkload = (type) ->
   @socket.push({
