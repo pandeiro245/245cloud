@@ -64,7 +64,6 @@
       function ruffnote(state_name, id, target) {
         var uri = 'https://ruffnote.com/pandeiro245/245cloud/'+id+'/download.json?callback=?';
         var options = { timeout: 3000, callbackKey: '?' };
-
         request.get(uri).use(jsonp(options)).end(function(err, res){
           console.log('err', err);
           console.log('res', res);
