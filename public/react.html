@@ -6,8 +6,8 @@
     <script src="https://unpkg.com/react@latest/dist/react.js"></script>
     <script src="https://unpkg.com/react-dom@latest/dist/react-dom.js"></script>
     <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
-    <script src="https://wzrd.in/standalone/superagent@latest"></script>
-    <script src="https://wzrd.in/standalone/superagent-jsonp@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/superagent/3.4.2/superagent.min.js"></script>
+    <script src="/js/superagent-jsonp.js"></script>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
   </head>
@@ -19,7 +19,7 @@
 
     <script type="text/babel">
       var request = window.superagent;
-      var jsonp = window.superagentJsonp;
+      var jsonp = window.superagentJSONP
 
       const ids = {
         main: '24932'
@@ -64,6 +64,7 @@
       function ruffnote(state_name, id, target) {
         var uri = 'https://ruffnote.com/pandeiro245/245cloud/'+id+'/download.json?callback=?';
         var options = { timeout: 3000, callbackKey: '?' };
+
         request.get(uri).use(jsonp(options)).end(function(err, res){
           console.log('err', err);
           console.log('res', res);
