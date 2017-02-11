@@ -86,18 +86,24 @@
         </div>
       );
 
-      const Workload = (props) => (
-        <div className="workload facebook_{props.workload.facebook_id} col-sm-2"><div className="inborder"><h5>
-        <i className="fa fa-soundcloud" title="soundcloud" data-toggle="tooltip" data-placement="top"></i>
-        <span title="{props.workload.title}" data-toggle="tooltip" data-placement="top">
-        {props.workload.title || '無音'}
-        </span>
-        </h5>
-        <span><a href="/musics/soundcloud/21049964"><img src="https://ruffnote.com/attachments/24985" className="jacket" /></a></span>
-        <span><a href="/10153970340413381"><img className="icon img-thumbnail" src="https://graph.facebook.com/10153970340413381/picture?height=40&amp;width=40" /></a></span>
-        <div className="disp">1/31 {props.workload.number}回目(週{props.workload.weekly_number}回)</div>
-        <div><a href="#soundcloud:21049964" className="fixed_start"><img src="https://ruffnote.com/attachments/24921" /></a></div></div></div>
-      );
+      class Workload extends React.Component {
+        render () {
+          var hoge = 'workload facebook_{thils.props.workload.facebook_id}col-sm-2';
+          var workload = this.props.workload;
+          var icon_url = 'https://graph.facebook.com/' + workload.facebook_id + '/picture?height=40&width=40';
+
+          return <div className={hoge}><div className="inborder"><h5>
+            <i className="fa fa-soundcloud" title="soundcloud" data-toggle="tooltip" data-placement="top"></i>
+            <span title="{workload.title}" data-toggle="tooltip" data-placement="top">
+            {workload.title || '無音'}
+            </span>
+            </h5>
+            <span><a href="/musics/soundcloud/21049964"><img src={artwork_url(workload.artwork_url)} className="jacket" /></a></span>
+            <span><a href="/10153970340413381"><img className="icon img-thumbnail" src={icon_url} /></a></span>
+            <div className="disp">1/31 {workload.number}回目(週{workload.weekly_number}回)</div>
+            <div><a href="#soundcloud:21049964" className="fixed_start"><img src="https://ruffnote.com/attachments/24921" /></a></div></div></div>
+        };
+      };
 
       ReactDOM.render(<MainVisual />, document.getElementById('main-visual'));
       ReactDOM.render(<News />, document.getElementById('news'));
@@ -122,6 +128,10 @@
           state[state_name] = res.body;
           target.setState(state);
         });
+      }
+
+      function artwork_url(url) {
+        return url || 'https://ruffnote.com/attachments/24985'
       }
     </script>
   </body>
