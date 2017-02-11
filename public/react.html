@@ -81,15 +81,22 @@
       }
     
       const Workloads = (props) => (
-        <div>
-         { props.workloads.map(workload => <Workload key={workload.created_at} workload={workload}/>) }
+        <div className='row'>
+         { props.workloads.reverse().map(workload => <Workload key={workload.created_at} workload={workload}/>) }
         </div>
       );
 
       const Workload = (props) => (
-        <div>
-          {props.workload.created_at}
-        </div>
+        <div className="workload facebook_{props.workload.facebook_id} col-sm-2"><div className="inborder"><h5>
+        <i className="fa fa-soundcloud" title="soundcloud" data-toggle="tooltip" data-placement="top"></i>
+        <span title="{props.workload.title}" data-toggle="tooltip" data-placement="top">
+        {props.workload.title || '無音'}
+        </span>
+        </h5>
+        <span><a href="/musics/soundcloud/21049964"><img src="https://ruffnote.com/attachments/24985" className="jacket" /></a></span>
+        <span><a href="/10153970340413381"><img className="icon img-thumbnail" src="https://graph.facebook.com/10153970340413381/picture?height=40&amp;width=40" /></a></span>
+        <div className="disp">1/31 {props.workload.number}回目(週{props.workload.weekly_number}回)</div>
+        <div><a href="#soundcloud:21049964" className="fixed_start"><img src="https://ruffnote.com/attachments/24921" /></a></div></div></div>
       );
 
       ReactDOM.render(<MainVisual />, document.getElementById('main-visual'));

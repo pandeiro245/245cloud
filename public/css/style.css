@@ -35,6 +35,19 @@ h2.status img {
   text-align: center;
 }
 
+.inborder {
+  border: 4px solid rgb(234, 219, 160);
+  border-radius: 18px;
+  background: rgb(255, 255, 255);
+  margin: 10px 5px 3px;
+  padding: 0px 0px 6px;
+  color: rgb(178, 178, 178);
+}
+
+.workload {
+  min-height: '180px';
+}
+
 /* PC */
 @media (min-width: 657px) {
   #header img {
