@@ -76,9 +76,21 @@
           // this.state.dones.each(function(){
           //   console.log(this);
           // });
-          return <div dangerouslySetInnerHTML={{__html: this.state.news}}></div>;
+          return <Workloads workloads={this.state.dones} />;
         }
       }
+    
+      const Workloads = (props) => (
+        <div>
+         { props.workloads.map(workload => <Workload key={workload.created_at} workload={workload}/>) }
+        </div>
+      );
+
+      const Workload = (props) => (
+        <div>
+          {props.workload.created_at}
+        </div>
+      );
 
       ReactDOM.render(<MainVisual />, document.getElementById('main-visual'));
       ReactDOM.render(<News />, document.getElementById('news'));
