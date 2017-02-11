@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>245cloud</title>
+    <script src="https://unpkg.com/react@latest/dist/react.js"></script>
+    <script src="https://unpkg.com/react-dom@latest/dist/react-dom.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/superagent/3.4.2/superagent.min.js"></script>
+    <script src="/js/superagent-jsonp.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div id="root" style='width: 100%; text-align: center;'>
+      <div id="main-visual"></div>
+      <div id="news"></div>
+    </div>
+
+    <script type="text/babel">
+      var request = window.superagent;
+      var jsonp = window.superagentJSONP
+
+      const ids = {
+        main: '24932'
+      }
+
+      function imgUrl(id) {
+        return 'https://ruffnote.com/attachments/' + id
+      }
+
+      function image(key) {
+        return imgUrl(ids[key]);
+      }
+
+      class MainVisual extends React.Component {
+        render() {
+          var img = image('main');
+          var style = {
+            background: '#231809',
+            width: '100%',
+            height: '340px'
+          }
+          return <div style={style}><img src={img} /></div>;
+        }
+      }
+
+      class News extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = {news: 'loading...'};
+        }
+        componentDidMount() {
+          ruffnote('news', '18004', this);
+        }
+        render() {
+          return <div dangerouslySetInnerHTML={{__html: this.state.news}}></div>;
+        }
+      }
+
+      ReactDOM.render(<MainVisual />, document.getElementById('main-visual'));
+      ReactDOM.render(<News />, document.getElementById('news'));
+
+      function ruffnote(state_name, id, target) {
+        var uri = 'https://ruffnote.com/pandeiro245/245cloud/'+id+'/download.json?callback=?';
+        var options = { timeout: 3000, callbackKey: '?' };
+        request.get(uri).use(jsonp(options)).end(function(err, res){
+          console.log('err', err);
+          console.log('res', res);
+          var state = {};
+          state[state_name] = res.body.content;
+          target.setState(state);
+        });
+      }
+    </script>
+  </body>
+</html>
+
