@@ -16,6 +16,10 @@
     <div id="root" style='width: 100%; text-align: center;'>
       <div id="main-visual"></div>
       <div id="news"></div>
+      <div id="playings"></div>
+      <div id="chattings"></div>
+      <div id="dones"></div>
+      <div id="yours"></div>
     </div>
 
     <script type="text/babel">
@@ -59,17 +63,44 @@
         }
       }
 
+      class Dones extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = {dones: []};
+        }
+        componentDidMount() {
+          workloads('dones', this);
+        }
+        render() {
+          console.log(this.state.dones);
+          // this.state.dones.each(function(){
+          //   console.log(this);
+          // });
+          return <div dangerouslySetInnerHTML={{__html: this.state.news}}></div>;
+        }
+      }
+
       ReactDOM.render(<MainVisual />, document.getElementById('main-visual'));
       ReactDOM.render(<News />, document.getElementById('news'));
+      ReactDOM.render(<Dones />, document.getElementById('dones'));
 
       function ruffnote(state_name, id, target) {
         var uri = 'https://ruffnote.com/pandeiro245/245cloud/'+id+'/download.json?callback=?';
         var options = { timeout: 3000, callbackKey: '?' };
         request.get(uri).use(jsonp(options)).end(function(err, res){
+          var state = {};
+          state[state_name] = res.body.content;
+          target.setState(state);
+        });
+      }
+
+      function workloads(state_name, target) {
+        var uri = '/api/workloads.json'
+        request.get(uri).end(function(err, res){
           console.log('err', err);
           console.log('res', res);
           var state = {};
-          state[state_name] = res.body.content;
+          state[state_name] = res.body;
           target.setState(state);
         });
       }
