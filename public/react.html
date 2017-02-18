@@ -3,13 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <title>245cloud</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
     <script src="https://unpkg.com/react@latest/dist/react.js"></script>
     <script src="https://unpkg.com/react-dom@latest/dist/react-dom.js"></script>
     <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/superagent/3.4.2/superagent.min.js"></script>
     <script src="/js/superagent-jsonp.js"></script>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
+    integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
     <link rel="stylesheet" href="/css/style.css" />
   </head>
   <body>
@@ -88,22 +90,44 @@
 
       class Workload extends React.Component {
         render () {
-          var hoge = 'workload facebook_{thils.props.workload.facebook_id}col-sm-2';
+          var className = 'workload facebook_{thils.props.workload.facebook_id}col-sm-2';
           var workload = this.props.workload;
+          workload.music_hash = '#' + workload.music_key;
           var icon_url = 'https://graph.facebook.com/' + workload.facebook_id + '/picture?height=40&width=40';
+          var start    = moment(workload.created_at).format("M/DD")
 
-          return <div className={hoge}><div className="inborder"><h5>
+          return <div className={className}><div className="inborder"><h5>
             <i className="fa fa-soundcloud" title="soundcloud" data-toggle="tooltip" data-placement="top"></i>
             <span title="{workload.title}" data-toggle="tooltip" data-placement="top">
             {workload.title || '無音'}
             </span>
             </h5>
-            <span><a href="/musics/soundcloud/21049964"><img src={artwork_url(workload.artwork_url)} className="jacket" /></a></span>
-            <span><a href="/10153970340413381"><img className="icon img-thumbnail" src={icon_url} /></a></span>
-            <div className="disp">1/31 {workload.number}回目(週{workload.weekly_number}回)</div>
-            <div><a href="#soundcloud:21049964" className="fixed_start"><img src="https://ruffnote.com/attachments/24921" /></a></div></div></div>
+            <span><MusicIcon workload={workload} /></span>
+            <span><a href={'/' + workload.facebook_id}><img className="icon img-thumbnail" src={icon_url} /></a></span>
+            <div className="disp">{start} {workload.number}回目(週{workload.weekly_number}回)</div>
+            <div><StartButton workload={workload} /></div>
+            </div></div>
         };
       };
+
+      class MusicIcon extends React.Component {
+        render () {
+          var workload = this.props.workload;
+          if(workload.music_key) {
+            workload.music_url  = '/musics/' + workload.music_key.split(':').join('/');
+            return <a href={workload.music_url}><img src={artwork_url(workload.artwork_url)} className="jacket" /></a>
+          } else { // 無音 
+            return <img src="https://ruffnote.com/attachments/24981" className="jacket" />
+          }
+        }
+      }
+
+      class StartButton extends React.Component {
+        render () {
+          var workload = this.props.workload;
+          return <a href={workload.music_hash} className="fixed_start"><img src="https://ruffnote.com/attachments/24921" /></a>
+        }
+      }
 
       ReactDOM.render(<MainVisual />, document.getElementById('main-visual'));
       ReactDOM.render(<News />, document.getElementById('news'));
