@@ -10,7 +10,9 @@ body {
 }
 
 h2.status, hr.status {
-  background: repeat-x url('https://ruffnote.com/attachments/24944')
+  background: repeat-x url('https://ruffnote.com/attachments/24944');
+  width: 100%;
+  margin-top: 20px;
 }
 
 hr.status{
@@ -35,6 +37,19 @@ h2.status img {
   text-align: center;
 }
 
+.inborder {
+  border: 4px solid rgb(234, 219, 160);
+  border-radius: 18px;
+  background: rgb(255, 255, 255);
+  margin: 10px 5px 3px;
+  padding: 0px 0px 6px;
+  color: rgb(178, 178, 178);
+}
+
+.workload {
+  min-height: '180px';
+}
+
 /* PC */
 @media (min-width: 657px) {
   #header img {
@@ -42,7 +57,7 @@ h2.status img {
   }
   .inborder {
     width: 200px;
-    margin: 0 auto;
+    margin: 10 auto 3px;
   }
 }
 
