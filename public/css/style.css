@@ -10,7 +10,9 @@ body {
 }
 
 h2.status, hr.status {
-  background: repeat-x url('https://ruffnote.com/attachments/24944')
+  background: repeat-x url('https://ruffnote.com/attachments/24944');
+  width: 100%;
+  margin-top: 20px;
 }
 
 hr.status{
@@ -55,7 +57,7 @@ h2.status img {
   }
   .inborder {
     width: 200px;
-    margin: 0 auto;
+    margin: 10 auto 3px;
   }
 }
 

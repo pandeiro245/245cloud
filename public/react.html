@@ -83,14 +83,17 @@
       }
     
       const Workloads = (props) => (
+        <div>
+        <div className='row' id='done_title'><h2 className='status'><img src='https://ruffnote.com/attachments/24937' /></h2></div>
         <div className='row'>
          { props.workloads.reverse().map(workload => <Workload key={workload.created_at} workload={workload}/>) }
+        </div>
         </div>
       );
 
       class Workload extends React.Component {
         render () {
-          var className = 'workload facebook_{thils.props.workload.facebook_id}col-sm-2';
+          var className = 'workload facebook_' + this.props.workload.facebook_id + ' col-sm-2';
           var workload = this.props.workload;
           workload.music_hash = '#' + workload.music_key;
           var icon_url = 'https://graph.facebook.com/' + workload.facebook_id + '/picture?height=40&width=40';
@@ -125,7 +128,7 @@
       class StartButton extends React.Component {
         render () {
           var workload = this.props.workload;
-          return <a href={workload.music_hash} className="fixed_start"><img src="https://ruffnote.com/attachments/24921" /></a>
+          return <a href={workload.music_hash} onClick={start}><img src="https://ruffnote.com/attachments/24921" /></a>
         }
       }
 
@@ -156,6 +159,10 @@
 
       function artwork_url(url) {
         return url || 'https://ruffnote.com/attachments/24985'
+      }
+
+      function start() {
+        alert('start!');
       }
     </script>
   </body>
