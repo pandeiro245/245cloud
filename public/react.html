@@ -161,8 +161,9 @@
         return url || 'https://ruffnote.com/attachments/24985'
       }
 
-      function start() {
-        alert('start!');
+      function start(e) {
+        var hash = e.currentTarget.getAttribute('href').replace(/^#/, '')
+        alert('start:' + hash);
       }
     </script>
   </body>
