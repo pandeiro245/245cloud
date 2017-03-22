@@ -59,7 +59,7 @@ initTopbar = () ->
   $topbar.html($topbar_content)
   $(document).on('click', '.to_search', (e) ->
     e.preventDefault() # location.hash の変更を阻止
-    $('#search input').focus()
+    $('#search input#track').focus()
   )
 
 initSettings = () ->
