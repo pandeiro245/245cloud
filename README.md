@@ -33,5 +33,14 @@ export FACEBOOK_KEY='1234567890'
 export FACEBOOK_SECRET='1234567890ABCDEF12345'
 ```
 
+## 開発モード
+
+pomo時間, chat時間を変更する
+
+- localstrage
+  - dev_pomo : 0.1 (6秒くらい)
+  - dev_chat : 0.1 (6秒くらい)
+
+
 # see also  
 https://ruffnote.com/pandeiro245/245cloud
