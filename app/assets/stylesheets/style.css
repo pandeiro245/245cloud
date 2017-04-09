@@ -216,13 +216,13 @@ table.comments .icon{
   border-top: 0;
 }
 
-#twitter_home table{
+.twitter table{
   margin: 0 auto;
   width: 800px;
   text-align: left;
 }
 
-#twitter_home table img{
+.twitter table img{
   width: 20px;
   margin: 3px;
   border-radius: 8px;

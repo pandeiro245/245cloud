@@ -28,5 +28,6 @@ Rails.application.routes.draw do
     resources :access_logs, only: [:create]
     get '/tweets/yaruki', to: 'tweets#yaruki'
     get '/tweets/home', to: 'tweets#home'
+    get '/tweets/notifications', to: 'tweets#notifications'
   end
 end
