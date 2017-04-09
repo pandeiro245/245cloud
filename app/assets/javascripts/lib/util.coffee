@@ -141,11 +141,16 @@ class Util
       $(dom).html(disp)
 
   @parseHttp: (str) ->
-    str.replace(/https?:\/\/[\w?=&.\/-;#~%\-+]+(?![\w\s?&.\/;#~%"=\-]*>)/g, (http) ->
-      text = http
-      text = text.substring(0, 21) + "..." if text.length > 20
-
-      "<a href=\"#{http}\" target=\"_blank\">#{text}</a>"
+    str.replace(/https?:\/\/[\w?=&.\/-;#~%\-+]+(?![\w\s?&.\/;#~%"=\-]*>)/g, (url) ->
+      if url.match(/\.(png|gif|jpg)$/i)
+        # image link
+        imgTag = "<img src='#{url}' class='comment-inline-image' alt='#{url}' title='#{url}' />"
+        return "<a href='#{url}' target='_blank'>#{imgTag}</a>"
+      else
+        # normal link
+        linkText = url
+        linkText = linkText.substring(0, 21) + "..." if linkText.length > 20
+        return "<a href='#{url}' target='_blank'>#{linkText}</a>"
     )
 
   @addButton: (id, $dom, text, callback, tooltip=null) ->

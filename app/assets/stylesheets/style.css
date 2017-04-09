@@ -261,3 +261,10 @@ table.comments .icon{
   margin-left: -8px;
   margin-right: 18px;
 }
+
+/* コメント内画像 (でっかい画像は縮小する) */
+.comment-inline-image {
+  max-height: 100px;
+  display: block;
+  margin: 0 auto;
+}
