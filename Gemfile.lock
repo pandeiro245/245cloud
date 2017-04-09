@@ -396,6 +396,7 @@ DEPENDENCIES
   launchy
   mysql2
   nico_search_snapshot
+  nokogiri
   omniauth-facebook
   omniauth-timecrowd!
   omniauth-twitter

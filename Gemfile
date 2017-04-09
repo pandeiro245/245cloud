@@ -59,3 +59,4 @@ gem 'nico_search_snapshot'
 
 gem 'draper'
 
+gem 'nokogiri'

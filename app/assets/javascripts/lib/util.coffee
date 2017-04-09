@@ -142,7 +142,13 @@ class Util
 
   @parseHttp: (str) ->
     str.replace(/https?:\/\/[\w?=&.\/-;#~%\-+]+(?![\w\s?&.\/;#~%"=\-]*>)/g, (url) ->
-      if url.match(/\.(png|gif|jpg)$/i)
+      if url.match(/\/\/gyazo\.com\/([A-Za-z0-9]+)$/)
+        # gyazo image link
+        gyazoId = url.match(/\/\/gyazo\.com\/([A-Za-z0-9]+)$/)[1]
+        gyazoRawImageUrl = "/api/gyazo/proxy?id=#{gyazoId}"
+        imgTag = "<img src='#{gyazoRawImageUrl}' class='comment-inline-image' alt='#{url}' title='#{url}' />"
+        return "<a href='#{url}' target='_blank'>#{imgTag}</a>"
+      else if url.match(/\.(png|gif|jpg)$/i)
         # image link
         imgTag = "<img src='#{url}' class='comment-inline-image' alt='#{url}' title='#{url}' />"
         return "<a href='#{url}' target='_blank'>#{imgTag}</a>"
