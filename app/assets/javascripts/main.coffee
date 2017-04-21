@@ -860,6 +860,7 @@ initFixedStart = () ->
       start_hash()
     else
       alert 'Facebookログインをお願いします！'
+      $('html,body').animate({scrollTop:$('#login').offset().top - 40}) # Scroll to the login button position.
       window.fbAsyncInit()
   )
   $(document).on('click', '.add_playlist', () ->
