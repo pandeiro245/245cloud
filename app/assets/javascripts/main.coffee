@@ -476,7 +476,8 @@ start = () ->
   Util.countDown(@env.pomotime*60*1000, complete)
 
 window.youtubeDurationSec = (key)  ->
-  duration = key['contentDetails']['duration'].replace(/^PT/, '').replace(/S$/, '')
+  duration = key['contentDetails']['duration'];            # Ex) "PT43M22S", "PT43M"
+  duration = duration.replace(/^PT/, '').replace(/S$/, '') # Ex) "43M22", "43M"
 
   console.log duration
   if duration.match(/H/)
@@ -485,8 +486,8 @@ window.youtubeDurationSec = (key)  ->
   else
     hour = 0
     d2 = duration
-  min = parseInt(d2.split('M')[0])
-  sec = parseInt(d2.split('M')[1])
+  min = parseInt(d2.split('M')[0]) || 0
+  sec = parseInt(d2.split('M')[1]) || 0
   sec = hour*60*60+min*60+sec
   parseInt(sec)
 
