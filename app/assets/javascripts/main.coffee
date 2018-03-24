@@ -135,17 +135,17 @@ initTwitter = () ->
       """)
     else
         $('#twitter table').append("""
-          <tr>  
+          <tr>
           <td colspan='2'>やる気が出るかもしれない言葉</td>
-          </tr>  
+          </tr>
         """)
       for tweet in data
         console.log tweet
         $('#twitter table').append("""
-          <tr>  
+          <tr>
           <td><a href='https://twitter.com/#{tweet.user.screen_name}/status/#{tweet.id_str}' target='_blank'><img src='#{tweet.user.profile_image_url}' /></a></td>
           <td>#{tweet.text}</td>
-          </tr>  
+          </tr>
         """)
   )
 
@@ -332,7 +332,7 @@ initSearch = () ->
     """
   services += '</div>'
   $('#search').append(services)
- 
+
   $(document).on('click', '#check_services input', (e) ->
     searchMusics()
   )
@@ -582,10 +582,10 @@ complete = () ->
       $('#twitter_home').html('<table></table>')
       for tweet in data
         $('#twitter_home table').append("""
-          <tr>  
+          <tr>
           <td><a href='https://twitter.com/#{tweet.user.screen_name}' target='_blank'><img src='#{tweet.user.profile_image_url}' /></a></td>
           <td><hr>#{tweet.text}</td>
-          </tr>  
+          </tr>
         """)
     )
 
@@ -665,7 +665,7 @@ window.initWantedly = () ->
       'https://i.gyazo.com/b33f22cfe8b883a5d8b1cbc2f691ee3a.png'
     ]
     [
-      'エンジニアの今さんも伊藤さんも245cloudユーザ☆'
+      'エンジニアの伊藤さんが245cloudユーザ☆'
       27659
       'ベストティーチャー'
       '_6Z51YeGo0gOplv7iHbimw'
@@ -1024,4 +1024,3 @@ renderFixedStart = (title, icon) ->
   $('#random').removeClass("col-sm-offset-#{getOffset(2)}")
   $('#random').addClass("col-sm-offset-#{getOffset(3)}")
   $('[data-toggle="tooltip"]').tooltip()
-
