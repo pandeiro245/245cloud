@@ -95,9 +95,6 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
-    capybara-webkit (1.8.0)
-      capybara (>= 2.3.0, < 2.7.0)
-      json
     celluloid (0.16.0)
       timers (~> 4.0.0)
     chatwork (0.1.2)
@@ -380,7 +377,6 @@ DEPENDENCIES
   capistrano-rbenv
   capistrano-sidekiq
   capistrano3-unicorn
-  capybara-webkit
   chatwork
   coffee-rails (~> 4.1.0)
   database_rewinder
