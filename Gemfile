@@ -7,7 +7,7 @@ end
 
 gem 'rails', '~> 5.1.5'
 # gem 'sqlite3'
-gem 'mysql2'
+gem 'mysql2', '0.3.21'
 gem 'puma', '~> 3.7'
 gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '>= 1.3.0'
@@ -66,3 +66,5 @@ gem 'nico_search_snapshot'
 
 gem 'draper'
 
+gem 'jquery-rails'
+gem 'jquery-ui-rails'
