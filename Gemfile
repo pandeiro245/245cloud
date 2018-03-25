@@ -38,7 +38,7 @@ end
 
 group 'test' do
   gem 'rspec-rails'
-  # gem 'capybara-webkit'
+  gem 'capybara-webkit'
   gem 'launchy'
   gem 'factory_girl_rails'
   gem 'poltergeist'
