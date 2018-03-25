@@ -18,7 +18,6 @@ gem 'jbuilder', '~> 2.5'
 
 group :development, :test do
   gem 'byebug'
-  gem 'web-console', '>= 3.3.0'
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
@@ -34,6 +33,7 @@ group :development do
   gem 'chatwork'
   gem 'capistrano-pending', require: false
   gem 'gem_reloader'
+  gem 'web-console', '>= 3.3.0'
 end
 
 group 'test' do
