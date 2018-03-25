@@ -1,15 +1,4 @@
 GIT
-  remote: git@github.com:pandeiro245/parse_resource.git
-  revision: 6e0b13e0d2326aca2c1166fad8f29951d0e88b02
-  branch: issue-1
-  specs:
-    parse_resource (1.8.0)
-      activemodel
-      activesupport
-      json
-      rest-client
-
-GIT
   remote: https://github.com/pandeiro245/omniauth-timecrowd.git
   revision: bf857b38c79a56767e52f25504f51cd1d8e41197
   branch: issue-1
@@ -181,7 +170,6 @@ GEM
       thor (>= 0.14, < 2.0)
     jquery-ui-rails (6.0.1)
       railties (>= 3.2.16)
-    json (2.1.0)
     jwt (1.5.6)
     launchy (2.4.3)
       addressable (~> 2.3)
@@ -199,9 +187,6 @@ GEM
     memoizable (0.4.2)
       thread_safe (~> 0.3, >= 0.3.1)
     method_source (0.9.0)
-    mime-types (3.1)
-      mime-types-data (~> 3.2015)
-    mime-types-data (3.2016.0521)
     mini_mime (1.0.0)
     mini_portile2 (2.3.0)
     minitest (5.11.3)
@@ -213,7 +198,6 @@ GEM
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (4.2.0)
-    netrc (0.11.0)
     nico_search_snapshot (0.1.1)
       httpclient (>= 2.6.0)
     nio4r (2.3.0)
@@ -288,10 +272,6 @@ GEM
     responders (2.4.0)
       actionpack (>= 4.2.0, < 5.3)
       railties (>= 4.2.0, < 5.3)
-    rest-client (2.0.2)
-      http-cookie (>= 1.0.2, < 2.0)
-      mime-types (>= 1.16, < 4.0)
-      netrc (~> 0.8)
     rspec-core (3.7.1)
       rspec-support (~> 3.7.0)
     rspec-expectations (3.7.0)
@@ -419,7 +399,6 @@ DEPENDENCIES
   omniauth-facebook
   omniauth-timecrowd!
   omniauth-twitter
-  parse_resource!
   poltergeist
   puma (~> 3.7)
   rails (~> 5.1.5)

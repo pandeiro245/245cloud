@@ -49,8 +49,6 @@ gem 'dotenv-rails'
 gem 'settingslogic'
 gem 'font-awesome-sass'
 
-gem 'parse_resource', git: 'git@github.com:pandeiro245/parse_resource.git', branch: 'issue-1'
-
 gem 'omniauth-facebook'
 gem 'omniauth-timecrowd', github: 'pandeiro245/omniauth-timecrowd', branch: 'issue-1'
 gem 'omniauth-twitter'
