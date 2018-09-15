@@ -16,7 +16,6 @@
 //= require images
 //= require lib/config
 //= require lib/bootstrap.min.js
-//= require lib/eight_tracks.coffee
 //= require lib/mixcloud.coffee
 //= require lib/mlkcca.coffee
 //= require lib/nicovideo.coffee
@@ -35,6 +34,5 @@
 //= require pitch.coffee
 //= require soundcloud_api.js
 //= require underscore-min.js
-//= require gakkison.coffee
 //= require lib/leap-0.6.4.js
 //= require lib/leap-plugins-0.1.6.js

@@ -1,20 +1,26 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.2.0'
+git_source(:github) do |repo_name|
+  repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
+  "https://github.com/#{repo_name}.git"
+end
+
+gem 'rails', '~> 5.1.5'
+# gem 'sqlite3'
+gem 'mysql2', '0.3.21'
+gem 'puma', '~> 3.7'
 gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '>= 1.3.0'
-gem 'coffee-rails', '~> 4.1.0'
 gem 'therubyracer', platforms: :ruby
-gem 'jquery-rails'
-gem 'jbuilder', '~> 2.0'
-gem 'sdoc', '~> 0.4.0', group: :doc
-gem 'unicorn'
+gem 'coffee-rails', '~> 4.2'
+gem 'jbuilder', '~> 2.5'
+# gem 'bcrypt', '~> 3.1.7'
 
 group :development, :test do
-  gem 'mysql2'
   gem 'byebug'
-  gem 'web-console', '~> 2.0'
+  gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'spring'
+  gem 'spring-watcher-listen', '~> 2.0.0'
 end
 
 group :development do
@@ -27,6 +33,7 @@ group :development do
   gem 'chatwork'
   gem 'capistrano-pending', require: false
   gem 'gem_reloader'
+  gem 'web-console', '>= 3.3.0'
 end
 
 group 'test' do
@@ -41,8 +48,6 @@ gem 'haml'
 gem 'dotenv-rails'
 gem 'settingslogic'
 gem 'font-awesome-sass'
-
-gem 'parse_resource', git: 'git@github.com:pandeiro245/parse_resource.git', branch: 'issue-1'
 
 gem 'omniauth-facebook'
 gem 'omniauth-timecrowd', github: 'pandeiro245/omniauth-timecrowd', branch: 'issue-1'
@@ -59,4 +64,5 @@ gem 'nico_search_snapshot'
 
 gem 'draper'
 
-gem 'nokogiri'
+gem 'jquery-rails'
+gem 'jquery-ui-rails'
