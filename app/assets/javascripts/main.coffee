@@ -7,6 +7,7 @@ $ ->
   scaffolds = Util.scaffolds('''
   header:no_row&stay news otukare:hidden&stay
   topbar:init
+  rap:stay
   ad:stay contents:stay
   twitter_home:stay
   settings:init
@@ -611,6 +612,17 @@ complete = () ->
 
   @env.is_doing = false
   @env.is_done = true
+
+
+  if location.href.match("rap=")
+    key = 'Aw1Awul1818'
+    url = "https://www.youtube.com/embed/#{key}?autoplay=1"
+    $('#rap').html(
+      """
+      <h2>2459rap</h2>
+      <iframe width=\"560\" height=\"315\" src=\"#{url}\" frameborder=\"0\" allowfullscreen></iframe>
+      """
+    )
 
   if location.href.match("gohobi_youtube=") and !$('#ad iframe').length
     url = "https://www.youtube.com/embed/#{location.href.split('gohobi_youtube=')[1].replace(/&.*$/,'').replace(/#.*$/,'')}?autoplay=1"
