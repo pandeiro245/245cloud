@@ -7,7 +7,9 @@ $ ->
   scaffolds = Util.scaffolds('''
   header:no_row&stay news otukare:hidden&stay
   topbar:init
-  ad:stay contents:stay
+  ad:stay
+  rap:hidden&stay
+  contents:stay
   twitter_home:stay
   settings:init
   twitter timecrowd toggl nortification heatmap:init start_buttons
@@ -17,7 +19,6 @@ $ ->
   you_title you:init calendar_title calendar
   search_title search:init
   okyo_title okyo:init&track_item_group
-  8tracks_title 8tracks:init&track_item_group
   kimiya_title kimiya:init&track_item_group
   naotake_title naotake:init&track_item_group
   playing:stay complete:stay select_rooms:stay
@@ -135,17 +136,17 @@ initTwitter = () ->
       """)
     else
         $('#twitter table').append("""
-          <tr>  
+          <tr>
           <td colspan='2'>やる気が出るかもしれない言葉</td>
-          </tr>  
+          </tr>
         """)
       for tweet in data
         console.log tweet
         $('#twitter table').append("""
-          <tr>  
+          <tr>
           <td><a href='https://twitter.com/#{tweet.user.screen_name}/status/#{tweet.id_str}' target='_blank'><img src='#{tweet.user.profile_image_url}' /></a></td>
           <td>#{tweet.text}</td>
-          </tr>  
+          </tr>
         """)
   )
 
@@ -207,11 +208,6 @@ entryItem = (entry) ->
       </label>
     </tr>
   """
-
-
-init8tracks = () ->
-  ruffnote(17763, '8tracks_title')
-  EightTracks.attrip($('#8tracks'))
 
 initOkyo = () ->
   ruffnote(30556, 'okyo_title')
@@ -284,14 +280,6 @@ initStart = () ->
           artworkUrlWithNoimage(track.artwork_url)
         )
       )
-    if location.hash.match(/8tracks/)
-      EightTracks.fetch(id, @env.et_client_id, (track) ->
-        renderFixedStart(
-          track.mix.name,
-          artworkUrlWithNoimage(track.mix.cover_urls.sq100)
-        )
-      )
-
     #text = '無音で24分集中'
     text = [
       ImgURLs.button_paly_nomusic
@@ -332,7 +320,7 @@ initSearch = () ->
     """
   services += '</div>'
   $('#search').append(services)
- 
+
   $(document).on('click', '#check_services input', (e) ->
     searchMusics()
   )
@@ -535,15 +523,6 @@ window.play = (key) ->
       createWorkload(params, start)
     )
     Nicovideo.play(id, $("#playing"))
-  if key.match(/^8tracks/)
-    EightTracks.fetch(id, @env.et_client_id, (track) ->
-      params['music_key'] = "8tracks:#{id}"
-      params.title = track.mix.name
-      params.artwork_url = track.mix.cover_urls.sq100
-      createWorkload(params, start)
-      window.play_repeat(key, track.mix.duration * 1000)
-    )
-
 window.play_repeat = (key, duration) ->
   console.log 'play_repeat'
   return false if @env.is_done
@@ -554,8 +533,6 @@ window.play_repeat = (key, duration) ->
     Youtube.play(id, $("#playing"))
   else if key.match(/^mixcloud/)
     Mixcloud.play(id, $("#playing"),)
-  else if key.match(/^8tracks/)
-    EightTracks.play(id, $("#playing"))
   else if key.match(/^nicovideo/)
     Nicovideo.play(id, $("#playing"))
   setTimeout("play_repeat\(\"#{key}\"\, #{duration})", duration)
@@ -582,10 +559,10 @@ complete = () ->
       $('#twitter_home').html('<table></table>')
       for tweet in data
         $('#twitter_home table').append("""
-          <tr>  
+          <tr>
           <td><a href='https://twitter.com/#{tweet.user.screen_name}' target='_blank'><img src='#{tweet.user.profile_image_url}' /></a></td>
           <td><hr>#{tweet.text}</td>
-          </tr>  
+          </tr>
         """)
     )
 
@@ -600,10 +577,10 @@ complete = () ->
   $('#header').hide()
   $('#topbar').hide()
   $('#otukare').fadeIn()
+  $('#rap').fadeIn()
   $("#playing").fadeOut()
   $("#search").fadeOut()
   $("#playing").html('') # for stopping
-  initWantedly()
   unless @env.is_kakuhen
     window.initSelectRooms()
 
@@ -633,71 +610,6 @@ complete = () ->
       body: '245cloud'
       icon: '//placehold.jp/100x100.png'
     }).show()
-
-window.initWantedly = () ->
-  companies = [
-    [
-      '245cloud mix作者のkimiyaさんをはじめ、コアユーザの菊本さん、瀬川さん等々が率いる技術者集団'
-      33589
-      'スタテク'
-      'H77rEIjYFdS8X0dyRnohdA'
-      'https://i.gyazo.com/e33c7a589df67ea5e68a5b9dec74df3d.png'
-    ]
-    [
-      '245cloudを作っている西小倉が働く'
-      29075
-      'ラフノート'
-      'b3umDS_P10Avjbmwv-1ldA'
-      'https://i.gyazo.com/e72ff20360920ff26dab3dde6155bb1c.png'
-    ]
-    [
-      'この245cloudはホトスタの香月さんと西小倉の2人でポモドーロする会からスタートしました。社長のハッシーもコアユーザ'
-      6683
-      'ホトスタ'
-      'CJm45IwYynMvPdaLRvUESg'
-      'https://i.gyazo.com/8218576144d00615a898433f3a61f9f3.png'
-    ]
-    [
-      '累計ポモ数ダントツ１位のはらぱんさんのRubyアジャイルな会社'
-      20027
-      'mofmof'
-      'r0P3mUnqLLLrOnFazuo1aQ'
-      'https://i.gyazo.com/b33f22cfe8b883a5d8b1cbc2f691ee3a.png'
-    ]
-    [
-      'エンジニアの今さんも伊藤さんも245cloudユーザ☆'
-      27659
-      'ベストティーチャー'
-      '_6Z51YeGo0gOplv7iHbimw'
-      'https://i.gyazo.com/ea0a709fb5a6215021809e04eb147dcd.png'
-
-    ]
-  ]
-  n = Math.floor(Math.random() * companies.length)
-  company = companies[n]
-  $('#wantedly').html("""
-  【試験的宣伝】<br/>
-  正常動作しない場合は<a href='https://www.facebook.com/pandeiro245' target='_blank'>西小倉</a>までご連絡ください！<br>
-  <a href='https://github.com/pandeiro245/245cloud/issues/138' target='_blank'>ここから</a>貼り付けコードを発行して共有頂ければ西小倉による紹介文付きで追加させて頂きます！<br>
-  （もちろん無料っすけど誰かに怒られたりしたら突然消えますｗ）<br/><br/>
-  <img src='#{company[4]}' width='500px'/>
-  <br/>
-  #{company[0]}<br>
-  「<a href='https://www.wantedly.com/projects/#{company[1]}' target='_blank'>#{company[2]}</a>」の話を聞いてみませんか？<br />
-  <div class="wantedly-visit-button" data-visit-button-id="#{company[3]}" data-width="270" data-height="60"></div>
-  </div>
-  """)
-
-  d = document
-  s = 'script'
-  id = 'wantedly-visit-buttons-wjs'
-  fjs = d.getElementsByTagName(s)[0]
-  if d.getElementById(id)
-    return
-  js = d.createElement(s)
-  js.id = id
-  js.src = 'https://platform.wantedly.com/visit_buttons/script.js'
-  fjs.parentNode.insertBefore js, fjs
 
 window.initComments = () ->
   initRoom()
@@ -800,8 +712,6 @@ window.addChatting = (workload) ->
     jacket = "<a href='/musics/#{w.music_key.replace(':', '/')}'>#{jacket}</a>" if w.music_key
     provider = w.music_key.split(':')[0]
     icon_name = if provider == 'nicovideo' then 'television'  else provider
-    unless provider == '8tracks'
-      provider_icon = "<i class='fa fa-#{icon_name}' title='#{provider}' data-toggle='tooltip' data-placement='top' ></i>"
   else
     title = '無音'
     fixed = "<a href=\"#\" class='fixed_start'><img src='#{ImgURLs.button_paly_nomusic}' /></a>"
@@ -952,7 +862,6 @@ searchMusics = () ->
     Soundcloud.search(q, @env.sc_client_id, $tracks, initTooltip)
   if is_none || search_sm
     Nicovideo.search(q, $tracks, initTooltip)
-  #EightTracks.search(q, $tracks)
 
 initTooltip = () ->
   $('[data-toggle="tooltip"]').tooltip()
@@ -1024,4 +933,3 @@ renderFixedStart = (title, icon) ->
   $('#random').removeClass("col-sm-offset-#{getOffset(2)}")
   $('#random').addClass("col-sm-offset-#{getOffset(3)}")
   $('[data-toggle="tooltip"]').tooltip()
-
