@@ -19,7 +19,6 @@ $ ->
   you_title you:init calendar_title calendar
   search_title search:init
   okyo_title okyo:init&track_item_group
-  8tracks_title 8tracks:init&track_item_group
   kimiya_title kimiya:init&track_item_group
   naotake_title naotake:init&track_item_group
   playing:stay complete:stay select_rooms:stay
@@ -210,11 +209,6 @@ entryItem = (entry) ->
     </tr>
   """
 
-
-init8tracks = () ->
-  ruffnote(17763, '8tracks_title')
-  EightTracks.attrip($('#8tracks'))
-
 initOkyo = () ->
   ruffnote(30556, 'okyo_title')
   setTimeout("Youtube.search('お経 作業BGM', $('#okyo'))", 1000)
@@ -286,14 +280,6 @@ initStart = () ->
           artworkUrlWithNoimage(track.artwork_url)
         )
       )
-    if location.hash.match(/8tracks/)
-      EightTracks.fetch(id, @env.et_client_id, (track) ->
-        renderFixedStart(
-          track.mix.name,
-          artworkUrlWithNoimage(track.mix.cover_urls.sq100)
-        )
-      )
-
     #text = '無音で24分集中'
     text = [
       ImgURLs.button_paly_nomusic
@@ -537,15 +523,6 @@ window.play = (key) ->
       createWorkload(params, start)
     )
     Nicovideo.play(id, $("#playing"))
-  if key.match(/^8tracks/)
-    EightTracks.fetch(id, @env.et_client_id, (track) ->
-      params['music_key'] = "8tracks:#{id}"
-      params.title = track.mix.name
-      params.artwork_url = track.mix.cover_urls.sq100
-      createWorkload(params, start)
-      window.play_repeat(key, track.mix.duration * 1000)
-    )
-
 window.play_repeat = (key, duration) ->
   console.log 'play_repeat'
   return false if @env.is_done
@@ -556,8 +533,6 @@ window.play_repeat = (key, duration) ->
     Youtube.play(id, $("#playing"))
   else if key.match(/^mixcloud/)
     Mixcloud.play(id, $("#playing"),)
-  else if key.match(/^8tracks/)
-    EightTracks.play(id, $("#playing"))
   else if key.match(/^nicovideo/)
     Nicovideo.play(id, $("#playing"))
   setTimeout("play_repeat\(\"#{key}\"\, #{duration})", duration)
@@ -737,8 +712,6 @@ window.addChatting = (workload) ->
     jacket = "<a href='/musics/#{w.music_key.replace(':', '/')}'>#{jacket}</a>" if w.music_key
     provider = w.music_key.split(':')[0]
     icon_name = if provider == 'nicovideo' then 'television'  else provider
-    unless provider == '8tracks'
-      provider_icon = "<i class='fa fa-#{icon_name}' title='#{provider}' data-toggle='tooltip' data-placement='top' ></i>"
   else
     title = '無音'
     fixed = "<a href=\"#\" class='fixed_start'><img src='#{ImgURLs.button_paly_nomusic}' /></a>"
@@ -889,7 +862,6 @@ searchMusics = () ->
     Soundcloud.search(q, @env.sc_client_id, $tracks, initTooltip)
   if is_none || search_sm
     Nicovideo.search(q, $tracks, initTooltip)
-  #EightTracks.search(q, $tracks)
 
 initTooltip = () ->
   $('[data-toggle="tooltip"]').tooltip()

@@ -16,7 +16,6 @@
 //= require images
 //= require lib/config
 //= require lib/bootstrap.min.js
-//= require lib/eight_tracks.coffee
 //= require lib/mixcloud.coffee
 //= require lib/mlkcca.coffee
 //= require lib/nicovideo.coffee
