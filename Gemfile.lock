@@ -166,7 +166,6 @@ GEM
       domain_name (~> 0.5)
     http-form_data (2.1.1)
     http_parser.rb (0.6.0)
-    httpclient (2.8.3)
     i18n (1.1.1)
       concurrent-ruby (~> 1.0)
     jbuilder (2.8.0)
@@ -209,8 +208,6 @@ GEM
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (5.0.2)
-    nico_search_snapshot (0.1.1)
-      httpclient (>= 2.6.0)
     nio4r (2.3.1)
     nokogiri (1.8.5)
       mini_portile2 (~> 2.3.0)
@@ -406,7 +403,6 @@ DEPENDENCIES
   launchy
   listen (>= 3.0.5, < 3.2)
   mysql2 (= 0.5.2)
-  nico_search_snapshot
   omniauth-facebook
   omniauth-timecrowd!
   omniauth-twitter
