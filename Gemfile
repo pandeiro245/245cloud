@@ -1,14 +1,11 @@
 source 'https://rubygems.org'
+git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-git_source(:github) do |repo_name|
-  repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
-  "https://github.com/#{repo_name}.git"
-end
+ruby '2.5.1'
 
-gem 'rails', '~> 5.1.5'
-# gem 'sqlite3'
-gem 'mysql2', '0.3.21'
-gem 'puma', '~> 3.7'
+gem 'rails', '~> 5.2.1'
+gem 'mysql2', '0.5.2'
+gem 'puma', '~> 3.11'
 gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '>= 1.3.0'
 gem 'therubyracer', platforms: :ruby
