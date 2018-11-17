@@ -12,7 +12,6 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require underscore-min
 //= require images
 //= require lib/config
 //= require lib/bootstrap.min.js
@@ -24,15 +23,11 @@
 //= require lib/util.coffee
 //= require lib/whatis.coffee
 //= require lib/youtube.coffee
-//= require d3.min
 //= require application.js
 //= require cal-heatmap.min.js
 //= require d3.min.js
 //= require images.coffee
 //= require main.coffee
 //= require notify.js
-//= require pitch.coffee
 //= require soundcloud_api.js
 //= require underscore-min.js
-//= require lib/leap-0.6.4.js
-//= require lib/leap-plugins-0.1.6.js
