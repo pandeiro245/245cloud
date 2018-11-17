@@ -30,4 +30,3 @@
 //= require main.coffee
 //= require notify.js
 //= require soundcloud_api.js
-//= require underscore-min.js
