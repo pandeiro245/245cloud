@@ -23,6 +23,7 @@
 //= require lib/util.coffee
 //= require lib/whatis.coffee
 //= require lib/youtube.coffee
+//= require d3.min
 //= require application.js
 //= require cal-heatmap.min.js
 //= require d3.min.js
