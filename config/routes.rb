@@ -7,10 +7,6 @@ Rails.application.routes.draw do
   post '/timecrowd/start' => 'timecrowd#start'
   post '/timecrowd/stop' => 'timecrowd#stop'
 
-  post '/toggl/start' => 'toggl#start'
-  post '/toggl/stop'  => 'toggl#stop'
-
-
   get '/auth/:provider/callback', to: 'users#login'
 
   get '/:id', to: 'users#show'
