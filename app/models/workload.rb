@@ -30,15 +30,15 @@ class Workload < ActiveRecord::Base
     )
   }
   scope :today, -> (created_at = nil) {
-    to = created_at || Time.now
+    to = created_at || Time.zone.now
     to -= POMOTIME
-    from = to.to_date.beginning_of_day
+    from = to.beginning_of_day
     where(
       created_at: from..to
     )
   }
   scope :thisweek, -> (created_at = nil) {
-    to = created_at || Time.now
+    to = created_at || Time.zone.now
     to -= POMOTIME
     from = to.to_date.beginning_of_day
     from = if created_at.wday == 0 # sunday
@@ -51,13 +51,13 @@ class Workload < ActiveRecord::Base
     )
   }
   scope :chattings, -> {
-    from = Time.now - POMOTIME - CHATTIME
-    to   = Time.now - POMOTIME
+    from = Time.zone.now - POMOTIME - CHATTIME
+    to   = Time.zone.now - POMOTIME
     by_range(from..to)
   }
   scope :playings, -> {
-    from = Time.now - POMOTIME
-    to   = Time.now
+    from = Time.zone.now - POMOTIME
+    to   = Time.zone.now
     by_range(from..to)
   }
   scope :by_range, -> range {
@@ -76,7 +76,7 @@ class Workload < ActiveRecord::Base
   end
 
   def to_done!
-    #if workload.created_at + Workload.pomotime <= Time.now
+    #if workload.created_at + Workload.pomotime <= Time.zone.now
     if true
       self.number = next_number
       self.weekly_number = next_number(:weekly)
