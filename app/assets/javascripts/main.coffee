@@ -443,7 +443,6 @@ start = () ->
   $("input").hide()
 
   @env.is_doing = true
-  @syncWorkload('doing')
 
   if @env.is_kakuhen
     initComments()
@@ -542,7 +541,6 @@ complete = () ->
   if window.settings.timecrowd
     $.post('/timecrowd/stop')
 
-  @syncWorkload('chatting')
   window.is_hato = false
   Util.countDown(@env.chattime*60*1000, 'finish')
   $('#header').hide()
@@ -623,7 +621,6 @@ window.initRoom = (id = '1', title='いつもの部屋') ->
 
 window.finish = () ->
   console.log 'finish'
-  @syncWorkload('finish')
 
   # nortification
   if $('#show-nortification').prop('checked')
@@ -654,7 +651,6 @@ window.createComment = (room_id) ->
 
   $.post('/api/comments', params, (comment) ->
     window.addComment(room_id, comment)
-    syncComment(room_id, comment)
   )
 
 window.addDoing = (workload) ->
@@ -770,28 +766,13 @@ initService = ($dom, url) ->
     <img class='icon' src='#{img}' />
     </a>
     <td>
-    <td>#{Util.parseHttp(_.escape(c.body))}</td>
+    <td>#{Util.parseHttp(c.body)}</td>
     <td>#{Util.hourMin(c.created_at)}</td>
     </tr>
     """
     $comments.prepend(html)
 
 window.addComment = @addComment
-
-@syncWorkload = (type) ->
-  @socket.push({
-    type: type
-    workload: window.workload
-  })
-
-syncComment = (room_id, comment, is_countup=false) ->
-  console.log 'syncComment'
-  @socket.push({
-    type: 'comment'
-    comment: comment
-    room_id: room_id
-    is_countup: is_countup
-  })
 
 @stopUser = (facebook_id) ->
   $("#chatting .user_#{facebook_id}").remove()
