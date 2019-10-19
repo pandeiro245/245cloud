@@ -12,7 +12,7 @@ class Comment < ActiveRecord::Base
   end
 
   def self.fetch parent_id = nil
-    url = 'http://245cloud.com/api/comments.json'
+    url = 'https://245cloud.com/api/comments.json'
     url += "?parent_id=#{parent_id}" if parent_id.present?
     uri = URI.parse(url)
     json = Net::HTTP.get(uri)

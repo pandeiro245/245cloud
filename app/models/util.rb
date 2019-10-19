@@ -1,6 +1,6 @@
 class Util
   def self.sync
-    url = 'http://245cloud.com/api/workloads.json?limit=1000&type=dones'
+    url = 'https://245cloud.com/api/workloads.json?limit=1000&type=dones'
     uri = URI.parse(url)
     json = Net::HTTP.get(uri)
     JSON.parse(json).each do |w|
