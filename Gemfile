@@ -46,9 +46,6 @@ gem 'settingslogic'
 gem 'font-awesome-sass'
 
 gem 'omniauth-facebook'
-gem 'omniauth-timecrowd', github: 'pandeiro245/omniauth-timecrowd', branch: 'issue-1'
-gem 'omniauth-twitter'
-gem 'twitter'
 
 gem 'rb-readline'
 gem 'awesome_print'
