@@ -16,7 +16,6 @@
 //= require lib/config
 //= require lib/bootstrap.min.js
 //= require lib/mixcloud.coffee
-//= require lib/mlkcca.coffee
 //= require lib/nicovideo.coffee
 //= require lib/ruffnote.coffee
 //= require lib/soundcloud.coffee

@@ -12,7 +12,7 @@ class Comment < ActiveRecord::Base
   end
 
   def self.fetch parent_id = nil
-    url = 'http://245cloud.com/api/comments.json'
+    url = 'https://245cloud.com/api/comments.json'
     url += "?parent_id=#{parent_id}" if parent_id.present?
     uri = URI.parse(url)
     json = Net::HTTP.get(uri)
@@ -26,9 +26,9 @@ class Comment < ActiveRecord::Base
     created_at = Time.at(cmnt['created_at']/1000)
     comment.created_at =  created_at
     %w(body facebook_id parent_id).each do |key|
-      comment.send("#{key}=", cmnt[key])
+      comment.send("#{key}=", cmnt[key] || 1)
     end
-    comment.save!
+    comment.save!(validate: false)
   end
 end
 

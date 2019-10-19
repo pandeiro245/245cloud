@@ -1,7 +1,7 @@
 class Api::CommentsController < ApplicationController
   def index
     parent_id = params[:room_id] || nil
-    @comments = Comment.where(parent_id: params[:parent_id]).limit(48).order('updated_at desc')
+    @comments = Comment.where(parent_id: params[:parent_id]).limit(48).order('created_at desc')
 
     render json: @comments.map{|c|
       hash = JSON.parse(c.to_json)
@@ -12,7 +12,7 @@ class Api::CommentsController < ApplicationController
 
   def create
     parent_id = params[:room_id] || nil
-    comment = Comment.create(
+    comment = Comment.create!(
       facebook_id: current_user.facebook_id,
       parent_id: parent_id,
       body: params[:body]
