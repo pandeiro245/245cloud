@@ -17,11 +17,11 @@ class Api::CommentsController < ApplicationController
       parent_id: parent_id,
       body: params[:body]
     )
-    if parent = comment.parent
+    if parent_id.present?
+      parent = comment.parent
       parent.num = parent.children.count
-      parent.save!
+      parent.save!(validate: false)
     end
-
     render json: comment
   end
 end
