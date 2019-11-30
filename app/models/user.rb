@@ -6,7 +6,7 @@ class User < ActiveRecord::Base
     Workload.his(facebook_id).bests.limit(48)
   end
 
-  def start!(params=nil)
+  def start!(params={})
     Workload.find_or_start_by_user(self, params)
   end
 
