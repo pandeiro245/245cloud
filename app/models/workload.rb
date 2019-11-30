@@ -76,13 +76,10 @@ class Workload < ActiveRecord::Base
   end
 
   def to_done!
-    #if workload.created_at + Workload.pomotime <= Time.zone.now
-    if true
-      self.number = next_number
-      self.weekly_number = next_number(:weekly)
-      self.is_done = true
-      self.save!
-    end
+    self.number = next_number
+    self.weekly_number = next_number(:weekly)
+    self.is_done = true
+    self.save!
     self
   end
 
