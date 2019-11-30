@@ -8,7 +8,7 @@ $ ->
   header:no_row&stay news otukare:hidden&stay
   topbar:init
   contents:stay
-  nortification heatmap:init start_buttons
+  heatmap:init start_buttons
   doing_title:stay doing:init&stay
   chatting_title:stay chatting:init:stay
   done_title done:init
@@ -88,17 +88,6 @@ initHeatmap = () ->
   })
 
 
-entryItem = (entry) ->
-  """
-    <tr>
-      <label>
-      <td><input type='radio' name='timecrowd_task' data-team-id='#{entry.task.team_id}' value='#{entry.task.id}' /></td>
-      <td><a href='#{entry.task.url}' target='_blank'>#{entry.task.title}</a></td>
-      <td>#{Util.time(entry.started_at)}</td>
-      </label>
-    </tr>
-  """
-
 initOkyo = () ->
   ruffnote(30556, 'okyo_title')
   setTimeout("Youtube.search('お経 作業BGM', $('#okyo'))", 1000)
@@ -112,11 +101,6 @@ initNaotake = () ->
   Mixcloud.search('/naotake/', $('#naotake'))
 
 initStart = () ->
-  if location.href.match(/sparta/)
-    Util.countDown(1*60*1000, start_unless_doing)
-  if location.href.match(/auto_start=/)
-    start_unless_doing()
-
   text = "24分やり直しでも大丈夫ですか？"
   Util.beforeunload(text, 'env.is_doing')
 
@@ -170,7 +154,6 @@ initStart = () ->
           artworkUrlWithNoimage(track.artwork_url)
         )
       )
-    #text = '無音で24分集中'
     text = [
       ImgURLs.button_paly_nomusic
       ImgURLs.button_paly_nomusic_hover
@@ -283,6 +266,8 @@ initDoing = () ->
     return unless workloads.length > 0
     $("#doing_title").show()
     for workload in workloads
+      if workload.facebook_id == window.facebook_id
+        @env.is_doing = true
       window.addDoing(workload)
   )
 
@@ -329,23 +314,11 @@ createWorkload = (params = {}, callback) ->
 start = () ->
   $('#topbar').hide()
   console.log 'start'
-  if window.settings.timecrowd
-    task_id = $("input[name='timecrowd_task']:checked").val()
-    team_id = $("input[name='timecrowd_task']:checked").attr('data-team-id')
-    params = {
-      team_id: team_id
-      task_id: task_id
-    }
-    $.post('/timecrowd/start', params)
   for div in $("#nc div.scaffold")
     $(div).hide() unless $(div).attr('id') in window.stays
   $("input").hide()
 
   @env.is_doing = true
-
-  if @env.is_kakuhen
-    initComments()
-    window.initSelectRooms()
 
   Util.countDown(@env.pomotime*60*1000, complete)
 
@@ -425,21 +398,6 @@ window.play_repeat = (key, duration) ->
 
 complete = () ->
   console.log 'complete'
-  if window.settings.twitter
-    $.get('/api/tweets/home', (data) ->
-      $('#twitter_home').html('<table></table>')
-      for tweet in data
-        $('#twitter_home table').append("""
-          <tr>
-          <td><a href='https://twitter.com/#{tweet.user.screen_name}' target='_blank'><img src='#{tweet.user.profile_image_url}' /></a></td>
-          <td><hr>#{tweet.text}</td>
-          </tr>
-        """)
-    )
-
-  if window.settings.timecrowd
-    $.post('/timecrowd/stop')
-
   window.is_hato = false
   Util.countDown(@env.chattime*60*1000, 'finish')
   $('#header').hide()
@@ -448,9 +406,6 @@ complete = () ->
   $("#playing").fadeOut()
   $("#search").fadeOut()
   $("#playing").html('') # for stopping
-  unless @env.is_kakuhen
-    window.initSelectRooms()
-
   alert '24分間お疲れ様でした！5分間交換日記ができます☆' if window.settings.alert unless @env.is_done
 
   @env.is_doing = false
@@ -461,13 +416,6 @@ complete = () ->
   $complete = $('#complete')
   $complete.html('')
   initComments()
-
-  # nortification
-  if $('#show-nortification').prop('checked')
-    new Notify('作業時間が終了しました！', {
-      body: '245cloud'
-      icon: '//placehold.jp/100x100.png'
-    }).show()
 
 window.initComments = () ->
   initRoom()
@@ -510,19 +458,7 @@ window.initRoom = (id = '1', title='いつもの部屋') ->
 
 window.finish = () ->
   console.log 'finish'
-
-  # nortification
-  if $('#show-nortification').prop('checked')
-    new Notify('休憩時間が終了しました！', {
-      body: '245cloud'
-      icon: '//placehold.jp/100x100.png'
-    }).show()
-
-  if location.href.match(/auto_close=/)
-    window.open(location, '_self', '')
-    window.close()
-  else
-    location.reload()
+  location.reload()
 
 window.createComment = (room_id) ->
   console.log 'createComment'
@@ -659,14 +595,6 @@ initService = ($dom, url) ->
 
 window.addComment = @addComment
 
-@stopUser = (facebook_id) ->
-  $("#chatting .user_#{facebook_id}").remove()
-  if $("#chatting div").length < 1
-    $("#chatting_title").hide()
-  $("#doing .user_#{facebook_id}").remove()
-  if $("#doing div").length < 1
-    $("#doing_title").hide()
-
 searchMusics = () ->
   q = $('#track').val()
 
@@ -727,10 +655,6 @@ renderWorkloads = (dom) ->
   $items.removeClass('col-sm-offset-4')
   $items.removeClass('col-sm-offset-5')
   $first.addClass("col-sm-offset-#{getOffset($items.length)}")
-
-start_unless_doing = ()->
-  unless ( @env.is_doing or @env.is_done)
-    start_hash()
 
 artworkUrlWithNoimage = (artwork_url) ->
   artwork_url || ImgURLs.track_noimage_hover
