@@ -48,7 +48,6 @@ gem 'font-awesome-sass'
 
 gem 'omniauth-facebook'
 gem 'omniauth-discord'
-# gem 'discordrb'
 
 gem 'rb-readline'
 gem 'awesome_print'
@@ -63,3 +62,4 @@ gem 'jquery-rails'
 gem 'jquery-ui-rails'
 
 gem 'firebase'
+gem 'discordrb'

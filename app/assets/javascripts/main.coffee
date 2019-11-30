@@ -51,7 +51,6 @@ initFirebase = () ->
         if i.facebook_id == window.facebook_id
           start_hash()
           @env.is_doing = true
-    else
   )
 
 initTopbar = () ->
@@ -324,6 +323,11 @@ window.start_nomusic = () ->
 createWorkload = (params = {}, callback) ->
   $.post('/api/workloads', params, (workload) ->
     window.workload = workload
+    database = firebase.database()
+    database.ref('workloads').push({
+      facebook_id: window.facebook_id
+      created_at: workload.created_at
+    })
     callback()
   )
 
