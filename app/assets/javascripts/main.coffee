@@ -7,12 +7,8 @@ $ ->
   scaffolds = Util.scaffolds('''
   header:no_row&stay news otukare:hidden&stay
   topbar:init
-  ad:stay
-  rap:hidden&stay
   contents:stay
-  twitter_home:stay
-  settings:init
-  twitter timecrowd nortification heatmap:init start_buttons
+  nortification heatmap:init start_buttons
   doing_title:stay doing:init&stay
   chatting_title:stay chatting:init:stay
   done_title done:init
@@ -43,9 +39,6 @@ $ ->
     ruffnote(content[0], content[1])
 
   initStart()
-  initTwitter() if window.settings.twitter
-  initTimecrowd() if window.settings.timecrowd
-  initNortification() if location.href.match(/notification=/)
   initFixedStart()
 
 initTopbar = () ->
@@ -61,31 +54,6 @@ initTopbar = () ->
     e.preventDefault() # location.hash の変更を阻止
     $('#search input#track').focus()
   )
-
-initSettings = () ->
-  for key of window.settings
-    continue unless key in ['alert', 'timecrowd', 'twitter']
-    $('#settings').append("<div><a href='/?cancel=#{key}' class='btn btn-warning'>#{key}をやめる</a></div>")
-
-initNortification = () ->
-  if window.facebook_id
-    if !Notify.needsPermission || Notify.isSupported()
-      $('#nortification').html("""
-        <input id="show-nortification" type="checkbox" style="display:inline">
-        <label for="show-nortification"> デスクトップ通知を利用する</label>
-      """)
-
-      # チェック時に通知の許可要求
-      $('#show-nortification').on('change', () ->
-        if $(this).prop('checked') && Notify.needsPermission
-          Notify.requestPermission(() ->
-            # 成功時(何もしない)
-            console.log('nortification permitted')
-          , () ->
-            # 失敗時はcheckboxを元に戻す
-            $(this).prop('checked', false)
-          )
-      )
 
 initHeatmap = () ->
   return unless window.facebook_id
@@ -120,75 +88,6 @@ initHeatmap = () ->
   })
 
 
-initTwitter = () ->
-  console.log 'initTwitter'
-  $('#twitter').html("""
-  <h2>Twitter</h2>
-  <ul><li class='loading'>ローディング中。。。<br>（タスクが多いと時間がかかるかもです…。）</li></ul>
-  <table class='table table-bordered table-hover' id='tweets' style='margin-bottom: 20px;'>
-  """)
-  $.get('/api/tweets/yaruki', (data) ->
-    $('.loading').remove()
-    if data.status == 'ng'
-      $('#twitter ul').html("""
-      <a href='/auth/twitter'>ログイン</a>
-      """)
-    else
-        $('#twitter table').append("""
-          <tr>
-          <td colspan='2'>やる気が出るかもしれない言葉</td>
-          </tr>
-        """)
-      for tweet in data
-        console.log tweet
-        $('#twitter table').append("""
-          <tr>
-          <td><a href='https://twitter.com/#{tweet.user.screen_name}/status/#{tweet.id_str}' target='_blank'><img src='#{tweet.user.profile_image_url}' /></a></td>
-          <td>#{tweet.text}</td>
-          </tr>
-        """)
-  )
-
-initTimecrowd = () ->
-  console.log 'initTimecrowd'
-  $('#timecrowd').html("""
-  <h2>TimeCrowd</h2>
-  <div style='display:none; width:100%; text-align:center;'><input placeholder='タスク追加' style='width:100%;' id='timecrowd_add_task'/></div>
-  <ul><li class='loading'>ローディング中。。。<br>（タスクが多いと時間がかかるかもです…。）</li></ul>
-  <table class='table table-bordered table-hover' id='timecrowd_select_task'>
-  </table>
-  """)
-  $('#timecrowd_add_task').keypress((e) ->
-    if e.which == 13 #enter
-      alert $('#timecrowd_add_task').val()
-  )
-  $.get('/timecrowd/recents', (data) ->
-    console.log 'GET /timecrowd/recents', data
-    $('.loading').remove()
-    if data.status == 'ng'
-      $('#timecrowd ul').html("""
-      <a href='/auth/timecrowd'>ログイン</a>
-      """)
-    else
-      task_ids = {}
-      if data.is_working
-        working_entry = data.entries[0]
-        task_ids[working_entry.task.id] = true
-        $('#timecrowd table').append(entryItem(working_entry))
-      for entry in data.entries
-        continue if working_entry && entry.id == working_entry.id
-        continue if task_ids[entry.task.id]
-        task_ids[entry.task.id] = true
-        $('#timecrowd table').append(entryItem(entry))
-
-      $('#timecrowd table tr:first input').attr('checked', 'checked')
-      $('#timecrowd table tr').click((e) ->
-        console.log e
-        $('#timecrowd table input').removeAttr('checked')
-        $(e.currentTarget).find('input').prop('checked', true)
-      )
-  )
-
 entryItem = (entry) ->
   """
     <tr>
@@ -206,7 +105,7 @@ initOkyo = () ->
 
 initKimiya = () ->
   ruffnote(21800, 'kimiya_title')
-  Mixcloud.search('/kimiya-sato/', $('#kimiya'))
+  Mixcloud.search('kimiya310', $('#kimiya'))
 
 initNaotake = () ->
   ruffnote(21799, 'naotake_title')
@@ -546,7 +445,6 @@ complete = () ->
   $('#header').hide()
   $('#topbar').hide()
   $('#otukare').fadeIn()
-  $('#rap').fadeIn()
   $("#playing").fadeOut()
   $("#search").fadeOut()
   $("#playing").html('') # for stopping
@@ -557,15 +455,6 @@ complete = () ->
 
   @env.is_doing = false
   @env.is_done = true
-
-  if location.href.match("gohobi_youtube=") and !$('#ad iframe').length
-    url = "https://www.youtube.com/embed/#{location.href.split('gohobi_youtube=')[1].replace(/&.*$/,'').replace(/#.*$/,'')}?autoplay=1"
-    $('#ad').html(
-      """
-      <h2>ご褒美動画です☆</h2>
-      <iframe width=\"560\" height=\"315\" src=\"#{url}\" frameborder=\"0\" allowfullscreen></iframe>
-      """
-    )
 
   $.get('/api/complete')
 
@@ -708,9 +597,9 @@ window.addChatting = (workload) ->
   $('[data-toggle="tooltip"]').tooltip()
 
   # dones以外は１ユーザにつき１つしか表示しないので他の$itemは消去
-  unless dom == '#done'
-    $("#chatting .facebook_#{facebook_id}").remove()
-    $("#doing .facebook_#{facebook_id}").remove()
+  # unless dom == '#done'
+  $("#chatting .facebook_#{facebook_id}").remove()
+  #   $("#doing .facebook_#{facebook_id}").remove()
 
   $workload = $('<div></div>')
   $workload.addClass("workload")
@@ -741,10 +630,6 @@ initFixedStart = () ->
       $('html,body').animate({scrollTop:$('#login').offset().top - 40}) # Scroll to the login button position.
       window.fbAsyncInit()
   )
-  $(document).on('click', '.add_playlist', () ->
-    alert 'プレイリストに追加する機能は現在開発中です。。。'
-  )
-
 
 window.ruffnote = (id, dom, callback=null) ->
   Ruffnote.fetch("pandeiro245/245cloud/#{id}", dom, callback)
@@ -784,8 +669,6 @@ window.addComment = @addComment
 
 searchMusics = () ->
   q = $('#track').val()
-
-
 
   search_yt = $("#search_yt").prop('checked')
   search_mc = $("#search_mc").prop('checked')

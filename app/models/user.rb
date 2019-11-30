@@ -6,6 +6,10 @@ class User < ActiveRecord::Base
     Workload.his(facebook_id).bests.limit(48)
   end
 
+  def start!
+    Workload.find_or_start_by_user(self)
+  end
+
   def email_required?
     false
   end

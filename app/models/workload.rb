@@ -70,6 +70,14 @@ class Workload < ActiveRecord::Base
     type ? public_send(type) : dones
   }
 
+  def self.find_or_start_by_user(user)
+    w = playings.his(user.facebook_id).first
+    return w if w.present?
+    self.create!(
+      facebook_id: user.facebook_id
+    )
+  end
+
   def set_music_key
     return nil if self.music_key.nil?
     self.music_key = URI.decode(self.music_key)

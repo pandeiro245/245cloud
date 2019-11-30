@@ -16,24 +16,24 @@ class DiscordBot
     bot.command :pomo do |event|
       start = Time.now 
       sec = 0
-      res = event.send_message("#{remain_text(sec)} by #{event.user.name}")
-      user = User.find_by(discord_id: event.user.id)
       workload = nil
-      if user.present?
-        workload = Workload.create!(
-          facebook_id: user.facebook_id
-        )
-      end
+      user = User.find_by(discord_id: event.user.id)
 
-      while(@pomo_sec > sec) do
-        sec = (Time.now - start).to_i
-        res.edit("#{remain_text(sec)} by #{event.user.name} id: #{res.id}")
-        sleep 0.8
-      end
-      if user.present?
+      if user.blank?
+        event.send_message("#{event.user.name} please login https://245cloud.com/auth/discord")
+      else
+        res = event.send_message("loading...")
+
+        workload = Workload.find_or_start_by_user(user)
+        
+        while(@pomo_sec > sec) do
+          sec = (Time.now - start).to_i
+          res.edit("#{remain_text(sec)} by #{event.user.name} id: #{res.id}")
+          sleep 0.8
+        end
         workload.to_done!
+        res.edit("done! by #{event.user.mention}")
       end
-      res.edit("done! by #{event.user.mention}")
     end
     bot.run
   end
