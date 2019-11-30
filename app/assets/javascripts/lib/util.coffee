@@ -98,15 +98,17 @@ class Util
     return "00" if i < 0
     if i < 10 then "0#{i}" else "#{i}"
 
-  @countDown: (duration, callback='reload', started=null, params={}) ->
+  @countDown: (end_time, callback) ->
     unless started
       started = (new Date()).getTime()
+    duration = end_time - (new Date()).getTime()
+
     past = (new Date()).getTime() - started
 
     $('.countdown2').show()
 
     if duration > past # yet end
-      remain = duration-past
+      remain = duration - past
      
       if remain < 8 * 1000 && !window.is_hato
         audio = document.getElementById("hato")
@@ -114,19 +116,14 @@ class Util
         window.is_hato = true
 
       remain2 = Util.time(remain)
-      if dom = params.dom
-        $dom = $(dom)
-      else
-        $('title').html(remain2)
-        $dom = $('.countdown')
-      #$dom.html("あと#{remain2}")
+      $('title').html(remain2)
+      $dom = $('.countdown')
       $dom.html("<img src='#{ImgURLs.whitespace}' /><span class='time'>#{remain2}</span>")
-
       if callback == 'reload'
-        setTimeout("Util.countDown(#{duration}, null, #{started}, #{JSON.stringify(params)})", 1000)
+        setTimeout("Util.countDown(#{end_time}, 'reload')", 1000)
       else
-        setTimeout("Util.countDown(#{duration}, #{callback}, #{started}, #{JSON.stringify(params)})", 1000)
-    else # end
+        setTimeout("Util.countDown(#{end_time}, #{callback})", 1000)
+    else
       if callback == 'reload'
         location.reload()
       else
