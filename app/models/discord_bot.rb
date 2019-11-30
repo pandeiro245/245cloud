@@ -14,30 +14,26 @@ class DiscordBot
       prefix: '/',
     )
     bot.command :pomo do |event|
-      if event.channel.id == 650199453327949826
-      # if true
-        # binding.pry
-        start = Time.now 
-        sec = 0
-        res = event.send_message("#{remain_text(sec)} by #{event.user.name}")
-        user = User.find_by(discord_id: event.user.id)
-        workload = nil
-        if user.present?
-          workload = Workload.create!(
-            facebook_id: user.facebook_id
-          )
-        end
-
-        while(@pomo_sec > sec) do
-          sec = (Time.now - start).to_i
-          res.edit("#{remain_text(sec)} by #{event.user.name} id: #{res.id}")
-          sleep 0.8
-        end
-        if user.present?
-          workload.to_done!
-        end
-        res.edit("done! by #{event.user.mention}")
+      start = Time.now 
+      sec = 0
+      res = event.send_message("#{remain_text(sec)} by #{event.user.name}")
+      user = User.find_by(discord_id: event.user.id)
+      workload = nil
+      if user.present?
+        workload = Workload.create!(
+          facebook_id: user.facebook_id
+        )
       end
+
+      while(@pomo_sec > sec) do
+        sec = (Time.now - start).to_i
+        res.edit("#{remain_text(sec)} by #{event.user.name} id: #{res.id}")
+        sleep 0.8
+      end
+      if user.present?
+        workload.to_done!
+      end
+      res.edit("done! by #{event.user.mention}")
     end
     bot.run
   end
