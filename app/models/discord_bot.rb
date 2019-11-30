@@ -36,11 +36,11 @@ class DiscordBot
         
         while(@pomo_sec > sec) do
           sec = (Time.now - start).to_i
-          res.edit("#{remain_text(sec)} by #{event.user.name} id: #{res.id}")
+          res.edit("#{workload.number}回目の集中完了まであと#{remain_text(sec)} by #{event.user.name} ")
           sleep 0.8
         end
         workload.to_done!
-        res.edit("done! by #{event.user.mention}")
+        res.edit("#{workload.number}回集中しました by #{event.user.mention}")
       end
     end
     bot.run
