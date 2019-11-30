@@ -46,7 +46,6 @@ gem 'dotenv-rails'
 gem 'settingslogic'
 gem 'font-awesome-sass'
 
-gem 'omniauth-facebook'
 
 gem 'rb-readline'
 gem 'awesome_print'
@@ -59,4 +58,7 @@ gem 'draper'
 
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
+
+
+# gem 'omniauth-facebook'
 gem 'discordrb'

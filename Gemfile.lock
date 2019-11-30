@@ -167,7 +167,6 @@ GEM
       thor (>= 0.14, < 2.0)
     jquery-ui-rails (6.0.1)
       railties (>= 3.2.16)
-    jwt (2.2.1)
     launchy (2.4.3)
       addressable (~> 2.3)
     libv8 (3.16.14.19)
@@ -190,8 +189,6 @@ GEM
     mini_mime (1.0.2)
     mini_portile2 (2.4.0)
     minitest (5.12.2)
-    multi_json (1.14.1)
-    multi_xml (0.6.0)
     multipart-post (2.1.1)
     mysql2 (0.5.2)
     net-scp (2.0.0)
@@ -203,20 +200,6 @@ GEM
     nio4r (2.5.2)
     nokogiri (1.10.4)
       mini_portile2 (~> 2.4.0)
-    oauth2 (1.4.2)
-      faraday (>= 0.8, < 2.0)
-      jwt (>= 1.0, < 3.0)
-      multi_json (~> 1.3)
-      multi_xml (~> 0.5)
-      rack (>= 1.2, < 3)
-    omniauth (1.9.0)
-      hashie (>= 3.4.6, < 3.7.0)
-      rack (>= 1.6.2, < 3)
-    omniauth-facebook (5.0.0)
-      omniauth-oauth2 (~> 1.2)
-    omniauth-oauth2 (1.6.0)
-      oauth2 (~> 1.1)
-      omniauth (~> 1.9)
     opus-ruby (1.0.1)
       ffi
     orm_adapter (0.5.0)
@@ -383,7 +366,6 @@ DEPENDENCIES
   listen (>= 3.0.5, < 3.2)
   mysql2 (= 0.5.2)
   nico_search_snapshot
-  omniauth-facebook
   poltergeist
   pry-rails
   puma (~> 3.11)
