@@ -31,10 +31,11 @@ class @Nicovideo
     # …ので、append した後に src を設定する.
     script = document.createElement('script')
     $dom.append(script)
-    script.src = "http://ext.nicovideo.jp/thumb_watch/#{sm_id}"
+    script.src = "//ext.nicovideo.jp/thumb_watch/#{sm_id}"
 
   @search: (keyword, $dom, callback=null) ->
-    url = "http://api.search.nicovideo.jp/api/snapshot/"
+    # url = "//api.search.nicovideo.jp/api/snapshot/"
+    url = "//api.search.nicovideo.jp/api/v2/snapshot/video/contents/search"
     query = {
       query: keyword,
       service: ["video"],
@@ -64,7 +65,7 @@ class @Nicovideo
               duration = sm.length_seconds * 1000
               title = sm.title
               artwork_url = sm.thumbnail_url
-              url = "http://www.nicovideo.jp/watch/#{sm_id}"
+              url = "//www.nicovideo.jp/watch/#{sm_id}"
               href = "nicovideo:#{sm_id}"
               $dom.append(
                 Util.renderTrack('nicovideo', url, title, artwork_url, href, Util.time(duration), 'television')

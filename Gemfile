@@ -52,7 +52,6 @@ gem 'awesome_print'
 
 gem 'devise'
 gem 'activerecord-import'
-gem 'nico_search_snapshot'
 
 gem 'draper'
 
