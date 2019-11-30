@@ -40,6 +40,19 @@ $ ->
 
   initStart()
   initFixedStart()
+  initFirebase()
+
+initFirebase = () ->
+  database = firebase.database()
+  database.ref('workloads').on('child_added', (snapshot) ->
+    i = snapshot.val()
+    if i.created_at + @env.pomotime*60*1000 > (new Date()).getTime()
+      if @env.is_doing == false
+        if i.facebook_id == window.facebook_id
+          start_hash()
+          @env.is_doing = true
+    else
+  )
 
 initTopbar = () ->
   $topbar = $('#topbar')

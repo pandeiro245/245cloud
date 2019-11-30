@@ -24,7 +24,15 @@ class DiscordBot
       else
         res = event.send_message("loading...")
 
-        workload = Workload.find_or_start_by_user(user)
+        workload = user.start!
+
+        base_uri = 'https://neat-glazing-702.firebaseio.com/'
+        token = File.open('tmp/token.json').read
+        firebase = Firebase::Client.new(base_uri, token)
+        response = firebase.push("workloads", {
+          facebook_id: user.facebook_id,
+          created_at: Time.now.to_i * 1000
+        })
         
         while(@pomo_sec > sec) do
           sec = (Time.now - start).to_i
