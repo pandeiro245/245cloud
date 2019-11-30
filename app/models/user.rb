@@ -6,8 +6,16 @@ class User < ActiveRecord::Base
     Workload.his(facebook_id).bests.limit(48)
   end
 
-  def start!
-    Workload.find_or_start_by_user(self)
+  def start!(params=nil)
+    Workload.find_or_start_by_user(self, params)
+  end
+
+  def to_done!
+    w = Workload.his(
+      facebook_id
+    ).chattings.first
+    w.to_done! if w.present?
+    w
   end
 
   def email_required?

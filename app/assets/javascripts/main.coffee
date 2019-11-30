@@ -265,10 +265,14 @@ initDoing = () ->
   $.get('/api/workloads?type=playings', (workloads) ->
     return unless workloads.length > 0
     $("#doing_title").show()
+    _is_doing = false
     for workload in workloads
       if workload.facebook_id == window.facebook_id
-        @env.is_doing = true
+        _is_doing = true
       window.addDoing(workload)
+    if _is_doing
+      window.start_hash()
+      $(".fixed_start").hide()
   )
 
 initDone = () ->
@@ -295,7 +299,6 @@ window.start_hash = (key = null) ->
   console.log 'start_hash'
   unless key
     key = location.hash.replace(/#/, '')
-
   if key
      window.play(key)
    else
@@ -320,7 +323,8 @@ start = () ->
 
   @env.is_doing = true
 
-  Util.countDown(@env.pomotime*60*1000, complete)
+  end_time = window.workload.created_at + @env.pomotime*60*1000
+  Util.countDown(end_time, complete)
 
 window.youtubeDurationSec = (key)  ->
   duration = key['contentDetails']['duration'];            # Ex) "PT43M22S", "PT43M"
@@ -399,14 +403,14 @@ window.play_repeat = (key, duration) ->
 complete = () ->
   console.log 'complete'
   window.is_hato = false
-  Util.countDown(@env.chattime*60*1000, 'finish')
+  end_time = window.workload.created_at + @env.pomotime*60*1000 + @env.chattime*60*1000
+  Util.countDown(end_time, 'reload')
   $('#header').hide()
   $('#topbar').hide()
   $('#otukare').fadeIn()
   $("#playing").fadeOut()
   $("#search").fadeOut()
   $("#playing").html('') # for stopping
-  alert '24分間お疲れ様でした！5分間交換日記ができます☆' if window.settings.alert unless @env.is_done
 
   @env.is_doing = false
   @env.is_done = true
@@ -493,6 +497,7 @@ window.addChatting = (workload) ->
   @addWorkload("#chatting", workload, disp)
 
 @addWorkload = (dom, workload, disp) ->
+  console.log dom
   provider_icon = ''
   w = workload
   facebook_id = w.facebook_id
@@ -534,7 +539,7 @@ window.addChatting = (workload) ->
 
   # dones以外は１ユーザにつき１つしか表示しないので他の$itemは消去
   # unless dom == '#done'
-  $("#chatting .facebook_#{facebook_id}").remove()
+  #   $("#chatting .facebook_#{facebook_id}").remove()
   #   $("#doing .facebook_#{facebook_id}").remove()
 
   $workload = $('<div></div>')

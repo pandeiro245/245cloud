@@ -18,18 +18,11 @@ class Api::WorkloadsController < ApplicationController
   end
 
   def complete # TODO: PUT update にする
-    render json: Workload.his(
-      current_user.facebook_id
-    ).created.first.to_done!.decorate
+    render json: current_user.to_done!.decorate
   end
 
   def create
-    workload = Workload.create!(
-      facebook_id: current_user.facebook_id,
-      music_key: params['music_key'].presence,
-      title: params['title'].presence,
-      artwork_url: params['artwork_url'].presence
-    ).decorate
+    workload = current_user.start!(params).decorate
     render json: workload
   end
 end

@@ -1,6 +1,8 @@
 class Workload < ActiveRecord::Base
   POMOTIME = 24.minutes
   CHATTIME = 5.minutes
+  # POMOTIME = (0.1).minutes
+  # CHATTIME = (0.1).minutes
 
   before_save :set_music_key
 
@@ -70,12 +72,17 @@ class Workload < ActiveRecord::Base
     type ? public_send(type) : dones
   }
 
-  def self.find_or_start_by_user(user)
+  def self.find_or_start_by_user(user, _params = {})
     w = playings.his(user.facebook_id).first
     return w if w.present?
-    self.create!(
-      facebook_id: user.facebook_id
-    )
+
+    params = {'facebook_id' => user.facebook_id}
+    %w(music_key title artwork_url).each do |key|
+      if _params[key].present?
+        params[key] = _params[key]
+      end
+    end
+    self.create!(params)
   end
 
   def set_music_key
