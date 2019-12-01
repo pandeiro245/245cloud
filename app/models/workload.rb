@@ -82,12 +82,28 @@ class Workload < ActiveRecord::Base
         params[key] = _params[key]
       end
     end
-    self.create!(params)
+    w = self.create!(params)
+    w.number = w.next_number
+    w.save!
+    w
   end
 
   def set_music_key
     return nil if self.music_key.nil?
     self.music_key = URI.decode(self.music_key)
+  end
+
+  def playing?
+    from = Time.zone.now - POMOTIME
+    to   = Time.zone.now
+    created_at > from && created_at < to
+  end
+
+  def remain_text
+    remain = created_at + POMOTIME - Time.zone.now
+    _min = (remain / 60).to_i
+    _sec = remain - _min * 60
+    format("%02d:%02d", _min, _sec)
   end
 
   def to_done!

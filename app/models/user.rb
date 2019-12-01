@@ -1,6 +1,15 @@
 class User < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
+  has_many :provider_users
+
+  def provider_user(provider_name)
+    provider = Provider.find_by(name: provider_name)
+    ProviderUser.find_or_create_by(
+      provider: provider,
+      user: self
+    )
+  end
 
   def workloads
     Workload.his(facebook_id).bests.limit(48)

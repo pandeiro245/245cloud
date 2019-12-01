@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_30_065620) do
+ActiveRecord::Schema.define(version: 2019_12_01_030028) do
 
   create_table "access_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "facebook_id"
@@ -26,6 +26,35 @@ ActiveRecord::Schema.define(version: 2019_11_30_065620) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "num", default: 0
+  end
+
+  create_table "provider_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "provider_id"
+    t.string "key"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["provider_id"], name: "index_provider_users_on_provider_id"
+    t.index ["user_id"], name: "index_provider_users_on_user_id"
+  end
+
+  create_table "provider_workloads", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.bigint "workload_id"
+    t.bigint "provider_id"
+    t.bigint "provider_user_id"
+    t.string "key"
+    t.text "val"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["provider_id"], name: "index_provider_workloads_on_provider_id"
+    t.index ["provider_user_id"], name: "index_provider_workloads_on_provider_user_id"
+    t.index ["workload_id"], name: "index_provider_workloads_on_workload_id"
+  end
+
+  create_table "providers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
@@ -57,4 +86,9 @@ ActiveRecord::Schema.define(version: 2019_11_30_065620) do
     t.integer "weekly_number"
   end
 
+  add_foreign_key "provider_users", "providers"
+  add_foreign_key "provider_users", "users"
+  add_foreign_key "provider_workloads", "provider_users"
+  add_foreign_key "provider_workloads", "providers"
+  add_foreign_key "provider_workloads", "workloads"
 end

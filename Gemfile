@@ -18,6 +18,7 @@ group :development, :test do
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'pry-rails'
+  gem 'rspec-rails'
 end
 
 group :development do
@@ -34,7 +35,6 @@ group :development do
 end
 
 group 'test' do
-  gem 'rspec-rails'
   # gem 'capybara-webkit'
   gem 'launchy'
   gem 'factory_girl_rails'
@@ -63,3 +63,6 @@ gem 'jquery-ui-rails'
 
 gem 'firebase'
 gem 'discordrb'
+
+gem 'slack-ruby-bot'
+gem 'async-websocket', '~>0.8.0'

@@ -53,6 +53,15 @@ GEM
     airbrussh (1.4.0)
       sshkit (>= 1.6.1, != 1.7.0)
     arel (9.0.0)
+    async (1.23.0)
+      console (~> 1.0)
+      nio4r (~> 2.3)
+      timers (~> 4.1)
+    async-io (1.27.0)
+      async (~> 1.14)
+    async-websocket (0.8.0)
+      async-io
+      websocket-driver (~> 0.7.0)
     awesome_print (1.8.0)
     bcrypt (3.1.13)
     bindex (0.8.1)
@@ -101,6 +110,7 @@ GEM
     coffee-script-source (1.12.2)
     concurrent-ruby (1.1.5)
     connection_pool (2.2.2)
+    console (1.6.0)
     crass (1.0.5)
     database_rewinder (0.9.1)
     devise (4.7.1)
@@ -150,6 +160,7 @@ GEM
     font-awesome-sass (5.11.2)
       sassc (>= 1.11)
     gem_reloader (0.0.2)
+    gli (2.19.0)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
     googleauth (0.10.0)
@@ -325,6 +336,16 @@ GEM
       faraday (~> 0.9)
       jwt (>= 1.5, < 3.0)
       multi_json (~> 1.10)
+    slack-ruby-bot (0.12.0)
+      hashie
+      slack-ruby-client (>= 0.14.0)
+    slack-ruby-client (0.14.4)
+      activesupport
+      faraday (>= 0.9)
+      faraday_middleware
+      gli
+      hashie
+      websocket-driver
     spring (2.1.0)
     spring-watcher-listen (2.0.1)
       listen (>= 2.7, < 4.0)
@@ -346,6 +367,7 @@ GEM
     thor (0.20.3)
     thread_safe (0.3.6)
     tilt (2.0.10)
+    timers (4.3.0)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
     uglifier (4.2.0)
@@ -375,6 +397,7 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord-import
+  async-websocket (~> 0.8.0)
   awesome_print
   byebug
   capistrano
@@ -412,6 +435,7 @@ DEPENDENCIES
   rb-readline
   rspec-rails
   settingslogic
+  slack-ruby-bot
   spring
   spring-watcher-listen (~> 2.0.0)
   therubyracer

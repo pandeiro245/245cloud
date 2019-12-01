@@ -1,55 +1,27 @@
-class DiscordBot
-  def self.run
-    self.new.run
+class DiscordBot < Bot
+  def initialize(event, user)
+    @event = event
+    @user = user
   end
 
-  def initialize
-    @pomo_sec = 24 * 60
+  def echo(text)
+    @event.send_message(text)
   end
 
-  def run
-    bot = Discordrb::Commands::CommandBot.new(
-      token: ENV['DISCORD_TOKEN'],
-      client_id: ENV['DISCORD_CLIENT_ID'],
-      prefix: '/',
-    )
-    bot.command :pomo do |event|
-      start = Time.now 
-      sec = 0
-      workload = nil
-      user = User.find_by(discord_id: event.user.id)
 
-      if user.blank?
-        event.send_message("#{event.user.name} please login https://245cloud.com/auth/discord")
-      else
-        res = event.send_message("loading...")
-
-        workload = user.start!
-
-        base_uri = 'https://neat-glazing-702.firebaseio.com/'
-        token = File.open('tmp/token.json').read
-        firebase = Firebase::Client.new(base_uri, token)
-        response = firebase.push("workloads", {
-          facebook_id: user.facebook_id,
-          created_at: Time.now.to_i * 1000
-        })
-        
-        while(@pomo_sec > sec) do
-          sec = (Time.now - start).to_i
-          res.edit("#{workload.number}回目の集中完了まであと#{remain_text(sec)} by #{event.user.name} ")
-          sleep 0.8
-        end
-        workload.to_done!
-        res.edit("#{workload.number}回集中しました by #{event.user.mention}")
-      end
-    end
-    bot.run
+  def user_name
+    @event.user.name
   end
 
-  def remain_text(_sec)
-    remain = (@pomo_sec - _sec).to_i
-    min = (remain / 60).to_i
-    sec = remain - min * 60
-    format("%02d:%02d", min, sec)
+  def sleep_sec
+    0.8
+  end
+
+  def update(text)
+    @message.edit(text)
+  end
+  
+  def by_user_name
+     "by #{@event.user.name}"
   end
 end
