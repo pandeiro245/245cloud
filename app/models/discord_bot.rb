@@ -22,6 +22,6 @@ class DiscordBot < Bot
   end
   
   def by_user_name
-     "by #{@event.user.name}"
+     " by #{@event.user.name}"
   end
 end

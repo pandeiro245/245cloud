@@ -2,6 +2,11 @@ class DiscordBotWatcher
   def self.run
     self.new.run
   end
+
+  def provider
+    @provider ||= Provider.find_by(name: 'discord')
+  end
+
   def run
     bot = Discordrb::Commands::CommandBot.new(
       token: ENV['DISCORD_TOKEN'],
@@ -9,9 +14,10 @@ class DiscordBotWatcher
       prefix: '/',
     )
     bot.command :pomo do |event|
-      user = User.find_by(
-        discord_id: event.user.id
-      )
+      user = ProviderUser.find_by(
+        provider: provider,
+        key: event.user.id
+      ).user
       DiscordBot.new(event, user).exec
     end
     bot.run

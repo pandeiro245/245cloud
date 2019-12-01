@@ -48,6 +48,7 @@ gem 'font-awesome-sass'
 
 gem 'omniauth-facebook'
 gem 'omniauth-discord'
+gem 'omniauth-slack'
 
 gem 'rb-readline'
 gem 'awesome_print'
