@@ -15,6 +15,7 @@ class SlackBot < Bot
       @ts = '1575166363.041900'
     end
     @match = match
+    @provider = Provider.find_by(name: 'slack')
   end
 
   def echo(text)

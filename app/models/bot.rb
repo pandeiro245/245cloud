@@ -2,8 +2,8 @@ class Bot
   attr_accessor :user, :message
  def exec
     start = Time.now 
-    if user.blank? && self.class == DiscordBot
-      echo("#{user_name} please login https://245cloud.com/auth/discord")
+    if user.blank?
+      echo("#{user_name} please login https://245cloud.com/auth/#{provider.name}")
     else
       @workload = user.start!
 
