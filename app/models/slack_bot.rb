@@ -4,7 +4,7 @@ class SlackBot < Bot
   end 
 
   def initialize(user=nil, data=nil, match=nil)
-    @user = user || User.first
+    @user = user
     @client = Slack::Web::Client.new
     @data = data
     if @data.present?

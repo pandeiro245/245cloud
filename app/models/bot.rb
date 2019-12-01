@@ -3,7 +3,7 @@ class Bot
  def exec
     start = Time.now 
     if user.blank?
-      echo("#{user_name} please login https://245cloud.com/auth/#{provider.name}")
+      echo("please login https://245cloud.com/auth/#{@provider.name}")
     else
       @workload = user.start!
 

@@ -15,10 +15,11 @@ class DiscordBotWatcher
     )
     bot.command :pomo do |event|
       if ENV['DISCORD_DEBUG_CHANNEL'].blank? || event.channel.id == ENV['DISCORD_DEBUG_CHANNEL']
-        user = ProviderUser.find_by(
+        pu= ProviderUser.find_by(
           provider: provider,
           key: event.user.id
-        ).user
+        )
+        user = pu.present? ? pu.user : nil
         DiscordBot.new(event, user).exec
       end
     end
