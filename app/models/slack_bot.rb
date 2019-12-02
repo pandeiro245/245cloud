@@ -8,8 +8,8 @@ class SlackBot < Bot
     @client = Slack::Web::Client.new
     @data = data
     if @data.present?
-      @channel = @data.channel
-      @ts = @data.ts
+      @channel = @data['channel']
+      @ts = @data['ts']
     else
       @channel = 'CR4Q7GH0Q'
       @ts = '1575166363.041900'

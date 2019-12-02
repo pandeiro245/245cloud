@@ -3,7 +3,7 @@ class Bot
  def exec
     start = Time.now 
     if user.blank?
-      echo("please login https://245cloud.com/auth/#{@provider.name}")
+      # echo("please login https://245cloud.com/auth/#{@provider.name}")
     else
       @workload = user.start!
 
@@ -15,17 +15,31 @@ class Bot
         created_at: Time.now.to_i * 1000
       })
   
-      begin   
-        start_post
+      start_post
+
+      case self.class.to_s
+      when 'DiscordBot'
         while(@workload.playing?) do
           process_post
           sleep sleep_sec
         end
         @workload.to_done!
         complete_post
-      rescue=>e
-        binding.pry
+      when 'SlackBot'
+        pw = @workload.provider_workload(@provider.name)
+        pw.val = @data.to_json
+        pw.save!
       end
+    end
+  end
+
+  def batch
+    loop do
+      Workload.playings.each do |workload|
+        puts "workload.id is #{workload.id}"
+        workload.check
+      end
+      sleep 0.2
     end
   end
 
@@ -33,15 +47,18 @@ class Bot
     @message = echo("#{@workload.number}回目の集中開始！ ")
   end
 
-  def process_post
-    update("#{@workload.number}回目の集中完了まであと#{@workload.remain_text}#{by_user_name}")
+  def process_post(workload=nil)
+    workload ||= @workload
+    binding.pry
+    update("#{workload.number}回目の集中完了まであと#{workload.remain_text}#{by_user_name}")
   end
 
   def by_user_name
     ''
   end
 
-  def complete_post 
-    update("#{@workload.number}回集中しました。おつかれさまでした！#{by_user_name}")
+  def complete_post(workload=nil)
+    workload ||= @workload
+    update("#{workload.number}回集中しました。おつかれさまでした！#{by_user_name}")
   end
 end
