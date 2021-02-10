@@ -530,7 +530,8 @@ window.addChatting = (workload) ->
     title = '無音'
     fixed = "<a href=\"#\" class='fixed_start'><img src='#{ImgURLs.button_paly_nomusic}' /></a>"
     jacket = "<img src='#{ImgURLs.track_nomusic}' class='jacket'/>"
-  user_img = "<a href='/#{workload.facebook_id}'><img class='icon img-thumbnail' src='https://graph.facebook.com/#{workload.facebook_id}/picture?height=40&width=40' /></a>"
+  user_img = "<a href='/#{workload.facebook_id}'><img class='icon img-thumbnail' src='/images/profile/#{workload.facebook_id}.jpg' /></a>"
+  # user_img = "<a href='/#{workload.facebook_id}'><img class='icon img-thumbnail' src='https://graph.facebook.com/#{workload.facebook_id}/picture?height=40&width=40' /></a>"
 
   $item = Util.tag('div', null, {class: 'inborder'})
   $item.css("border", '4px solid #eadba0')
@@ -602,6 +603,7 @@ initService = ($dom, url) ->
 
   if c.body
     img = "https://graph.facebook.com/#{c.facebook_id}/picture?height=40&width=40"
+    # img = "/images/profile/#{c.facebook_id}.jpg"
     html = """
     <tr>
     <td>
