@@ -246,7 +246,7 @@ GEM
     pry-rails (0.3.9)
       pry (>= 0.10.4)
     public_suffix (4.0.1)
-    puma (3.12.1)
+    puma (3.12.6)
     rack (2.0.7)
     rack-protection (2.0.7)
       rack
@@ -407,7 +407,7 @@ DEPENDENCIES
   omniauth-facebook
   poltergeist
   pry-rails
-  puma (~> 3.11)
+  puma (~> 3.12)
   rails (~> 5.2.1)
   rb-readline
   rspec-rails
