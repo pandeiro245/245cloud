@@ -2,6 +2,7 @@ class DiscordBot < Bot
   def initialize(event, user)
     @event = event
     @user = user
+    @provider = Provider.find_by(name: 'discord')
   end
 
   def echo(text)

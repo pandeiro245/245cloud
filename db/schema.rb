@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_01_030028) do
+ActiveRecord::Schema.define(version: 2019_12_01_063506) do
 
   create_table "access_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "facebook_id"
@@ -84,6 +84,8 @@ ActiveRecord::Schema.define(version: 2019_12_01_030028) do
     t.integer "number"
     t.string "artwork_url"
     t.integer "weekly_number"
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_workloads_on_user_id"
   end
 
   add_foreign_key "provider_users", "providers"
@@ -91,4 +93,5 @@ ActiveRecord::Schema.define(version: 2019_12_01_030028) do
   add_foreign_key "provider_workloads", "provider_users"
   add_foreign_key "provider_workloads", "providers"
   add_foreign_key "provider_workloads", "workloads"
+  add_foreign_key "workloads", "users"
 end

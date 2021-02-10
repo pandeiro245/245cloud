@@ -3,7 +3,8 @@ class CreateProviderWorkloads < ActiveRecord::Migration[5.2]
     create_table :provider_workloads do |t|
       t.references :workload, foreign_key: true
       t.references :provider, foreign_key: true
-      t.references :provider_user, foreign_key: true
+      # t.references :provider_user, foreign_key: true
+      t.integer :workload_id
       t.string :key
       t.text :val
 

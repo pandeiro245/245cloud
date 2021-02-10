@@ -1,4 +1,5 @@
 class Workload < ActiveRecord::Base
+  belongs_to :user
   POMOTIME = 24.minutes
   CHATTIME = 5.minutes
   # POMOTIME = (0.1).minutes
@@ -76,7 +77,10 @@ class Workload < ActiveRecord::Base
     w = playings.his(user.facebook_id).first
     return w if w.present?
 
-    params = {'facebook_id' => user.facebook_id}
+    params = {
+      'user_id' => user.id,
+      'facebook_id' => user.facebook_id
+    }
     %w(music_key title artwork_url).each do |key|
       if _params[key].present?
         params[key] = _params[key]
@@ -88,15 +92,42 @@ class Workload < ActiveRecord::Base
     w
   end
 
+  def check
+    pw = provider_workload('slack')
+    return if pw.blank?
+    data =  JSON.parse(pw.val)
+    bot = SlackBot.new(user, data)
+    bot.process_post(self)
+    sleep bot.sleep_sec
+    if done?
+      to_done!
+      bot.complete_post(self)
+    end
+  end
+
   def set_music_key
     return nil if self.music_key.nil?
     self.music_key = URI.decode(self.music_key)
+  end
+
+  def provider_workload(provider_name)
+    provider = Provider.find_by(name: provider_name)
+    pw = ProviderWorkload.find_or_initialize_by(
+      workload: self,
+      provider: provider
+    )
+    pw.provider_user = self.user.provider_user(provider_name)
+    pw
   end
 
   def playing?
     from = Time.zone.now - POMOTIME
     to   = Time.zone.now
     created_at > from && created_at < to
+  end
+
+  def done?
+    Time.zone.now > created_at + POMOTIME
   end
 
   def remain_text

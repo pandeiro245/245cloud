@@ -4,17 +4,18 @@ class SlackBot < Bot
   end 
 
   def initialize(user=nil, data=nil, match=nil)
-    @user = user || User.first
+    @user = user
     @client = Slack::Web::Client.new
     @data = data
     if @data.present?
-      @channel = @data.channel
-      @ts = @data.ts
+      @channel = @data['channel']
+      @ts = @data['ts']
     else
       @channel = 'CR4Q7GH0Q'
       @ts = '1575166363.041900'
     end
     @match = match
+    @provider = Provider.find_by(name: 'slack')
   end
 
   def echo(text)
