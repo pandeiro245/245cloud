@@ -5,6 +5,19 @@ class UsersController < ApplicationController
     )
   end
 
+  def login_with_token
+    token = params[:token]
+    user_id = params[:user_id]
+    user = User.find_by(
+      id: user_id,
+      token: token
+    )
+    raise 'invalid token' if user.blank?
+    user
+    sign_in(user)
+    redirect_to '/'
+  end
+
   def login
     provider = params[:provider]
     if provider == 'facebook'

@@ -2,6 +2,11 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
+  def refresh_token!
+    self.token = SecureRandom.hex(64)
+    self.save!
+  end
+
   def workloads
     Workload.his(facebook_id).bests.limit(48)
   end
