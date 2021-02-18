@@ -41,9 +41,10 @@ class UsersController < ApplicationController
       keys["#{provider}_#{key}"] = val
     end
     cookies[provider] = keys.to_json
-    if provider.to_s == 'discord' && current_user.present?
-      current_user.discord_id = auth_hash['uid']
-      current_user.save!
+    if current_user.present?
+      a = current_user.provider_user(provider)
+      a.key = auth_hash['uid']
+      a.save!
     end
     redirect_to "/?#{provider}=1", notice: 'Signed in successfully'
   end
