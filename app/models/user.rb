@@ -2,6 +2,19 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
+  def self.add(name)
+    u = User.create!(
+      name: name,
+      email: "#{name}@245cloud.com"
+    )
+    u.refresh_token!
+    u
+  end
+
+  def url
+    "https://245cloud.com/login?user_id=#{id}&token=#{token}"
+  end
+
   def refresh_token!
     self.token = SecureRandom.hex(64)
     self.save!

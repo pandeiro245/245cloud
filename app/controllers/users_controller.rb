@@ -1,4 +1,8 @@
 class UsersController < ApplicationController
+  def index
+    @users = Workload.group(:facebook_id).count.to_a.sort_by{|u| u.last}.reverse
+  end
+
   def show
     @user = User.find_or_create_by(
       facebook_id: params[:id]
@@ -25,6 +29,7 @@ class UsersController < ApplicationController
     else
       _login(provider)
     end
+    redirect_to '/'
   end
 
   def login_with_facebook
