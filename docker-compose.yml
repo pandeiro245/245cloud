@@ -1,0 +1,34 @@
+version: "3.5"
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      TZ: Asia/Tokyo
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_ROOT_HOST: '%'
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - './docker/mysql/my.cnf:/etc/mysql/my.cnf'
+    networks:
+      - local
+
+  web:
+    build: .
+    command: rails s -p 3000 -b '0.0.0.0'
+    environment:
+      TZ: Asia/Tokyo
+      RAILS_ENV: development
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./web:/usr/app
+    links:
+      - db
+
+volumes:
+  mysql-data:
+    driver: local
+networks:
+  local:

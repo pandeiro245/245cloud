@@ -1,19 +1,16 @@
-FROM ruby:2.5.1
+FROM ruby:2.5.3
 
 RUN apt-get update -qq && apt-get install -y --no-install-recommends \
     apt-utils \
-    mysql-client \
     build-essential \
     libgmp3-dev \
-    less \
-    vim
+    libpq-dev \
+    nodejs
 
 RUN apt-get install net-tools
-RUN rm -rf /var/lib/apt/lists/*
 
 RUN gem update
 RUN gem install bundler
-RUN gem install json -v '1.8.3'
 
 WORKDIR /usr/app
 ADD Dockerfile Dockerfile
@@ -31,10 +28,8 @@ ADD db db
 ADD public public
 RUN mkdir tmp
 
-RUN bundle config git.allow_insecure true
 RUN bundle install
 
 ENV APP_HOME /usr/app
 
 EXPOSE 3000
-# ENTRYPOINT ./start.sh
