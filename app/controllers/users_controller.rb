@@ -1,8 +1,25 @@
 class UsersController < ApplicationController
+  def index
+    @users = Workload.group(:facebook_id).count.to_a.sort_by{|u| u.last}.reverse
+  end
+
   def show
     @user = User.find_or_create_by(
       facebook_id: params[:id]
     )
+  end
+
+  def login_with_token
+    token = params[:token]
+    user_id = params[:user_id]
+    user = User.find_by(
+      id: user_id,
+      token: token
+    )
+    raise 'invalid token' if user.blank?
+    user
+    sign_in(user)
+    redirect_to '/'
   end
 
   def login
@@ -12,6 +29,7 @@ class UsersController < ApplicationController
     else
       _login(provider)
     end
+    redirect_to '/'
   end
 
   def login_with_facebook
