@@ -36,5 +36,6 @@ module NishikoCloud
     config.generators.system_tests = nil
 
     config.hosts << ENV['WHITE_HOST']
+    Time.zone = 'Tokyo'
   end
 end
