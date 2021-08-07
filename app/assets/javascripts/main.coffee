@@ -179,7 +179,8 @@ initStart = () ->
 
   else
     text = 'facebookログイン'
-    Util.addButton('login', $('#contents'), text, login)
+    # Util.addButton('login', $('#contents'), text, login)
+    $('#contents').append('<form action="/redirect"><input type="text" name="url" placeholder="245cloudアプリからログインする場合はこちら" style="width: 400px" /></form>')
 
 initSearch = () ->
   $track = $("<input />").attr('id', 'track').attr('placeholder', 'ここにアーティスト名や曲名を入れてね')
@@ -602,8 +603,8 @@ initService = ($dom, url) ->
   c = comment
 
   if c.body
-    img = "https://graph.facebook.com/#{c.facebook_id}/picture?height=40&width=40"
-    # img = "/images/profile/#{c.facebook_id}.jpg"
+    # img = "https://graph.facebook.com/#{c.facebook_id}/picture?height=40&width=40"
+    img = "/images/profile/#{c.facebook_id}.jpg"
     html = """
     <tr>
     <td>

@@ -5,9 +5,15 @@ Rails.application.routes.draw do
 
   get '/auth/:provider/callback', to: 'users#login'
 
+  get '/login', to: 'users#login_with_token'
+
+  get '/users', to: 'users#index'
+  get '/redirect', to: 'welcome#redirect'
+
   get '/:id', to: 'users#show'
   get '/musics/:provider/:key', to: 'musics#index'
   get '/musics/:provider/:key/:key2', to: 'musics#index'
+
 
   namespace :api do
     get '/complete', to: 'workloads#complete'
