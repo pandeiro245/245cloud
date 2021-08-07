@@ -28,6 +28,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # Original
 gem 'haml'
+gem 'slim-rails'
 gem 'dotenv-rails'
 gem 'devise'
 gem 'draper'
