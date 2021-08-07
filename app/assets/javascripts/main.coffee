@@ -198,12 +198,19 @@ initSearch = () ->
     fa = 'television' if key == 'sm'
     checked = 'checked=\'checked\' '
     checked = '' if localStorage["search_#{key}"]  == 'false'
+    # services += """
+    # <label>
+    # <i class="fa fa-#{fa}" title='#{val}' data-toggle='tooltip' data-placement='top' style='display: inline;'></i>
+    # <input #{checked}type='checkbox' style='display: inline;' id='search_#{key}'  />
+    # </label>
+    # """
     services += """
     <label>
-    <i class="fa fa-#{fa}" title='#{val}' data-toggle='tooltip' data-placement='top' style='display: inline;'></i>
-    <input #{checked}type='checkbox' style='display: inline;' id='search_#{key}'  />
+    <input #{checked}type='checkbox' style='display: inline;' id='search_#{key}'  />&nbsp;#{val}&nbsp;&nbsp;
     </label>
     """
+
+
   services += '</div>'
   $('#search').append(services)
 
