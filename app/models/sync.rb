@@ -7,7 +7,7 @@ class Sync
 
   def fb2user
     [Workload, Comment, AccessLog].each do |model|
-      model.where.not(facebook_id: nil).each do |item|
+      model.where.not(facebook_id: nil).reverse.each do |item|
         next if model == Comment && item.facebook_id.to_i == 1
         begin
           user = User.find_or_initialize_by(facebook_id: item.facebook_id)

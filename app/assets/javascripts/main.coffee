@@ -180,7 +180,7 @@ initStart = () ->
   else
     text = 'Twitterログイン'
     Util.addButton('login', $('#contents'), text, login)
-    $('#contents').append('<form action="/redirect"><input type="text" name="url" placeholder="245cloudアプリからログインする場合はこちら" style="width: 400px" /></form>')
+    # $('#contents').append('<form action="/redirect"><input type="text" name="url" placeholder="245cloudアプリからログインする場合はこちら" style="width: 400px" /></form>')
 
 initSearch = () ->
   $track = $("<input />").attr('id', 'track').attr('placeholder', 'ここにアーティスト名や曲名を入れてね')
