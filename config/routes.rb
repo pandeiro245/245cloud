@@ -7,6 +7,9 @@ Rails.application.routes.draw do
 
   get '/login', to: 'users#login_with_token'
 
+  get '/users', to: 'users#index'
+  get '/redirect', to: 'welcome#redirect'
+
   get '/:id', to: 'users#show'
   get '/musics/:provider/:key', to: 'musics#index'
   get '/musics/:provider/:key/:key2', to: 'musics#index'
