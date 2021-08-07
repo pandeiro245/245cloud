@@ -5,7 +5,7 @@ ruby '2.6.3'
 
 gem 'rails', '~> 5.2.1'
 gem 'mysql2', '0.5.2'
-gem 'puma', '~> 3.11'
+gem 'puma', '~> 4.3'
 gem 'uglifier', '>= 1.3.0'
 gem 'therubyracer', platforms: :ruby
 gem 'coffee-rails', '~> 4.2'
@@ -17,6 +17,7 @@ group :development, :test do
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'pry-rails'
 end
 
 group :development do
@@ -45,7 +46,7 @@ gem 'dotenv-rails'
 gem 'settingslogic'
 gem 'font-awesome-sass'
 
-gem 'omniauth-facebook'
+gem 'omniauth-discord'
 
 gem 'rb-readline'
 gem 'awesome_print'
@@ -57,3 +58,9 @@ gem 'draper'
 
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
+
+gem 'firebase'
+gem 'discordrb'
+
+gem 'omniauth-twitter'
+gem 'omniauth-rails_csrf_protection'

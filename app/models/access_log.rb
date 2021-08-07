@@ -1,9 +1,9 @@
 class AccessLog < ActiveRecord::Base
   def self.add url, user = nil
-    facebook_id = user ? user.facebook_id : nil
+    user_id = user ? user.id : nil
     self.create!(
       url: url,
-      facebook_id: facebook_id
+      user_id: user_id
     )
   end
 end

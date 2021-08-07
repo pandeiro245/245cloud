@@ -3,11 +3,12 @@ Rails.application.routes.draw do
   root 'welcome#index'
   resources :nicoinfo, only: [:show], constraints: {id: /sm[0-9]+/}
 
-  get '/timecrowd/recents' => 'timecrowd#recents'
-  post '/timecrowd/start' => 'timecrowd#start'
-  post '/timecrowd/stop' => 'timecrowd#stop'
-
   get '/auth/:provider/callback', to: 'users#login'
+
+  get '/login', to: 'users#login_with_token'
+
+  get '/users', to: 'users#index'
+  get '/redirect', to: 'welcome#redirect'
 
   get '/:id', to: 'users#show'
   get '/musics/:provider/:key', to: 'musics#index'
@@ -16,12 +17,10 @@ Rails.application.routes.draw do
 
   namespace :api do
     get '/complete', to: 'workloads#complete'
-    get '/users/:facebook_id/workloads', to: 'workloads#index'
+    get '/users/:user_id/workloads', to: 'workloads#index'
     resources :workloads, only: [:index, :create]
     resources :comments, only: [:index, :create]
     resources :access_logs, only: [:create]
-    get '/tweets/yaruki', to: 'tweets#yaruki'
-    get '/tweets/home', to: 'tweets#home'
     get '/gyazo/proxy', to: 'gyazo#proxy'
   end
 end

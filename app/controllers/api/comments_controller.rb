@@ -13,15 +13,15 @@ class Api::CommentsController < ApplicationController
   def create
     parent_id = params[:room_id] || nil
     comment = Comment.create!(
-      facebook_id: current_user.facebook_id,
+      user_id: current_user.id,
       parent_id: parent_id,
       body: params[:body]
     )
-    if parent = comment.parent
+    if parent_id.present?
+      parent = comment.parent
       parent.num = parent.children.count
-      parent.save!
+      parent.save!(validate: false)
     end
-
     render json: comment
   end
 end

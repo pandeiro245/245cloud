@@ -3,7 +3,7 @@ class Api::WorkloadsController < ApplicationController
     type = params[:type]
     limit = params[:limit] || 48
     scope = Workload.of_type(type)
-    id = params[:facebook_id]
+    id = params[:user_id]
     scope = scope.his(id).dones if id 
     scope = scope.limit(limit) if scope.limit_value.nil?
     if params[:best]
@@ -18,18 +18,11 @@ class Api::WorkloadsController < ApplicationController
   end
 
   def complete # TODO: PUT update にする
-    render json: Workload.his(
-      current_user.facebook_id
-    ).created.first.to_done!.decorate
+    render json: current_user.to_done!.decorate
   end
 
   def create
-    workload = Workload.create!(
-      facebook_id: current_user.facebook_id,
-      music_key: params['music_key'].presence,
-      title: params['title'].presence,
-      artwork_url: params['artwork_url'].presence
-    ).decorate
+    workload = current_user.start!(params).decorate
     render json: workload
   end
 end

@@ -7,12 +7,8 @@ $ ->
   scaffolds = Util.scaffolds('''
   header:no_row&stay news otukare:hidden&stay
   topbar:init
-  ad:stay
-  rap:hidden&stay
   contents:stay
-  twitter_home:stay
-  settings:init
-  twitter timecrowd nortification heatmap:init start_buttons
+  heatmap:init start_buttons
   doing_title:stay doing:init&stay
   chatting_title:stay chatting:init:stay
   done_title done:init
@@ -43,10 +39,19 @@ $ ->
     ruffnote(content[0], content[1])
 
   initStart()
-  initTwitter() if window.settings.twitter
-  initTimecrowd() if window.settings.timecrowd
-  initNortification() if location.href.match(/notification=/)
   initFixedStart()
+  initFirebase()
+
+initFirebase = () ->
+  database = firebase.database()
+  database.ref('workloads').on('child_added', (snapshot) ->
+    i = snapshot.val()
+    if i.created_at + @env.pomotime*60*1000 > (new Date()).getTime()
+      if @env.is_doing == false
+        if i.user_id == window.user_id
+          start_hash()
+          @env.is_doing = true
+  )
 
 initTopbar = () ->
   $topbar = $('#topbar')
@@ -62,33 +67,8 @@ initTopbar = () ->
     $('#search input#track').focus()
   )
 
-initSettings = () ->
-  for key of window.settings
-    continue unless key in ['alert', 'timecrowd', 'twitter']
-    $('#settings').append("<div><a href='/?cancel=#{key}' class='btn btn-warning'>#{key}をやめる</a></div>")
-
-initNortification = () ->
-  if window.facebook_id
-    if !Notify.needsPermission || Notify.isSupported()
-      $('#nortification').html("""
-        <input id="show-nortification" type="checkbox" style="display:inline">
-        <label for="show-nortification"> デスクトップ通知を利用する</label>
-      """)
-
-      # チェック時に通知の許可要求
-      $('#show-nortification').on('change', () ->
-        if $(this).prop('checked') && Notify.needsPermission
-          Notify.requestPermission(() ->
-            # 成功時(何もしない)
-            console.log('nortification permitted')
-          , () ->
-            # 失敗時はcheckboxを元に戻す
-            $(this).prop('checked', false)
-          )
-      )
-
 initHeatmap = () ->
-  return unless window.facebook_id
+  return unless window.user_id
   cal = new CalHeatMap()
   now = new Date()
   startDate = new Date(now.getFullYear() - 1, now.getMonth() + 1)
@@ -110,7 +90,7 @@ initHeatmap = () ->
     range: 12
     afterLoad: () ->
       pomos = {}
-      $.get("/api/users/#{window.facebook_id}/workloads?type=dones&limit=99999", (workloads) ->
+      $.get("/api/users/#{window.user_id}/workloads?type=dones&limit=99999", (workloads) ->
         pomos = {}
         for i in [0...workloads.length]
           pomos[+workloads[i].created_at / 1000] = 1
@@ -120,108 +100,23 @@ initHeatmap = () ->
   })
 
 
-initTwitter = () ->
-  console.log 'initTwitter'
-  $('#twitter').html("""
-  <h2>Twitter</h2>
-  <ul><li class='loading'>ローディング中。。。<br>（タスクが多いと時間がかかるかもです…。）</li></ul>
-  <table class='table table-bordered table-hover' id='tweets' style='margin-bottom: 20px;'>
-  """)
-  $.get('/api/tweets/yaruki', (data) ->
-    $('.loading').remove()
-    if data.status == 'ng'
-      $('#twitter ul').html("""
-      <a href='/auth/twitter'>ログイン</a>
-      """)
-    else
-        $('#twitter table').append("""
-          <tr>
-          <td colspan='2'>やる気が出るかもしれない言葉</td>
-          </tr>
-        """)
-      for tweet in data
-        console.log tweet
-        $('#twitter table').append("""
-          <tr>
-          <td><a href='https://twitter.com/#{tweet.user.screen_name}/status/#{tweet.id_str}' target='_blank'><img src='#{tweet.user.profile_image_url}' /></a></td>
-          <td>#{tweet.text}</td>
-          </tr>
-        """)
-  )
-
-initTimecrowd = () ->
-  console.log 'initTimecrowd'
-  $('#timecrowd').html("""
-  <h2>TimeCrowd</h2>
-  <div style='display:none; width:100%; text-align:center;'><input placeholder='タスク追加' style='width:100%;' id='timecrowd_add_task'/></div>
-  <ul><li class='loading'>ローディング中。。。<br>（タスクが多いと時間がかかるかもです…。）</li></ul>
-  <table class='table table-bordered table-hover' id='timecrowd_select_task'>
-  </table>
-  """)
-  $('#timecrowd_add_task').keypress((e) ->
-    if e.which == 13 #enter
-      alert $('#timecrowd_add_task').val()
-  )
-  $.get('/timecrowd/recents', (data) ->
-    console.log 'GET /timecrowd/recents', data
-    $('.loading').remove()
-    if data.status == 'ng'
-      $('#timecrowd ul').html("""
-      <a href='/auth/timecrowd'>ログイン</a>
-      """)
-    else
-      task_ids = {}
-      if data.is_working
-        working_entry = data.entries[0]
-        task_ids[working_entry.task.id] = true
-        $('#timecrowd table').append(entryItem(working_entry))
-      for entry in data.entries
-        continue if working_entry && entry.id == working_entry.id
-        continue if task_ids[entry.task.id]
-        task_ids[entry.task.id] = true
-        $('#timecrowd table').append(entryItem(entry))
-
-      $('#timecrowd table tr:first input').attr('checked', 'checked')
-      $('#timecrowd table tr').click((e) ->
-        console.log e
-        $('#timecrowd table input').removeAttr('checked')
-        $(e.currentTarget).find('input').prop('checked', true)
-      )
-  )
-
-entryItem = (entry) ->
-  """
-    <tr>
-      <label>
-      <td><input type='radio' name='timecrowd_task' data-team-id='#{entry.task.team_id}' value='#{entry.task.id}' /></td>
-      <td><a href='#{entry.task.url}' target='_blank'>#{entry.task.title}</a></td>
-      <td>#{Util.time(entry.started_at)}</td>
-      </label>
-    </tr>
-  """
-
 initOkyo = () ->
   ruffnote(30556, 'okyo_title')
   setTimeout("Youtube.search('お経 作業BGM', $('#okyo'))", 1000)
 
 initKimiya = () ->
   ruffnote(21800, 'kimiya_title')
-  Mixcloud.search('/kimiya-sato/', $('#kimiya'))
+  Mixcloud.search('kimiya310', $('#kimiya'))
 
 initNaotake = () ->
   ruffnote(21799, 'naotake_title')
   Mixcloud.search('/naotake/', $('#naotake'))
 
 initStart = () ->
-  if location.href.match(/sparta/)
-    Util.countDown(1*60*1000, start_unless_doing)
-  if location.href.match(/auto_start=/)
-    start_unless_doing()
-
   text = "24分やり直しでも大丈夫ですか？"
   Util.beforeunload(text, 'env.is_doing')
 
-  if window.facebook_id
+  if window.user_id
     $('#contents').append("""
       <div class='countdown2' >
       <div class='countdown' ></div>
@@ -271,7 +166,6 @@ initStart = () ->
           artworkUrlWithNoimage(track.artwork_url)
         )
       )
-    #text = '無音で24分集中'
     text = [
       ImgURLs.button_paly_nomusic
       ImgURLs.button_paly_nomusic_hover
@@ -284,8 +178,9 @@ initStart = () ->
     Util.addButton('start', $nomusic, text, start_nomusic)
 
   else
-    text = 'facebookログイン'
+    text = 'Twitterログイン'
     Util.addButton('login', $('#contents'), text, login)
+    # $('#contents').append('<form action="/redirect"><input type="text" name="url" placeholder="245cloudアプリからログインする場合はこちら" style="width: 400px" /></form>')
 
 initSearch = () ->
   $track = $("<input />").attr('id', 'track').attr('placeholder', 'ここにアーティスト名や曲名を入れてね')
@@ -303,12 +198,19 @@ initSearch = () ->
     fa = 'television' if key == 'sm'
     checked = 'checked=\'checked\' '
     checked = '' if localStorage["search_#{key}"]  == 'false'
+    # services += """
+    # <label>
+    # <i class="fa fa-#{fa}" title='#{val}' data-toggle='tooltip' data-placement='top' style='display: inline;'></i>
+    # <input #{checked}type='checkbox' style='display: inline;' id='search_#{key}'  />
+    # </label>
+    # """
     services += """
     <label>
-    <i class="fa fa-#{fa}" title='#{val}' data-toggle='tooltip' data-placement='top' style='display: inline;'></i>
-    <input #{checked}type='checkbox' style='display: inline;' id='search_#{key}'  />
+    <input #{checked}type='checkbox' style='display: inline;' id='search_#{key}'  />&nbsp;#{val}&nbsp;&nbsp;
     </label>
     """
+
+
   services += '</div>'
   $('#search').append(services)
 
@@ -383,8 +285,14 @@ initDoing = () ->
   $.get('/api/workloads?type=playings', (workloads) ->
     return unless workloads.length > 0
     $("#doing_title").show()
+    _is_doing = false
     for workload in workloads
+      if workload.user_id == window.user_id
+        _is_doing = true
       window.addDoing(workload)
+    if _is_doing
+      window.start_hash()
+      $(".fixed_start").hide()
   )
 
 initDone = () ->
@@ -397,7 +305,7 @@ initDone = () ->
   )
 
 login = () ->
-  location.href = '/auth/facebook'
+  $('#twitterlogin').click()
 
 start_random = () ->
   console.log 'start_random'
@@ -411,7 +319,6 @@ window.start_hash = (key = null) ->
   console.log 'start_hash'
   unless key
     key = location.hash.replace(/#/, '')
-
   if key
      window.play(key)
    else
@@ -424,31 +331,25 @@ window.start_nomusic = () ->
 createWorkload = (params = {}, callback) ->
   $.post('/api/workloads', params, (workload) ->
     window.workload = workload
+    database = firebase.database()
+    database.ref('workloads').push({
+      user_id: window.user_id
+      created_at: workload.created_at
+    })
     callback()
   )
 
 start = () ->
   $('#topbar').hide()
   console.log 'start'
-  if window.settings.timecrowd
-    task_id = $("input[name='timecrowd_task']:checked").val()
-    team_id = $("input[name='timecrowd_task']:checked").attr('data-team-id')
-    params = {
-      team_id: team_id
-      task_id: task_id
-    }
-    $.post('/timecrowd/start', params)
   for div in $("#nc div.scaffold")
     $(div).hide() unless $(div).attr('id') in window.stays
   $("input").hide()
 
   @env.is_doing = true
 
-  if @env.is_kakuhen
-    initComments()
-    window.initSelectRooms()
-
-  Util.countDown(@env.pomotime*60*1000, complete)
+  end_time = window.workload.created_at + @env.pomotime*60*1000
+  Util.countDown(end_time, complete)
 
 window.youtubeDurationSec = (key)  ->
   duration = key['contentDetails']['duration'];            # Ex) "PT43M22S", "PT43M"
@@ -526,59 +427,24 @@ window.play_repeat = (key, duration) ->
 
 complete = () ->
   console.log 'complete'
-  if window.settings.twitter
-    $.get('/api/tweets/home', (data) ->
-      $('#twitter_home').html('<table></table>')
-      for tweet in data
-        $('#twitter_home table').append("""
-          <tr>
-          <td><a href='https://twitter.com/#{tweet.user.screen_name}' target='_blank'><img src='#{tweet.user.profile_image_url}' /></a></td>
-          <td><hr>#{tweet.text}</td>
-          </tr>
-        """)
-    )
-
-  if window.settings.timecrowd
-    $.post('/timecrowd/stop')
-
   window.is_hato = false
-  Util.countDown(@env.chattime*60*1000, 'finish')
+  end_time = window.workload.created_at + @env.pomotime*60*1000 + @env.chattime*60*1000
+  Util.countDown(end_time, 'reload')
   $('#header').hide()
   $('#topbar').hide()
   $('#otukare').fadeIn()
-  $('#rap').fadeIn()
   $("#playing").fadeOut()
   $("#search").fadeOut()
   $("#playing").html('') # for stopping
-  unless @env.is_kakuhen
-    window.initSelectRooms()
-
-  alert '24分間お疲れ様でした！5分間交換日記ができます☆' if window.settings.alert unless @env.is_done
 
   @env.is_doing = false
   @env.is_done = true
-
-  if location.href.match("gohobi_youtube=") and !$('#ad iframe').length
-    url = "https://www.youtube.com/embed/#{location.href.split('gohobi_youtube=')[1].replace(/&.*$/,'').replace(/#.*$/,'')}?autoplay=1"
-    $('#ad').html(
-      """
-      <h2>ご褒美動画です☆</h2>
-      <iframe width=\"560\" height=\"315\" src=\"#{url}\" frameborder=\"0\" allowfullscreen></iframe>
-      """
-    )
 
   $.get('/api/complete')
 
   $complete = $('#complete')
   $complete.html('')
   initComments()
-
-  # nortification
-  if $('#show-nortification').prop('checked')
-    new Notify('作業時間が終了しました！', {
-      body: '245cloud'
-      icon: '//placehold.jp/100x100.png'
-    }).show()
 
 window.initComments = () ->
   initRoom()
@@ -621,19 +487,7 @@ window.initRoom = (id = '1', title='いつもの部屋') ->
 
 window.finish = () ->
   console.log 'finish'
-
-  # nortification
-  if $('#show-nortification').prop('checked')
-    new Notify('休憩時間が終了しました！', {
-      body: '245cloud'
-      icon: '//placehold.jp/100x100.png'
-    }).show()
-
-  if location.href.match(/auto_close=/)
-    window.open(location, '_self', '')
-    window.close()
-  else
-    location.reload()
+  location.reload()
 
 window.createComment = (room_id) ->
   console.log 'createComment'
@@ -668,9 +522,10 @@ window.addChatting = (workload) ->
   @addWorkload("#chatting", workload, disp)
 
 @addWorkload = (dom, workload, disp) ->
+  console.log dom
   provider_icon = ''
   w = workload
-  facebook_id = w.facebook_id
+  user_id = w.user_id
   if w.music_key
     title = w.title
     href = "##{workload.music_key}"
@@ -683,7 +538,7 @@ window.addChatting = (workload) ->
     title = '無音'
     fixed = "<a href=\"#\" class='fixed_start'><img src='#{ImgURLs.button_paly_nomusic}' /></a>"
     jacket = "<img src='#{ImgURLs.track_nomusic}' class='jacket'/>"
-  user_img = "<a href='/#{workload.facebook_id}'><img class='icon img-thumbnail' src='https://graph.facebook.com/#{workload.facebook_id}/picture?height=40&width=40' /></a>"
+  user_img = "<a href='/#{workload.user_id}'><img class='icon img-thumbnail' src='/images/profile/#{workload.user_id}.jpg' /></a>"
 
   $item = Util.tag('div', null, {class: 'inborder'})
   $item.css("border", '4px solid #eadba0')
@@ -707,14 +562,9 @@ window.addChatting = (workload) ->
   """)
   $('[data-toggle="tooltip"]').tooltip()
 
-  # dones以外は１ユーザにつき１つしか表示しないので他の$itemは消去
-  unless dom == '#done'
-    $("#chatting .facebook_#{facebook_id}").remove()
-    $("#doing .facebook_#{facebook_id}").remove()
-
   $workload = $('<div></div>')
   $workload.addClass("workload")
-  $workload.addClass("facebook_#{facebook_id}")
+  $workload.addClass("user_#{user_id}")
   $workload.addClass("col-sm-2")
   $workload.css("min-height", '180px')
   $workload.html($item)
@@ -732,19 +582,15 @@ window.addWorkload = @addWorkload
 
 initFixedStart = () ->
   $(document).on('click', '.fixed_start', () ->
-    if window.facebook_id
+    if window.user_id
       hash = $(this).attr('href').replace(/^#/, '')
       location.hash = hash
       start_hash()
     else
-      alert 'Facebookログインをお願いします！'
+      alert 'Twitterログインをお願いします！'
       $('html,body').animate({scrollTop:$('#login').offset().top - 40}) # Scroll to the login button position.
       window.fbAsyncInit()
   )
-  $(document).on('click', '.add_playlist', () ->
-    alert 'プレイリストに追加する機能は現在開発中です。。。'
-  )
-
 
 window.ruffnote = (id, dom, callback=null) ->
   Ruffnote.fetch("pandeiro245/245cloud/#{id}", dom, callback)
@@ -758,13 +604,11 @@ initService = ($dom, url) ->
   c = comment
 
   if c.body
-    img = "https://graph.facebook.com/#{c.facebook_id}/picture?height=40&width=40"
+    img = "/images/profile/#{c.user_id}.jpg"
     html = """
     <tr>
     <td>
-    <a href='https://facebook.com/#{c.facebook_id}' target='_blank'>
     <img class='icon' src='#{img}' />
-    </a>
     <td>
     <td>#{Util.parseHttp(c.body)}</td>
     <td>#{Util.hourMin(c.created_at)}</td>
@@ -774,18 +618,8 @@ initService = ($dom, url) ->
 
 window.addComment = @addComment
 
-@stopUser = (facebook_id) ->
-  $("#chatting .user_#{facebook_id}").remove()
-  if $("#chatting div").length < 1
-    $("#chatting_title").hide()
-  $("#doing .user_#{facebook_id}").remove()
-  if $("#doing div").length < 1
-    $("#doing_title").hide()
-
 searchMusics = () ->
   q = $('#track').val()
-
-
 
   search_yt = $("#search_yt").prop('checked')
   search_mc = $("#search_mc").prop('checked')
@@ -845,25 +679,21 @@ renderWorkloads = (dom) ->
   $items.removeClass('col-sm-offset-5')
   $first.addClass("col-sm-offset-#{getOffset($items.length)}")
 
-start_unless_doing = ()->
-  unless ( @env.is_doing or @env.is_done)
-    start_hash()
-
 artworkUrlWithNoimage = (artwork_url) ->
   artwork_url || ImgURLs.track_noimage_hover
 
 initYou = () ->
   console.log 'initYou'
-  return unless window.facebook_id
+  return unless window.user_id
   if location.href.match(/best=/)
-    $.get("/api/users/#{window.facebook_id}/workloads?best=1", (workloads) ->
+    $.get("/api/users/#{window.user_id}/workloads?best=1", (workloads) ->
       ruffnote(22876, 'you_title')
       for workload in workloads
         disp = "累計#{workload.music_key_count}回"
         window.addWorkload("#you", workload, disp)
     )
   else
-    $.get("/api/users/#{window.facebook_id}/workloads", (workloads) ->
+    $.get("/api/users/#{window.user_id}/workloads", (workloads) ->
       ruffnote(22876, 'you_title')
       for workload in workloads
         disp = "#{Util.hourMin(workload.created_at, '')} #{workload.number}回目(週#{workload.weekly_number}回)"
