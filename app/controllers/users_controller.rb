@@ -1,11 +1,11 @@
 class UsersController < ApplicationController
   def index
-    @users = Workload.group(:facebook_id).count.to_a.sort_by{|u| u.last}.reverse
+    @users = Workload.group(:user_id).count.to_a.sort_by{|u| u.last}.reverse
   end
 
   def show
-    @user = User.find_or_create_by(
-      facebook_id: params[:id]
+    @user = User.find_by(
+      id: params[:id]
     )
   end
 
@@ -24,31 +24,33 @@ class UsersController < ApplicationController
 
   def login
     provider = params[:provider]
-    if provider == 'facebook'
-      login_with_facebook
+    case provider
+    when 'twitter'
+      login_with_twitter
     else
       _login(provider)
     end
     redirect_to '/'
   end
 
-  def login_with_facebook
+  def login_with_twitter
     auth_hash = request.env['omniauth.auth']
-    facebook_id = auth_hash['uid'].to_i
-    user = User.find_by(
-      facebook_id: facebook_id
+    twitter_id = auth_hash['uid'].to_i
+    user = current_user
+    user ||= User.find_by(
+      twitter_id: twitter_id
     )
     if user.nil?
       user = User.new(
-        email: "fa-#{facebook_id}@245cloud.com",
-        facebook_id: facebook_id
+        email: "tw-#{twitter_id}@245cloud.com"
       )
       user.save!
       user.email = "#{user.id}@245cloud.com"
-      user.save!
     end
+    user.twitter_id ||= twitter_id
+    user.save!
+    `wget -O public/images/profile/#{user.id}.jpg #{auth_hash[:info][:image]}`
     sign_in(user)
-    redirect_to '/'
   end
 
   def _login provider

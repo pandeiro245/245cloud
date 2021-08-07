@@ -21,7 +21,7 @@ class User < ActiveRecord::Base
   end
 
   def workloads
-    Workload.his(facebook_id).bests.limit(48)
+    Workload.his(id).bests.limit(48)
   end
 
   def start!(params={})
@@ -30,7 +30,7 @@ class User < ActiveRecord::Base
 
   def to_done!
     w = Workload.his(
-      facebook_id
+      id
     ).chattings.first
     w.to_done! if w.present?
     w

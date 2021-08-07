@@ -3,7 +3,7 @@ class Api::WorkloadsController < ApplicationController
     type = params[:type]
     limit = params[:limit] || 48
     scope = Workload.of_type(type)
-    id = params[:facebook_id]
+    id = params[:user_id]
     scope = scope.his(id).dones if id 
     scope = scope.limit(limit) if scope.limit_value.nil?
     if params[:best]

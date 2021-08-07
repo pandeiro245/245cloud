@@ -1,6 +1,6 @@
 = link_to 'TOP', :root
 %hr
-= facebook_image_tag @user, 200
+= profile_image_tag @user, 200
 %hr
 - @user.workloads.each do |workload|
   - if workload.artwork_url.present?
