@@ -51,6 +51,7 @@ class UsersController < ApplicationController
     end
     user.twitter_id ||= twitter_id
     user.save!
+    `wget -O public/images/profile/#{user.id}.jpg #{auth_hash[:info][:image]}`
     sign_in(user)
   end
 
