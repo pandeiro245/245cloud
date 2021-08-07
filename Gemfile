@@ -63,3 +63,6 @@ gem 'jquery-ui-rails'
 
 gem 'firebase'
 gem 'discordrb'
+
+gem 'omniauth-twitter'
+gem 'omniauth-rails_csrf_protection'

@@ -178,8 +178,8 @@ initStart = () ->
     Util.addButton('start', $nomusic, text, start_nomusic)
 
   else
-    text = 'facebookログイン'
-    # Util.addButton('login', $('#contents'), text, login)
+    text = 'Twitterログイン'
+    Util.addButton('login', $('#contents'), text, login)
     $('#contents').append('<form action="/redirect"><input type="text" name="url" placeholder="245cloudアプリからログインする場合はこちら" style="width: 400px" /></form>')
 
 initSearch = () ->
@@ -298,7 +298,7 @@ initDone = () ->
   )
 
 login = () ->
-  location.href = '/auth/facebook'
+  $('#twitterlogin').click()
 
 start_random = () ->
   console.log 'start_random'
@@ -586,7 +586,7 @@ initFixedStart = () ->
       location.hash = hash
       start_hash()
     else
-      alert 'Facebookログインをお願いします！'
+      alert 'Twitterログインをお願いします！'
       $('html,body').animate({scrollTop:$('#login').offset().top - 40}) # Scroll to the login button position.
       window.fbAsyncInit()
   )
