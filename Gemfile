@@ -46,7 +46,6 @@ gem 'dotenv-rails'
 gem 'settingslogic'
 gem 'font-awesome-sass'
 
-gem 'omniauth-facebook'
 gem 'omniauth-discord'
 
 gem 'rb-readline'

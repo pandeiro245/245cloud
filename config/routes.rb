@@ -17,7 +17,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     get '/complete', to: 'workloads#complete'
-    get '/users/:facebook_id/workloads', to: 'workloads#index'
+    get '/users/:user_id/workloads', to: 'workloads#index'
     resources :workloads, only: [:index, :create]
     resources :comments, only: [:index, :create]
     resources :access_logs, only: [:create]

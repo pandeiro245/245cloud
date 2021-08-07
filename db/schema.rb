@@ -13,19 +13,19 @@
 ActiveRecord::Schema.define(version: 2021_08_07_022936) do
 
   create_table "access_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-    t.string "facebook_id"
     t.text "url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id"
   end
 
   create_table "comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-    t.string "facebook_id"
     t.integer "parent_id"
     t.text "body"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "num", default: 0
+    t.integer "user_id"
   end
 
   create_table "provider_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
@@ -78,7 +78,6 @@ ActiveRecord::Schema.define(version: 2021_08_07_022936) do
   end
 
   create_table "workloads", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-    t.string "facebook_id"
     t.string "music_key"
     t.string "title"
     t.boolean "is_done"
@@ -87,8 +86,7 @@ ActiveRecord::Schema.define(version: 2021_08_07_022936) do
     t.integer "number"
     t.string "artwork_url"
     t.integer "weekly_number"
-    t.bigint "user_id"
-    t.index ["user_id"], name: "index_workloads_on_user_id"
+    t.integer "user_id"
   end
 
   add_foreign_key "provider_users", "providers"
@@ -96,5 +94,4 @@ ActiveRecord::Schema.define(version: 2021_08_07_022936) do
   add_foreign_key "provider_workloads", "provider_users"
   add_foreign_key "provider_workloads", "providers"
   add_foreign_key "provider_workloads", "workloads"
-  add_foreign_key "workloads", "users"
 end

@@ -1,8 +1,8 @@
 class Api::AccessLogsController < ApplicationController
   def create
-    facebook_id = current_user ? current_user.facebook_id : nil
+    user_id = current_user ? current_user.id : nil
     access_log = AccessLog.create!(
-      facebook_id: facebook_id,
+      user_id: user_id,
       url: params[:url]
     )
     render json: access_log

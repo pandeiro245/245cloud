@@ -12,9 +12,9 @@ class Workload < ActiveRecord::Base
   scope :dones, -> {
     where(is_done: true)
   }
-  scope :his, -> (facebook_id) {
+  scope :his, -> (user_id) {
     where(
-      facebook_id: facebook_id
+      user_id: user_id
     )
   }
   scope :bests, ->  { select(
@@ -25,10 +25,10 @@ class Workload < ActiveRecord::Base
     )
   }
   scope :best_listeners, -> (music_key) { select(
-    '*, count(facebook_id) as facebook_id_count'
+    '*, count(user_id) as user_id_count'
   ).where(music_key: music_key
-  ).group(:facebook_id).order(
-      'facebook_id_count DESC'
+  ).group(:user_id).order(
+      'user_id_count DESC'
     )
   }
   scope :today, -> (created_at = nil) {
@@ -73,10 +73,10 @@ class Workload < ActiveRecord::Base
   }
 
   def self.find_or_start_by_user(user, _params = {})
-    w = playings.his(user.facebook_id).first
+    w = playings.his(user.id).first
     return w if w.present?
 
-    params = {'facebook_id' => user.facebook_id}
+    params = {'user_id' => user.id}
     %w(music_key title artwork_url).each do |key|
       if _params[key].present?
         params[key] = _params[key]
@@ -115,7 +115,7 @@ class Workload < ActiveRecord::Base
   end
 
   def next_number type=nil
-    scope = Workload.his(facebook_id).dones
+    scope = Workload.his(user_id).dones
     scope = case type
     when :weekly
       scope.thisweek(created_at)

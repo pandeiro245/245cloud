@@ -48,7 +48,7 @@ initFirebase = () ->
     i = snapshot.val()
     if i.created_at + @env.pomotime*60*1000 > (new Date()).getTime()
       if @env.is_doing == false
-        if i.facebook_id == window.facebook_id
+        if i.user_id == window.user_id
           start_hash()
           @env.is_doing = true
   )
@@ -68,7 +68,7 @@ initTopbar = () ->
   )
 
 initHeatmap = () ->
-  return unless window.facebook_id
+  return unless window.user_id
   cal = new CalHeatMap()
   now = new Date()
   startDate = new Date(now.getFullYear() - 1, now.getMonth() + 1)
@@ -90,7 +90,7 @@ initHeatmap = () ->
     range: 12
     afterLoad: () ->
       pomos = {}
-      $.get("/api/users/#{window.facebook_id}/workloads?type=dones&limit=99999", (workloads) ->
+      $.get("/api/users/#{window.user_id}/workloads?type=dones&limit=99999", (workloads) ->
         pomos = {}
         for i in [0...workloads.length]
           pomos[+workloads[i].created_at / 1000] = 1
@@ -116,7 +116,7 @@ initStart = () ->
   text = "24分やり直しでも大丈夫ですか？"
   Util.beforeunload(text, 'env.is_doing')
 
-  if window.facebook_id
+  if window.user_id
     $('#contents').append("""
       <div class='countdown2' >
       <div class='countdown' ></div>
@@ -280,7 +280,7 @@ initDoing = () ->
     $("#doing_title").show()
     _is_doing = false
     for workload in workloads
-      if workload.facebook_id == window.facebook_id
+      if workload.user_id == window.user_id
         _is_doing = true
       window.addDoing(workload)
     if _is_doing
@@ -326,7 +326,7 @@ createWorkload = (params = {}, callback) ->
     window.workload = workload
     database = firebase.database()
     database.ref('workloads').push({
-      facebook_id: window.facebook_id
+      user_id: window.user_id
       created_at: workload.created_at
     })
     callback()
@@ -518,7 +518,7 @@ window.addChatting = (workload) ->
   console.log dom
   provider_icon = ''
   w = workload
-  facebook_id = w.facebook_id
+  user_id = w.user_id
   if w.music_key
     title = w.title
     href = "##{workload.music_key}"
@@ -531,8 +531,7 @@ window.addChatting = (workload) ->
     title = '無音'
     fixed = "<a href=\"#\" class='fixed_start'><img src='#{ImgURLs.button_paly_nomusic}' /></a>"
     jacket = "<img src='#{ImgURLs.track_nomusic}' class='jacket'/>"
-  user_img = "<a href='/#{workload.facebook_id}'><img class='icon img-thumbnail' src='/images/profile/#{workload.facebook_id}.jpg' /></a>"
-  # user_img = "<a href='/#{workload.facebook_id}'><img class='icon img-thumbnail' src='https://graph.facebook.com/#{workload.facebook_id}/picture?height=40&width=40' /></a>"
+  user_img = "<a href='/#{workload.user_id}'><img class='icon img-thumbnail' src='/images/profile/#{workload.user_id}.jpg' /></a>"
 
   $item = Util.tag('div', null, {class: 'inborder'})
   $item.css("border", '4px solid #eadba0')
@@ -556,14 +555,9 @@ window.addChatting = (workload) ->
   """)
   $('[data-toggle="tooltip"]').tooltip()
 
-  # dones以外は１ユーザにつき１つしか表示しないので他の$itemは消去
-  # unless dom == '#done'
-  #   $("#chatting .facebook_#{facebook_id}").remove()
-  #   $("#doing .facebook_#{facebook_id}").remove()
-
   $workload = $('<div></div>')
   $workload.addClass("workload")
-  $workload.addClass("facebook_#{facebook_id}")
+  $workload.addClass("user_#{user_id}")
   $workload.addClass("col-sm-2")
   $workload.css("min-height", '180px')
   $workload.html($item)
@@ -581,7 +575,7 @@ window.addWorkload = @addWorkload
 
 initFixedStart = () ->
   $(document).on('click', '.fixed_start', () ->
-    if window.facebook_id
+    if window.user_id
       hash = $(this).attr('href').replace(/^#/, '')
       location.hash = hash
       start_hash()
@@ -603,14 +597,11 @@ initService = ($dom, url) ->
   c = comment
 
   if c.body
-    # img = "https://graph.facebook.com/#{c.facebook_id}/picture?height=40&width=40"
-    img = "/images/profile/#{c.facebook_id}.jpg"
+    img = "/images/profile/#{c.user_id}.jpg"
     html = """
     <tr>
     <td>
-    <a href='https://facebook.com/#{c.facebook_id}' target='_blank'>
     <img class='icon' src='#{img}' />
-    </a>
     <td>
     <td>#{Util.parseHttp(c.body)}</td>
     <td>#{Util.hourMin(c.created_at)}</td>
@@ -686,16 +677,16 @@ artworkUrlWithNoimage = (artwork_url) ->
 
 initYou = () ->
   console.log 'initYou'
-  return unless window.facebook_id
+  return unless window.user_id
   if location.href.match(/best=/)
-    $.get("/api/users/#{window.facebook_id}/workloads?best=1", (workloads) ->
+    $.get("/api/users/#{window.user_id}/workloads?best=1", (workloads) ->
       ruffnote(22876, 'you_title')
       for workload in workloads
         disp = "累計#{workload.music_key_count}回"
         window.addWorkload("#you", workload, disp)
     )
   else
-    $.get("/api/users/#{window.facebook_id}/workloads", (workloads) ->
+    $.get("/api/users/#{window.user_id}/workloads", (workloads) ->
       ruffnote(22876, 'you_title')
       for workload in workloads
         disp = "#{Util.hourMin(workload.created_at, '')} #{workload.number}回目(週#{workload.weekly_number}回)"

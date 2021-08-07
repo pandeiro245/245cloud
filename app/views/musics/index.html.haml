@@ -5,5 +5,5 @@
 = link_to image_tag('https://ruffnote.com/attachments/24921'), "/##{@music.key}"
 %hr
 - @music.users.each do |workload|
-  = link_to facebook_image_tag(workload, 100), "/#{workload.facebook_id}"
+  = link_to profile_image_tag(workload, 100), "/#{workload.user_id}"
 
