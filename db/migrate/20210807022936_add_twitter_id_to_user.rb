@@ -8,8 +8,8 @@ class AddTwitterIdToUser < ActiveRecord::Migration[5.2]
 
     # Sync.new.fb2user
 
-    remove_column :workloads, :facebook_id
-    remove_column :comments, :facebook_id
-    remove_column :access_logs, :facebook_id
+    # remove_column :workloads, :facebook_id
+    # remove_column :comments, :facebook_id
+    # remove_column :access_logs, :facebook_id
   end
 end

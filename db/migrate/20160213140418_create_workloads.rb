@@ -1,4 +1,4 @@
-class CreateWorkloads < ActiveRecord::Migration
+class CreateWorkloads < ActiveRecord::Migration[4.2]
   def change
     create_table :workloads do |t|
       t.integer :facebook_id

@@ -25,7 +25,7 @@ class Comment < ActiveRecord::Base
     )
     created_at = Time.at(cmnt['created_at']/1000)
     comment.created_at =  created_at
-    %w(body user_id parent_id).each do |key|
+    %w(body facebook_id user_id parent_id).each do |key|
       comment.send("#{key}=", cmnt[key] || 1)
     end
     comment.save!(validate: false)

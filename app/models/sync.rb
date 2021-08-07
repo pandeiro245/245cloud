@@ -1,4 +1,10 @@
 class Sync
+  def rename_images
+    User.all.each do |user|
+      `cp public/images/fb_profile/#{user.facebook_id}.jpg public/images/profile/#{user.id}.jpg`
+    end
+  end
+
   def fb2user
     [Workload, Comment, AccessLog].each do |model|
       model.where.not(facebook_id: nil).each do |item|
