@@ -4,11 +4,4 @@
     !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
 
 = link_to 'twitter login', '/auth/twitter', method: :post, style: 'display:none;', id: 'twitterlogin'
-
-#nc
-  %h1 245cloud（ニシコクラウド）で24分間集中しましょう
-#fb-root
-- if current_user
-  :javascript
-    window.user_id = "#{current_user.id}";
-    window.settings = #{cookies[:settings] || '{}'};
+= render 'welcome/main'

@@ -1,46 +1,24 @@
-# Install
+# README
 
-```
-$ cp config/database.yml.sample config/database.yml
-$ vim config/database.yml
-$ bundle install
-$ bundle exec rake db:setup
-$ bundle exec rails s -p 3001
-```
+This README would normally document whatever steps are necessary to get the
+application up and running.
 
-## Facebook app id を開発用に取得
+Things you may want to cover:
 
-https://developers.facebook.com/
+* Ruby version
 
-- FACEBOOK_KEY: app id
-- FACEBOOK_SECRET: app secret
+* System dependencies
 
-## powで動かす場合
+* Configuration
 
-`.env`に
-```
-FACEBOOK_KEY='1234567890'
-FACEBOOK_SECRET='1234567890ABCDEF12345'
-```
-と書いて http://245cloud.dev/ で動かせばOK
+* Database creation
 
-## webrickで動かす場合
+* Database initialization
 
-起動前に環境変数に設定
+* How to run the test suite
 
-```
-export FACEBOOK_KEY='1234567890'
-export FACEBOOK_SECRET='1234567890ABCDEF12345'
-```
+* Services (job queues, cache servers, search engines, etc.)
 
-## 開発モード
+* Deployment instructions
 
-pomo時間, chat時間を変更する
-
-- localstrage
-  - dev_pomo : 0.1 (6秒くらい)
-  - dev_chat : 0.1 (6秒くらい)
-
-
-# see also  
-https://ruffnote.com/pandeiro245/245cloud
+* ...
