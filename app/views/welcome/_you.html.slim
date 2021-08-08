@@ -1,0 +1,6 @@
+#you_title.scaffold.row
+  h2.status
+    img src="https://ruffnote.com/attachments/24943" /
+#you.scaffold.row
+  - 10.times.each do |i|
+    = render 'workload', user: User.first

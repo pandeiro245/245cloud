@@ -11,6 +11,10 @@ class User < ActiveRecord::Base
     u
   end
 
+  def status
+    'before'
+  end
+
   def url
     "https://245cloud.com/login?user_id=#{id}&token=#{token}"
   end
