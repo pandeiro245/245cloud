@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   devise_for :users
-  root 'welcome#index'
+  root 'home#index'
   resources :nicoinfo, only: [:show], constraints: {id: /sm[0-9]+/}
 
   get '/auth/:provider/callback', to: 'users#login'
@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   get '/login', to: 'users#login_with_token'
 
   get '/users', to: 'users#index'
-  get '/redirect', to: 'welcome#redirect'
+  get '/redirect', to: 'home#redirect'
 
   get '/:id', to: 'users#show'
 
