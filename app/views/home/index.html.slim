@@ -17,11 +17,13 @@
     = render 'search'
     /= render 'others'
     = render 'footer'
+    /= javascript_pack_tag 'home_vue'
+    /= stylesheet_pack_tag 'home_vue'
+
   - when 'playing'
     = render 'header'
     = render 'playing'
+    /= javascript_pack_tag 'countdown_vue'
   - when 'chatting'
     = render 'chatting'
 
-= javascript_pack_tag 'home_vue'
-= stylesheet_pack_tag 'home_vue'
