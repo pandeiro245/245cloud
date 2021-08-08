@@ -1,8 +1,8 @@
 class Workload < ActiveRecord::Base
   # POMOTIME = 24.minutes
-  CHATTIME = 5.minutes
+  # CHATTIME = 5.minutes
   POMOTIME = (0.1).minutes
-  # CHATTIME = (0.1).minutes
+  CHATTIME = (0.1).minutes
 
   before_save :set_music_key
 

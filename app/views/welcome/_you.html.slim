@@ -2,5 +2,5 @@
   h2.status
     img src="https://ruffnote.com/attachments/24943" /
 #you.scaffold.row
-  - 10.times.each do |i|
-    = render 'workload', user: User.first
+  - Workload.his(current_user).created.limit(48).each do |workload|
+    = render 'workload', workload: workload
