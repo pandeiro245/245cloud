@@ -3,21 +3,23 @@
 #nc
   - case current_user.status
   - when 'before'
+    = render 'header'
     = render 'news'
     - if current_user.blank?
       = render 'login'
     - else 
       = render 'heatmap'
       = render 'start_menu'
-    /= render 'playing'
-    /= render 'chatting'
+    /= render 'playings'
+    /= render 'chattings'
     = render 'done'
     /= render 'you'
     = render 'search'
     /= render 'others'
+    = render 'footer'
   - when 'playing'
-    / playing
+    = render 'header'
+    = render 'playing'
   - when 'chatting'
-    / chatting
-  = render 'footer'
+    = render 'chatting'
 

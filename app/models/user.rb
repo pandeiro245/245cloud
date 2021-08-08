@@ -4,6 +4,7 @@ class User < ActiveRecord::Base
 
   def status
     return 'playing' if Workload.playings.where(user_id: id).present?
+    return 'chatting' if Workload.chattings.where(user_id: id).present?
     return 'before'
   end
 
