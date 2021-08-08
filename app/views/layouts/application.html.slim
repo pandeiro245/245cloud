@@ -1,0 +1,28 @@
+doctype html
+html ng-app="" 
+  head
+    /!
+      | 245cloudのソースコード見てしまったあなた！
+      | ほんと恥ずかしいんで是非ともコードレビューお願いしますｗ
+      | https://github.com/pandeiro245/245cloud
+    title 245cloud（ニシコクラウド）
+
+    = stylesheet_link_tag    'application', media: 'all'
+    = csrf_meta_tags
+    = csp_meta_tag
+
+    script src="https://apis.google.com/js/client.js?onload=onJSClientLoad" 
+    meta content="245cloud（ニシコクラウド）は24分間のパワーソングを聞きながら作業に集中できるWebサービスです" name="description" /
+    meta content="作業BGM, ポモドーロ法, 集中タイム, Soundcloud.com YouTube" name="keywords" /
+    link href="/favicon.ico" rel=("shortcut icon") type="image/x-icon" /
+    meta content="width=device-width, initial-scale=1" name="viewport" /
+    meta content="yes" name="apple-mobile-web-app-capable" /
+    link href="/icon.png" rel="apple-touch-icon-precomposed" /
+    meta content="https://ruffnote.com/attachments/24010" property="og:image" /
+    = render 'layouts/ga'
+
+
+
+  body
+    = yield
+

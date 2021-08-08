@@ -1,5 +1,18 @@
-= render 'welcome/social_button'
+= render 'social_button'
 
 #nc
-  = render 'welcome/news'
-  = render 'welcome/main'
+  = render 'news'
+  - if current_user.blank?
+    = render 'login'
+  - else 
+    = render 'heatmap'
+    = render 'start_menu'
+  /= render 'playing'
+	= render 'chatting'
+	= render 'done'
+	-if false
+		= render 'you'
+		= render 'search'
+		= render 'others'
+		= render 'footer'
+
