@@ -4,6 +4,8 @@ class Workload < ActiveRecord::Base
   POMOTIME = (0.1).minutes
   CHATTIME = (0.1).minutes
 
+  belongs_to :user
+
   before_save :set_music_key
 
   scope :created, -> {
@@ -71,6 +73,17 @@ class Workload < ActiveRecord::Base
     raise if type && !active_type?(type)
     type ? public_send(type) : dones
   }
+
+  def will_reload_at
+    case user.status
+    when 'playing'
+      created_at + POMOTIME
+    when 'chatting'
+      created_at + POMOTIME + CHATTIME
+    else
+      nil
+    end
+  end
 
   def self.find_or_start_by_user(user, _params = {})
     w = playings.his(user.id).first

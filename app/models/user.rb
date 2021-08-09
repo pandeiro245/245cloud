@@ -3,9 +3,17 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
 
   def status
-    return 'playing' if Workload.playings.where(user_id: id).present?
-    return 'chatting' if Workload.chattings.where(user_id: id).present?
+    return 'playing' if playing.present?
+    return 'chatting' if chatting.present?
     return 'before'
+  end
+
+  def playing
+    Workload.playings.where(user_id: id).first 
+  end
+
+  def chatting
+    Workload.chattings.where(user_id: id).first
   end
 
   def url
