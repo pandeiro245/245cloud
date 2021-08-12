@@ -74,6 +74,10 @@ class Workload < ActiveRecord::Base
     type ? public_send(type) : dones
   }
 
+  def hm
+    created_at.in_time_zone.strftime('%H:%M')
+  end
+
   def will_reload_at
     case user.status
     when 'playing'
