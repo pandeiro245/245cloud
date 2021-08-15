@@ -75,7 +75,12 @@ class Workload < ActiveRecord::Base
   }
 
   def hm
-    created_at.in_time_zone.strftime('%H:%M')
+    time = created_at.in_time_zone('Tokyo')
+    if time.to_date == Time.zone.now.to_date
+      time.strftime('%H:%M')
+    else
+      time.strftime('%m/%d %H:%M')
+    end
   end
 
   def will_reload_at
