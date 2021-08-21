@@ -1,0 +1,113 @@
+version: 2.1
+executors:
+  app:
+    docker:
+      - image: circleci/ruby:3.0.2-node-browsers
+        environment:
+          BUNDLE_JOBS: 3
+          BUNDLE_RETRY: 3
+          BUNDLE_PATH: vendor/bundle
+          RAILS_ENV: test
+          DB_PASSWORD: 'rootpw'
+      - image: circleci/mysql:5.7
+        command: mysqld --default-authentication-plugin=mysql_native_password
+        environment:
+          MYSQL_ROOT_PASSWORD: rootpw
+          MYSQL_USER: user
+          MYSQL_PASSWORD: password
+          MYSQL_HOST: 127.0.0.1
+          MYSQL_DATABASE: nishikocloud_test
+    working_directory: ~/nishikocloud
+
+jobs:
+  build:
+    executor: app
+    steps:
+      - checkout
+
+      - run:
+          name: Install bundler
+          command: gem install bundler:2.2.22
+
+      - run:
+          name: Which bundler?
+          command: bundle -v
+
+      - restore_cache:
+          keys: 
+            - v1-nishikocloud-bundle-{{ checksum "Gemfile.lock" }}-{{ checksum "yarn.lock" }}
+            - v1-nishikocloud-bundle-
+
+      - run:
+          name: Bundle Install
+          command: bundle check || bundle install
+
+      - run:
+          name: Yarn Install
+          command: yarn install
+
+      - save_cache:
+          key: v1-nishikocloud-bundle-{{ checksum "Gemfile.lock" }}-{{ checksum "yarn.lock" }}
+          paths:
+            - vendor/bundle
+            - node_modules
+
+  test:
+    executor: app
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - v1-nishikocloud-bundle-{{ checksum "Gemfile.lock" }}-{{ checksum "yarn.lock" }}
+            - v1-nishikocloud-bundle-
+
+      - run:
+          name: Install bundler
+          command: gem install bundler:2.2.22
+
+      - run:
+          name: Wait for DB
+          command: dockerize -wait tcp://127.0.0.1:3306 -timeout 120s
+
+      - run:
+          name: Setup DB
+          command: bin/rails db:schema:load --trace
+
+      - run:
+          name: Compile Assets
+          command: bin/webpack
+
+      - run:
+          name: Run RSpec
+          command: bundle exec rspec 
+
+  lint:
+    executor: app
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - v1-nishikocloud-bundle-{{ checksum "Gemfile.lock" }}-{{ checksum "yarn.lock" }}
+            - v1-nishikocloud-bundle-
+
+      - run:
+          name: Install bundler
+          command: gem install bundler:2.2.22
+
+      - run:
+          name: Run Rubocop
+          command: bundle exec rubocop
+
+workflows:
+  version: 2
+  build_and_test_and_lint:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - lint:
+          requires:
+            - build
