@@ -6,7 +6,13 @@
       ほんと恥ずかしいんで是非ともコードレビューお願いしますｗ
       https://github.com/pandeiro245/245cloud
 
-    %title 245cloud（ニシコクラウド）
+    %title
+      - if @music.present? && @music.title.present?
+        = "#{@music.title} を聴きながら245cloudでポモドーロテクニックする"
+      - if @user.present? && @user.name.present?
+        = "#{@user.name} が集中できる音楽をを聴きながら245cloudでポモドーロテクニックする"
+      - else
+        245cloud（ニシコクラウド）でポモドーロテクニック
     = stylesheet_link_tag    'application', media: 'all'
     = javascript_include_tag 'application'
     = csrf_meta_tags

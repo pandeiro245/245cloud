@@ -11,6 +11,22 @@ class User < ActiveRecord::Base
     u
   end
 
+  def self.sync_names
+    client = Twitter::REST::Client.new do |config|
+      config.consumer_key        = ENV['TWITTER_KEY']
+      config.consumer_secret     = ENV['TWITTER_SECRET']
+      config.access_token        = ENV['TWITTER_ACCESS_KEY']
+      config.access_token_secret = ENV['TWITTER_ACCESS_SECRET']
+    end
+
+    self.where.not(twitter_id: nil).each do |user|
+      twitter_user = client.user(user.twitter_id.to_i)
+      user.screen_name = twitter_user.screen_name
+      user.name ||= twitter_user.name
+      user.save
+    end
+  end
+
   def url
     "https://245cloud.com/login?user_id=#{id}&token=#{token}"
   end

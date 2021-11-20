@@ -1,6 +1,10 @@
 = link_to 'TOP', :root
 %hr
 = profile_image_tag @user, 200
+- if @user.screen_name.present?
+  %br
+  = link_to 'twitter', "https://twitter.com/#{@user.screen_name}", target: '_blank'
+  %hr
 %hr
 - @user.workloads.each do |workload|
   - if workload.artwork_url.present?

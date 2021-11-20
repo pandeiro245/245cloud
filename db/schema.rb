@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_07_022936) do
+ActiveRecord::Schema.define(version: 2021_11_20_001429) do
 
   create_table "access_logs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "facebook_id"
@@ -28,6 +28,52 @@ ActiveRecord::Schema.define(version: 2021_08_07_022936) do
     t.datetime "updated_at", null: false
     t.integer "num", default: 0
     t.integer "user_id"
+  end
+
+  create_table "issue_workloads", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.integer "issue_id"
+    t.integer "workload_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["issue_id"], name: "index_issue_workloads_on_issue_id"
+    t.index ["workload_id"], name: "index_issue_workloads_on_workload_id"
+  end
+
+  create_table "issues", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.integer "user_id"
+    t.string "key"
+    t.integer "estimated"
+    t.integer "worked"
+    t.datetime "deadline"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_issues_on_user_id"
+  end
+
+  create_table "provider_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.integer "user_id"
+    t.bigint "provider_id"
+    t.string "key"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["provider_id"], name: "index_provider_users_on_provider_id"
+  end
+
+  create_table "provider_workloads", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.integer "workload_id"
+    t.bigint "provider_id"
+    t.string "key"
+    t.text "val"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["provider_id"], name: "index_provider_workloads_on_provider_id"
+    t.index ["workload_id"], name: "index_provider_workloads_on_workload_id"
+  end
+
+  create_table "providers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
@@ -48,6 +94,7 @@ ActiveRecord::Schema.define(version: 2021_08_07_022936) do
     t.string "name"
     t.string "token"
     t.string "twitter_id"
+    t.string "screen_name"
   end
 
   create_table "workloads", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
@@ -63,4 +110,10 @@ ActiveRecord::Schema.define(version: 2021_08_07_022936) do
     t.integer "user_id"
   end
 
+  add_foreign_key "issue_workloads", "issues"
+  add_foreign_key "issue_workloads", "workloads"
+  add_foreign_key "issues", "users"
+  add_foreign_key "provider_users", "providers"
+  add_foreign_key "provider_workloads", "providers"
+  add_foreign_key "provider_workloads", "workloads"
 end
