@@ -1,7 +1,7 @@
 class Workload < ActiveRecord::Base
-  POMOTIME = 24.minutes
+  # POMOTIME = 24.minutes
   CHATTIME = 5.minutes
-  # POMOTIME = (0.1).minutes
+  POMOTIME = (0.1).minutes
   # CHATTIME = (0.1).minutes
 
   belongs_to :user

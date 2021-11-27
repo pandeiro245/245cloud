@@ -14,3 +14,6 @@
       span.time 24:00
   br/
 
+- Comment.order('id desc').each do |comment|
+  = comment.body
+  hr
