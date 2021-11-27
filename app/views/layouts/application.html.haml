@@ -9,7 +9,7 @@
     %title
       - if @music.present? && @music.title.present?
         = "#{@music.title} を聴きながら245cloudでポモドーロテクニックする"
-      - if @user.present? && @user.name.present?
+      - elsif @user.present? && @user.name.present?
         = "#{@user.name} が集中できる音楽をを聴きながら245cloudでポモドーロテクニックする"
       - else
         245cloud（ニシコクラウド）でポモドーロテクニック

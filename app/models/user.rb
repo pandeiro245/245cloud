@@ -22,7 +22,7 @@ class User < ActiveRecord::Base
     self.where.not(twitter_id: nil).each do |user|
       twitter_user = client.user(user.twitter_id.to_i)
       user.screen_name = twitter_user.screen_name
-      user.name ||= twitter_user.name
+      user.name = twitter_user.name
       user.save
     end
   end

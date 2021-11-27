@@ -3,6 +3,8 @@ class Workload < ActiveRecord::Base
   CHATTIME = 5.minutes
   # POMOTIME = (0.1).minutes
   # CHATTIME = (0.1).minutes
+  
+  belongs_to :user
 
   before_save :set_music_key
 
