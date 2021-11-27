@@ -8,6 +8,7 @@ executors:
           BUNDLE_RETRY: 3
           BUNDLE_PATH: vendor/bundle
           RAILS_ENV: test
+          DB_HOST: '127.0.0.1'
           DB_PASSWORD: 'rootpw'
       - image: circleci/mysql:5.7
         command: mysqld --default-authentication-plugin=mysql_native_password
