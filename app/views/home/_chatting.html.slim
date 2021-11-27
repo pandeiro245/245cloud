@@ -14,6 +14,8 @@
       span.time 24:00
   br/
 
-- Comment.order('id desc').each do |comment|
-  = comment.body
-  hr
+table
+  - Comment.order('created_at desc').limit(100).each do |comment|
+    tr
+      td=image_tag "https://245cloud.com/images/profile/#{comment.user_id}.jpg"
+      td==comment.body
