@@ -129,7 +129,6 @@ input#track {
 .tooltip.bottom .tooltip-arrow {border-bottom-color: #6d4922;}
 
 .countdown2 {
-  display: none;
   background: #ff9c9c;
   padding: 3px;
   border-radius: 35px;

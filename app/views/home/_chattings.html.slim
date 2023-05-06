@@ -1,0 +1,8 @@
+- workloads = Workload.chattings.created.limit(48)
+- if workloads.present?
+  #chatting_title.scaffold.row
+    h2.status
+      img src="https://ruffnote.com/attachments/24938" /
+  #chatting.scaffold.row
+    - workloads.each do |workload|
+      = render 'workload', workload: workload

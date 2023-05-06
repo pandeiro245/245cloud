@@ -2,16 +2,22 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  def self.add(name)
-    u = User.create!(
-      name: name,
-      email: "#{name}@245cloud.com"
-    )
-    u.refresh_token!
-    u
+  def status
+    return 'playing' if playing.present?
+    return 'chatting' if chatting.present?
+    return 'before'
+  end
+
+  def playing
+    Workload.playings.where(user_id: id).first 
+  end
+
+  def chatting
+    Workload.chattings.where(user_id: id).first
   end
 
   def url
+    refresh_token! if token.blank?
     "https://245cloud.com/login?user_id=#{id}&token=#{token}"
   end
 
