@@ -8,7 +8,6 @@ Rails.application.routes.draw do
   get '/login', to: 'users#login_with_token'
 
   get '/users', to: 'users#index'
-  get '/redirect', to: 'home#redirect'
 
   get '/:id', to: 'users#show'
 
