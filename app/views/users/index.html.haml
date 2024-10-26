@@ -1,5 +1,21 @@
-- @users.each do |user|
-  = image_tag "/images/profile/#{user.first}.jpg"
-  = "#{user.first}: #{user.last}"
-  %hr
+%p
+  恐れ入ります。Facebookログインに続きTwitterログインもできなくなってしまいました。。。<br />
+  下記から「利用者ID」ご連絡頂ければログイン用の個別URLをお送りしますね。<br />
+  <a href="https://twitter.com/pandeiro245">https://twitter.com/pandeiro245</a><br />
+  <a href="https://www.facebook.com/pandeiro245">https://www.facebook.com/pandeiro245</a><br />
+
+
+%table{border: 1}
+  %tr
+    %th
+    %th 利用者ID（こちらを西小倉にご連絡ください）
+    %th 累計ポモ数
+  - @users.each do |user|
+    %tr
+      %td
+        = image_tag "/images/profile/#{user.first}.jpg"
+      %td
+        = user.first
+      %td
+        =user.last
 

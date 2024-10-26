@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   get '/auth/:provider/callback', to: 'users#login'
 
   get '/login', to: 'users#login_with_token'
+  get '/sign_out', to: 'welcome#sign_out'
 
   get '/users', to: 'users#index'
   get '/redirect', to: 'welcome#redirect'

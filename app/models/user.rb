@@ -19,15 +19,20 @@ class User < ActiveRecord::Base
       config.access_token_secret = ENV['TWITTER_ACCESS_SECRET']
     end
 
-    self.where.not(twitter_id: nil).each do |user|
-      twitter_user = client.user(user.twitter_id.to_i)
-      user.screen_name = twitter_user.screen_name
-      user.name = twitter_user.name
-      user.save
+    self.where.not(twitter_id: nil).order('id desc').each do |user|
+      begin
+        twitter_user = client.user(user.twitter_id.to_i)
+        user.screen_name = twitter_user.screen_name
+        user.name = twitter_user.name
+        user.save!
+      rescue => e
+        puts e.inspect
+      end
     end
   end
 
   def url
+    refresh_token! if token.blank?
     "https://245cloud.com/login?user_id=#{id}&token=#{token}"
   end
 
