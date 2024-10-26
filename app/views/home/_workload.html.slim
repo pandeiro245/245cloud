@@ -7,7 +7,7 @@
         - if workload.artwork_url.present?
           img.jacket src=workload.artwork_url
         - else
-          img.jacket src="https://ruffnote.com/attachments/24981" /
+          img.jacket src="/images/ruffnote/24981.png" /
       span
         a href="/#{workload.user_id}" 
           -# img.icon.img-thumbnail src="/images/profile/#{workload.user_id}.jpg" /
@@ -15,6 +15,6 @@
       .disp
         = "#{workload.hm} #{workload.number}回目(週#{workload.weekly_number}回)"
       div
-        /= link_to image_tag('//ruffnote.com/attachments/24926'), "/api/workloads", method: :post, class: 'fixed_start'
+        /= link_to image_tag('/images/ruffnote/24926.png'), "/api/workloads", method: :post, class: 'fixed_start'
         = form_tag("/api/workloads", method: "post") do
-          = image_submit_tag('//ruffnote.com/attachments/24926')
+          = image_submit_tag('/images/ruffnote/24926.png')
