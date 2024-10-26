@@ -26,12 +26,12 @@ class Workload < ActiveRecord::Base
      .group(:music_key)
      .order('music_key_count DESC')
   }
-  scope :best_listeners, -> (music_key) { select(
-    '*, count(user_id) as user_id_count'
-  ).where(music_key: music_key
-  ).group(:user_id).order(
-      'user_id_count DESC'
-    )
+  scope :best_listeners, -> (music_key) {
+    select(
+      'user_id, COUNT(user_id) AS user_id_count'
+    ).where(music_key: music_key)
+     .group(:user_id)
+     .order('user_id_count DESC')
   }
   scope :today, -> (created_at = nil) {
     to = created_at || Time.zone.now

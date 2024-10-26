@@ -11,6 +11,8 @@ Rails.application.routes.draw do
   get '/redirect', to: 'home#redirect'
 
   get '/:id', to: 'users#show'
+  get '/musics/:provider/:key', to: 'musics#index'
+  get '/musics/:provider/:key/:key2', to: 'musics#index'
 
   namespace :api do
     get '/complete', to: 'workloads#complete'

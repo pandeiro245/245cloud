@@ -1,8 +1,8 @@
 = link_to 'TOP', :root
 %hr
-= image_tag @music.artwork_url
+= image_tag @music.artwork_url if @music.artwork_url.present?
 %h1=@music.title
-= link_to image_tag('/images/ruffnote/24921.png'), "/##{@music.key}"
+= link_to image_tag('/images/ruffnote/24921.png'), top_path_with_music(@music)
 %hr
 - @music.users.each do |workload|
   = link_to profile_image_tag(workload, 100), "/#{workload.user_id}"

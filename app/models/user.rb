@@ -30,7 +30,7 @@ class User < ActiveRecord::Base
     Workload.his(id).bests.limit(48)
   end
 
-  def start!(params={})
+  def start!(params)
     Workload.find_or_start_by_user(self, params)
   end
 

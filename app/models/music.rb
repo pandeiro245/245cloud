@@ -6,11 +6,13 @@ class Music
       music_key: key
     )
     workload = Workload.find_by(
-      music_key: URI.decode(key)
+      music_key: URI.decode_www_form_component(key)
     ) unless workload
     if workload
       @title = workload.title
       @artwork_url = workload.artwork_url
+    else
+      fetch
     end
   end
 
@@ -20,6 +22,16 @@ class Music
 
   def url
     # TODO
+  end
+
+  def fetch
+    api_key = ENV['YOUTUBE_TOKEN']
+    id = key.split(':').last
+    url = URI("https://www.googleapis.com/youtube/v3/videos?id=#{id}&key=#{api_key}&part=snippet")
+    response = Net::HTTP.get(url)
+    result = JSON.parse(response)
+    @title = result['items'].first['snippet']['title']
+    @artwork_url = result['items'].first['snippet']['thumbnails']['medium']['url']
   end
 
   def active?

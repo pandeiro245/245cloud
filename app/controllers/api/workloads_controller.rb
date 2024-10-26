@@ -23,7 +23,6 @@ class Api::WorkloadsController < ApplicationController
 
   def create
     workload = current_user.start!(params).decorate
-    # render json: workload
     redirect_to :root
   end
 end
