@@ -19,12 +19,12 @@ class Workload < ActiveRecord::Base
       user_id: user_id
     )
   }
-  scope :bests, ->  { select(
-    '*, count(music_key) as music_key_count'
-  ).where.not(music_key: ''
-  ).group(:music_key).order(
-      'music_key_count DESC'
-    )
+  scope :bests, -> {
+    select(
+      'music_key, COUNT(music_key) AS music_key_count'
+    ).where.not(music_key: '')
+     .group(:music_key)
+     .order('music_key_count DESC')
   }
   scope :best_listeners, -> (music_key) { select(
     '*, count(user_id) as user_id_count'
