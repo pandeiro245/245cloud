@@ -1,8 +1,8 @@
 class Workload < ActiveRecord::Base
   # POMOTIME = 24.minutes
-  CHATTIME = 5.minutes
+  # CHATTIME = 5.minutes
   POMOTIME = (0.1).minutes
-  # CHATTIME = (0.1).minutes
+  CHATTIME = (0.1).minutes
 
   validate :music_key_presence_if_title_or_artwork_url_present 
 
@@ -154,7 +154,7 @@ class Workload < ActiveRecord::Base
   end
 
 	def music
-		@music ||= Music.new(music_key)
+		@music ||= Music.new_from_key(music_key.split(':').first, music_key.split(':').last)
 	end
 
   def music_path

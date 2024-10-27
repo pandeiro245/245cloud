@@ -10,9 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_07_022936) do
+ActiveRecord::Schema.define(version: 2024_10_27_055857) do
 
-  create_table "access_logs", id: :integer, charset: "utf8mb4", force: :cascade do |t|
+  create_table "access_logs", id: :integer, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "facebook_id"
     t.text "url"
     t.datetime "created_at", null: false
@@ -20,7 +20,7 @@ ActiveRecord::Schema.define(version: 2021_08_07_022936) do
     t.integer "user_id"
   end
 
-  create_table "comments", id: :integer, charset: "utf8mb4", force: :cascade do |t|
+  create_table "comments", id: :integer, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "facebook_id"
     t.integer "parent_id"
     t.text "body"
@@ -30,7 +30,18 @@ ActiveRecord::Schema.define(version: 2021_08_07_022936) do
     t.integer "user_id"
   end
 
-  create_table "users", id: :integer, charset: "utf8mb4", force: :cascade do |t|
+  create_table "musics", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.string "key"
+    t.string "provider"
+    t.string "title"
+    t.string "artwork_url"
+    t.string "status"
+    t.integer "duration"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "users", id: :integer, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
@@ -50,7 +61,7 @@ ActiveRecord::Schema.define(version: 2021_08_07_022936) do
     t.string "twitter_id"
   end
 
-  create_table "workloads", id: :integer, charset: "utf8mb4", force: :cascade do |t|
+  create_table "workloads", id: :integer, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "facebook_id"
     t.string "music_key"
     t.string "title"

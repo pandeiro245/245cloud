@@ -1,33 +1,30 @@
-class Music
-  attr_accessor :key, :title, :artwork_url, :duration
-  def initialize key
-    @key = key
-    workload = Workload.find_by(
-      music_key: key
-    )
-    workload = Workload.find_by(
-      music_key: URI.decode_www_form_component(key)
-    ) unless workload
-    if workload
-      @title = workload.title
-      @artwork_url = workload.artwork_url
-    else
-      fetch
-    end
+class Music < ApplicationRecord
+  def self.new_from_key(provider, key)
+    music_key = "#{provider}:#{key}"
+    Music.find_or_initialize_by(key: key)
   end
 
-  def id
-    return nil if key.blank?
-    key.split(':').last
-  end
-
-  def provider
-    return nil if key.blank?
-    key.split(':').first
-  end
+  # def initialize key
+  #   workload = Workload.find_by(
+  #     music_key: key
+  #   )
+  #   workload = Workload.find_by(
+  #     music_key: URI.decode_www_form_component(key)
+  #   ) unless workload
+  #   if workload
+  #     @title = workload.title
+  #     @artwork_url = workload.artwork_url
+  #   else
+  #     fetch
+  #   end
+  # end
 
   def users
-    Workload.best_listeners(key) 
+    Workload.best_listeners(provider_and_key) 
+  end
+
+  def provider_and_key
+    "#{provider}:#{key}"
   end
 
   def url
@@ -36,8 +33,7 @@ class Music
 
   def fetch
     api_key = ENV['YOUTUBE_TOKEN']
-    id = key.split(':').last
-    url = URI("https://www.googleapis.com/youtube/v3/videos?id=#{id}&key=#{api_key}&part=snippet,contentDetails")
+    url = URI("https://www.googleapis.com/youtube/v3/videos?id=#{key}&key=#{api_key}&part=snippet,contentDetails")
     response = Net::HTTP.get(url)
     result = JSON.parse(response)
 
@@ -69,4 +65,3 @@ class Music
     end
   end
 end
-

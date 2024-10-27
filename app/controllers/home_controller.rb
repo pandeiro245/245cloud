@@ -1,8 +1,7 @@
 class HomeController < ApplicationController
   def index
     if params[:music_provider].present?
-      key = "#{params[:music_provider]}:#{params[:music_key]}"
-      @music = Music.new(key)
+      @music = Music.new_from_key(params[:music_provider], params[:music_key])
     end
 
     current_user.done = true if params[:done].to_i == 1
