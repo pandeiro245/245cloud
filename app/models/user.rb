@@ -2,9 +2,11 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
+  attr_accessor :done
+
   def status
     return 'playing' if playing.present?
-    return 'chatting' if chatting.present?
+    return 'chatting' if chatting.present? && done.blank?
     return 'before'
   end
 

@@ -2,6 +2,7 @@
   div style=("background: #c9e9f4; width: 100%;") 
     img src="/images/ruffnote/24933.png" /
   br/
+  = link_to '休憩早めに終わって次のポモへ行く', root_path_with_params({done: 1})
   br/
   span style=("color: #9e7a41;") 
     | 24分おつかれさまでした！5分間だけ見られる交換日記に是非参加してください☆
@@ -14,3 +15,14 @@
       span.time 24:00
   br/
 
+hr
+
+= form_tag("/api/comments", method: "post", id: 'comment-form') do
+  = hidden_field_tag :redirect_url, URI.parse(request.url)
+
+  input type="text" name="body" placeholder="Add your comment..." required="required" autocomplete="off"
+
+- Comment.where.not(parent_id: nil).order('id desc').limit(100).each do |comment|
+  = profile_image_tag comment.user_id, 30
+  = comment.body
+  hr

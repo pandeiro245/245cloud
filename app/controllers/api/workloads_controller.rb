@@ -26,6 +26,7 @@ class Api::WorkloadsController < ApplicationController
     redirect_params = {}
     redirect_params[:music_key] = params[:music_key] if params[:music_key].present?
     redirect_params[:music_provider] = params[:music_provider] if params[:music_provider].present?
+    redirect_params[:done] = 0
 		redirect_to root_path(redirect_params)
   end
 end

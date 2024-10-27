@@ -9,6 +9,7 @@
       img.jacket src=@music.artwork_url
       = form_tag("/api/workloads", method: "post", class: 'btn', style: 'border:none;', id: 'start') do
         = hidden_field_tag :music_key, @music.key
+        = hidden_field_tag :music_provider, @music.provider
         = hidden_field_tag :title, @music.title
         = hidden_field_tag :artwork_url, @music.artwork_url
         = image_submit_tag('/images/ruffnote/24921.png')

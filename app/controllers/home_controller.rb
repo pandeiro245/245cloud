@@ -5,6 +5,8 @@ class HomeController < ApplicationController
       @music = Music.new(key)
     end
 
+    current_user.done = true if params[:done].to_i == 1
+
     if current_user.present? && current_user.status == 'chatting'
       current_user.chatting.to_done!
     end

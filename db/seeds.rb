@@ -5,3 +5,6 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+comment = Comment.find_or_initialize_by(id: 1)
+comment.body = 'いつもの部屋'
+comment.save(validate: false)
