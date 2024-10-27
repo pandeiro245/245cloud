@@ -1,6 +1,6 @@
 module ApplicationHelper
-  def profile_image_tag user, size=40
-    image_tag "/images/profile/#{user.id}.jpg"
+  def profile_image_tag user_id, size=40
+    image_tag "/images/profile/#{user_id}.jpg"
   end
 
   def top_path_with_music(music)

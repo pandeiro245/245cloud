@@ -16,6 +16,16 @@ class Music
     end
   end
 
+  def id
+    return nil if key.blank?
+    key.split(':').last
+  end
+
+  def provider
+    return nil if key.blank?
+    key.split(':').first
+  end
+
   def users
     Workload.best_listeners(key) 
   end

@@ -5,3 +5,7 @@
       span.time 24:00
   br/
 
+- if @current_user.playing.music_key.present?
+	="<iframe width=\"560\" height=\"315\" src=\"//www.youtube.com/embed/#{@current_user.playing.music.id}?autoplay=1&start=0\" frameborder=\"0\" allowfullscreen></iframe>"
+
+

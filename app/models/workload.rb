@@ -109,7 +109,7 @@ class Workload < ActiveRecord::Base
 
   def set_music_key
     return nil if self.music_key.nil?
-    self.music_key = URI.decode(self.music_key)
+    self.music_key = URI.decode_www_form_component(self.music_key)
   end
 
   def to_done!
@@ -147,6 +147,10 @@ class Workload < ActiveRecord::Base
     scope.count + 1
   end
 
+	def music
+		@music ||= Music.new(music_key)
+	end
+
   def music_path
     key = music_key.gsub(/:/, '/')
     "/musics/#{key}"
@@ -156,9 +160,14 @@ class Workload < ActiveRecord::Base
     return unless music_key
     if music_key.match(/^mixcloud:/)
       puts music_key
-      self.music_key = URI.decode(self.music_key)
+      self.music_key = URI.decode_www_form_component(self.music_key)
       self.save!
     end
+  end
+
+  def artwork_url_from_music
+    return nil if music.blank?
+    @artwork_url_from_music ||= music.artwork_url
   end
 end
 
