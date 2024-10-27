@@ -1,5 +1,5 @@
 class Music
-  attr_accessor :key, :title, :artwork_url
+  attr_accessor :key, :title, :artwork_url, :duration
   def initialize key
     @key = key
     workload = Workload.find_by(
@@ -37,11 +37,18 @@ class Music
   def fetch
     api_key = ENV['YOUTUBE_TOKEN']
     id = key.split(':').last
-    url = URI("https://www.googleapis.com/youtube/v3/videos?id=#{id}&key=#{api_key}&part=snippet")
+    url = URI("https://www.googleapis.com/youtube/v3/videos?id=#{id}&key=#{api_key}&part=snippet,contentDetails")
     response = Net::HTTP.get(url)
     result = JSON.parse(response)
+
     @title = result['items'].first['snippet']['title']
     @artwork_url = result['items'].first['snippet']['thumbnails']['medium']['url']
+    str = result["items"].first["contentDetails"]["duration"]
+    match = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/.match(str)
+    hours = (match[1] || 0).to_i
+    minutes = (match[2] || 0).to_i
+    seconds = (match[3] || 0).to_i
+    @duration = hours * 3600 + minutes * 60  + seconds
   end
 
   def active?

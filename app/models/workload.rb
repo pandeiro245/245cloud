@@ -5,7 +5,6 @@ class Workload < ActiveRecord::Base
   # CHATTIME = (0.1).minutes
 
   validate :music_key_presence_if_title_or_artwork_url_present 
-     
 
   belongs_to :user
 
@@ -97,6 +96,10 @@ class Workload < ActiveRecord::Base
     end
   end
 
+  def remain
+    (created_at + POMOTIME).to_i - Time.zone.now.to_i
+  end
+
   def self.find_or_start_by_user(user, _params = {})
     w = playings.his(user.id).first
     return w if w.present?
@@ -171,6 +174,11 @@ class Workload < ActiveRecord::Base
   def artwork_url_from_music
     return nil if music.blank?
     @artwork_url_from_music ||= music.artwork_url
+  end
+
+  def youtube_start
+    music.fetch if music.provider == 'youtube' && music.duration.blank?
+    music.duration - remain
   end
 
   def self.for1027
