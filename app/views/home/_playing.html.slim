@@ -6,6 +6,11 @@
   br/
 
 - if @current_user.playing.music_key.present?
-	="<iframe width=\"560\" height=\"315\" src=\"//www.youtube.com/embed/#{@current_user.playing.music.id}?autoplay=1&start=0\" frameborder=\"0\" allowfullscreen></iframe>"
+  iframe width="560" height="315" src="//www.youtube.com/embed/#{@current_user.playing.music.id}?autoplay=1&start=0&enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen
 
+  javascript:
+    document.addEventListener('DOMContentLoaded', function() {
+      const iframe = document.querySelector('iframe');
+      iframe.src += '&autoplay=1';
+    })
 

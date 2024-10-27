@@ -1,8 +1,11 @@
 class Workload < ActiveRecord::Base
-  # POMOTIME = 24.minutes
-  # CHATTIME = 5.minutes
-  POMOTIME = (0.1).minutes
-  CHATTIME = (0.1).minutes
+  POMOTIME = 24.minutes
+  CHATTIME = 5.minutes
+  # POMOTIME = (0.1).minutes
+  # CHATTIME = (0.1).minutes
+
+  validate :music_key_presence_if_title_or_artwork_url_present 
+     
 
   belongs_to :user
 
@@ -168,6 +171,21 @@ class Workload < ActiveRecord::Base
   def artwork_url_from_music
     return nil if music.blank?
     @artwork_url_from_music ||= music.artwork_url
+  end
+
+  def self.for1027
+    Workload.where(music_key: nil).where.not(artwork_url: nil).each do |w|
+      w.music_key = Workload.where.not(music_key: nil).where(artwork_url: w.artwork_url).limit(1).first.music_key
+      w.save!
+    end
+  end
+
+  private
+
+  def music_key_presence_if_title_or_artwork_url_present
+    if (title.present? || artwork_url.present?) && music_key.blank?
+      errors.add(:music_key, ' is required if either title or artwork_url is present')
+    end
   end
 end
 
