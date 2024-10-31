@@ -16,7 +16,12 @@ class HomeController < ApplicationController
   end
 
   def chatting
-    redirect_to root_path unless current_user.status == 'chatting'
+    params = {}
+    if session[:music_provider].present?
+      params[:music_provider] = params[:music_provider]
+      params[:music_key] = params[:music_key]
+    end
+    redirect_to root_path(params) unless current_user.status == 'chatting'
   end
 
   def redirect
