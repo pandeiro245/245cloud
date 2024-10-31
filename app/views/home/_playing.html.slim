@@ -5,8 +5,8 @@
       span.time 24:00
   br/
 
-- if @current_user.playing.music_key.present?
-  - case @current_user.playing.music.provider
+- if current_user.playing.music_key.present?
+  - case current_user.playing.music.provider
   - when 'youtube'
     = render 'playing_youtube'
   - when 'mixcloud'

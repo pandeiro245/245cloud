@@ -1,45 +1,23 @@
 = render 'social_button'
 
 #nc
+  = render 'header'
+  = render 'news'
+
   - if current_user.present?
-    - case current_user.status
-    - when 'before'
-      = render 'header'
-      = render 'news'
-      = render 'heatmap'
-      = render 'start_menu'
-      = render 'playings'
-      = render 'chattings'
-      = render 'done'
-      = render 'you'
-      = render 'search'
-      /= render 'others'
-      = render 'footer'
-
-    - when 'playing'
-      = render 'header'
-      = render 'playing'
-      = javascript_pack_tag 'countdown_vue'
-      = stylesheet_pack_tag 'countdown_vue'
-    - when 'chatting'
-      = render 'chatting'
-      = javascript_pack_tag 'countdown_vue'
-      = stylesheet_pack_tag 'countdown_vue'
-    - if current_user.status == 'playing'
-      javascript:
-        window.will_reload_at = #{current_user.playing.will_reload_at.to_i * 1000}
-    - if current_user.status == 'chatting'
-      javascript:
-        window.will_reload_at = #{current_user.chatting.will_reload_at.to_i * 1000}
+    = render 'heatmap'
+    = render 'start_menu'
   - else
-    = render 'header'
-    = render 'news'
     = render 'login'
-    = render 'playings'
-    = render 'chattings'
-    = render 'done'
-    /= render 'search'
-    /= render 'others'
-    = render 'footer'
 
+  = render 'playings'
+  = render 'chattings'
+  = render 'done'
+
+  - if current_user.present?
+    = render 'you'
+
+  = render 'search'
+  /= render 'others'
+  = render 'footer'
 
