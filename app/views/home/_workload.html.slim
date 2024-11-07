@@ -5,7 +5,7 @@
           = workload.title || '無音'
       span
         - if workload.artwork_url.present?
-          = link_to (image_tag src=workload.artwork_url, class: :jacket), "/musics/#{workload.music.provider}/#{workload.music.id}"
+          = link_to (image_tag src=workload.artwork_url, class: :jacket), "/musics/#{workload.music.provider}/#{workload.music.key}"
         - else
           img.jacket src="/images/ruffnote/24981.png" /
       span

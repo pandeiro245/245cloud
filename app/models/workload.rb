@@ -1,8 +1,8 @@
 class Workload < ActiveRecord::Base
-  # POMOTIME = 24.minutes
-  # CHATTIME = 5.minutes
-  POMOTIME = (0.1).minutes
-  CHATTIME = (0.1).minutes
+  POMOTIME = 24.minutes
+  CHATTIME = 5.minutes
+  # POMOTIME = (0.1).minutes
+  # CHATTIME = (0.1).minutes
 
   validate :music_key_presence_if_title_or_artwork_url_present 
 
@@ -18,7 +18,8 @@ class Workload < ActiveRecord::Base
   }
   scope :his, -> (user_id) {
     where(
-      user_id: user_id
+      user_id: user_id,
+      is_done: true
     )
   }
   scope :bests, -> {

@@ -4,15 +4,20 @@ module ApplicationHelper
   end
 
   def top_path_with_music(music)
-    array = music.key.split(':')
-    root_path(music_provider: array.first, music_key: array.last)
+    params = {
+      music_provider: music.provider,
+      music_key: music.key,
+    }
+    root_path(params)
   end
 
-  def root_path_with_params(additional_params)
-    uri = URI.parse(request.url)
-    current_params = Rack::Utils.parse_nested_query(uri.query)
-    merged_params = current_params.merge(additional_params)
-    uri.query = merged_params.to_query
-    uri.to_s
+
+  def root_path_with_params
+    params = {}
+    if session[:music_provider].present?
+      params[:music_provider] = session[:music_provider]
+      params[:music_key] = session[:music_key]
+    end
+    root_path(params)
   end
 end

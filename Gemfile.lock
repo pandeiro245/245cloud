@@ -121,7 +121,7 @@ GEM
     faraday-retry (2.2.1)
       faraday (~> 2.0)
     ffi (1.17.0-arm64-darwin)
-    ffi (1.17.0-x86_64-linux-gnu)
+    ffi (1.17.0-x86_64-linux)
     gapic-common (0.23.0)
       faraday (>= 1.9, < 3.a)
       faraday-retry (>= 1.0, < 3.a)
@@ -209,6 +209,7 @@ GEM
     minitest (5.25.1)
     msgpack (1.7.3)
     multi_json (1.15.0)
+    mysql2 (0.5.6)
     net-http (0.4.1)
       uri
     net-imap (0.4.17)
@@ -425,6 +426,7 @@ GEM
     zeitwerk (2.6.18)
 
 PLATFORMS
+  arm64-darwin-20
   arm64-darwin-21
   x86_64-linux
 
@@ -441,6 +443,7 @@ DEPENDENCIES
   haml
   jbuilder (~> 2.7)
   listen (~> 3.3)
+  mysql2
   omniauth-rails_csrf_protection
   omniauth-twitter
   pry-rails
@@ -461,7 +464,7 @@ DEPENDENCIES
   webpacker (~> 5.0)
 
 RUBY VERSION
-   ruby 3.2.2p53
+   ruby 3.0.2p107
 
 BUNDLED WITH
    2.2.22
