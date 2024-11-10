@@ -3,7 +3,7 @@ class Sync
     uri = URI("https://245cloud.com/users.json?&token=#{ENV.fetch('TOKEN', nil)}")
     json = Net::HTTP.get(uri)
     JSON.parse(json).each do |u|
-      puts u['id']
+      Rails.logger.debug u['id']
       user = User.find_or_initialize_by(
         id: u['id']
       )
@@ -24,7 +24,7 @@ class Sync
               response.read_body { |chunk| file.write(chunk) }
             end
           else
-            puts "Failed to download image: #{response.message}"
+            Rails.logger.debug { "Failed to download image: #{response.message}" }
           end
         end
       end
@@ -35,7 +35,7 @@ class Sync
     uri = URI("https://245cloud.com/api/workloads/download.json?&token=#{ENV.fetch('TOKEN', nil)}")
     json = Net::HTTP.get(uri)
     JSON.parse(json).each do |w|
-      puts w['id']
+      Rails.logger.debug w['id']
       workload = Workload.find_or_initialize_by(
         id: w['id']
       )
