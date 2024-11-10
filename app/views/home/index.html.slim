@@ -1,23 +1,22 @@
 = render 'social_button'
 
-#nc
-  = render 'header'
-  = render 'news'
+= render 'header'
+= render 'news'
 
-  - if current_user.present?
-    = render 'heatmap'
-    = render 'start_menu'
-  - else
-    = render 'login'
+- if current_user.present?
+  = render 'heatmap'
+  = render 'start_menu'
+- else
+  = render 'login'
 
-  = render 'playings'
-  = render 'chattings'
-  = render 'done'
+= render 'playings'
+= render 'chattings'
+= render 'done'
 
-  - if current_user.present?
-    = render 'you'
+- if current_user.present?
+  = render 'you'
 
-  = render 'search'
-  /= render 'others'
-  = render 'footer'
+= render 'search'
+/= render 'others'
+= render 'footer'
 

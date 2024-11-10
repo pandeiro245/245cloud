@@ -1,9 +1,9 @@
 #start_buttons.scaffold.row
+  #random.col-sm-2
+    h5 おまかせ
+    img.jacket src="/images/ruffnote/24982.png" /
+    input#start.btn onmouseout="this.src='/images/ruffnote/24919.png'" onmouseover="this.src='/images/ruffnote/24920.png'" src="/images/ruffnote/24919.png" style=("border: none;") type="image" /
   - if @music.present?
-    #random.col-sm-2.col-sm-offset-3
-      h5 おまかせ
-      img.jacket src="/images/ruffnote/24982.png" /
-      input#start.btn onmouseout="this.src='/images/ruffnote/24919.png'" onmouseover="this.src='/images/ruffnote/24920.png'" src="/images/ruffnote/24919.png" style=("border: none;") type="image" /
     #fixedstart.col-sm-2
       h5=@music.title
       img.jacket src=@music.artwork_url
@@ -13,19 +13,9 @@
         = hidden_field_tag :title, @music.title
         = hidden_field_tag :artwork_url, @music.artwork_url
         = image_submit_tag('/images/ruffnote/24921.png')
-    #nomusic.col-sm-2
-      h5 無音
-      img.jacket src="/images/ruffnote/24981.png" /
-      = form_tag("/api/workloads", method: "post", class: 'btn', style: 'border:none;', id: 'start') do
-        = image_submit_tag('/images/ruffnote/24926.png')
-  - else
-    #random.col-sm-2.col-sm-offset-4
-      h5 おまかせ
-      img.jacket src="/images/ruffnote/24982.png" /
-      input#start.btn onmouseout="this.src='/images/ruffnote/24919.png'" onmouseover="this.src='/images/ruffnote/24920.png'" src="/images/ruffnote/24919.png" style=("border: none;") type="image" /
-    #fixedstart.col-sm-2 style=("display: none;") 
-    #nomusic.col-sm-2
-      h5 無音
-      img.jacket src="/images/ruffnote/24981.png" /
-      = form_tag("/api/workloads", method: "post", class: 'btn', style: 'border:none;', id: 'start') do
-        = image_submit_tag('/images/ruffnote/24926.png')
+  #nomusic.col-sm-2
+    h5 無音
+    img.jacket src="/images/ruffnote/24981.png" /
+    = form_tag("/api/workloads", method: "post", class: 'btn', style: 'border:none;', id: 'start') do
+      = image_submit_tag('/images/ruffnote/24926.png')
+

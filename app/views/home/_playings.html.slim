@@ -3,7 +3,7 @@
   #doing_title.scaffold.row
     h2.status
       img src="/images/ruffnote/24939.png" /
-  #doing.scaffold.row
+  #doing.scaffold.row.d-flex.justify-content-center.flex-wrap
     - workloads.each do |workload|
       = render 'workload', workload: workload
   

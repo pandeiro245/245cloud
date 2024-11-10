@@ -4,8 +4,19 @@ body {
   overflow-x:hidden;
 }
 
-h2.status, hr.status {
-  background: repeat-x url('/images/ruffnote/24944.png')
+.scaffold {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+#done_title {
+  display: block;
+  background: repeat-x url('/images/ruffnote/24944.png') !important;
+}
+
+#done_title h2{
+  margin-top: -3px;
 }
 
 hr.status{
@@ -250,7 +261,7 @@ table.comments .icon{
 }
 
 /* タイトル部の左右は現状維持 */
-#header.scaffold.row {
+#headerscaffold.row {
   margin-left: -8px;
   margin-right: -8px;
 }
