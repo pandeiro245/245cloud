@@ -1,6 +1,6 @@
 class Sync
   def users
-    uri = URI("https://245cloud.com/users.json?&token=#{ENV['TOKEN']}")
+    uri = URI("https://245cloud.com/users.json?&token=#{ENV.fetch('TOKEN', nil)}")
     json = Net::HTTP.get(uri)
     JSON.parse(json).each do |u|
       puts u['id']
@@ -32,14 +32,13 @@ class Sync
   end
 
   def workloads
-    uri = URI("https://245cloud.com/api/workloads/download.json?&token=#{ENV['TOKEN']}")
+    uri = URI("https://245cloud.com/api/workloads/download.json?&token=#{ENV.fetch('TOKEN', nil)}")
     json = Net::HTTP.get(uri)
     JSON.parse(json).each do |w|
       puts w['id']
       workload = Workload.find_or_initialize_by(
         id: w['id']
       )
-      params = w
       workload.update(w)
     end
   end
