@@ -1,8 +1,8 @@
 class Workload < ActiveRecord::Base
-  POMOTIME = 24.minutes
-  CHATTIME = 5.minutes
-  # POMOTIME = (0.1).minutes
-  # CHATTIME = (0.1).minutes
+  # POMOTIME = 24.minutes
+  # CHATTIME = 5.minutes
+  POMOTIME = (0.1).minutes
+  CHATTIME = (0.1).minutes
 
   validate :music_key_presence_if_title_or_artwork_url_present 
 
@@ -106,10 +106,13 @@ class Workload < ActiveRecord::Base
     return w if w.present?
 
     params = {'user_id' => user.id}
-    %w(music_key title artwork_url).each do |key|
+    %w(title artwork_url).each do |key|
       if _params[key].present?
         params[key] = _params[key]
       end
+    end
+    if _params[:music_key].present?
+      params[:music_key] = "#{_params[:music_provider]}:#{_params[:music_key]}"
     end
     self.create!(params)
   end

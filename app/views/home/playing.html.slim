@@ -1,7 +1,5 @@
 = render 'header'
 = render 'playing'
-= javascript_pack_tag 'countdown_vue'
-= stylesheet_pack_tag 'countdown_vue'
 javascript:
   window.will_reload_at = #{current_user.playing.will_reload_at.to_i * 1000}
 

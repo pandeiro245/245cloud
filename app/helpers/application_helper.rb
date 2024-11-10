@@ -11,7 +11,6 @@ module ApplicationHelper
     root_path(params)
   end
 
-
   def root_path_with_params
     params = {}
     if session[:music_provider].present?
