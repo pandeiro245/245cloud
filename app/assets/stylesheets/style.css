@@ -4,18 +4,20 @@ body {
   overflow-x:hidden;
 }
 
-.scaffold {
+.workloads_list {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
+  padding-left: 10px;
 }
 
-#done_title {
+.title {
   display: block;
   background: repeat-x url('/images/ruffnote/24944.png') !important;
+  margin-top: 10px;
 }
 
-#done_title h2{
+.title h2{
   margin-top: -3px;
 }
 
@@ -248,22 +250,6 @@ table.comments .icon{
 }
 .track_item_group .track_item .fixed_start img {
   margin-bottom: 8px;
-}
-
-/* 検索結果一覧の左右枠に余裕がないので少し隙間をあける */
-.scaffold.row {
-  margin-left: 0px;
-  margin-right: 0px;
-}
-#nc {
-  margin-left: 8px;
-  margin-right: 8px;
-}
-
-/* タイトル部の左右は現状維持 */
-#header.scaffold.row {
-  margin-left: -8px;
-  margin-right: -8px;
 }
 
 /* 再生中一覧の枠の左側の隙間は現状を維持。右側にちょっと余裕がないので少し隙間をあける */
