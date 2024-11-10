@@ -11,7 +11,7 @@ class Api::CommentsController < ApplicationController
   end
 
   def create
-    parent_id = params[:room_id] || nil
+    parent_id = params[:room_id] || 1
     comment = Comment.create!(
       user_id: current_user.id,
       parent_id: parent_id,
@@ -22,6 +22,7 @@ class Api::CommentsController < ApplicationController
       parent.num = parent.children.count
       parent.save!(validate: false)
     end
-    render json: comment
+    # render json: comment
+    redirect_to params[:redirect_url]
   end
 end

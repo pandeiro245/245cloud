@@ -5,16 +5,23 @@
           = workload.title || '無音'
       span
         - if workload.artwork_url.present?
-          img.jacket src=workload.artwork_url
+          = link_to (image_tag src=workload.artwork_url, class: :jacket), "/musics/#{workload.music.provider}/#{workload.music.key}"
         - else
-          img.jacket src="https://ruffnote.com/attachments/24981" /
+          img.jacket src="/images/ruffnote/24981.png" /
       span
         a href="/#{workload.user_id}" 
           -# img.icon.img-thumbnail src="/images/profile/#{workload.user_id}.jpg" /
-          img.icon.img-thumbnail src="https://245cloud.com/images/profile/#{workload.user_id}.jpg" /
+          img.icon.img-thumbnail src="/images/profile/#{workload.user_id}.jpg" /
       .disp
         = "#{workload.hm} #{workload.number}回目(週#{workload.weekly_number}回)"
       div
-        /= link_to image_tag('//ruffnote.com/attachments/24926'), "/api/workloads", method: :post, class: 'fixed_start'
-        = form_tag("/api/workloads", method: "post") do
-          = image_submit_tag('//ruffnote.com/attachments/24926')
+        - if workload.music_key.present?
+          = form_tag("/api/workloads", method: "post") do
+            = hidden_field_tag :music_key, workload.music.key
+            = hidden_field_tag :music_provider, workload.music.provider
+            = hidden_field_tag :title, workload.title
+            = hidden_field_tag :artwork_url, workload.artwork_url
+            = image_submit_tag('/images/ruffnote/24921.png')
+        - else
+          = form_tag("/api/workloads", method: "post") do
+            = image_submit_tag('/images/ruffnote/24926.png')

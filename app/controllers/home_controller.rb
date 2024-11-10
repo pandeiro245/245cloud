@@ -1,8 +1,22 @@
 class HomeController < ApplicationController
   def index
-    if current_user.present? && current_user.status == 'chatting'
+    @music = Music.new_from_key(params[:music_provider], params[:music_key]) if params[:music_provider].present?
+  end
+
+  def playing
+    case current_user.status
+    when 'playing'
+      # do nothing
+    when 'chatting'
       current_user.chatting.to_done!
+      redirect_to chatting_path
+    else
+      redirect_to root_path
     end
+  end
+
+  def chatting
+    redirect_to root_path(params) unless current_user.status == 'chatting'
   end
 
   def redirect

@@ -1,6 +1,6 @@
 #you_title.scaffold.row
   h2.status
-    img src="https://ruffnote.com/attachments/24943" /
+    img src="/images/ruffnote/24943.png" /
 #you.scaffold.row
   - Workload.his(current_user).created.limit(48).each do |workload|
     = render 'workload', workload: workload

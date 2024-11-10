@@ -1,0 +1,7 @@
+iframe width="560" height="315" src="//www.youtube.com/embed/#{@current_user.playing.music.key}?autoplay=1&start=#{@current_user.playing.youtube_start}&enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen
+javascript:
+  document.addEventListener('DOMContentLoaded', function() {
+    const iframe = document.querySelector('iframe');
+    iframe.src += '&autoplay=1';
+  })
+

@@ -7,7 +7,6 @@ html ng-app=""
       | https://github.com/pandeiro245/245cloud
     title 245cloud（ニシコクラウド）
 
-    = stylesheet_link_tag    'application', media: 'all'
     = csrf_meta_tags
     = csp_meta_tag
 
@@ -18,11 +17,12 @@ html ng-app=""
     meta content="width=device-width, initial-scale=1" name="viewport" /
     meta content="yes" name="apple-mobile-web-app-capable" /
     link href="/icon.png" rel="apple-touch-icon-precomposed" /
-    meta content="https://ruffnote.com/attachments/24010" property="og:image" /
+    meta content="/images/ruffnote/24010.png" property="og:image" /
     = render 'layouts/ga'
 
-
-
+    = stylesheet_link_tag :app, "data-turbo-track": "reload"
+    = javascript_importmap_tags
+    = javascript_include_tag "application", type: "module"
   body
     = yield
 
