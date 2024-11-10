@@ -1,24 +1,20 @@
-# README
+# Install
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+```
+$ cp config/database.yml.sample config/database.yml
+$ vim config/database.yml
+$ bundle install
+$ bundle exec rake db:setup
+$ bundle exec rails s -p 3001
+```
 
-Things you may want to cover:
+## 開発モード
 
-* Ruby version
+pomo時間, chat時間を変更する
 
-* System dependencies
+- localstrage
+  - dev_pomo : 0.1 (6秒くらい) 
+  - dev_chat : 0.1 (6秒くらい) 
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+# see also  
+https://ruffnote.com/pandeiro245/245cloud
