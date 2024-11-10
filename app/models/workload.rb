@@ -1,10 +1,10 @@
 class Workload < ActiveRecord::Base
   # POMOTIME = 24.minutes
   # CHATTIME = 5.minutes
-  POMOTIME = (0.1).minutes
-  CHATTIME = (0.1).minutes
+  POMOTIME = 0.1.minutes
+  CHATTIME = 0.1.minutes
 
-  validate :music_key_presence_if_title_or_artwork_url_present 
+  validate :music_key_presence_if_title_or_artwork_url_present
 
   belongs_to :user
 
@@ -26,15 +26,15 @@ class Workload < ActiveRecord::Base
     select(
       'music_key, COUNT(music_key) AS music_key_count'
     ).where.not(music_key: '')
-     .group(:music_key)
-     .order('music_key_count DESC')
+      .group(:music_key)
+      .order('music_key_count DESC')
   }
   scope :best_listeners, -> (music_key) {
     select(
       'user_id, COUNT(user_id) AS user_id_count'
     ).where(music_key: music_key)
-     .group(:user_id)
-     .order('user_id_count DESC')
+      .group(:user_id)
+      .order('user_id_count DESC')
   }
   scope :today, -> (created_at = nil) {
     to = created_at || Time.zone.now
@@ -157,12 +157,12 @@ class Workload < ActiveRecord::Base
     scope.count + 1
   end
 
-	def music
-		@music ||= Music.new_from_key(music_key.split(':').first, music_key.split(':').last)
-	end
+  def music
+    @music ||= Music.new_from_key(music_key.split(':').first, music_key.split(':').last)
+  end
 
   def music_path
-    key = music_key.gsub(/:/, '/')
+    key = music_key.gsub(':', '/')
     "/musics/#{key}"
   end
 

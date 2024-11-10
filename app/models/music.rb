@@ -1,6 +1,5 @@
 class Music < ApplicationRecord
-  def self.new_from_key(provider, key)
-    music_key = "#{provider}:#{key}"
+  def self.new_from_key(_provider, key)
     Music.find_or_initialize_by(key: key)
   end
 
@@ -32,19 +31,19 @@ class Music < ApplicationRecord
   end
 
   def fetch
-    api_key = ENV['YOUTUBE_TOKEN']
+    api_key = ENV.fetch('YOUTUBE_TOKEN', nil)
     url = URI("https://www.googleapis.com/youtube/v3/videos?id=#{key}&key=#{api_key}&part=snippet,contentDetails")
     response = Net::HTTP.get(url)
     result = JSON.parse(response)
 
     @title = result['items'].first['snippet']['title']
     @artwork_url = result['items'].first['snippet']['thumbnails']['medium']['url']
-    str = result["items"].first["contentDetails"]["duration"]
+    str = result['items'].first['contentDetails']['duration']
     match = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/.match(str)
     hours = (match[1] || 0).to_i
     minutes = (match[2] || 0).to_i
     seconds = (match[3] || 0).to_i
-    @duration = hours * 3600 + minutes * 60  + seconds
+    @duration = (hours * 3600) + (minutes * 60) + seconds
   end
 
   def active?

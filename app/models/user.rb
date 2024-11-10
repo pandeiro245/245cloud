@@ -48,9 +48,7 @@ class User < ActiveRecord::Base
     image_url = auth_hash[:info][:image]
     uri = URI.parse(image_url)
 
-    unless uri.is_a?(URI::HTTP) || uri.is_a?(URI::HTTPS)
-      raise "Invalid URL: #{image_url}"
-    end
+    raise "Invalid URL: #{image_url}" unless uri.is_a?(URI::HTTP) || uri.is_a?(URI::HTTPS)
 
     file_path = "public/images/profile/#{id}.jpg"
 

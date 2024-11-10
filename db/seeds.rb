@@ -8,13 +8,12 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-
 music = Music.find_or_initialize_by(
   key: '142822858',
-	provider: 'soundcloud',
+  provider: 'soundcloud'
 )
 music.title = 'DJ Kopec Mix #3.5'
-music.artwork_url = "https://i1.sndcdn.com/artworks-000075433291-aruwbw-t500x500.jpg"
+music.artwork_url = 'https://i1.sndcdn.com/artworks-000075433291-aruwbw-t500x500.jpg'
 music.save!
 
 comment = Comment.new
