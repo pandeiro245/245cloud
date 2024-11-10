@@ -76,3 +76,5 @@ gem 'omniauth-twitter'
 gem 'omniauth-rails_csrf_protection'
 gem 'google-cloud-firestore'
 gem 'i18n', '>= 1.6', '< 2'
+gem 'bundler-audit', require: false
+
