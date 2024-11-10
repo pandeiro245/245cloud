@@ -186,7 +186,7 @@ class Workload < ActiveRecord::Base
   end
 
   def self.for1027
-    Workload.where(music_key: nil).where.not(artwork_url: nil).each do |w|
+    Workload.where(music_key: nil).where.not(artwork_url: nil).find_each do |w|
       w.music_key = Workload.where.not(music_key: nil).where(artwork_url: w.artwork_url).limit(1).first.music_key
       w.save!
     end
