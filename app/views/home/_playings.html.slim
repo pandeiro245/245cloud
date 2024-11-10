@@ -1,9 +1,11 @@
 - workloads = Workload.playings.created.limit(48)
-- if workloads.present?
-  #doing_title.scaffold.row
+- unique_workloads = workloads.group_by(&:user_id).map{ |_, records| records.max_by(&:id) }
+
+- if unique_workloads.present?
+  #doing_title.title.row
     h2.status
       img src="/images/ruffnote/24939.png" /
-  #doing.scaffold.row
-    - workloads.each do |workload|
+  #doing.workloads_list.row.d-flex.justify-content-center.flex-wrap
+    - unique_workloads.each do |workload|
       = render 'workload', workload: workload
   

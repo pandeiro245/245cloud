@@ -1,6 +1,6 @@
-#done_title.scaffold.row
+#done_title.title.row
   h2.status
     img src="/images/ruffnote/24937.png" /
-#done.scaffold.row
+#done.workloads_list.row
   - Workload.dones.created.limit(48).each do |workload|
     = render 'workload', workload: workload
