@@ -54,6 +54,10 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem 'web-console'
+
+  # Original
+  gem 'pry-rails'
+  gem 'bundler-audit'
 end
 
 group :test do
@@ -76,4 +80,3 @@ gem 'omniauth-twitter'
 gem 'omniauth-rails_csrf_protection'
 gem 'google-cloud-firestore'
 gem 'i18n', '>= 1.6', '< 2'
-gem 'bundler-audit', require: false
