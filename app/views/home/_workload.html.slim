@@ -13,7 +13,7 @@
           -# img.icon.img-thumbnail src="/images/profile/#{workload.user_id}.jpg" /
           img.icon.img-thumbnail src="/images/profile/#{workload.user_id}.jpg" /
       .disp
-        = "#{workload.hm} #{workload.number}回目(週#{workload.weekly_number}回)"
+        = workload.disp
       div
         - if workload.music_key.present?
           = form_tag("/api/workloads", method: "post") do

@@ -16,7 +16,8 @@ class HomeController < ApplicationController
   end
 
   def chatting
-    redirect_to root_path(params) unless current_user.status == 'chatting'
+    hash = {}
+    redirect_to root_path(hash) unless current_user.status == 'chatting'
   end
 
   def redirect

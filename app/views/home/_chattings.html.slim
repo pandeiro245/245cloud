@@ -1,8 +1,9 @@
 - workloads = Workload.chattings.created.limit(48)
-- if workloads.present?
+- unique_workloads = workloads.group_by(&:user_id).map{ |_, records| records.max_by(&:id) }
+- if unique_workloads.present?
   #chatting_title.title.row
     h2.status
       img src="/images/ruffnote/24938.png" /
   #chatting.workloads_list.row
-    - workloads.each do |workload|
+    - unique_workloads.each do |workload|
       = render 'workload', workload: workload

@@ -1,8 +1,8 @@
 class Workload < ActiveRecord::Base
-  # POMOTIME = 24.minutes
-  # CHATTIME = 5.minutes
-  POMOTIME = 0.1.minutes
-  CHATTIME = 0.1.minutes
+  POMOTIME = 24.minutes
+  CHATTIME = 5.minutes
+  # POMOTIME = 0.1.minutes
+  # CHATTIME = 0.1.minutes
 
   validate :music_key_presence_if_title_or_artwork_url_present
 
@@ -183,6 +183,10 @@ class Workload < ActiveRecord::Base
   def youtube_start
     music.fetch if music.provider == 'youtube' && music.duration.blank?
     music.duration - remain
+  end
+
+  def disp
+    "#{hm} #{number}回目(週#{weekly_number}回)"
   end
 
   def self.for1027
