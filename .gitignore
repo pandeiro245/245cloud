@@ -49,5 +49,5 @@ yarn-debug.log*
 *.sw*
 
 vendor
-
+config/certs/
 
