@@ -1,4 +1,3 @@
 #contents.scaffold.row
-  /= link_to 'Twitterログイン', '/auth/twitter', method: :post, id: 'login', class: 'btn-default btn'
-  = form_tag("/auth/twitter", method: "post", class: 'btn-default btn', id: 'login') do
-    = submit_tag('Twitterログイン')
+  = button_to 'Twitterログイン', '/auth/twitter', class: 'btn-default btn', id: 'login', data: { turbo: false }
+
