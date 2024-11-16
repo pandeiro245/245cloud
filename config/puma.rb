@@ -14,7 +14,7 @@ ssl_bind '0.0.0.0', '8080', {
   cert: "/home/ec2-user/stable/config/certs/fullchain.pem.copy",
   verify_mode: 'none',
   no_tlsv1: true,
-  no_tlsv1_1: true,
+  no_tlsv1_1: true
 }
 
 # アプリケーションのディレクトリ
