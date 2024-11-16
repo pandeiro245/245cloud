@@ -1,25 +1,35 @@
-# config/puma.rb
 require 'puma/minissl'
+require 'dotenv'
 
-# 環境設定
-environment ENV.fetch("RAILS_ENV") { "production" }
+Dotenv.load
 
-# スレッド設定
+# config/puma.rb の先頭に追加
+puts "Environment: #{ENV['RAILS_ENV']}"
+puts "Port: #{ENV['PORT']}"
+puts "USE_SSL: #{ENV['USE_SSL']}"
+puts "SSL Key Path: #{ENV['SSL_KEY_PATH']}"
+puts "SSL Cert Path: #{ENV['SSL_CERT_PATH']}"
+
+
+
+environment ENV.fetch("RAILS_ENV") { "development" }
+
 threads_count = ENV.fetch("RAILS_MAX_THREADS", 3)
 threads threads_count, threads_count
 
-# SSL設定
-ssl_bind '0.0.0.0', '8080', {
-  key: "/home/ec2-user/stable/config/certs/privkey.pem.copy",
-  cert: "/home/ec2-user/stable/config/certs/fullchain.pem.copy",
-  verify_mode: 'none',
-  no_tlsv1: true,
-  no_tlsv1_1: true
-}
+if ENV['USE_SSL'] == 'true'
+  ssl_bind '0.0.0.0', '8443', {
+    key: ENV.fetch('SSL_KEY_PATH'),
+    cert: ENV.fetch('SSL_CERT_PATH'),
+    verify_mode: 'none',
+    no_tlsv1: true,
+    no_tlsv1_1: true
+  }
+else
+  port ENV.fetch('PORT', '8080')
+end
 
-# アプリケーションのディレクトリ
-directory '/home/ec2-user/stable'
+# directory '/home/ec2-user/stable'
 
-# プラグイン
 plugin :tmp_restart
 plugin :solid_queue if ENV["SOLID_QUEUE_IN_PUMA"]
