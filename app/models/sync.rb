@@ -32,14 +32,24 @@ class Sync
   end
 
   def workloads
+   uri = URI("https://245cloud.com/api/workloads/download.json?&token=#{ENV.fetch('TOKEN', nil)}&page=page")
+   json = Net::HTTP.get(uri)
+   JSON.parse(json).each do |w|
+     Rails.logger.debug w['id']
+     workload = Workload.find_or_initialize_by(
+       id: w['id']
+     )
+     workload.update(w)
+   end
+  end
+
+  def workloads_all
     page = 1
     loop do
       puts "page is #{page} Workload.count is #{Workload.count}"
-      uri = URI("https://245cloud.com/api/workloads/download.json?&token=#{ENV.fetch('TOKEN', nil)}&page=#{page}")
+      uri = URI("https://245cloud.com/api/workloads/download.json?&token=#{ENV.fetch('TOKEN', nil)}&page=page")
       json = Net::HTTP.get(uri)
-      array = JSON.parse(json)
-      return if array.blank?
-      array.each do |w|
+      JSON.parse(json).each do |w|
         Rails.logger.debug w['id']
         workload = Workload.find_or_initialize_by(
           id: w['id']
