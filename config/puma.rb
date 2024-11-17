@@ -4,11 +4,11 @@ require 'dotenv'
 Dotenv.load
 
 # config/puma.rb の先頭に追加
-puts "Environment: #{ENV.fetch('RAILS_ENV', nil)}"
-puts "Port: #{ENV.fetch('PORT', nil)}"
-puts "USE_SSL: #{ENV.fetch('USE_SSL', nil)}"
-puts "SSL Key Path: #{ENV.fetch('SSL_KEY_PATH', nil)}"
-puts "SSL Cert Path: #{ENV.fetch('SSL_CERT_PATH', nil)}"
+Rails.logger.debug { "Environment: #{ENV.fetch('RAILS_ENV', nil)}" }
+Rails.logger.debug { "Port: #{ENV.fetch('PORT', nil)}" }
+Rails.logger.debug { "USE_SSL: #{ENV.fetch('USE_SSL', nil)}" }
+Rails.logger.debug { "SSL Key Path: #{ENV.fetch('SSL_KEY_PATH', nil)}" }
+Rails.logger.debug { "SSL Cert Path: #{ENV.fetch('SSL_CERT_PATH', nil)}" }
 
 environment ENV.fetch("RAILS_ENV") { "development" }
 
