@@ -189,6 +189,10 @@ class Workload < ActiveRecord::Base
     "#{hm} #{number}回目(週#{weekly_number}回)"
   end
 
+  def finish_time
+    (created_at + POMOTIME).to_i * 1000
+  end
+
   def self.for1027
     Workload.where(music_key: nil).where.not(artwork_url: nil).find_each do |w|
       w.music_key = Workload.where.not(music_key: nil).where(artwork_url: w.artwork_url).limit(1).first.music_key
