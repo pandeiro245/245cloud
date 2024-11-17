@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   devise_for :users
   root 'home#index'
   resources :nicoinfo, only: [:show], constraints: {id: /sm[0-9]+/}
+  get '/prompt', to: 'home#prompt'
 
   get '/auth/:provider/callback', to: 'users#login'
 
@@ -37,4 +38,5 @@ Rails.application.routes.draw do
     resources :access_logs, only: [:create]
     get '/gyazo/proxy', to: 'gyazo#proxy'
   end
+
 end
