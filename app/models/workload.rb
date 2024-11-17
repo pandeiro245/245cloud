@@ -186,7 +186,7 @@ class Workload < ActiveRecord::Base
   end
 
   def disp
-    return "#{hm}" if created_at + POMOTIME + CHATTIME > Time.zone.now
+    return hm.to_s if created_at + POMOTIME + CHATTIME > Time.zone.now
     "#{hm} #{number}回目(週#{weekly_number}回)"
   end
 
