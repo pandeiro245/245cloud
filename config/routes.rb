@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   devise_for :users
   root 'home#index'
   resources :nicoinfo, only: [:show], constraints: {id: /sm[0-9]+/}
+  get '/prompt', to: 'home#prompt'
 
   get '/auth/:provider/callback', to: 'users#login'
 
