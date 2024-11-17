@@ -1,8 +1,8 @@
 .workload.user_1.col-sm-2 style="min-height: 180px; display:inline;"
   .inborder style="border: 4px solid rgb(234, 219, 160); border-radius: 18px; background: rgb(255, 255, 255); margin: 10px 5px 3px; padding: 0px 0px 6px; color: rgb(178, 178, 178);"
-    h5
+    h5  
       span data-original-title="無音" data-placement="top" data-toggle="tooltip" title=""
-        = workload.title || '無音'
+        = workload.title || '無音' 
     span
       - if workload.artwork_url.present?
         = link_to (image_tag src=workload.artwork_url, class: :jacket), "/musics/#{workload.music.provider}/#{workload.music.key}"
@@ -11,15 +11,13 @@
     span
       a href="/#{workload.user_id}"
         img.icon.img-thumbnail src="/images/profile/#{workload.user_id}.jpg"
-
     .disp
-      div
-        - if workload.within_time_limit?
-          div.workload_countdown data-controller="workload-countdown" data-workload-countdown-finish-time-value=workload.finish_time
-        - else
-          = workload.disp
-
-    div
+      - if workload.within_time_limit?
+        div.workload_countdown data-controller="workload-countdown" data-workload-countdown-finish-time-value=workload.finish_time
+        = workload.disp
+      - else
+        = workload.disp
+    div 
       - if workload.music_key.present?
         = form_tag("/api/workloads", method: "post") do
           = hidden_field_tag :music_key, workload.music.key
