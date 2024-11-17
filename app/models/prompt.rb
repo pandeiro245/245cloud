@@ -11,7 +11,7 @@ class Prompt
     [
       'config/importmap.rb',
       'package.json',
-      'app/javascript/controllers/index.js',
+      'app/javascript/controllers/index.js'
     ]
   end
 end

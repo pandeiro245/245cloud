@@ -38,5 +38,4 @@ Rails.application.routes.draw do
     resources :access_logs, only: [:create]
     get '/gyazo/proxy', to: 'gyazo#proxy'
   end
-
 end
