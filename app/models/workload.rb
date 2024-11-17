@@ -186,7 +186,7 @@ class Workload < ActiveRecord::Base
   end
 
   def disp
-    return "#{hm}" if  created_at  + POMOTIME + CHATTIME > Time.zone.now
+    return "#{hm}" if created_at + POMOTIME + CHATTIME > Time.zone.now
     "#{hm} #{number}回目(週#{weekly_number}回)"
   end
 
@@ -196,7 +196,7 @@ class Workload < ActiveRecord::Base
 
   def within_time_limit?
     time_diff = (created_at + POMOTIME + CHATTIME) - Time.zone.now
-    time_diff.to_i > -((POMOTIME + CHATTIME).to_i)
+    time_diff.to_i > -(POMOTIME + CHATTIME).to_i
   end
 
   def self.for1027
