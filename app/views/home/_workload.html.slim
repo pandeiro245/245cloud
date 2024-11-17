@@ -11,8 +11,14 @@
     span
       a href="/#{workload.user_id}"
         img.icon.img-thumbnail src="/images/profile/#{workload.user_id}.jpg"
+
     .disp
-      .disp data-controller="workload-countdown" data-workload-countdown-finish-time-value=workload.finish_time data-workload-countdown-pomo-time-value=Workload::POMOTIME data-workload-countdown-chat-time-value=Workload::CHATTIME
+      div
+        - if workload.within_time_limit?
+          div.workload_countdown data-controller="workload-countdown" data-workload-countdown-finish-time-value=workload.finish_time
+        - else
+          = workload.disp
+
     div
       - if workload.music_key.present?
         = form_tag("/api/workloads", method: "post") do

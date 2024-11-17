@@ -265,3 +265,21 @@ table.comments .icon{
   margin: 0 auto;
 }
 
+div[data-controller="workload-countdown"].workload_countdown,
+div[data-controller="workload-countdown"].workload_countdown a,
+div[data-controller="workload-countdown"].workload_countdown:any-link {
+  color: rgb(178, 178, 178) !important;  /* 親要素と同じ色 */
+  text-decoration: none !important;
+}
+
+.disp {
+  color: rgb(178, 178, 178);
+}
+
+.disp > div {
+  color: rgb(178, 178, 178);
+}
+
+.workload_countdown {
+  color: inherit;
+}
