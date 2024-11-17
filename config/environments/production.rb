@@ -96,4 +96,6 @@ Rails.application.configure do
     'X-XSS-Protection' => '1; mode=block',
     'X-Content-Type-Options' => 'nosniff'
   }
+  config.assets.js_compressor = nil
+  config.assets.compile = true
 end
