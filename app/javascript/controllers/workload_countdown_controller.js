@@ -15,10 +15,10 @@ export default class extends Controller {
     const now = new Date().getTime();
     const diff = (this.finishTimeValue - now) / 1000;
 
-    if (diff < -((this.pomoTimeValue + this.chatTimeValue) * 60)) {
-      this.element.remove();
-      return;
-    }
+    // if (diff <= 0) {
+    //   this.element.remove();
+    //   return;
+    // }
 
     const timeLeft = Math.abs(diff);
     const min = Math.floor(timeLeft / 60);
