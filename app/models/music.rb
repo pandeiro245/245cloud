@@ -44,7 +44,7 @@ class Music < ApplicationRecord
     minutes = (match[2] || 0).to_i
     seconds = (match[3] || 0).to_i
     self.duration = (hours * 3600) + (minutes * 60) + seconds
-    self.save!
+    save!
   end
 
   def active?
