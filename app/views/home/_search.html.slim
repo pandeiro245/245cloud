@@ -18,4 +18,10 @@
       i.fa.fa-television data-original-title="nicovideo" data-placement="top" data-toggle="tooltip" style=("display: inline;") title="" 
       input#search_sm checked="checked" style=("display: inline;") type="checkbox" /
   .results.track_item_group
+    - if params[:search_word].present?
+      - Music.search(params[:search_word])['items'].each do |item|
+        - id = item['id']['videoId']
+        - url = "https://www.youtube.com/watch?v=#{id}"
+        = render 'music', duration: 999, artwork_url: item['snippet']['thumbnails']['default']['url'], title: 'aaa', duration: 999, origin_title: 'bbb', url: url
+
 
