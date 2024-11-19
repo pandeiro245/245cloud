@@ -61,4 +61,43 @@ class Sync
       page += 1
     end
   end
+
+  def comments
+    uri = URI("https://245cloud.com/api/comments/download.json?&token=#{ENV.fetch('TOKEN', nil)}")
+    json = Net::HTTP.get(uri)
+    array = JSON.parse(json)
+    array.each do |w|
+      Rails.logger.debug w['id']
+      comment = Comment.find_or_initialize_by(
+        id: w['id']
+      )
+      w.delete('id')
+      w.each do |key, val|
+        comment.send("#{key}=", val)
+      end
+      comment.save!(validate: false)
+    end
+  end
+
+  def comments_all
+    page = 1
+    loop do
+      Rails.logger.debug { "page is #{page} Comment.count is #{Comment.count}" }
+      uri = URI("https://245cloud.com/api/comments/download.json?&token=#{ENV.fetch('TOKEN', nil)}&page=#{page}")
+      json = Net::HTTP.get(uri)
+      return if json.blank?
+
+      JSON.parse(json).each do |w|
+        Rails.logger.debug w['id']
+        comment = Comment.find_or_initialize_by(
+          id: w['id']
+        )
+        w.each do |key, val|
+          comment.send("#{key}=", val)
+        end
+        comment.save!(validate: false)
+      end
+      page += 1
+    end
+  end
 end
