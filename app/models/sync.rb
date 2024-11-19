@@ -100,5 +100,4 @@ class Sync
       page += 1
     end
   end
-
 end
