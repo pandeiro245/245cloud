@@ -1,6 +1,6 @@
 class Music < ApplicationRecord
-  def self.new_from_key(_provider, key)
-    Music.find_or_initialize_by(key: key)
+  def self.new_from_key(provider, key)
+    Music.find_or_initialize_by(provider: provider, key: key)
   end
 
   # def initialize key
@@ -36,14 +36,15 @@ class Music < ApplicationRecord
     response = Net::HTTP.get(url)
     result = JSON.parse(response)
 
-    @title = result['items'].first['snippet']['title']
-    @artwork_url = result['items'].first['snippet']['thumbnails']['medium']['url']
+    self.title = result['items'].first['snippet']['title']
+    self.artwork_url = result['items'].first['snippet']['thumbnails']['medium']['url']
     str = result['items'].first['contentDetails']['duration']
     match = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/.match(str)
     hours = (match[1] || 0).to_i
     minutes = (match[2] || 0).to_i
     seconds = (match[3] || 0).to_i
-    @duration = (hours * 3600) + (minutes * 60) + seconds
+    self.duration = (hours * 3600) + (minutes * 60) + seconds
+    save!
   end
 
   def active?
