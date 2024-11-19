@@ -16,6 +16,6 @@ music.title = 'DJ Kopec Mix #3.5'
 music.artwork_url = 'https://i1.sndcdn.com/artworks-000075433291-aruwbw-t500x500.jpg'
 music.save!
 
-comment = Comment.new
+comment = Comment.find_or_initialize_by(id: 1)
 comment.body = 'いつもの部屋'
 comment.save!(validate: false)
