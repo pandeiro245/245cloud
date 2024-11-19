@@ -99,7 +99,7 @@ Rails.application.configure do
   # Cloud9特有の設定
   config.hosts.clear
   config.web_console.whitelisted_ips = '0.0.0.0/0'
-  
+
   # 開発環境でのキャッシュを無効化
   config.action_controller.perform_caching = false
   config.cache_store = :null_store
