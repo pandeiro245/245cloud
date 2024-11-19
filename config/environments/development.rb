@@ -17,16 +17,16 @@ Rails.application.configure do
 
   # Enable/disable Action Controller caching. By default Action Controller caching is disabled.
   # Run rails dev:cache to toggle Action Controller caching.
-  if Rails.root.join("tmp/caching-dev.txt").exist?
-    config.action_controller.perform_caching = true
-    config.action_controller.enable_fragment_cache_logging = true
-    config.public_file_server.headers = { "cache-control" => "public, max-age=#{2.days.to_i}" }
-  else
-    config.action_controller.perform_caching = false
-  end
+  # if Rails.root.join("tmp/caching-dev.txt").exist?
+  #   config.action_controller.perform_caching = true
+  #   config.action_controller.enable_fragment_cache_logging = true
+  #   config.public_file_server.headers = { "cache-control" => "public, max-age=#{2.days.to_i}" }
+  # else
+  #   config.action_controller.perform_caching = false
+  # end
 
   # Change to :null_store to avoid any caching.
-  config.cache_store = :memory_store
+  # config.cache_store = :memory_store
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
@@ -71,4 +71,39 @@ Rails.application.configure do
   # config.generators.apply_rubocop_autocorrect_after_generate!
 
   config.web_console.permissions = '106.72.63.101'
+
+  # アセットのデバッグモードを有効化（個別のアセットファイルを読み込む）
+  config.assets.debug = true
+
+  # アセットの連結を無効化
+  config.assets.concatenate = false
+
+  # アセットのキャッシュを無効化
+  config.assets.cache = false
+
+  # アセットのダイジェストを無効化（ファイル名にハッシュを付けない）
+  config.assets.digest = false
+
+  # アセットのプリコンパイルを無効化
+  config.assets.compile = true
+
+  # キャッシュクラスを無効化
+  config.cache_classes = false
+
+  # eager_loadingを無効化
+  # config.eager_load = false
+
+  # アセットのバージョニングを無効化
+  config.assets.version = ''
+
+  # Cloud9特有の設定
+  config.hosts.clear
+  config.web_console.whitelisted_ips = '0.0.0.0/0'
+
+  # 開発環境でのキャッシュを無効化
+  config.action_controller.perform_caching = false
+  config.cache_store = :null_store
+
+  # ファイル更新の検出方法を設定
+  config.file_watcher = ActiveSupport::FileUpdateChecker
 end

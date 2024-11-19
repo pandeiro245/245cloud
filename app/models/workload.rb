@@ -97,6 +97,15 @@ class Workload < ActiveRecord::Base
     end
   end
 
+  def playing?
+    created_at + POMOTIME > Time.zone.now
+  end
+
+  def chatting?
+    return false if playing?
+    created_at + POMOTIME + CHATTIME > Time.zone.now
+  end
+
   def remain
     (created_at + POMOTIME).to_i - Time.zone.now.to_i
   end
@@ -190,13 +199,12 @@ class Workload < ActiveRecord::Base
     "#{hm} #{number}回目(週#{weekly_number}回)"
   end
 
-  def finish_time
+  def finish_playing_time
     (created_at + POMOTIME).to_i * 1000
   end
 
-  def within_time_limit?
-    time_diff = (created_at + POMOTIME + CHATTIME) - Time.zone.now
-    time_diff.to_i > -(POMOTIME + CHATTIME).to_i
+  def finish_chatting_time
+    (created_at + POMOTIME + POMOTIME).to_i * 1000
   end
 
   def self.for1027
