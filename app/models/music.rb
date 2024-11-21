@@ -10,11 +10,21 @@ class Music < ApplicationRecord
       key: api_key,
       part: 'id,snippet',
       videoDuration: 'long',
-      type: 'video'
+      type: 'video',
+      maxResults: 30
     }
     url = URI("https://www.googleapis.com/youtube/v3/search?#{URI.encode_www_form(params)}")
     response = Net::HTTP.get(url)
-    JSON.parse(response)
+    JSON.parse(response)['items'].map do |item|
+      music = Music.find_or_initialize_by(
+        provider: 'youtube',
+        key: item['id']['videoId'],
+      )
+      music.artwork_url = item['snippet']['thumbnails']['default']['url']
+      music.title = item['snippet']['title']
+      music.save!
+      music
+    end
   end
 
   # def initialize key
@@ -41,7 +51,8 @@ class Music < ApplicationRecord
   end
 
   def url
-    # TODO
+    raise unless provider == 'youtube'
+    "https://www.youtube.com/watch?v=#{key}"
   end
 
   def fetch

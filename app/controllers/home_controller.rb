@@ -1,6 +1,7 @@
 class HomeController < ApplicationController
   def index
     @music = Music.new_from_key(params[:music_provider], params[:music_key]) if params[:music_provider].present?
+    @musics = Music.search(params[:search_word]) if params[:search_word].present?
   end
 
   def playing

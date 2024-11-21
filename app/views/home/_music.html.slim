@@ -1,18 +1,16 @@
 .col-lg-2 style="min-height: 200px;"
   .track_item
     .track_item-title
-      i.fa.fa-youtube title="" data-toggle="tooltip" data-placement="top" data-original-title=origin_title
-      a href=url target="_blank" = title
-      | (#{duration})<br>
-    br
+      i.fa.fa-youtube title="" data-toggle="tooltip" data-placement="top" data-original-title=music.title
+      a href=music.url target="_blank" = music.title
     .track_item-body
       .track_item-thumb
-        img src=artwork_url width="100px"
-      = form_tag("/api/workloads", method: "post") do
-        - # = hidden_field_tag :music_key, workload.music.key
-        - # = hidden_field_tag :music_provider, workload.music.provider
-        - # = hidden_field_tag :title, workload.title
-        - # = hidden_field_tag :artwork_url, workload.artwork_url
-        - # = image_submit_tag('/images/ruffnote/24921.png')
-
+        img src=music.artwork_url width="100px"
+      / data-turbo="false" を追加してTurboを無効化
+      = form_tag("/api/workloads", method: "post", data: { turbo: false }) do
+        = hidden_field_tag :music_key, music.key
+        = hidden_field_tag :music_provider, music.provider
+        = hidden_field_tag :title, music.title
+        = hidden_field_tag :artwork_url, music.artwork_url
+        = image_submit_tag('/images/ruffnote/24921.png')
 

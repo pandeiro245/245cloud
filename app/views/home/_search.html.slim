@@ -1,27 +1,23 @@
-#search_title.scaffold.row
+/ app/views/your_view.html.slim
+#search_title.scaffold.row.title
   h2.status
-    img src="/images/ruffnote/24941.png" /
-#search.scaffold.row
-  input#track placeholder="ここにアーティスト名や曲名を入れてね" /
-  #tracks
-  #check_services
-    label
-      i.fa.fa-youtube data-original-title="youtube" data-placement="top" data-toggle="tooltip" style=("display: inline;") title="" 
-      input#search_yt style=("display: inline;") type="checkbox" /
-    label
-      i.fa.fa-mixcloud data-original-title="mixcloud" data-placement="top" data-toggle="tooltip" style=("display: inline;") title="" 
-      input#search_mc style=("display: inline;") type="checkbox" /
-    label
-      i.fa.fa-soundcloud data-original-title="soundcloud" data-placement="top" data-toggle="tooltip" style=("display: inline;") title="" 
-      input#search_sc style=("display: inline;") type="checkbox" /
-    label
-      i.fa.fa-television data-original-title="nicovideo" data-placement="top" data-toggle="tooltip" style=("display: inline;") title="" 
-      input#search_sm checked="checked" style=("display: inline;") type="checkbox" /
-  .results.track_item_group
-    - if params[:search_word].present?
-      - Music.search(params[:search_word])['items'].each do |item|
-        - id = item['id']['videoId']
-        - url = "https://www.youtube.com/watch?v=#{id}"
-        = render 'music', duration: 999, artwork_url: item['snippet']['thumbnails']['default']['url'], title: 'aaa', duration: 999, origin_title: 'bbb', url: url
+    img src="/images/ruffnote/24941.png"
 
+#search.scaffold.row data-controller="search"
+  input#track[
+    data-search-target="input"
+    placeholder="ここにアーティスト名や曲名を入れてね"
+    value=params[:search_word]
+  ]
+  
+  / Turbo Frame を追加
+  = turbo_frame_tag "search_results" do
+    #tracks
+    #check_services
+      / チェックボックス部分は省略...
+    
+    .results.track_item_group
+      - if params[:search_word].present?
+        - @musics.each do |music|
+          = render 'music', music: music
 
