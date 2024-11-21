@@ -18,7 +18,7 @@ class Music < ApplicationRecord
     JSON.parse(response)['items'].map do |item|
       music = Music.find_or_initialize_by(
         provider: 'youtube',
-        key: item['id']['videoId'],
+        key: item['id']['videoId']
       )
       music.artwork_url = item['snippet']['thumbnails']['default']['url']
       music.title = item['snippet']['title']

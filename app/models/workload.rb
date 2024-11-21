@@ -1,5 +1,5 @@
 class Workload < ActiveRecord::Base
-  if Rails.env == 'production'
+  if Rails.env.production?
     POMOTIME = 24.minutes
     CHATTIME = 5.minutes
   else
