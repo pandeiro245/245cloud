@@ -7,7 +7,6 @@ class ApplicationController < ActionController::Base
   private
 
   def create_access_log
-    current_user ? current_user.id : nil
     AccessLog.create!(
       user_id: current_user&.id,
       url: request.url
