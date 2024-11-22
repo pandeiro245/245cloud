@@ -1,62 +1,43 @@
-require 'puma/minissl'
-require 'dotenv'
-Dotenv.load
-
-# 環境設定
+# Pumaの基本設定
 environment ENV.fetch("RAILS_ENV") { "development" }
+port ENV.fetch("PORT") { 8080 }
 
-# ディレクトリ設定
-app_dir = File.expand_path("../..", __FILE__)
-directory app_dir
+# アプリケーションのディレクトリ設定
+directory File.expand_path("../..", __FILE__)
 
-# PIDファイルとステート設定
-pidfile "#{app_dir}/tmp/pids/puma.pid"
-state_path "#{app_dir}/tmp/pids/puma.state"
+# プロセス管理
+pidfile "tmp/pids/puma.pid"
+state_path "tmp/pids/puma.state"
 
-# ワーカープロセスの設定
-workers ENV.fetch("WEB_CONCURRENCY") { 2 }
-
-# スレッド数の設定
+# スレッド設定
 threads_count = ENV.fetch("RAILS_MAX_THREADS") { 3 }
 threads threads_count, threads_count
 
-# プリロード設定
-preload_app!
+# 本番環境の場合のみワーカーを設定
+if ENV.fetch("RAILS_ENV") == "production"
+  workers ENV.fetch("WEB_CONCURRENCY") { 2 }
+  preload_app!
 
-# ポートとSSLの設定
-if ENV['USE_SSL'] == 'true'
-  ssl_bind '0.0.0.0', '8443', {
-    key: ENV.fetch('SSL_KEY_PATH'),
-    cert: ENV.fetch('SSL_CERT_PATH'),
-    verify_mode: 'none',
-    no_tlsv1: true,
-    no_tlsv1_1: true
-  }
-else
-  port ENV.fetch('PORT', '8080')
+  # データベース接続の管理
+  before_fork do
+    ActiveRecord::Base.connection_pool.disconnect! if defined?(ActiveRecord)
+  end
+
+  on_worker_boot do
+    ActiveRecord::Base.establish_connection if defined?(ActiveRecord)
+  end
 end
 
-# フォーク後の接続設定
-before_fork do
-  ActiveRecord::Base.connection_pool.disconnect! if defined?(ActiveRecord)
+# ログ設定
+if ENV.fetch("RAILS_ENV") == "production"
+  stdout_redirect "log/puma.stdout.log", "log/puma.stderr.log", true
 end
 
-after_fork do
-  ActiveRecord::Base.establish_connection if defined?(ActiveRecord)
+# エラーハンドリング
+lowlevel_error_handler do |e|
+  [500, {}, ["An error has occurred, please check the server logs.\n"]]
 end
 
-# 管理CLI用のアクティベーション設定
-activate_control_app
-
-# プラグイン設定
+# プラグイン
 plugin :tmp_restart
 plugin :solid_queue if ENV["SOLID_QUEUE_IN_PUMA"]
-
-# グレースフルリスタート設定
-on_worker_boot do
-  ActiveRecord::Base.establish_connection if defined?(ActiveRecord)
-end
-
-on_worker_shutdown do
-  ActiveRecord::Base.connection_pool.disconnect! if defined?(ActiveRecord)
-end
