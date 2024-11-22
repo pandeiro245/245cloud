@@ -2,7 +2,7 @@ class HomeController < ApplicationController
   def index
     if params[:music_provider].present?
       store_music_session(params[:music_provider], params[:music_key])
-      redirect_to music_path, allow_other_host: false
+      redirect_to root_path, allow_other_host: false
     else
       load_music_from_session
     end
