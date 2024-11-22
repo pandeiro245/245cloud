@@ -8,6 +8,7 @@ class Prompt
   end
 
   def paths
+    return ['server.sh']
     [
       'config/importmap.rb',
       'package.json',
