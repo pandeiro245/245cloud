@@ -15,8 +15,8 @@ class ApplicationController < ActionController::Base
   end
 
   def load_music_from_session
-    if session[:music_provider].present?
-      @music = Music.new_from_key(session[:music_provider], session[:music_key])
-    end
+    return if session[:music_provider].blank?
+
+    @music = Music.new_from_key(session[:music_provider], session[:music_key])
   end
 end
