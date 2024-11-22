@@ -207,7 +207,7 @@ class Workload < ActiveRecord::Base
   end
 
   def finish_chatting_time
-    (created_at + POMOTIME + POMOTIME).to_i * 1000
+    (created_at + POMOTIME + CHATTIME).to_i * 1000
   end
 
   def self.for1027
