@@ -1,11 +1,14 @@
 <pre style="text-aligh: left;">【すべて日本語で回答お願いします】
 Rails8+Hotwireでポモドーロ・テクニックアプリを開発しています。 
 サーバはAmazonLinux2024でnginxなどを使わずにpumaのみで動いています。
+SSL はlet's encryptです。
 
 得たいこととしては「無停止でサーバ再起動できるようにしたい」です。
 
 その前段階として ~/stable ディレクトリ で　https://rails8.245cloud.com/ で動いていますがそれとは別で
 ~/next ディレクトリに同じレポジトリをおいて　https://next.245cloud.com/ で動かしたい
+
+config/puma.rb の設定はファイルを分けるのではなく.envを使いたい
 
 
 下記に現状のコードを共有しますが変更する場合は一部ではなくファイル全体のコードを指定してください。
