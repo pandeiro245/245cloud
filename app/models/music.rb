@@ -3,6 +3,30 @@ class Music < ApplicationRecord
     Music.find_or_initialize_by(provider: provider, key: key)
   end
 
+  def self.search(word)
+    api_key = ENV.fetch('YOUTUBE_TOKEN', nil)
+    params = {
+      q: word,
+      key: api_key,
+      part: 'id,snippet',
+      videoDuration: 'long',
+      type: 'video',
+      maxResults: 30
+    }
+    url = URI("https://www.googleapis.com/youtube/v3/search?#{URI.encode_www_form(params)}")
+    response = Net::HTTP.get(url)
+    JSON.parse(response)['items'].map do |item|
+      music = Music.find_or_initialize_by(
+        provider: 'youtube',
+        key: item['id']['videoId']
+      )
+      music.artwork_url = item['snippet']['thumbnails']['default']['url']
+      music.title = item['snippet']['title']
+      music.save!
+      music
+    end
+  end
+
   # def initialize key
   #   workload = Workload.find_by(
   #     music_key: key
@@ -27,7 +51,8 @@ class Music < ApplicationRecord
   end
 
   def url
-    # TODO
+    raise unless provider == 'youtube'
+    "https://www.youtube.com/watch?v=#{key}"
   end
 
   def fetch
