@@ -1,5 +1,5 @@
 require "active_support/core_ext/integer/time"
-  
+
 Rails.application.configure do
   # 基本設定
   config.enable_reloading = false
@@ -20,11 +20,11 @@ Rails.application.configure do
   config.assume_ssl = true
   config.force_ssl = true
   config.ssl_options = {
-    redirect: { 
+    redirect: {
       port: 443,
       status: 307
     },
-    hsts: { 
+    hsts: {
       subdomains: true,
       preload: true,
       expires: 1.year
@@ -35,21 +35,21 @@ Rails.application.configure do
   config.log_level = :debug
   config.log_tags = [ :request_id ]
   config.logger = ActiveSupport::TaggedLogging.new(
-    Logger.new(Rails.root.join("log", "production.log"))
+    Logger.new(Rails.root.join("log/production.log"))
   )
 
   # ヘルスチェック
   config.silence_healthcheck_path = "/up"
-  
+
   # キャッシュとジョブ
   config.active_support.report_deprecations = false
   config.cache_store = :solid_cache_store
   config.active_job.queue_adapter = :solid_queue
   config.solid_queue.connects_to = { database: { writing: :queue } }
-  
+
   # メール設定
-  config.action_mailer.default_url_options = { host: ENV['DOMAIN'] }
-  
+  config.action_mailer.default_url_options = { host: ENV.fetch('DOMAIN', nil) }
+
   # 国際化
   config.i18n.fallbacks = true
 
@@ -69,5 +69,5 @@ Rails.application.configure do
 
   # ホスト設定
   config.hosts = nil
-  config.host_authorization = { exclude: ->(request) { true } }
+  config.host_authorization = { exclude: ->(_request) { true } }
 end

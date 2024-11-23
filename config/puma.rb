@@ -15,13 +15,13 @@ threads threads_count, threads_count
 
 # 環境変数の表示
 puts "=== Environment Variables ==="
-puts "RAILS_ENV: #{ENV['RAILS_ENV']}"
-puts "PORT: #{ENV['PORT']}"
-puts "HTTP_PORT: #{ENV['HTTP_PORT']}"
-puts "HTTPS_PORT: #{ENV['HTTPS_PORT']}"
-puts "APP_DIR: #{ENV['APP_DIR']}"
-puts "DOMAIN: #{ENV['DOMAIN']}"
-puts "USE_SSL: #{ENV['USE_SSL']}"
+puts "RAILS_ENV: #{ENV.fetch('RAILS_ENV', nil)}"
+puts "PORT: #{ENV.fetch('PORT', nil)}"
+puts "HTTP_PORT: #{ENV.fetch('HTTP_PORT', nil)}"
+puts "HTTPS_PORT: #{ENV.fetch('HTTPS_PORT', nil)}"
+puts "APP_DIR: #{ENV.fetch('APP_DIR', nil)}"
+puts "DOMAIN: #{ENV.fetch('DOMAIN', nil)}"
+puts "USE_SSL: #{ENV.fetch('USE_SSL', nil)}"
 puts "=========================="
 
 # HTTPポートの設定
@@ -32,20 +32,20 @@ puts "Checking SSL configuration..."
 if ENV['USE_SSL'] == 'true'
   ssl_key_path = ENV.fetch('SSL_KEY_PATH')
   ssl_cert_path = ENV.fetch('SSL_CERT_PATH')
-  
+
   puts "Configuring SSL..."
   puts "Key path: #{ssl_key_path}"
   puts "Cert path: #{ssl_cert_path}"
-  
-  ssl_bind '0.0.0.0', 
-          ENV.fetch('HTTPS_PORT', '443'),
-          {
-            key: ssl_key_path,
-            cert: ssl_cert_path,
-            verify_mode: 'none',
-            no_tlsv1: true,
-            no_tlsv1_1: true
-          }
+
+  ssl_bind '0.0.0.0',
+           ENV.fetch('HTTPS_PORT', '443'),
+           {
+             key: ssl_key_path,
+             cert: ssl_cert_path,
+             verify_mode: 'none',
+             no_tlsv1: true,
+             no_tlsv1_1: true
+           }
   puts "SSL configuration complete"
 else
   puts "SSL is not enabled"
