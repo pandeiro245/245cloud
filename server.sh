@@ -3,12 +3,8 @@
 # エラー時に停止
 set -e
 
-# プロセスのクリーンアップ
-if [ -f tmp/pids/puma.pid ]; then
-  kill -TERM $(cat tmp/pids/puma.pid) 2>/dev/null || true
-  rm -f tmp/pids/puma.pid
-  sleep 2
-fi
+# 環境変数の設定
+export RAILS_ENV=production
 
 # アプリケーションの更新
 git pull origin develop
@@ -17,7 +13,13 @@ git pull origin develop
 bundle install
 
 # アセットのプリコンパイル
-RAILS_ENV=production bundle exec rails assets:precompile
+bundle exec rails assets:precompile
 
-# Pumaの起動
-RAILS_ENV=production bundle exec puma -C config/puma.rb
+# Pumaの起動または再起動
+if [ -f tmp/pids/puma.pid ] && ps -p $(cat tmp/pids/puma.pid) > /dev/null; then
+  echo "Performing phased restart..."
+  bundle exec pumactl -P tmp/pids/puma.pid phased-restart
+else
+  echo "Starting Puma..."
+  bundle exec puma -C config/puma.rb
+fi

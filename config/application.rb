@@ -1,64 +1,64 @@
 require_relative "boot"
 require "rails/all"
-
-# Require the gems listed in Gemfile, including any gems
-# you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
 module NishikoCloud
   class Application < Rails::Application
-    # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
-
-    # Please, add to the `ignore` list any other `lib` subdirectories that do
-    # not contain `.rb` files, or that should not be reloaded or eager loaded.
-    # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
 
-    # Configuration for the application, engines, and railties goes here.
-    #
-    # These settings can be overridden in specific environments using the files
-    # in config/environments, which are processed later.
-    #
-    # config.time_zone = "Central Time (US & Canada)"
-    # config.eager_load_paths << Rails.root.join("extras")
-    config.hosts << ENV['WHITE_HOST']
+    # ホスト認証設定
+    config.hosts << ENV['DOMAIN']
+    config.hosts << "localhost"
+    config.hosts << "127.0.0.1"
+
+    # タイムゾーン設定
     Time.zone = 'Tokyo'
 
-    # アセットパイプラインの設定
+    # アセット設定
     config.assets.enabled = true
-
-    # アセットのパスを明示的に指定
     config.assets.paths << Rails.root.join("app/assets/stylesheets")
     config.assets.paths << Rails.root.join("app/assets/javascripts")
     config.assets.paths << Rails.root.join("app/assets/images")
-
-    # プリコンパイル対象のアセットを指定
     config.assets.precompile += %w[chatting.css]
+    config.assets.js_compressor = nil
+    config.assets.compile = true
 
-    # 開発環境特有の設定
-    if Rails.env.development?
-      # アセットのキャッシュを無効化
-      config.assets.configure do |env|
-        env.cache = ActiveSupport::Cache.lookup_store(:null_store)
-      end
-
-      # デバッグ情報の出力を有効化
-      config.assets.debug = true
-
-      # アセットのダイジェストを無効化
-      config.assets.digest = false
-
-      # ライブリロードの設定
-      config.middleware.insert_after ActionDispatch::Static, Rack::LiveReload if defined?(Rack::LiveReload)
-    end
-
-    # production環境特有の設定
     if Rails.env.production?
-      # 本番環境ではアセットの圧縮を有効化
+      # SSL設定
+      config.force_ssl = true
+      config.ssl_options = {
+        hsts: { expires: 1.year, subdomains: true },
+        redirect: { status: 307 }
+      }
+
+      # セキュリティヘッダー設定
+      config.action_dispatch.default_headers.merge!(
+        'Strict-Transport-Security' => 'max-age=31536000; includeSubDomains',
+        'X-Frame-Options' => 'SAMEORIGIN',
+        'X-XSS-Protection' => '1; mode=block',
+        'X-Content-Type-Options' => 'nosniff'
+      )
+
+      # アセット設定
       config.assets.compress = true
       config.assets.compile = false
       config.assets.digest = true
+
+      # エラーレポート設定
+      config.consider_all_requests_local = false
+
+      # ロガー設定
+      config.logger = ActiveSupport::Logger.new(STDOUT)
+    end
+
+    if Rails.env.development?
+      config.assets.configure do |env|
+        env.cache = ActiveSupport::Cache.lookup_store(:null_store)
+      end
+      config.assets.debug = true
+      config.assets.digest = false
+      config.middleware.insert_after ActionDispatch::Static, Rack::LiveReload if defined?(Rack::LiveReload)
     end
   end
 end
