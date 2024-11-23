@@ -49,7 +49,7 @@ module NishikoCloud
       config.consider_all_requests_local = false
 
       # ロガー設定
-      config.logger = ActiveSupport::Logger.new(STDOUT)
+      config.logger = ActiveSupport::Logger.new($stdout)
     end
 
     if Rails.env.development?
