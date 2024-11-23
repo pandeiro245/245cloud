@@ -1,8 +1,15 @@
 #start_buttons.workloads_list.row
   #random.col-sm-2
     h5 おまかせ
+    - tmp_music = Music.find_by(provider: 'soundcloud')
     img.jacket src="/images/ruffnote/24982.png" /
-    input#start.btn onmouseout="this.src='/images/ruffnote/24919.png'" onmouseover="this.src='/images/ruffnote/24920.png'" src="/images/ruffnote/24919.png" style=("border: none;") type="image" /
+    = form_tag("/api/workloads", method: "post", class: 'btn', style: 'border:none;', id: 'start') do
+      = hidden_field_tag :music_key, tmp_music.key
+      = hidden_field_tag :music_provider, tmp_music.provider
+      = hidden_field_tag :title, tmp_music.title
+      = hidden_field_tag :artwork_url, tmp_music.artwork_url
+      = image_submit_tag('/images/ruffnote/24919.png')
+
   - if @music.present?
     #fixedstart.col-sm-2
       h5=@music.title

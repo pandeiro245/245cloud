@@ -3,8 +3,8 @@ class Workload < ActiveRecord::Base
     POMOTIME = 24.minutes
     CHATTIME = 5.minutes
   else
-    POMOTIME = 0.1.minutes
-    CHATTIME = 0.1.minutes
+    POMOTIME = 0.2.minutes
+    CHATTIME = 0.2.minutes
   end
 
   validate :music_key_presence_if_title_or_artwork_url_present
