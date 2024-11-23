@@ -1,19 +1,24 @@
-<pre style="text-aligh: left;">【すべて日本語で回答お願いします】
+<pre style="text-aligh: left;">【重要事項】
+
+・すべて日本語で回答お願いします
+・変更するコードは一部ではなくファイル全体のコードを指定してください(よく「その他の設定」というように省略されがちですが全部上書きするので省略しないでください
+
+【前提条件】
 Rails8+Hotwireでポモドーロ・テクニックアプリを開発しています。 
 サーバはAmazonLinux2024でnginxなどを使わずにpumaのみで動いています。
 SSL はlet's encryptです。
+rails8サーバは　https://rails8.245cloud.com/ で動いていますがそれとは別で
+nextサーバ（EC2インスタンス） 　https://next.245cloud.com/ で動かしたい
+ディレクトリはどちらも /home/ec2-user/stable でポートはどちらも8443ポート経由で443ポートのSSLです。
 
-得たいこととしては「無停止でサーバ再起動できるようにしたい」です。
 
-その前段階として ~/stable ディレクトリ で　https://rails8.245cloud.com/ で動いていますがそれとは別で
-~/next ディレクトリに同じレポジトリをおいて　https://next.245cloud.com/ で動かしたい
-
-config/puma.rb の設定はファイルを分けるのではなく.envを使いたい
-
+【依頼事項】
+得たいこととしては「<%= @prompt.goal %>」です。
 
 下記に現状のコードを共有しますが変更する場合は一部ではなくファイル全体のコードを指定してください。
+ただし、コードのディレクトリはソース内のコメントではなくコード記法のヘッダに記載してください
 
-<%- Prompt.new.codes.each do |path, code| %>
+<%- @prompt.codes.each do |path, code| %>
 ======================
 <%= path %> のコードは下記の通り
 

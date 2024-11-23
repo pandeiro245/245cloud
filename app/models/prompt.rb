@@ -1,4 +1,8 @@
 class Prompt
+  def goal
+    './server.sh を実行するとdevelopmentモードで起動するのでproductionモードにしたい'
+  end
+
   def codes
     hash = {}
     paths.each do |path|
