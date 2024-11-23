@@ -1,8 +1,8 @@
+# config/puma.rb
+
 require 'puma/minissl'
 require 'dotenv'
 Dotenv.load
-
-# please delete this line before you do git commit
 
 # 基本設定
 environment ENV.fetch("RAILS_ENV", "production")
@@ -17,18 +17,23 @@ threads threads_count, threads_count
 puts "=== Environment Variables ==="
 puts "RAILS_ENV: #{ENV['RAILS_ENV']}"
 puts "PORT: #{ENV['PORT']}"
+puts "HTTP_PORT: #{ENV['HTTP_PORT']}"
+puts "HTTPS_PORT: #{ENV['HTTPS_PORT']}"
 puts "APP_DIR: #{ENV['APP_DIR']}"
 puts "DOMAIN: #{ENV['DOMAIN']}"
+puts "USE_SSL: #{ENV['USE_SSL']}"
+puts "=========================="
 
-# HTTP用のポート
+# HTTPポートの設定
 port ENV.fetch('HTTP_PORT', '80')
 
-# HTTPS用の設定
+# HTTPSポートの設定
+puts "Checking SSL configuration..."
 if ENV['USE_SSL'] == 'true'
   ssl_key_path = ENV.fetch('SSL_KEY_PATH')
   ssl_cert_path = ENV.fetch('SSL_CERT_PATH')
   
-  puts "SSL Configuration:"
+  puts "Configuring SSL..."
   puts "Key path: #{ssl_key_path}"
   puts "Cert path: #{ssl_cert_path}"
   
@@ -41,6 +46,9 @@ if ENV['USE_SSL'] == 'true'
             no_tlsv1: true,
             no_tlsv1_1: true
           }
+  puts "SSL configuration complete"
+else
+  puts "SSL is not enabled"
 end
 
 # プロセス管理
