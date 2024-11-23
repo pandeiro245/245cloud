@@ -11,7 +11,9 @@ class Prompt
     [
       'Gemfile',
       'server.sh',
-      'config/puma.rb'
+      'config/puma.rb',
+      'config/application.rb',
+      'config/environments/production.rb'
 
       # 'config/importmap.rb',
       # 'package.json',
