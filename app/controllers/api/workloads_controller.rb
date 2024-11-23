@@ -7,7 +7,7 @@ class Api::WorkloadsController < ApplicationController
       range = from.upto(to).to_a
       workloads = Workload.where(id: range)
     else
-      workloads = Workload.all.order('id desc').limit(1000)
+      workloads = Workload.order('id desc').limit(1000)
     end
     render json: workloads.to_json
   end

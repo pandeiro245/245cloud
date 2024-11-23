@@ -7,7 +7,7 @@ class Api::CommentsController < ApplicationController
       range = from.upto(to).to_a
       comments = Comment.where(id: range)
     else
-      comments = Comment.all.order('id desc').limit(1000)
+      comments = Comment.order('id desc').limit(1000)
     end
     render json: comments.to_json
   end
