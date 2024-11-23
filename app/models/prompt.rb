@@ -1,7 +1,6 @@
 class Prompt
   def goal
-    # 'カウントダウン終了7秒前に /audio/Zihou01-4.mp3 を鳴らしたい'
-    'developmentモードなのにjavascriptの更新がブラウザ表示に反映されない'
+    'https://focus.timecrowd.net/ が表示されるようにしたい'
   end
 
   def codes
