@@ -1,19 +1,24 @@
-<pre style="text-aligh: left;">【すべて日本語で回答お願いします】
-AmazonLinux2024+Rails8+Hotwireでポモドーロ・テクニックアプリを開発しています。 前まで動いていたカウントダウン部分が 下記のJSエラーが出てカウントダウンが動かなくなりました。
+<pre style="text-aligh: left;">【重要事項】
 
-application-53316239.js:9 Uncaught ReferenceError: require is not defined
-at application-53316239.js:9:17
+・すべて日本語で回答お願いします
+・変更するコードは一部ではなくファイル全体のコードを指定してください(よく「その他の設定」というように省略されがちですが全部上書きするので省略しないでください
+
+【前提条件】
+Rails8+Hotwireでポモドーロ・テクニックアプリを開発しています。 
+サーバはAmazonLinux2024でnginxなどを使わずにpumaのみで動いています。
+SSL はlet's encryptです。
+rails8サーバは　https://rails8.245cloud.com/ で動いていますがそれとは別で
+nextサーバ（EC2インスタンス） 　https://next.245cloud.com/ で動かしたい
+ディレクトリはどちらも /home/ec2-user/stable でポートはどちらも8443ポート経由で443ポートのSSLです。
+
+
+【依頼事項】
+得たいこととしては「<%= @prompt.goal %>」です。
 
 下記に現状のコードを共有しますが変更する場合は一部ではなくファイル全体のコードを指定してください。
+ただし、コードのディレクトリはソース内のコメントではなくコード記法のヘッダに記載してください
 
-=====================
-有効になっているgemは下記の通り
-gem 'rails', '~> 8.0.0'
-gem 'importmap-rails'
-gem 'turbo-rails'
-gem 'stimulus-rails'
-gem 'slim-rails'
-<%- Prompt.new.codes.each do |path, code| %>
+<%- @prompt.codes.each do |path, code| %>
 ======================
 <%= path %> のコードは下記の通り
 

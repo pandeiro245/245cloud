@@ -1,4 +1,8 @@
 class Prompt
+  def goal
+    './server.sh を実行するとdevelopmentモードで起動するのでproductionモードにしたい'
+  end
+
   def codes
     hash = {}
     paths.each do |path|
@@ -9,9 +13,15 @@ class Prompt
 
   def paths
     [
-      'config/importmap.rb',
-      'package.json',
-      'app/javascript/controllers/index.js'
+      'Gemfile',
+      'server.sh',
+      'config/puma.rb',
+      'config/application.rb',
+      'config/environments/production.rb'
+
+      # 'config/importmap.rb',
+      # 'package.json',
+      # 'app/javascript/controllers/index.js'
     ]
   end
 end

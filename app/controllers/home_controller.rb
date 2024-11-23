@@ -29,5 +29,9 @@ class HomeController < ApplicationController
   def redirect
     redirect_to params[:url]
   end
+
+  def prompt
+    @prompt = Prompt.new
+  end
 end
 
