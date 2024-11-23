@@ -13,7 +13,7 @@ Rails.application.configure do
   config.assets.digest = false
   config.assets.version = Time.now.to_i.to_s
   config.assets.check_precompiled_asset = false
-  
+
   # キャッシュ設定
   config.cache_classes = false
   config.action_controller.perform_caching = false
@@ -25,15 +25,15 @@ Rails.application.configure do
 
   # ファイル監視設定
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
-  
+
   # Live Reload設定
-  config.middleware.insert_after ActionDispatch::Static, Rack::LiveReload, 
-    min_delay: 0.5,
-    max_delay: 10,
-    pure_js: true,
-    host: 'localhost',
-    port: '35729',
-    ignore: [ %r{.map$} ]
+  config.middleware.insert_after ActionDispatch::Static, Rack::LiveReload,
+                                 min_delay: 0.5,
+                                 max_delay: 10,
+                                 pure_js: true,
+                                 host: 'localhost',
+                                 port: '35729',
+                                 ignore: [/.map$/]
 
   # その他の既存設定は残したまま...
   config.active_storage.service = :local

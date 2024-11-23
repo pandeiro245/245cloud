@@ -24,12 +24,12 @@ class Prompt
       'config/application.rb',
       # 'config/environments/production.rb',
       'config/environments/development.rb',
-      
+
       # js
       # 'config/importmap.rb',
       # 'package.json',
       # 'app/javascript/controllers/index.js',
-      'app/javascript/controllers/timer_controller.js',
+      'app/javascript/controllers/timer_controller.js'
 
       # view
       # 'app/views/home/_footer.html.slim'
