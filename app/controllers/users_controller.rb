@@ -1,6 +1,8 @@
 class UsersController < ApplicationController
   def index
-    @users = Workload.group(:user_id).count.to_a.sort_by{|u| u.last}.reverse
+    # @users = Workload.group(:user_id).count.to_a.sort_by{|u| u.last}.reverse
+    raise if ENV['TOKEN'].blank? || params[:token].blank? || params[:token] != ENV['TOKEN']
+    render json: User.all.to_json
   end
 
   def show
