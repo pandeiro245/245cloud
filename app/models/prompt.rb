@@ -36,7 +36,7 @@ class Prompt
       # 'app/views/home/_hatopoppo.html.slim'
 
       # controller
-      'app/controllers/users_controller.rb',
+      'app/controllers/users_controller.rb'
 
       # model
 

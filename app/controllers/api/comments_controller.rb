@@ -2,15 +2,15 @@ class Api::CommentsController < ApplicationController
   def download
     if params[:page].present?
       page = params[:page].to_i
-      from = (page - 1) * 1000 + 1 
-      to   = from + 999 
+      from = ((page - 1) * 1000) + 1
+      to   = from + 999
       range = from.upto(to).to_a
       comments = Comment.where(id: range)
     else
       comments = Comment.all.order('id desc').limit(1000)
-    end 
+    end
     render json: comments.to_json
-  end 
+  end
 
   def index
     parent_id = params[:room_id] || nil
