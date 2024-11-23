@@ -31,6 +31,9 @@ Rails.application.routes.draw do
   get '/musics/:provider/:key/:key2', to: 'musics#index'
 
   namespace :api do
+    get '/workloads/download', to: 'workloads#download'
+    get '/comments/download', to: 'comments#download'
+
     get '/complete', to: 'workloads#complete'
     get '/users/:user_id/workloads', to: 'workloads#index'
     resources :workloads, only: [:index, :create]
