@@ -23,18 +23,6 @@ Rails.application.configure do
     env.cache = ActiveSupport::Cache.lookup_store(:null_store)
   end
 
-  # ファイル監視設定
-  config.file_watcher = ActiveSupport::EventedFileUpdateChecker
-
-  # Live Reload設定
-  config.middleware.insert_after ActionDispatch::Static, Rack::LiveReload,
-                                 min_delay: 0.5,
-                                 max_delay: 10,
-                                 pure_js: true,
-                                 host: 'localhost',
-                                 port: '35729',
-                                 ignore: [/.map$/]
-
   # その他の既存設定は残したまま...
   config.active_storage.service = :local
   config.action_mailer.raise_delivery_errors = false
