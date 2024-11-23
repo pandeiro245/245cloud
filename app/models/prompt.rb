@@ -1,6 +1,6 @@
 class Prompt
   def goal
-    'https://focus.timecrowd.net/ が表示されるようにしたい'
+    '/users.json でUserモデルの全データがダウンロードできるようにしたい'
   end
 
   def codes
@@ -13,26 +13,33 @@ class Prompt
 
   def paths
     [
-      'Gemfile',
+      # Basic
+      # 'Gemfile',
 
       # server
       # 'server.sh',
       # 'stop.sh',
       # 'restart.sh',
-      'config/puma.rb',
-      'config/application.rb',
+      # 'config/puma.rb',
+      # 'config/application.rb',
       # 'config/environments/production.rb',
-      'config/environments/development.rb',
+      # 'config/environments/development.rb',
 
       # js
       # 'config/importmap.rb',
       # 'package.json',
       # 'app/javascript/controllers/index.js',
-      'app/javascript/controllers/timer_controller.js'
+      # 'app/javascript/controllers/timer_controller.js'
 
       # view
       # 'app/views/home/_footer.html.slim'
       # 'app/views/home/_hatopoppo.html.slim'
+
+      # controller
+      'app/controllers/users_controller.rb'
+
+      # model
+
     ]
   end
 end

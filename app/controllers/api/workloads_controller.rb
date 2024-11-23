@@ -1,4 +1,17 @@
 class Api::WorkloadsController < ApplicationController
+  def download
+    if params[:page].present?
+      page = params[:page].to_i
+      from = ((page - 1) * 1000) + 1
+      to   = from + 999
+      range = from.upto(to).to_a
+      workloads = Workload.where(id: range)
+    else
+      workloads = Workload.order('id desc').limit(1000)
+    end
+    render json: workloads.to_json
+  end
+
   def index
     type = params[:type]
     limit = params[:limit] || 48
