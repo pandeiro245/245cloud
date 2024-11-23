@@ -4,7 +4,7 @@ Rails.application.configure do
   # 基本設定
   config.enable_reloading = false
   config.eager_load = true
-  config.consider_all_requests_local = true
+  config.consider_all_requests_local = false
   config.action_controller.perform_caching = true
 
   # アセット設定
@@ -66,8 +66,6 @@ Rails.application.configure do
     'X-Content-Type-Options' => 'nosniff',
     'Strict-Transport-Security' => 'max-age=31536000; includeSubDomains'
   }
-
-  # ホスト設定
   config.hosts = nil
   config.host_authorization = { exclude: ->(_request) { true } }
 end
