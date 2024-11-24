@@ -1,28 +1,30 @@
 class Instance < ApplicationRecord
+  USER_IDENTIFIER_KEYS = %w[facebook_id discord_id twitter_id token].freeze
+
   def fetch_users
     data = fetch_json_from_api('users.json')
     data.each do |user_data|
-      process_record(user_data, User, find_by: [:id]) do |user, data|
+      process_record(user_data, User, find_keys: detect_user_key(user_data)) do |user, data|
         params = data.except('screen_name')
         user.update(params)
-        download_profile_image(user)
-      end
+        download_profile_image(user, data)
+      end if should_sync_user?(user_data)
     end
   end
 
   def fetch_workloads
     data = fetch_json_from_api('api/workloads/download.json')
-    data.each { |record| process_record(record, Workload, find_by: [:created_at, :user_id]) }
+    data.each { |record| process_record(record, Workload, find_keys: ['created_at', 'user_id']) }
   end
 
   def fetch_workloads_all
-    fetch_paginated_data('api/workloads/download.json', Workload, find_by: [:created_at, :user_id])
+    fetch_paginated_data('api/workloads/download.json', Workload, find_keys: ['created_at', 'user_id'])
   end
 
   def fetch_comments
     data = fetch_json_from_api('api/comments/download.json')
     data.each do |record|
-      process_record(record, Comment, find_by: [:created_at, :user_id]) do |comment, data|
+      process_record(record, Comment, find_keys: ['created_at', 'user_id']) do |comment, data|
         data = data.except('id')
         data.each { |key, val| comment.send("#{key}=", val) }
         comment.save!(validate: false)
@@ -31,13 +33,24 @@ class Instance < ApplicationRecord
   end
 
   def fetch_comments_all
-    fetch_paginated_data('api/comments/download.json', Comment, find_by: [:created_at, :user_id]) do |comment, data|
+    fetch_paginated_data('api/comments/download.json', Comment, find_keys: ['created_at', 'user_id']) do |comment, data|
       data.each { |key, val| comment.send("#{key}=", val) }
       comment.save!(validate: false)
     end
   end
 
   private
+
+  def should_sync_user?(user_data)
+    USER_IDENTIFIER_KEYS.any? { |key| user_data[key].present? }
+  end
+
+  def detect_user_key(user_data)
+    USER_IDENTIFIER_KEYS.each do |key|
+      return [key] if user_data[key].present?
+    end
+    ['id'] # フォールバック（通常は呼ばれない）
+  end
 
   def fetch_json_from_api(endpoint, params = {})
     query_params = { token: ENV.fetch('TOKEN', nil) }.merge(params)
@@ -47,24 +60,29 @@ class Instance < ApplicationRecord
     JSON.parse(json) unless json.blank?
   end
 
-  def process_record(record, model_class, find_by: [:id], custom_processing = nil)
-    Rails.logger.debug record['id']
-    
-    # find_byの条件を構築
-    conditions = find_by.each_with_object({}) do |attr, hash|
-      hash[attr] = record[attr.to_s]
+  def process_record(record, model_class, find_keys:, custom_processing: nil)
+    # recordが配列の場合（エラーレスポンス）の処理
+    if record.is_a?(Array)
+      Rails.logger.error "#{host} is invalid"
+      return
     end
     
-    instance = model_class.find_or_initialize_by(conditions)
+    Rails.logger.debug record['id']
+    
+    conditions = find_keys.each_with_object({}) do |key, hash|
+      hash[key.to_sym] = record[key]
+    end
+    
+    target_record = model_class.find_or_initialize_by(conditions)
     
     if custom_processing
-      custom_processing.call(instance, record)
+      custom_processing.call(target_record, record)
     else
-      instance.update(record)
+      target_record.update(record)
     end
   end
 
-  def fetch_paginated_data(endpoint, model_class, find_by: [:id], custom_processing = nil)
+  def fetch_paginated_data(endpoint, model_class, find_keys:, custom_processing: nil)
     page = 1
     loop do
       Rails.logger.debug { "page is #{page} #{model_class}.count is #{model_class.count}" }
@@ -72,14 +90,14 @@ class Instance < ApplicationRecord
       break unless data
 
       data.each do |record|
-        process_record(record, model_class, find_by: find_by, custom_processing: custom_processing)
+        process_record(record, model_class, find_keys: find_keys, custom_processing: custom_processing)
       end
       page += 1
     end
   end
 
-  def download_profile_image(user)
-    image_url = "https://#{host}/images/profile/#{user['id']}.jpg"
+  def download_profile_image(user, data)
+    image_url = "https://#{host}/images/profile/#{data['id']}.jpg"
     uri = URI.parse(image_url)
     file_path = "public/images/profile/#{user.id}.jpg"
 
