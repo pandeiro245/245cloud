@@ -1,13 +1,15 @@
+# app/models/instance.rb
+
 class Instance < ApplicationRecord
   USER_IDENTIFIER_KEYS = %w[facebook_id discord_id twitter_id token].freeze
 
   def fetch_users
     data = fetch_json_from_api('users.json')
     data.each do |user_data|
-      process_record(user_data, User, find_keys: detect_user_key(user_data)) do |user, data|
-        params = data.except('screen_name')
+      process_record(user_data, User, find_keys: detect_user_key(user_data)) do |user, api_data|
+        params = api_data.except('screen_name')
         user.update(params)
-        download_profile_image(user, data)
+        download_profile_image(user, api_data)
       end if should_sync_user?(user_data)
     end
   end
@@ -24,17 +26,17 @@ class Instance < ApplicationRecord
   def fetch_comments
     data = fetch_json_from_api('api/comments/download.json')
     data.each do |record|
-      process_record(record, Comment, find_keys: ['created_at', 'user_id']) do |comment, data|
-        data = data.except('id')
-        data.each { |key, val| comment.send("#{key}=", val) }
+      process_record(record, Comment, find_keys: ['created_at', 'user_id']) do |comment, api_data|
+        api_data = api_data.except('id')
+        api_data.each { |key, val| comment.send("#{key}=", val) }
         comment.save!(validate: false)
       end
     end
   end
 
   def fetch_comments_all
-    fetch_paginated_data('api/comments/download.json', Comment, find_keys: ['created_at', 'user_id']) do |comment, data|
-      data.each { |key, val| comment.send("#{key}=", val) }
+    fetch_paginated_data('api/comments/download.json', Comment, find_keys: ['created_at', 'user_id']) do |comment, api_data|
+      api_data.each { |key, val| comment.send("#{key}=", val) }
       comment.save!(validate: false)
     end
   end
@@ -61,7 +63,6 @@ class Instance < ApplicationRecord
   end
 
   def process_record(record, model_class, find_keys:, custom_processing: nil)
-    # recordが配列の場合（エラーレスポンス）の処理
     if record.is_a?(Array)
       Rails.logger.error "#{host} is invalid"
       return
