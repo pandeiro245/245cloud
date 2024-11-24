@@ -85,7 +85,7 @@ class Instance < ApplicationRecord
 
   def fetch_paginated_data(endpoint, model_class, find_keys:, custom_processing: nil, resume: nil)
     page = 1
-    page = (resume / 1000) + 1
+    page = (resume / 1000) + 1 if resume.present?
     loop do
       Rails.logger.debug { "page is #{page} #{model_class}.count is #{model_class.count}" }
       data = fetch_json_from_api(endpoint, { page: page })
