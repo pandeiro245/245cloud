@@ -30,20 +30,20 @@ if ENV.fetch("RAILS_ENV", "development") == "production"
     begin
       ssl_key_path = ENV.fetch('SSL_KEY_PATH')
       ssl_cert_path = ENV.fetch('SSL_CERT_PATH')
-      
+
       puts "Configuring SSL..."
       puts "Key path: #{ssl_key_path}"
       puts "Cert path: #{ssl_cert_path}"
-      
+
       if File.exist?(ssl_key_path) && File.exist?(ssl_cert_path)
         puts "SSL files exist and are readable"
         puts "Key file permissions: #{File.stat(ssl_key_path).mode.to_s(8)}"
         puts "Cert file permissions: #{File.stat(ssl_cert_path).mode.to_s(8)}"
-        
+
         # 8080と8443ポートを使用
         bind "tcp://0.0.0.0:8080"
         bind "ssl://0.0.0.0:8443?key=#{ssl_key_path}&cert=#{ssl_cert_path}&verify_mode=none"
-        
+
         puts "Port bindings complete (8080 and 8443)"
       else
         puts "ERROR: SSL certificate files not found"
@@ -51,15 +51,15 @@ if ENV.fetch("RAILS_ENV", "development") == "production"
         puts "Cert file exists: #{File.exist?(ssl_cert_path)}"
         raise PumaConfigError, "SSL certificate files not found"
       end
-    rescue KeyError => error
+    rescue KeyError => e
       puts "ERROR: Missing required SSL environment variables"
-      puts error.message
-      raise PumaConfigError, "Missing required SSL environment variables: #{error.message}"
-    rescue StandardError => error
+      puts e.message
+      raise PumaConfigError, "Missing required SSL environment variables: #{e.message}"
+    rescue StandardError => e
       puts "ERROR: Failed to configure SSL"
-      puts error.message
-      puts error.backtrace
-      raise PumaConfigError, "Failed to configure SSL: #{error.message}"
+      puts e.message
+      puts e.backtrace
+      raise PumaConfigError, "Failed to configure SSL: #{e.message}"
     end
   else
     puts "SSL is not enabled in production"
