@@ -1,10 +1,10 @@
 = link_to 'TOP', :root
 %hr
-= profile_image_tag @user, 200
+= profile_image_tag @user.id, 200
 %hr
 - @user.workloads.each do |workload|
-  - if workload.artwork_url.present?
-    = link_to image_tag(workload.artwork_url), workload.music_path
+  - if workload.artwork_url_from_music.present?
+    = link_to image_tag(workload.artwork_url_from_music), workload.music_path
   - else
     = link_to 'no image', workload.music_path
 

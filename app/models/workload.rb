@@ -1,8 +1,15 @@
 class Workload < ActiveRecord::Base
-  POMOTIME = 24.minutes
-  CHATTIME = 5.minutes
-  # POMOTIME = (0.1).minutes
-  # CHATTIME = (0.1).minutes
+  if Rails.env.production?
+    POMOTIME = 24.minutes
+    CHATTIME = 5.minutes
+  else
+    POMOTIME = 0.2.minutes
+    CHATTIME = 0.2.minutes
+  end
+
+  validate :music_key_presence_if_title_or_artwork_url_present
+
+  belongs_to :user
 
   before_save :set_music_key
 
@@ -14,22 +21,23 @@ class Workload < ActiveRecord::Base
   }
   scope :his, -> (user_id) {
     where(
-      user_id: user_id
+      user_id: user_id,
+      is_done: true
     )
   }
-  scope :bests, ->  { select(
-    '*, count(music_key) as music_key_count'
-  ).where.not(music_key: ''
-  ).group(:music_key).order(
-      'music_key_count DESC'
-    )
+  scope :bests, -> {
+    select(
+      'music_key, COUNT(music_key) AS music_key_count'
+    ).where.not(music_key: '')
+      .group(:music_key)
+      .order('music_key_count DESC')
   }
-  scope :best_listeners, -> (music_key) { select(
-    '*, count(user_id) as user_id_count'
-  ).where(music_key: music_key
-  ).group(:user_id).order(
-      'user_id_count DESC'
-    )
+  scope :best_listeners, -> (music_key) {
+    select(
+      'user_id, COUNT(user_id) AS user_id_count'
+    ).where(music_key: music_key)
+      .group(:user_id)
+      .order('user_id_count DESC')
   }
   scope :today, -> (created_at = nil) {
     to = created_at || Time.zone.now
@@ -72,22 +80,58 @@ class Workload < ActiveRecord::Base
     type ? public_send(type) : dones
   }
 
+  def hm
+    time = created_at.in_time_zone('Tokyo')
+    if time.to_date == Time.zone.now.to_date
+      time.strftime('%H:%M')
+    else
+      time.strftime('%m/%d %H:%M')
+    end
+  end
+
+  def will_reload_at
+    case user.status
+    when 'playing'
+      created_at + POMOTIME
+    when 'chatting'
+      created_at + POMOTIME + CHATTIME
+    else
+      nil
+    end
+  end
+
+  def playing?
+    created_at + POMOTIME > Time.zone.now
+  end
+
+  def chatting?
+    return false if playing?
+    created_at + POMOTIME + CHATTIME > Time.zone.now
+  end
+
+  def remain
+    (created_at + POMOTIME).to_i - Time.zone.now.to_i
+  end
+
   def self.find_or_start_by_user(user, _params = {})
     w = playings.his(user.id).first
     return w if w.present?
 
     params = {'user_id' => user.id}
-    %w(music_key title artwork_url).each do |key|
+    %w(title artwork_url).each do |key|
       if _params[key].present?
         params[key] = _params[key]
       end
+    end
+    if _params[:music_key].present?
+      params[:music_key] = "#{_params[:music_provider]}:#{_params[:music_key]}"
     end
     self.create!(params)
   end
 
   def set_music_key
     return nil if self.music_key.nil?
-    self.music_key = URI.decode(self.music_key)
+    self.music_key = URI.decode_www_form_component(self.music_key)
   end
 
   def to_done!
@@ -125,8 +169,12 @@ class Workload < ActiveRecord::Base
     scope.count + 1
   end
 
+  def music
+    @music ||= Music.new_from_key(music_key.split(':').first, music_key.split(':').last)
+  end
+
   def music_path
-    key = music_key.gsub(/:/, '/')
+    key = music_key.gsub(':', '/')
     "/musics/#{key}"
   end
 
@@ -134,8 +182,46 @@ class Workload < ActiveRecord::Base
     return unless music_key
     if music_key.match(/^mixcloud:/)
       puts music_key
-      self.music_key = URI.decode(self.music_key)
+      self.music_key = URI.decode_www_form_component(self.music_key)
       self.save!
+    end
+  end
+
+  def artwork_url_from_music
+    return nil if music.blank?
+    @artwork_url_from_music ||= music.artwork_url
+  end
+
+  def youtube_start
+    music.fetch if music.provider == 'youtube' && music.duration.blank?
+    music.duration - remain
+  end
+
+  def disp
+    return hm.to_s if created_at + POMOTIME + CHATTIME > Time.zone.now
+    "#{hm} #{number}回目(週#{weekly_number}回)"
+  end
+
+  def finish_playing_time
+    (created_at + POMOTIME).to_i * 1000
+  end
+
+  def finish_chatting_time
+    (created_at + POMOTIME + CHATTIME).to_i * 1000
+  end
+
+  def self.for1027
+    Workload.where(music_key: nil).where.not(artwork_url: nil).find_each do |w|
+      w.music_key = Workload.where.not(music_key: nil).where(artwork_url: w.artwork_url).limit(1).first.music_key
+      w.save!
+    end
+  end
+
+  private
+
+  def music_key_presence_if_title_or_artwork_url_present
+    if (title.present? || artwork_url.present?) && music_key.blank?
+      errors.add(:music_key, ' is required if either title or artwork_url is present')
     end
   end
 end

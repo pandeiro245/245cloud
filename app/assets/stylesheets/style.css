@@ -4,8 +4,21 @@ body {
   overflow-x:hidden;
 }
 
-h2.status, hr.status {
-  background: repeat-x url('https://ruffnote.com/attachments/24944')
+.workloads_list {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding-left: 10px;
+}
+
+.title {
+  display: block;
+  background: repeat-x url('/images/ruffnote/24944.png') !important;
+  margin-top: 10px;
+}
+
+.title h2{
+  margin-top: -3px;
 }
 
 hr.status{
@@ -129,7 +142,6 @@ input#track {
 .tooltip.bottom .tooltip-arrow {border-bottom-color: #6d4922;}
 
 .countdown2 {
-  display: none;
   background: #ff9c9c;
   padding: 3px;
   border-radius: 35px;
@@ -240,22 +252,6 @@ table.comments .icon{
   margin-bottom: 8px;
 }
 
-/* 検索結果一覧の左右枠に余裕がないので少し隙間をあける */
-.scaffold.row {
-  margin-left: 0px;
-  margin-right: 0px;
-}
-#nc {
-  margin-left: 8px;
-  margin-right: 8px;
-}
-
-/* タイトル部の左右は現状維持 */
-#header.scaffold.row {
-  margin-left: -8px;
-  margin-right: -8px;
-}
-
 /* 再生中一覧の枠の左側の隙間は現状を維持。右側にちょっと余裕がないので少し隙間をあける */
 #doing, #chatting, #done, #you {
   margin-left: -8px;
@@ -268,3 +264,27 @@ table.comments .icon{
   display: block;
   margin: 0 auto;
 }
+
+div[data-controller="workload-countdown"].workload_countdown,
+div[data-controller="workload-countdown"].workload_countdown a,
+div[data-controller="workload-countdown"].workload_countdown:any-link {
+  color: rgb(178, 178, 178) !important;  /* 親要素と同じ色 */
+  text-decoration: none !important;
+}
+
+.disp {
+  color: rgb(178, 178, 178);
+}
+
+.disp > div {
+  color: rgb(178, 178, 178);
+}
+
+.workload_countdown {
+  color: inherit;
+}
+
+
+
+
+

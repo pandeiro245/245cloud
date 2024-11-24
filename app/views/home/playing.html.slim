@@ -1,0 +1,5 @@
+= render 'header'
+= render 'playing'
+javascript:
+  window.will_reload_at = #{current_user.playing.will_reload_at.to_i * 1000}
+

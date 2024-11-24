@@ -1,0 +1,33 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will download a prebuilt Ruby version, install dependencies, and  run linters
+name: Rails - Install dependencies and run linters
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+jobs:
+  run-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Ruby and install gems
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2.2
+          bundler-cache: true
+      # Add or Replace any other security checks here
+      - name: Run security checks
+        run: |
+          bundle exec bundler-audit --update
+          bundle exec brakeman -q -w2
+      # Add or Replace any other Linters here
+      - name: Run linters
+        run: |
+          bundle exec rubocop --parallel

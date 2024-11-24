@@ -1,6 +1,8 @@
 class UsersController < ApplicationController
   def index
-    @users = Workload.group(:user_id).count.to_a.sort_by{|u| u.last}.reverse
+    # @users = Workload.group(:user_id).count.to_a.sort_by{|u| u.last}.reverse
+    raise if ENV['TOKEN'].blank? || params[:token].blank? || params[:token] != ENV['TOKEN']
+    render json: User.all.to_json
   end
 
   def show
@@ -49,7 +51,7 @@ class UsersController < ApplicationController
     end
     user.twitter_id ||= twitter_id
     user.save!
-    `wget -O public/images/profile/#{user.id}.jpg #{auth_hash[:info][:image]}`
+    user.save_image_from_twitter(auth_hash)
     sign_in(user)
   end
 

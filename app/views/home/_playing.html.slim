@@ -1,0 +1,16 @@
+#contents.scaffold.row
+  .countdown2
+    .countdown
+      img src="/images/ruffnote/24966.png" /
+      span.time data-controller="timer" data-timer-target="time" 24:00
+  br/
+
+- if current_user.playing.music_key.present?
+  - case current_user.playing.music.provider
+  - when 'youtube'
+    = render 'playing_youtube'
+  - when 'mixcloud'
+    = render 'playing_mixcloud'
+  - when 'soundcloud'
+    = render 'playing_soundcloud'
+

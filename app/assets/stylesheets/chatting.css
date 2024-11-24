@@ -1,0 +1,236 @@
+/* ベース設定 */
+.chatting {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  color: #333;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  text-align: center;
+}
+
+/* ヘッダー部分 */
+.chatting .header-container {
+  width: 100%;
+  background-color: #c9e9f4;
+  border-radius: 15px;
+  padding: 20px 0;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.chatting .header-container img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* コンテンツラッパー */
+.chatting .content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;  /* 間隔を縮小 */
+}
+
+/* リダイレクトリンク */
+.chatting .redirect-link {
+  display: inline-block;
+  padding: 12px 24px;
+  background-color: #ff9fb6;
+  color: white;
+  text-decoration: none;
+  border-radius: 25px;
+  margin: 5px 0;  /* マージンを縮小 */
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.chatting .redirect-link:hover {
+  background-color: #ff8ca6;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255,159,182,0.3);
+}
+
+/* メッセージテキスト */
+.chatting .message-text,
+.chatting .style-text {
+  margin: 10px 0;  /* マージンを縮小 */
+  font-size: 16px;
+  color: #666;
+  line-height: 1.6;
+  text-align: center;
+}
+
+/* カウントダウン部分 */
+.chatting .countdown-section {
+  width: 100%;
+  text-align: center;
+  margin: 10px 0;  /* マージンを縮小 */
+  position: relative;
+}
+
+.chatting .timer-display {
+  background-color: white;
+  padding: 10px;  /* パディングを縮小 */
+  margin: 10px auto;  /* マージンを縮小 */
+  width: 200px;
+  text-align: center;
+  position: relative;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.chatting .chatting-countdown-time {
+  display: block;
+  font-size: 4em;
+  color: #ff6b6b;
+  font-weight: bold;
+  font-family: 'Arial', sans-serif;
+  line-height: 1;
+  text-align: center;
+  padding: 5px 0;  /* パディングを縮小 */
+  background: transparent;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* コメントセクション */
+.chatting .comment-section {
+  width: 100%;
+  max-width: 600px;
+  margin: 15px auto;  /* マージンを縮小 */
+}
+
+.chatting .comment-form {
+  margin: 15px 0;  /* マージンを縮小 */
+}
+
+.chatting .input-wrapper {
+  width: 100%;
+  position: relative;
+}
+
+.chatting .comment-input {
+  width: 100%;
+  padding: 15px 20px;
+  border: 2px solid #ffcdd2;
+  border-radius: 25px;
+  font-size: 16px;
+  background-color: white;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.chatting .comment-input:focus {
+  outline: none;
+  border-color: #ff9fb6;
+  box-shadow: 0 0 0 3px rgba(255,159,182,0.2);
+}
+
+/* コメント表示エリア */
+.chatting .comments-container {
+  margin-top: 15px;  /* マージンを縮小 */
+}
+
+.chatting .comment-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 15px;
+  background-color: white;
+  border-radius: 12px;
+  margin: 10px 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  text-align: left;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.chatting .comment-item img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.chatting .comment-body {
+  flex: 1;
+  line-height: 1.5;
+  color: #4a5568;
+  padding-top: 8px;
+  word-break: break-word;
+}
+
+/* アニメーション */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* アクセシビリティ */
+.chatting .comment-input::placeholder {
+  color: #999;
+}
+
+.chatting .redirect-link:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255,159,182,0.4);
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .chatting {
+    padding: 10px;
+  }
+
+  .chatting .timer-display {
+    width: 180px;
+    padding: 8px;  /* モバイルでさらに縮小 */
+  }
+
+  .chatting .chatting-countdown-time {
+    font-size: 3.5em;
+  }
+
+  .chatting .redirect-link {
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+
+  .chatting .message-text,
+  .chatting .style-text {
+    font-size: 14px;
+    padding: 0 10px;
+  }
+
+  .chatting .comment-input {
+    padding: 12px 15px;
+    font-size: 14px;
+  }
+
+  .chatting .comment-item {
+    padding: 12px;
+  }
+}
+
+/* プリント用スタイル */
+@media print {
+  .chatting {
+    padding: 0;
+  }
+
+  .chatting .redirect-link {
+    display: none;
+  }
+
+  .chatting .comment-form {
+    display: none;
+  }
+}

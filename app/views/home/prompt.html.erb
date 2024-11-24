@@ -1,0 +1,34 @@
+<pre style="text-aligh: left;">【重要事項】
+・すべて日本語で回答お願いします
+・変更するコードは一部ではなくファイル全体のコードを指定してください(よく「その他の設定」というように省略されがちですが全部上書きするので省略しないでください
+
+【前提条件】
+Rails8+Hotwireでポモドーロ・テクニックアプリを開発しています。 
+サーバはAmazonLinux2024でnginxなどを使わずにpumaのみで動いています。
+SSL はlet's encryptです。
+focusサーバは　https://focus.245cloud.com/ です
+nextサーバ 　https://next.245cloud.com/ です
+
+productionモード
+ディレクトリはどちらも /home/ec2-user/stable
+で下記疎通ができるのが正常状態です。
+curl -k https://localhost:443 
+
+devepmentモード
+AWS Cloud9で動かしているので8080ポートです
+
+
+
+【依頼事項】
+得たいこととしては「<%= @prompt.goal %>」です。
+
+下記に現状のコードを共有しますが変更する場合は一部ではなくファイル全体のコードを指定してください。
+ただし、コードのディレクトリはソース内のコメントではなくコード記法のヘッダに記載してください
+
+<%- @prompt.codes.each do |path, code| %>
+======================
+<%= path %> のコードは下記の通り
+
+<%= code %>
+<% end %>
+</pre>

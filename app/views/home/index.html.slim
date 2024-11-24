@@ -1,0 +1,22 @@
+= render 'social_button'
+
+= render 'header'
+= render 'news'
+
+- if current_user.present?
+  = render 'heatmap'
+  = render 'start_menu'
+- else
+  = render 'login'
+
+= render 'playings'
+= render 'chattings'
+= render 'done'
+
+- if current_user.present?
+  = render 'you'
+
+= render 'search'
+= render 'footer'
+= render 'hatopoppo'
+

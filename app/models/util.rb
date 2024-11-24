@@ -16,5 +16,28 @@ class Util
     end
     puts 'done'
   end
+
+  def export
+    models.each do |model|
+      File.write("tmp/#{model}.json", model.all.to_json)
+    end
+  end
+
+  def import
+    models.each do |model|
+      JSON.parse(File.open("tmp/#{model}.json").read).each do |data|
+        item = model.find_or_initialize_by(id: data['id'])
+        data.each do |key, val|
+          next if key == 'id'
+          item.send("#{key}=", val)
+        end
+        item.save(validate: false)
+      end
+    end
+  end
+
+  def models
+    [User, Comment, Workload, AccessLog]
+  end
 end
 
