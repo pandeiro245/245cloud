@@ -22,8 +22,8 @@ comment.save!(validate: false)
 
 {
   'next.245cloud.com' => {},
-  'focus.245cloud.com' => {},
-}.each do |host, hash|
+  'focus.245cloud.com' => {}
+}.each do |host, _hash|
   instance = Instance.find_or_initialize_by(
     host: host
   )
