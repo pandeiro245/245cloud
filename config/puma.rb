@@ -3,6 +3,9 @@ require 'puma/minissl'
 require 'dotenv'
 Dotenv.load
 
+# カスタム例外クラスの定義
+class PumaConfigError < StandardError; end
+
 # 基本設定
 environment ENV.fetch("RAILS_ENV", "development")
 app_dir = ENV.fetch("APP_DIR", Dir.pwd)
@@ -27,36 +30,36 @@ if ENV.fetch("RAILS_ENV", "development") == "production"
     begin
       ssl_key_path = ENV.fetch('SSL_KEY_PATH')
       ssl_cert_path = ENV.fetch('SSL_CERT_PATH')
-
+      
       puts "Configuring SSL..."
       puts "Key path: #{ssl_key_path}"
       puts "Cert path: #{ssl_cert_path}"
-
+      
       if File.exist?(ssl_key_path) && File.exist?(ssl_cert_path)
         puts "SSL files exist and are readable"
         puts "Key file permissions: #{File.stat(ssl_key_path).mode.to_s(8)}"
         puts "Cert file permissions: #{File.stat(ssl_cert_path).mode.to_s(8)}"
-
+        
         # 8080と8443ポートを使用
         bind "tcp://0.0.0.0:8080"
         bind "ssl://0.0.0.0:8443?key=#{ssl_key_path}&cert=#{ssl_cert_path}&verify_mode=none"
-
+        
         puts "Port bindings complete (8080 and 8443)"
       else
         puts "ERROR: SSL certificate files not found"
         puts "Key file exists: #{File.exist?(ssl_key_path)}"
         puts "Cert file exists: #{File.exist?(ssl_cert_path)}"
-        exit 1
+        raise PumaConfigError, "SSL certificate files not found"
       end
-    rescue KeyError => e
+    rescue KeyError => error
       puts "ERROR: Missing required SSL environment variables"
-      puts e.message
-      exit 1
-    rescue StandardError => e
+      puts error.message
+      raise PumaConfigError, "Missing required SSL environment variables: #{error.message}"
+    rescue StandardError => error
       puts "ERROR: Failed to configure SSL"
-      puts e.message
-      puts e.backtrace
-      exit 1
+      puts error.message
+      puts error.backtrace
+      raise PumaConfigError, "Failed to configure SSL: #{error.message}"
     end
   else
     puts "SSL is not enabled in production"
@@ -89,9 +92,9 @@ on_worker_boot do
 end
 
 # エラーハンドリング
-lowlevel_error_handler do |e|
-  puts "Low-level error: #{e.message}"
-  puts e.backtrace.join("\n")
+lowlevel_error_handler do |error|
+  puts "Low-level error: #{error.message}"
+  puts error.backtrace.join("\n")
   [500, {}, ["An error has occurred. Please try again later.\n"]]
 end
 
