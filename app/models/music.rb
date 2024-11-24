@@ -8,7 +8,7 @@ class Music < ApplicationRecord
       )
       workload = Workload.find_by(music_key: music_key)
       music.title = workload.title
-      music.artwork_url= workload.artwork_url
+      music.artwork_url = workload.artwork_url
       music.save!
     end
   end
