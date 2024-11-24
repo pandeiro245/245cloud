@@ -8,7 +8,7 @@ class Instance < ApplicationRecord
   end
 
   def self.actives
-    all.select{|i| i.host != ENV['DOMAIN']}
+    all.select { |i| i.host != ENV['DOMAIN'] }
   end
 
   def fetch
