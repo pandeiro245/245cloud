@@ -20,7 +20,7 @@ class Prompt
       'server.sh',
       # 'stop.sh',
       # 'restart.sh',
-      'config/puma.rb',
+      'config/puma.rb'
       # 'config/application.rb',
       # 'config/environments/production.rb',
       # 'config/environments/development.rb',
