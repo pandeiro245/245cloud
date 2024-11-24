@@ -1,6 +1,6 @@
 class Prompt
   def goal
-    '/users.json でUserモデルの全データがダウンロードできるようにしたい'
+    'server.sh を実行したときのこのエラーを解消したい：'
   end
 
   def codes
@@ -17,10 +17,10 @@ class Prompt
       # 'Gemfile',
 
       # server
-      # 'server.sh',
+      'server.sh',
       # 'stop.sh',
       # 'restart.sh',
-      # 'config/puma.rb',
+      'config/puma.rb',
       # 'config/application.rb',
       # 'config/environments/production.rb',
       # 'config/environments/development.rb',
@@ -36,7 +36,7 @@ class Prompt
       # 'app/views/home/_hatopoppo.html.slim'
 
       # controller
-      'app/controllers/users_controller.rb'
+      # 'app/controllers/users_controller.rb'
 
       # model
 

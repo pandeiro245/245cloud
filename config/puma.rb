@@ -1,5 +1,3 @@
-# config/puma.rb
-
 require 'puma/minissl'
 require 'dotenv'
 Dotenv.load
@@ -14,39 +12,60 @@ threads_count = ENV.fetch("RAILS_MAX_THREADS", 3).to_i
 threads threads_count, threads_count
 
 # 環境変数の表示
-puts  "=== Environment Variables ==="
-puts  { "RAILS_ENV: #{ENV.fetch('RAILS_ENV', nil)}" }
-puts  { "PORT: #{ENV.fetch('PORT', nil)}" }
-puts  { "HTTP_PORT: #{ENV.fetch('HTTP_PORT', nil)}" }
-puts  { "HTTPS_PORT: #{ENV.fetch('HTTPS_PORT', nil)}" }
-puts  { "APP_DIR: #{ENV.fetch('APP_DIR', nil)}" }
-puts  { "DOMAIN: #{ENV.fetch('DOMAIN', nil)}" }
-puts  { "USE_SSL: #{ENV.fetch('USE_SSL', nil)}" }
-puts  "=========================="
+puts "=== Environment Variables ==="
+puts "RAILS_ENV: #{ENV.fetch('RAILS_ENV', 'not set')}"
+puts "PORT: #{ENV.fetch('PORT', 'not set')}"
+puts "HTTP_PORT: #{ENV.fetch('HTTP_PORT', 'not set')}"
+puts "HTTPS_PORT: #{ENV.fetch('HTTPS_PORT', 'not set')}"
+puts "APP_DIR: #{ENV.fetch('APP_DIR', 'not set')}"
+puts "DOMAIN: #{ENV.fetch('DOMAIN', 'not set')}"
+puts "USE_SSL: #{ENV.fetch('USE_SSL', 'not set')}"
+puts "=========================="
 
-# HTTPポートの設定
-port ENV.fetch('HTTP_PORT', '80')
+# HTTPポートの設定（SSLが無効の場合のみ）
+unless ENV['USE_SSL'] == 'true'
+  port ENV.fetch('HTTP_PORT', '80')
+end
 
 # HTTPSポートの設定
 puts "Checking SSL configuration..."
 if ENV['USE_SSL'] == 'true'
-  ssl_key_path = ENV.fetch('SSL_KEY_PATH')
-  ssl_cert_path = ENV.fetch('SSL_CERT_PATH')
-
-  puts "Configuring SSL..."
-  puts { "Key path: #{ssl_key_path}" }
-  puts { "Cert path: #{ssl_cert_path}" }
-
-  ssl_bind '0.0.0.0',
-           ENV.fetch('HTTPS_PORT', '443'),
-           {
-             key: ssl_key_path,
-             cert: ssl_cert_path,
-             verify_mode: 'none',
-             no_tlsv1: true,
-             no_tlsv1_1: true
-           }
-  puts "SSL configuration complete"
+  begin
+    ssl_key_path = ENV.fetch('SSL_KEY_PATH')
+    ssl_cert_path = ENV.fetch('SSL_CERT_PATH')
+    
+    puts "Configuring SSL..."
+    puts "Key path: #{ssl_key_path}"
+    puts "Cert path: #{ssl_cert_path}"
+    
+    if File.exist?(ssl_key_path) && File.exist?(ssl_cert_path)
+      ssl_bind '0.0.0.0',
+               ENV.fetch('HTTPS_PORT', '443'),
+               {
+                 key: ssl_key_path,
+                 cert: ssl_cert_path,
+                 verify_mode: 'none',
+                 no_tlsv1: true,
+                 no_tlsv1_1: true,
+                 ssl_version: 'TLSv1_2'
+               }
+      puts "SSL configuration complete"
+    else
+      puts "ERROR: SSL certificate files not found"
+      puts "Key file exists: #{File.exist?(ssl_key_path)}"
+      puts "Cert file exists: #{File.exist?(ssl_cert_path)}"
+      exit 1
+    end
+  rescue KeyError => e
+    puts "ERROR: Missing required SSL environment variables"
+    puts e.message
+    exit 1
+  rescue => e
+    puts "ERROR: Failed to configure SSL"
+    puts e.message
+    puts e.backtrace
+    exit 1
+  end
 else
   puts "SSL is not enabled"
 end
@@ -70,7 +89,4 @@ end
 
 # エラーハンドリング
 lowlevel_error_handler do |e|
-  puts { "Low-level error: #{e.message}" }
-  puts e.backtrace.join("\n")
-  [500, {}, ["An error has occurred. Please try again later.\n"]]
-end
+  puts "Low-level error: #
