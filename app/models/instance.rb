@@ -2,13 +2,11 @@ class Instance < ApplicationRecord
   USER_IDENTIFIER_KEYS = %w[facebook_id discord_id twitter_id token].freeze
 
   def self.fetch
-    actives.each do |instance|
-      instance.fetch
-    end
+    actives.each(&:fetch)
   end
 
   def self.actives
-    all.select { |i| i.host != ENV['DOMAIN'] }
+    all.reject { |i| i.host == ENV['DOMAIN'] }
   end
 
   def fetch
