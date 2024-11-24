@@ -19,8 +19,8 @@ class Instance < ApplicationRecord
     data.each { |record| process_record(record, Workload, find_keys: %w[created_at user_id]) }
   end
 
-  def fetch_workloads_all
-    fetch_paginated_data('api/workloads/download.json', Workload, find_keys: %w[created_at user_id])
+  def fetch_workloads_all(resume: nil)
+    fetch_paginated_data('api/workloads/download.json', Workload, find_keys: %w[created_at user_id], resume: resume)
   end
 
   def fetch_comments
@@ -83,8 +83,9 @@ class Instance < ApplicationRecord
     end
   end
 
-  def fetch_paginated_data(endpoint, model_class, find_keys:, custom_processing: nil)
+  def fetch_paginated_data(endpoint, model_class, find_keys:, custom_processing: nil, resume: nil)
     page = 1
+    page = (resume / 1000) + 1 if resume.present?
     loop do
       Rails.logger.debug { "page is #{page} #{model_class}.count is #{model_class.count}" }
       data = fetch_json_from_api(endpoint, { page: page })

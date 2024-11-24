@@ -5,6 +5,6 @@ class MusicsController < ApplicationController
     key = "/#{key}/#{params[:key2]}/" if params[:key2] # mixcloud
     key = URI.encode_www_form_component(key)
     @music = Music.new_from_key(provider, key)
-    @music.fetch if @music.artwork_url.blank?
+    @music.fetch if @music.artwork_url.blank? && @music.provider == 'youtube'
   end
 end

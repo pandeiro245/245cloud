@@ -1,4 +1,15 @@
 class Music < ApplicationRecord
+  def self.fetch_soundcloud_from_workloads
+    Workload.where.not(music_key: nil).map { |m| m.music_key }.uniq.grep(/soundcloud:/).each do |music_key|
+      music = Music.find_or_initialize_by(
+        provider: 'soundcoud',
+        key: music_key
+      )
+      music.title = Workload.find_by(music_key: music_key).title
+      music.save!
+    end
+  end
+
   def self.new_from_key(provider, key)
     Music.find_or_initialize_by(provider: provider, key: key)
   end
