@@ -8,7 +8,15 @@ Rails8+Hotwireでポモドーロ・テクニックアプリを開発していま
 SSL はlet's encryptです。
 focusサーバは　https://focus.245cloud.com/ です
 nextサーバ 　https://next.245cloud.com/ です
-ディレクトリはどちらも /home/ec2-user/stable でポートはどちらも8443ポート経由で443ポートのSSLです。
+
+productionモード
+ディレクトリはどちらも /home/ec2-user/stable
+で下記疎通ができるのが正常状態です。
+curl -k https://localhost:443 
+
+devepmentモード
+AWS Cloud9で動かしているので8080ポートです
+
 
 
 【依頼事項】
