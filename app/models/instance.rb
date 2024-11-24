@@ -90,7 +90,9 @@ class Instance < ApplicationRecord
     if custom_processing
       custom_processing.call(target_record, record)
     else
-      target_record.update(record)
+      # idを除外してからupdateを実行
+      record_without_id = record.except('id')
+      target_record.update(record_without_id)
     end
   end
 
