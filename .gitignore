@@ -37,6 +37,7 @@
 .c9
 .env
 public/images/profile
+!/public/images/profile/.keep
 public/images/fb_profile
 
 

@@ -19,3 +19,15 @@ music.save!
 comment = Comment.find_or_initialize_by(id: 1)
 comment.body = 'いつもの部屋'
 comment.save!(validate: false)
+
+{
+  'next.245cloud.com' => {},
+  'focus.245cloud.com' => {}
+}.each_key do |host|
+  instance = Instance.find_or_initialize_by(
+    host: host
+  )
+  instance.db_service = 'sqlite'
+  instance.status = 'active'
+  instance.save!
+end

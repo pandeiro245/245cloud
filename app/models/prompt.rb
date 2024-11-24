@@ -1,6 +1,6 @@
 class Prompt
   def goal
-    'server.sh を実行したときのこのエラーを解消したい：'
+    'Instanceモデルの各メソッドの共通部分を共通メソッド化'
   end
 
   def codes
@@ -17,10 +17,10 @@ class Prompt
       # 'Gemfile',
 
       # server
-      'server.sh',
+      # 'server.sh',
       # 'stop.sh',
       # 'restart.sh',
-      'config/puma.rb'
+      # 'config/puma.rb'
       # 'config/application.rb',
       # 'config/environments/production.rb',
       # 'config/environments/development.rb',
@@ -39,6 +39,7 @@ class Prompt
       # 'app/controllers/users_controller.rb'
 
       # model
+      'app/models/instance.rb'
 
     ]
   end
