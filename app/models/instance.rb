@@ -1,6 +1,17 @@
 class Instance < ApplicationRecord
   USER_IDENTIFIER_KEYS = %w[facebook_id discord_id twitter_id token].freeze
 
+  def self.fetch
+    all.each do |instance|
+      instance.fetch
+    end
+  end
+
+  def fetch
+    fetch_workloads
+    fetch_comments
+  end
+
   def fetch_users
     data = fetch_json_from_api('users.json')
     data.each do |user_data|

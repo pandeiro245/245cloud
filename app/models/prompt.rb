@@ -1,6 +1,6 @@
 class Prompt
   def goal
-    'Instanceモデルの各メソッドの共通部分を共通メソッド化'
+    'Instance.fetchを実行してデータを取得、保存するときにidは外して保存したい（id以外をkeyしているため）'
   end
 
   def codes
