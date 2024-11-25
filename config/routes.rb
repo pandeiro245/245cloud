@@ -25,6 +25,7 @@ Rails.application.routes.draw do
   get '/redirect', to: 'home#redirect'
   get '/playing', to: 'home#playing'
   get '/chatting', to: 'home#chatting'
+  get '/error', to: 'home#error'
 
   get '/:id', to: 'users#show'
   get '/musics/:provider/:key', to: 'musics#index'

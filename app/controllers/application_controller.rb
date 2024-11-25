@@ -3,14 +3,41 @@ class ApplicationController < ActionController::Base
   allow_browser versions: :modern
 
   before_action :create_access_log
+  rescue_from StandardError, with: :handle_error
 
   private
 
   def create_access_log
     AccessLog.create!(
       user_id: current_user&.id,
-      url: request.url
+      url: request.url,
+      params: params.to_unsafe_h.except('password', 'token', 'auth_token'),
+      user_agent: request.user_agent,
+      ip_address: request.remote_ip,
+      session_id: session.id,
+      request_method: request.method
     )
+  end
+
+  # その他のメソッドは変更なし
+  def handle_error(exception)
+    ErrorLog.create!(
+      error_class: exception.class.name,
+      error_message: exception.message,
+      backtrace: exception.backtrace&.join("\n"),
+      user_id: current_user&.id,
+      url: request.url,
+      params: sanitize_params(params),
+      user_agent: request.user_agent,
+      ip_address: request.remote_ip,
+      session_id: session.id,
+      request_method: request.method
+    )
+    raise exception
+  end
+
+  def sanitize_params(params)
+    params.to_unsafe_h.except('password', 'token', 'auth_token')
   end
 
   def store_music_session(provider, key)

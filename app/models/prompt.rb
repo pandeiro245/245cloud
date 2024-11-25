@@ -1,6 +1,6 @@
 class Prompt
   def goal
-    'Instanceモデルの各メソッドの共通部分を共通メソッド化'
+    '24分たってリロードされたときにまだサーバ側はplayingになっていてエラーになるのを解消したい（リロードすると一致するので正常にChattingにリダイレクトされる） '
   end
 
   def codes
@@ -29,18 +29,22 @@ class Prompt
       # 'config/importmap.rb',
       # 'package.json',
       # 'app/javascript/controllers/index.js',
-      # 'app/javascript/controllers/timer_controller.js'
+      'app/javascript/controllers/timer_controller.js',
 
       # view
-      # 'app/views/home/_footer.html.slim'
-      # 'app/views/home/_hatopoppo.html.slim'
+      # 'app/views/home/index.html.slim',
+      # 'app/views/home/_footer.html.slim',
+      # 'app/views/home/_hatopoppo.html.slim',
 
       # controller
+      # 'app/controllers/application_controller.rb',
       # 'app/controllers/users_controller.rb'
+      'app/controllers/home_controller.rb',
 
       # model
-      'app/models/instance.rb'
-
+      # 'app/models/instance.rb'
+      # 'app/models/access_log.rb'
+      'app/models/workload.rb'
     ]
   end
 end

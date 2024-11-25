@@ -1,6 +1,19 @@
 class Instance < ApplicationRecord
   USER_IDENTIFIER_KEYS = %w[facebook_id discord_id twitter_id token].freeze
 
+  def self.fetch
+    actives.each(&:fetch)
+  end
+
+  def self.actives
+    all.reject { |i| i.host == ENV['DOMAIN'] }
+  end
+
+  def fetch
+    fetch_workloads
+    fetch_comments
+  end
+
   def fetch_users
     data = fetch_json_from_api('users.json')
     data.each do |user_data|
@@ -79,7 +92,9 @@ class Instance < ApplicationRecord
     if custom_processing
       custom_processing.call(target_record, record)
     else
-      target_record.update(record)
+      # idを除外してからupdateを実行
+      record_without_id = record.except('id')
+      target_record.update(record_without_id)
     end
   end
 
