@@ -33,5 +33,9 @@ class HomeController < ApplicationController
   def prompt
     @prompt = Prompt.new
   end
+
+  def error
+    raise 'this is error sample'
+  end
 end
 

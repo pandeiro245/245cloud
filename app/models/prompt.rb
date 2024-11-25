@@ -1,6 +1,6 @@
 class Prompt
   def goal
-    'Instance.fetchを実行してデータを取得、保存するときにidは外して保存したい（id以外をkeyしているため）'
+    '500エラーになった時と対象ユーザと閲覧ページと操作を保存して検証したい'
   end
 
   def codes
@@ -14,7 +14,7 @@ class Prompt
   def paths
     [
       # Basic
-      # 'Gemfile',
+      'Gemfile',
 
       # server
       # 'server.sh',
@@ -32,15 +32,18 @@ class Prompt
       # 'app/javascript/controllers/timer_controller.js'
 
       # view
-      # 'app/views/home/_footer.html.slim'
-      # 'app/views/home/_hatopoppo.html.slim'
+      'app/views/home/index.html.slim',
+      # 'app/views/home/_footer.html.slim',
+      # 'app/views/home/_hatopoppo.html.slim',
 
       # controller
+      'app/controllers/application_controller.rb',
       # 'app/controllers/users_controller.rb'
+      'app/controllers/home_controller.rb',
 
       # model
-      'app/models/instance.rb'
-
+      # 'app/models/instance.rb'
+      'app/models/access_log.rb'
     ]
   end
 end
