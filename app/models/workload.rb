@@ -104,7 +104,7 @@ class Workload < ActiveRecord::Base
     # タイムスタンプの比較を厳密に行う
     now = Time.zone.now
     end_time = created_at + POMOTIME
-    
+
     # 誤差を考慮して0.1秒のマージンを設ける
     now < (end_time + 0.1.seconds)
   end
