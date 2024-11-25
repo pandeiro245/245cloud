@@ -1,4 +1,4 @@
-class ErrorLog < ActiveRecord::Base
+class ErrorLog < ApplicationRecord
   belongs_to :user, optional: true
 
   validates :error_class, presence: true
