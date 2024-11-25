@@ -106,7 +106,7 @@ class Workload < ActiveRecord::Base
     end_time = created_at + POMOTIME
 
     # 誤差を考慮して0.1秒のマージンを設ける
-    now < (end_time + 0.1.seconds)
+    now < (end_time - 0.1.seconds)
   end
 
   def chatting?
