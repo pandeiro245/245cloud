@@ -1,6 +1,6 @@
 class Prompt
   def goal
-    '500エラーになった時と対象ユーザと閲覧ページと操作を保存して検証したい'
+    '24分たってリロードされたときにまだサーバ側はplayingになっていてエラーになるのを解消したい（リロードすると一致するので正常にChattingにリダイレクトされる） '
   end
 
   def codes
@@ -14,7 +14,7 @@ class Prompt
   def paths
     [
       # Basic
-      'Gemfile',
+      # 'Gemfile',
 
       # server
       # 'server.sh',
@@ -29,21 +29,22 @@ class Prompt
       # 'config/importmap.rb',
       # 'package.json',
       # 'app/javascript/controllers/index.js',
-      # 'app/javascript/controllers/timer_controller.js'
+      'app/javascript/controllers/timer_controller.js',
 
       # view
-      'app/views/home/index.html.slim',
+      # 'app/views/home/index.html.slim',
       # 'app/views/home/_footer.html.slim',
       # 'app/views/home/_hatopoppo.html.slim',
 
       # controller
-      'app/controllers/application_controller.rb',
+      # 'app/controllers/application_controller.rb',
       # 'app/controllers/users_controller.rb'
       'app/controllers/home_controller.rb',
 
       # model
       # 'app/models/instance.rb'
-      'app/models/access_log.rb'
+      # 'app/models/access_log.rb'
+      'app/models/workload.rb'
     ]
   end
 end
