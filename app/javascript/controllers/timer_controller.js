@@ -7,12 +7,14 @@ export default class extends Controller {
     console.log("Timer controller connected");
     this.originalTitle = document.title;
     this.audioPlayed = false;
+    this.isTransitioning = false;
+    this.retryCount = 0;
+    this.maxRetries = 3;
     this.setupAudio();
     this.updateTimer();
   }
 
   setupAudio() {
-    // 音声要素を取得（DOMから直接取得）
     this.audio = document.getElementById('hato');
     
     if (!this.audio) {
@@ -20,7 +22,6 @@ export default class extends Controller {
       return;
     }
 
-    // 音声の読み込みを監視
     this.audio.addEventListener('canplaythrough', () => {
       console.log('音声ファイルの読み込みが完了しました');
     });
@@ -29,11 +30,47 @@ export default class extends Controller {
       console.error('音声ファイルの読み込みエラー:', e);
     });
 
-    // ユーザーインタラクションを待機
     document.addEventListener('click', () => {
-      // 音声を読み込むだけ（まだ再生はしない）
       this.audio.load();
     }, { once: true });
+  }
+
+  async handleStateTransition() {
+    if (this.isTransitioning) return;
+    
+    try {
+      this.isTransitioning = true;
+      
+      // ページ遷移の前に少し待機して状態の同期を待つ
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const response = await fetch('/api/check_state', {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'X-CSRF-Token': document.querySelector('[name="csrf-token"]')?.content
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`State check failed: ${response.status}`);
+      }
+
+      location.reload();
+    } catch (error) {
+      console.error('State transition error:', error);
+      
+      if (this.retryCount < this.maxRetries) {
+        this.retryCount++;
+        console.log(`Retrying transition (${this.retryCount}/${this.maxRetries})...`);
+        setTimeout(() => this.handleStateTransition(), 1000);
+      } else {
+        console.error('Max retries reached, forcing reload');
+        location.reload();
+      }
+    } finally {
+      this.isTransitioning = false;
+    }
   }
 
   updateTimer() {
@@ -41,8 +78,10 @@ export default class extends Controller {
     const diff = (window.will_reload_at - now) / 1000;
     console.log("残り時間:", diff);
 
-    if (diff < 0) {
-      location.reload();
+    if (diff <= 0) {
+      if (!this.isTransitioning) {
+        this.handleStateTransition();
+      }
     } else {
       const min = Math.floor(diff / 60);
       const sec = Math.floor(diff % 60);
@@ -51,11 +90,9 @@ export default class extends Controller {
       this.timeTarget.textContent = timeString;
       document.title = `${timeString} | ${this.originalTitle}`;
 
-      // 7秒前の処理
       if (diff <= 7 && !this.audioPlayed && this.audio) {
         console.log("7秒前：音声再生開始");
         try {
-          // 音声の再生位置をリセット
           this.audio.currentTime = 0;
           const playPromise = this.audio.play();
           
@@ -65,7 +102,6 @@ export default class extends Controller {
               this.audioPlayed = true;
             }).catch(error => {
               console.error("音声再生失敗:", error);
-              // エラーが発生した場合、フラグをリセットして再試行できるようにする
               this.audioPlayed = false;
             });
           }
