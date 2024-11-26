@@ -1,6 +1,6 @@
 class Prompt
   def goal
-    'このlintエラーをなおしたい app/models/instance.rb:37:11: C: [Correctable] Style/IdenticalConditionalBranches'
+    '24分、29分それぞれのタイミングで状態変化の誤差による500エラーが発生するのを解消したい'
   end
 
   def codes
@@ -24,17 +24,20 @@ class Prompt
       # 'config/application.rb',
       # 'config/environments/production.rb',
       # 'config/environments/development.rb',
+      # 'config/routes.rb',
 
       # js
       # 'config/importmap.rb',
       # 'package.json',
       # 'app/javascript/controllers/index.js',
-      # 'app/javascript/controllers/timer_controller.js',
+      'app/javascript/controllers/timer_controller.js',
 
       # view
       # 'app/views/musics/index.html.haml',
       # 'app/views/users/show.html.haml',
-      # 'app/views/home/index.html.slim',
+      'app/views/home/index.html.slim',
+      'app/views/home/_playing.html.slim',
+      'app/views/home/_chatting.html.slim',
       # 'app/views/home/_footer.html.slim',
       # 'app/views/home/_hatopoppo.html.slim',
 
@@ -47,7 +50,7 @@ class Prompt
       # controller
       # 'app/controllers/application_controller.rb',
       # 'app/controllers/users_controller.rb',
-      # 'app/controllers/home_controller.rb',
+      'app/controllers/home_controller.rb',
 
       # model
       'app/models/instance.rb',
