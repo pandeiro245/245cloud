@@ -1,6 +1,6 @@
 class Prompt
   def goal
-    '24分たってリロードされたときにまだサーバ側はplayingになっていてエラーになるのを解消したい（リロードすると一致するので正常にChattingにリダイレクトされる） '
+    'mixcloudだけusers#show から musics#show へのリンクがスラッシュ１つ多い'
   end
 
   def codes
@@ -29,9 +29,17 @@ class Prompt
       # 'config/importmap.rb',
       # 'package.json',
       # 'app/javascript/controllers/index.js',
-      'app/javascript/controllers/timer_controller.js',
+      # 'app/javascript/controllers/timer_controller.js',
 
       # view
+      'app/views/musics/index.html.haml',
+      'app/views/users/show.html.haml',
+      # 'app/views/home/index.html.slim',
+      # 'app/views/home/_footer.html.slim',
+      # 'app/views/home/_hatopoppo.html.slim',
+
+      # helper
+      'app/helpers/application_helper.rb',
       # 'app/views/home/index.html.slim',
       # 'app/views/home/_footer.html.slim',
       # 'app/views/home/_hatopoppo.html.slim',
@@ -39,12 +47,12 @@ class Prompt
       # controller
       # 'app/controllers/application_controller.rb',
       # 'app/controllers/users_controller.rb'
-      'app/controllers/home_controller.rb',
+      # 'app/controllers/home_controller.rb',
 
       # model
       # 'app/models/instance.rb'
       # 'app/models/access_log.rb'
-      'app/models/workload.rb'
+      # 'app/models/workload.rb'
     ]
   end
 end
