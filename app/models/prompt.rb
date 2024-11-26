@@ -1,6 +1,6 @@
 class Prompt
   def goal
-    'mixcloudだけusers#show から musics#show へのリンクがスラッシュ１つ多い'
+    'このlintエラーをなおしたい app/models/instance.rb:37:11: C: [Correctable] Style/IdenticalConditionalBranches'
   end
 
   def codes
@@ -32,27 +32,27 @@ class Prompt
       # 'app/javascript/controllers/timer_controller.js',
 
       # view
-      'app/views/musics/index.html.haml',
-      'app/views/users/show.html.haml',
+      # 'app/views/musics/index.html.haml',
+      # 'app/views/users/show.html.haml',
       # 'app/views/home/index.html.slim',
       # 'app/views/home/_footer.html.slim',
       # 'app/views/home/_hatopoppo.html.slim',
 
       # helper
-      'app/helpers/application_helper.rb',
+      # 'app/helpers/application_helper.rb',
       # 'app/views/home/index.html.slim',
       # 'app/views/home/_footer.html.slim',
       # 'app/views/home/_hatopoppo.html.slim',
 
       # controller
       # 'app/controllers/application_controller.rb',
-      # 'app/controllers/users_controller.rb'
+      # 'app/controllers/users_controller.rb',
       # 'app/controllers/home_controller.rb',
 
       # model
-      # 'app/models/instance.rb'
-      # 'app/models/access_log.rb'
-      # 'app/models/workload.rb'
+      'app/models/instance.rb',
+      # 'app/models/access_log.rb',
+      # 'app/models/workload.rb',
     ]
   end
 end

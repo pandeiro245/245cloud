@@ -29,7 +29,17 @@ class Instance < ApplicationRecord
 
   def fetch_workloads
     data = fetch_json_from_api('api/workloads/download.json')
-    data.each { |record| process_record(record, Workload, find_keys: %w[created_at user_id]) }
+    data.each do |record|
+      process_record(record, Workload, find_keys: %w[created_at user_id]) do |workload, api_data|
+        # is_doneの状態に応じてapi_dataから除外するフィールドを決定
+        excluded_fields = ['id']
+        excluded_fields << 'is_done' if workload.persisted? && workload.is_done
+
+        # 除外するフィールドを適用
+        filtered_api_data = api_data.except(*excluded_fields)
+        workload.update(filtered_api_data)
+      end
+    end
   end
 
   def fetch_workloads_all(resume: nil)
@@ -92,7 +102,6 @@ class Instance < ApplicationRecord
     if custom_processing
       custom_processing.call(target_record, record)
     else
-      # idを除外してからupdateを実行
       record_without_id = record.except('id')
       target_record.update(record_without_id)
     end
