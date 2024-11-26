@@ -31,14 +31,13 @@ class Instance < ApplicationRecord
     data = fetch_json_from_api('api/workloads/download.json')
     data.each do |record|
       process_record(record, Workload, find_keys: %w[created_at user_id]) do |workload, api_data|
-        # is_doneがtrueの場合は保持し、それ以外の属性を更新
-        if workload.persisted? && workload.is_done
-          api_data = api_data.except('id', 'is_done')
-          workload.update(api_data)
-        else
-          api_data = api_data.except('id')
-          workload.update(api_data)
-        end
+        # is_doneの状態に応じてapi_dataから除外するフィールドを決定
+        excluded_fields = ['id']
+        excluded_fields << 'is_done' if workload.persisted? && workload.is_done
+        
+        # 除外するフィールドを適用
+        filtered_api_data = api_data.except(*excluded_fields)
+        workload.update(filtered_api_data)
       end
     end
   end

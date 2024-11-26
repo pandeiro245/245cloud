@@ -1,6 +1,6 @@
 class Prompt
   def goal
-    'Instance.fetchした時、すでに存在するworkloadレコードのis_doneがtrueになるのはいいがtrueになっているものがnilに戻るのは防ぎたい'
+    'このlintエラーをなおしたい app/models/instance.rb:37:11: C: [Correctable] Style/IdenticalConditionalBranches: Move workload.update(api_data) out of the conditional.'
   end
 
   def codes
@@ -32,14 +32,14 @@ class Prompt
       # 'app/javascript/controllers/timer_controller.js',
 
       # view
-      'app/views/musics/index.html.haml',
-      'app/views/users/show.html.haml',
+      # 'app/views/musics/index.html.haml',
+      # 'app/views/users/show.html.haml',
       # 'app/views/home/index.html.slim',
       # 'app/views/home/_footer.html.slim',
       # 'app/views/home/_hatopoppo.html.slim',
 
       # helper
-      'app/helpers/application_helper.rb',
+      # 'app/helpers/application_helper.rb',
       # 'app/views/home/index.html.slim',
       # 'app/views/home/_footer.html.slim',
       # 'app/views/home/_hatopoppo.html.slim',
