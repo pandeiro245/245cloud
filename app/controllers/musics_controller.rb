@@ -1,10 +1,10 @@
 class MusicsController < ApplicationController
   def index
     provider = params[:provider]
-    key = params[:key]
-    key = "/#{key}/#{params[:key2]}/" if params[:key2] # mixcloud
-    key = URI.encode_www_form_component(key)
+    key = URI.encode_www_form_component(params[:key])
+    key = "#{key}/#{URI.encode_www_form_component(params[:key2])}/" if params[:key2] # mixcloud
     @music = Music.new_from_key(provider, key)
-    @music.fetch if @music.artwork_url.blank? && @music.provider == 'youtube'
+    @music.save!
+    @music.fetch if @music.artwork_url.blank?
   end
 end

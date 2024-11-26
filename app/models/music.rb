@@ -70,6 +70,15 @@ class Music < ApplicationRecord
   end
 
   def fetch
+    return fetch_youtube if provider == 'youtube'
+    workload_music_key = URI.decode_www_form_component("#{provider}:/#{key}")
+    workload = Workload.find_by(music_key: workload_music_key)
+    self.title = workload.title
+    self.artwork_url = workload.artwork_url
+    save!
+  end
+
+  def fetch_youtube
     api_key = ENV.fetch('YOUTUBE_TOKEN', nil)
     url = URI("https://www.googleapis.com/youtube/v3/videos?id=#{key}&key=#{api_key}&part=snippet,contentDetails")
     response = Net::HTTP.get(url)
