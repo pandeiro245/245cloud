@@ -10,13 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_11_24_051318) do
+ActiveRecord::Schema[8.0].define(version: 2024_11_25_123100) do
   create_table "access_logs", force: :cascade do |t|
     t.string "facebook_id"
     t.text "url"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.integer "user_id"
+    t.string "user_agent"
+    t.string "ip_address"
+    t.string "session_id"
+    t.string "request_method"
+    t.json "params"
   end
 
   create_table "comments", force: :cascade do |t|
@@ -27,6 +32,22 @@ ActiveRecord::Schema[8.0].define(version: 2024_11_24_051318) do
     t.datetime "updated_at", precision: nil, null: false
     t.integer "num", default: 0
     t.integer "user_id"
+  end
+
+  create_table "error_logs", force: :cascade do |t|
+    t.string "error_class"
+    t.text "error_message"
+    t.text "backtrace"
+    t.integer "user_id", null: false
+    t.string "url"
+    t.json "params"
+    t.string "user_agent"
+    t.string "ip_address"
+    t.string "session_id"
+    t.string "request_method"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_error_logs_on_user_id"
   end
 
   create_table "instances", force: :cascade do |t|
@@ -81,4 +102,6 @@ ActiveRecord::Schema[8.0].define(version: 2024_11_24_051318) do
     t.integer "weekly_number"
     t.integer "user_id"
   end
+
+  add_foreign_key "error_logs", "users"
 end

@@ -23,10 +23,7 @@ if [ -f .env ]; then
 fi
 
 # gitの更新
-git pull origin develop
-
-# 依存関係の更新
-bundle install
+# git pull origin develop
 
 # アセットのプリコンパイル
 RAILS_ENV=production bundle exec rails assets:precompile

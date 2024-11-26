@@ -12,7 +12,7 @@ class HomeController < ApplicationController
   def playing
     case current_user.status
     when 'playing'
-      # do nothing
+      redirect_to chatting_path if current_user.playing.blank?
     when 'chatting'
       current_user.chatting.to_done!
       redirect_to chatting_path
@@ -32,6 +32,10 @@ class HomeController < ApplicationController
 
   def prompt
     @prompt = Prompt.new
+  end
+
+  def error
+    raise 'this is error sample'
   end
 end
 
