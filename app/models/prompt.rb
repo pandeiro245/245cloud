@@ -39,7 +39,7 @@ class Prompt
       # 'app/controllers/users_controller.rb'
 
       # model
-      'app/models/instance.rb',
+      'app/models/instance.rb'
     ]
   end
 end

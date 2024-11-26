@@ -29,7 +29,7 @@ class Instance < ApplicationRecord
 
   def fetch_workloads
     data = fetch_json_from_api('api/workloads/download.json')
-    data.each do |record| 
+    data.each do |record|
       process_record(record, Workload, find_keys: %w[created_at user_id]) do |workload, api_data|
         # is_doneがtrueの場合は保持し、それ以外の属性を更新
         if workload.persisted? && workload.is_done
