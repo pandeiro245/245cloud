@@ -34,7 +34,7 @@ class Instance < ApplicationRecord
         # is_doneの状態に応じてapi_dataから除外するフィールドを決定
         excluded_fields = ['id']
         excluded_fields << 'is_done' if workload.persisted? && workload.is_done
-        
+
         # 除外するフィールドを適用
         filtered_api_data = api_data.except(*excluded_fields)
         workload.update(filtered_api_data)
