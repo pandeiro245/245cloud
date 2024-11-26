@@ -13,9 +13,9 @@
         img.icon.img-thumbnail src="/images/profile/#{workload.user_id}.jpg"
     .disp
       - if workload.playing?
-        div.workload_countdown data-controller="workload-countdown" data-workload-countdown-finish-time-value=workload.finish_playing_time
+        div.workload_countdown data-controller="workload-countdown" data-workload-countdown-finish-time-value=workload.finish_playing_time data-workload-countdown-status-value="playing"
       - elsif workload.chatting?
-        div.workload_countdown data-controller="workload-countdown" data-workload-countdown-finish-time-value=workload.finish_chatting_time
+        div.workload_countdown data-controller="workload-countdown" data-workload-countdown-finish-time-value=workload.finish_chatting_time data-workload-countdown-status-value="chatting"
       - else
         = workload.disp
     div 
