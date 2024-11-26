@@ -1,6 +1,6 @@
 class Prompt
   def goal
-    'このlintエラーをなおしたい app/models/instance.rb:37:11: C: [Correctable] Style/IdenticalConditionalBranches: Move workload.update(api_data) out of the conditional.'
+    'このlintエラーをなおしたい app/models/instance.rb:37:11: C: [Correctable] Style/IdenticalConditionalBranches'
   end
 
   def codes
