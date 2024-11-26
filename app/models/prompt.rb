@@ -1,6 +1,6 @@
 class Prompt
   def goal
-    'Instance.fetchを実行してデータを取得、保存するときにidは外して保存したい（id以外をkeyしているため）'
+    'Instance.fetchした時、すでに存在するworkloadレコードのis_doneがtrueになるのはいいがtrueになっているものがnilに戻るのは防ぎたい'
   end
 
   def codes
@@ -39,8 +39,7 @@ class Prompt
       # 'app/controllers/users_controller.rb'
 
       # model
-      'app/models/instance.rb'
-
+      'app/models/instance.rb',
     ]
   end
 end
