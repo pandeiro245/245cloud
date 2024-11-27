@@ -61,6 +61,12 @@ class Workload < ActiveRecord::Base
     type ? public_send(type) : dones
   }
 
+  def self.calculate_week_start(date)
+    from = date.to_date.beginning_of_day
+    days_to_subtract = date.wday.zero? ? 6 : (date.wday - 1)
+    from - days_to_subtract.days
+  end
+
   # クラスメソッド
   class << self
     def active_type?(type)
@@ -190,11 +196,5 @@ class Workload < ActiveRecord::Base
 
   def formatted_music_key
     music_key.gsub('mixcloud:/', 'mixcloud:').gsub(':', '/')
-  end
-
-  def self.calculate_week_start(date)
-    from = date.to_date.beginning_of_day
-    days_to_subtract = date.wday.zero? ? 6 : (date.wday - 1)
-    from - days_to_subtract.days
   end
 end
