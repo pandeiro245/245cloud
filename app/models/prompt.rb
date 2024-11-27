@@ -31,11 +31,16 @@ class Prompt
       # 'package.json',
       # 'app/javascript/controllers/index.js',
       # 'app/javascript/controllers/timer_controller.js',
+      'app/javascript/controllers/workload_countdown_controller.js',
 
       # view
       # 'app/views/musics/index.html.haml',
       # 'app/views/users/show.html.haml',
-      # 'app/views/home/index.html.slim',
+      'app/views/home/index.html.slim',
+      'app/views/home/_workload.html.slim',
+      'app/views/home/_playings.html.slim',
+      'app/views/home/_chattings.html.slim',
+      'app/views/home/_done.html.slim',
       # 'app/views/home/_playing.html.slim',
       # 'app/views/home/_chatting.html.slim',
       # 'app/views/home/_footer.html.slim',
