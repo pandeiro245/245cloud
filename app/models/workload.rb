@@ -33,7 +33,7 @@ class Workload < ActiveRecord::Base
 
   # 時間関連スコープ
   scope :by_range, ->(range) { where(created_at: range) }
-  
+
   scope :today, ->(created_at = nil) {
     to = (created_at || Time.zone.now) - POMOTIME
     from = to.beginning_of_day
@@ -83,7 +83,7 @@ class Workload < ActiveRecord::Base
 
     def build_create_params(user, params)
       create_params = { 'user_id' => user.id }
-      
+
       %w[title artwork_url].each do |key|
         create_params[key] = params[key] if params[key].present?
       end
