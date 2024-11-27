@@ -5,7 +5,6 @@ class Workload < ActiveRecord::Base
   belongs_to :user
 
   # バリデーション
-  validates :user_id, presence: true
   validate :music_key_presence_if_title_or_artwork_url_present
 
   # コールバック
