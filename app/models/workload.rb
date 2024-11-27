@@ -1,112 +1,122 @@
 class Workload < ActiveRecord::Base
-  if Rails.env.production?
-    POMOTIME = 24.minutes
-    CHATTIME = 5.minutes
-  else
-    POMOTIME = 0.2.minutes
-    CHATTIME = 0.2.minutes
-  end
-
-  validate :music_key_presence_if_title_or_artwork_url_present
+  POMOTIME = Rails.env.production? ? 24.minutes : 0.2.minutes
+  CHATTIME = Rails.env.production? ? 5.minutes : 0.2.minutes
 
   belongs_to :user
 
+  # バリデーション
+  validate :music_key_presence_if_title_or_artwork_url_present
+
+  # コールバック
   before_save :set_music_key
 
-  scope :created, -> {
-    order('workloads.created_at DESC')
-  }
-  scope :dones, -> {
-    where(is_done: true)
-  }
-  scope :his, -> (user_id) {
-    where(
-      user_id: user_id,
-      is_done: true
-    )
-  }
+  # 基本スコープ
+  scope :created, -> { order('workloads.created_at DESC') }
+  scope :dones, -> { where(is_done: true) }
+  scope :his, ->(user_id) { where(user_id: user_id, is_done: true) }
+
+  # 音楽関連スコープ
   scope :bests, -> {
-    select(
-      'music_key, COUNT(music_key) AS music_key_count'
-    ).where.not(music_key: '')
+    select('music_key, COUNT(music_key) AS music_key_count')
+      .where.not(music_key: '')
       .group(:music_key)
       .order('music_key_count DESC')
   }
-  scope :best_listeners, -> (music_key) {
-    select(
-      'user_id, COUNT(user_id) AS user_id_count'
-    ).where(music_key: music_key)
+
+  scope :best_listeners, ->(music_key) {
+    select('user_id, COUNT(user_id) AS user_id_count')
+      .where(music_key: music_key)
       .group(:user_id)
       .order('user_id_count DESC')
   }
-  scope :today, -> (created_at = nil) {
-    to = created_at || Time.zone.now
-    to -= POMOTIME
+
+  # 時間関連スコープ
+  scope :by_range, ->(range) { where(created_at: range) }
+
+  scope :today, ->(created_at = nil) {
+    to = (created_at || Time.zone.now) - POMOTIME
     from = to.beginning_of_day
-    where(
-      created_at: from..to
-    )
+    by_range(from..to)
   }
-  scope :thisweek, -> (created_at = nil) {
-    to = created_at || Time.zone.now
-    to -= POMOTIME
-    from = to.to_date.beginning_of_day
-    from = if created_at.wday == 0 # sunday
-      from - 6.day
-    else
-      from - (created_at.wday - 1).day
-    end
-    where(
-      created_at: from..to
-    )
+
+  scope :thisweek, ->(created_at = nil) {
+    to = (created_at || Time.zone.now) - POMOTIME
+    from = calculate_week_start(to)
+    by_range(from..to)
   }
+
   scope :chattings, -> {
-    from = Time.zone.now - POMOTIME - CHATTIME
-    to   = Time.zone.now - POMOTIME
-    by_range(from..to)
+    now = Time.zone.now
+    by_range((now - POMOTIME - CHATTIME)..(now - POMOTIME))
   }
+
   scope :playings, -> {
-    from = Time.zone.now - POMOTIME
-    to   = Time.zone.now
-    by_range(from..to)
+    now = Time.zone.now
+    by_range((now - POMOTIME)..now)
   }
-  scope :by_range, -> range {
-    where(
-      created_at: range
-    )
-  }
-  scope :of_type, -> type {
-    raise if type && !active_type?(type)
+
+  # タイプ関連
+  scope :of_type, ->(type) {
+    raise ArgumentError, "Invalid type: #{type}" if type && !active_type?(type)
     type ? public_send(type) : dones
   }
 
+  def self.calculate_week_start(date)
+    from = date.to_date.beginning_of_day
+    days_to_subtract = date.wday.zero? ? 6 : (date.wday - 1)
+    from - days_to_subtract.days
+  end
+
+  # クラスメソッド
+  class << self
+    def active_type?(type)
+      %w[dones chattings playings all].include?(type)
+    end
+
+    def find_or_start_by_user(user, params = {})
+      return playings.his(user.id).first if playings.his(user.id).exists?
+
+      create_params = build_create_params(user, params)
+      create!(create_params)
+    end
+
+    def update_numbers
+      created.dones.each(&:update_number!)
+    end
+
+    private
+
+    def build_create_params(user, params)
+      create_params = { 'user_id' => user.id }
+
+      %w[title artwork_url].each do |key|
+        create_params[key] = params[key] if params[key].present?
+      end
+
+      if params[:music_key].present?
+        create_params[:music_key] = "#{params[:music_provider]}:#{params[:music_key]}"
+      end
+
+      create_params
+    end
+  end
+
+  # インスタンスメソッド
   def hm
     time = created_at.in_time_zone('Tokyo')
-    if time.to_date == Time.zone.now.to_date
-      time.strftime('%H:%M')
-    else
-      time.strftime('%m/%d %H:%M')
-    end
+    format = time.to_date == Time.zone.now.to_date ? '%H:%M' : '%m/%d %H:%M'
+    time.strftime(format)
   end
 
   def will_reload_at
     case user.status
-    when 'playing'
-      created_at + POMOTIME
-    when 'chatting'
-      created_at + POMOTIME + CHATTIME
-    else
-      nil
+    when 'playing' then created_at + POMOTIME
+    when 'chatting' then created_at + POMOTIME + CHATTIME
     end
   end
 
   def playing?
-    # タイムスタンプの比較を厳密に行う
-    now = Time.zone.now
-    end_time = created_at + POMOTIME
-
-    # 誤差を考慮して0.1秒のマージンを設ける
-    now < (end_time - 0.1.seconds)
+    Time.zone.now < (created_at + POMOTIME - 0.1.seconds)
   end
 
   def chatting?
@@ -118,90 +128,48 @@ class Workload < ActiveRecord::Base
     (created_at + POMOTIME).to_i - Time.zone.now.to_i
   end
 
-  def self.find_or_start_by_user(user, _params = {})
-    w = playings.his(user.id).first
-    return w if w.present?
-
-    params = {'user_id' => user.id}
-    %w(title artwork_url).each do |key|
-      if _params[key].present?
-        params[key] = _params[key]
-      end
-    end
-    if _params[:music_key].present?
-      params[:music_key] = "#{_params[:music_provider]}:#{_params[:music_key]}"
-    end
-    self.create!(params)
-  end
-
-  def set_music_key
-    return nil if self.music_key.nil?
-    self.music_key = URI.decode_www_form_component(self.music_key)
-  end
-
   def to_done!
-    self.number = next_number
-    self.weekly_number = next_number(:weekly)
-    self.is_done = true
-    self.save!
+    update!(
+      number: next_number,
+      weekly_number: next_number(:weekly),
+      is_done: true
+    )
     self
   end
 
-  def self.active_type? type
-    %w(dones chattings playings all).include?(type)
-  end
-
   def update_number!
-    self.number = next_number
-    self.weekly_number = next_number(:weekly)
-    self.save!
+    update!(
+      number: next_number,
+      weekly_number: next_number(:weekly)
+    )
   end
 
-  def self.update_numbers
-    self.created.dones.each do |w|
-      w.update_number!
-    end
-  end
-
-  def next_number type=nil
+  def next_number(type = nil)
     scope = Workload.his(user_id).dones
-    scope = case type
-    when :weekly
-      scope.thisweek(created_at)
-    else
-      scope.today(created_at)
-    end
+    scope = type == :weekly ? scope.thisweek(created_at) : scope.today(created_at)
     scope.count + 1
   end
 
+  # 音楽関連メソッド
   def music
-    @music ||= Music.new_from_key(music_key.split(':').first, music_key.split(':').last)
+    @music ||= Music.new_from_key(*music_key.split(':'))
   end
 
   def music_path
-    key = music_key.gsub('mixcloud:/', 'mixcloud:').gsub(':', '/')
-    "/musics/#{key}"
-  end
-
-  def repair!
-    return unless music_key
-    if music_key.match(/^mixcloud:/)
-      puts music_key
-      self.music_key = URI.decode_www_form_component(self.music_key)
-      self.save!
-    end
+    "/musics/#{formatted_music_key}"
   end
 
   def artwork_url_from_music
-    return nil if music.blank?
-    @artwork_url_from_music ||= music.artwork_url
+    music&.artwork_url
   end
 
   def youtube_start
-    music.fetch if music.provider == 'youtube' && music.duration.blank?
+    return unless music.provider == 'youtube'
+    music.fetch if music.duration.blank?
     music.duration - remain
   end
 
+  # 表示関連メソッド
   def disp
     return hm.to_s if created_at + POMOTIME + CHATTIME > Time.zone.now
     "#{hm} #{number}回目(週#{weekly_number}回)"
@@ -215,19 +183,18 @@ class Workload < ActiveRecord::Base
     (created_at + POMOTIME + CHATTIME).to_i * 1000
   end
 
-  def self.for1027
-    Workload.where(music_key: nil).where.not(artwork_url: nil).find_each do |w|
-      w.music_key = Workload.where.not(music_key: nil).where(artwork_url: w.artwork_url).limit(1).first.music_key
-      w.save!
-    end
-  end
-
   private
 
   def music_key_presence_if_title_or_artwork_url_present
-    if (title.present? || artwork_url.present?) && music_key.blank?
-      errors.add(:music_key, ' is required if either title or artwork_url is present')
-    end
+    return unless title.present? || artwork_url.present?
+    errors.add(:music_key, 'is required if either title or artwork_url is present') if music_key.blank?
+  end
+
+  def set_music_key
+    self.music_key = URI.decode_www_form_component(music_key) if music_key.present?
+  end
+
+  def formatted_music_key
+    music_key.gsub('mixcloud:/', 'mixcloud:').gsub(':', '/')
   end
 end
-

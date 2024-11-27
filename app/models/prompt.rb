@@ -1,6 +1,6 @@
 class Prompt
   def goal
-    '他人のカウンドダウンは終わったらカウントアップさせずにplayingならchattingに、chattingならdoneに移す '
+    'Workloadモデルのリファクタリングして保守性を上げたい'
   end
 
   def codes
@@ -60,7 +60,7 @@ class Prompt
       # model
       # 'app/models/instance.rb',
       # 'app/models/access_log.rb',
-      # 'app/models/workload.rb',
+      'app/models/workload.rb',
     ]
   end
 end
