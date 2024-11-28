@@ -1,6 +1,6 @@
 class Prompt
   def goal
-    'RSpecを書いてバグを減らしたい'
+    'is_doneになったworkloadのnumberとweekly_numberが日本時間で集計して欲しいのにそうならないことがあるのでまずはそれが再現するRspecを用意したい'
   end
 
   def codes
@@ -54,16 +54,22 @@ class Prompt
 
       # controller
       # 'app/controllers/application_controller.rb',
-      'app/controllers/users_controller.rb',
+      # 'app/controllers/users_controller.rb',
       'app/controllers/home_controller.rb',
 
       # model
       # 'app/models/instance.rb',
       # 'app/models/access_log.rb',
       'app/models/workload.rb',
-      'app/models/comment.rb',
-      'app/models/user.rb',
-      'app/models/music.rb',
+      # 'app/models/comment.rb',
+      # 'app/models/user.rb',
+      # 'app/models/music.rb',
+
+      # spec
+      'spec/spec_helper.rb',
+      'spec/rails_helper.rb',
+      'spec/models/workload_spec.rb',
+
     ]
   end
 end
