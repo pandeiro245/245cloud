@@ -8,12 +8,12 @@ class NumberCalculatorService
       # 期間指定がある場合は範囲を限定
       if start_date.present?
         start_time = Time.zone.parse(start_date.to_s).in_time_zone('Tokyo').beginning_of_day.in_time_zone('UTC')
-        workloads = workloads.where('created_at >= ?', start_time)
+        workloads = workloads.where(created_at: start_time..)
       end
 
       if end_date.present?
         end_time = Time.zone.parse(end_date.to_s).in_time_zone('Tokyo').end_of_day.in_time_zone('UTC')
-        workloads = workloads.where('created_at <= ?', end_time)
+        workloads = workloads.where(created_at: ..end_time)
       end
 
       # created_atの昇順でソート
