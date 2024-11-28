@@ -8,9 +8,9 @@ class NumberCalculatorService
 
     def verify_numbers_for_user(user_id, start_date: nil, end_date: nil)
       workloads = Workload.his(user_id)
-        .where(created_at: start_date..end_date)
-        .order(created_at: :asc)
-      
+                          .where(created_at: start_date..end_date)
+                          .order(created_at: :asc)
+
       collect_verification_results(workloads)
     end
 
@@ -25,12 +25,12 @@ class NumberCalculatorService
 
     def fetch_target_workloads(user_id, start_date, end_date)
       workloads = Workload.his(user_id)
-      
+
       if start_date.present?
         start_time = Time.zone.parse(start_date.to_s).in_time_zone('Tokyo').beginning_of_day.in_time_zone('UTC')
         workloads = workloads.where('created_at >= ?', start_time)
       end
-      
+
       if end_date.present?
         end_time = Time.zone.parse(end_date.to_s).in_time_zone('Tokyo').end_of_day.in_time_zone('UTC')
         workloads = workloads.where('created_at <= ?', end_time)
@@ -49,7 +49,7 @@ class NumberCalculatorService
         workloads.each do |workload|
           counts = calculate_counts(workload, current_date, current_week_start, daily_count, weekly_count)
           update_workload(workload, counts)
-          
+
           current_date = workload.created_at.in_time_zone('Tokyo').to_date
           current_week_start = calculate_week_start(workload.created_at)
           daily_count = counts[:daily]
@@ -80,13 +80,13 @@ class NumberCalculatorService
 
     def collect_verification_results(workloads)
       results = {}
-      
+
       workloads.each do |workload|
         jst_time = workload.created_at.in_time_zone('Tokyo')
         date_key = jst_time.strftime('%Y-%m-%d')
         week_key = calculate_week_start(workload.created_at)
-                    .in_time_zone('Tokyo')
-                    .strftime('%Y-%m-%d')
+                   .in_time_zone('Tokyo')
+                   .strftime('%Y-%m-%d')
 
         results[date_key] ||= []
         results[date_key] << build_verification_result(workload, jst_time, week_key)
