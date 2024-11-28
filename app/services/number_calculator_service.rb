@@ -4,13 +4,13 @@ class NumberCalculatorService
     def recalculate_numbers_for_user(user_id, start_date: nil, end_date: nil)
       # 対象となるWorkloadを取得
       workloads = Workload.his(user_id)
-      
+
       # 期間指定がある場合は範囲を限定
       if start_date.present?
         start_time = Time.zone.parse(start_date.to_s).in_time_zone('Tokyo').beginning_of_day.in_time_zone('UTC')
         workloads = workloads.where('created_at >= ?', start_time)
       end
-      
+
       if end_date.present?
         end_time = Time.zone.parse(end_date.to_s).in_time_zone('Tokyo').end_of_day.in_time_zone('UTC')
         workloads = workloads.where('created_at <= ?', end_time)
@@ -59,17 +59,17 @@ class NumberCalculatorService
 
     def verify_numbers_for_user(user_id, start_date: nil, end_date: nil)
       workloads = Workload.his(user_id)
-        .where(created_at: start_date..end_date)
-        .order(created_at: :asc)
-      
+                          .where(created_at: start_date..end_date)
+                          .order(created_at: :asc)
+
       results = {}
-      
+
       workloads.each do |workload|
         jst_time = workload.created_at.in_time_zone('Tokyo')
         date_key = jst_time.strftime('%Y-%m-%d')
         week_key = calculate_week_start(workload.created_at)
-                    .in_time_zone('Tokyo')
-                    .strftime('%Y-%m-%d')
+                   .in_time_zone('Tokyo')
+                   .strftime('%Y-%m-%d')
 
         results[date_key] ||= []
         results[date_key] << {
@@ -86,11 +86,11 @@ class NumberCalculatorService
     def calculate_week_start(date)
       # JSTでの週の開始日時を計算
       jst_time = date.in_time_zone('Tokyo')
-      
+
       # 月曜日の0時を取得（JSTベース）
       monday = jst_time.beginning_of_week(:monday)
       week_start = monday.beginning_of_day
-      
+
       # UTCに変換して返す
       week_start.in_time_zone('UTC')
     end

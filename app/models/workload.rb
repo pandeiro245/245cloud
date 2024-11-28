@@ -88,8 +88,8 @@ class Workload < ActiveRecord::Base
 
   def recalculate_numbers
     ::NumberCalculatorService.recalculate_numbers_for_user(user_id,
-      start_date: created_at.in_time_zone('Tokyo').to_date,
-      end_date: created_at.in_time_zone('Tokyo').to_date)
+                                                           start_date: created_at.in_time_zone('Tokyo').to_date,
+                                                           end_date: created_at.in_time_zone('Tokyo').to_date)
   end
 
   def hm
