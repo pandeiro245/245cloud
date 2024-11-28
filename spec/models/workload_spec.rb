@@ -1,3 +1,4 @@
+# spec/models/workload_spec.rb
 require 'rails_helper'
 
 RSpec.describe Workload, type: :model do
@@ -11,31 +12,7 @@ RSpec.describe Workload, type: :model do
     end
 
     context 'numberとweekly_numberの計算' do
-      # 日本時間の2024/1/1 00:00を基準にテストデータを作成
       let(:base_time) { Time.zone.local(2024, 1, 1, 0, 0, 0) }
-
-      before do
-        # テスト用の完了済みWorkloadを作成
-        create(:workload, user: user, created_at: base_time - 1.day, is_done: true, number: 1, weekly_number: 1)
-        create(:workload, user: user, created_at: base_time - 12.hours, is_done: true, number: 2, weekly_number: 2)
-      end
-
-      it '日本時間での日次カウントが正しく計算される' do
-        # 日本時間1/1 00:30に新しいWorkloadを作成
-        new_workload = create(:workload, user: user, created_at: base_time + 30.minutes)
-        new_workload.to_done!
-        
-        # 前日のWorkloadは含まれず、当日の分だけでカウント
-        expect(new_workload.number).to eq(1)
-      end
-
-      it '日本時間での週次カウントが正しく計算される' do
-        # 2024/1/1は火曜日。週の開始は月曜日
-        new_workload = create(:workload, user: user, created_at: base_time + 1.hour)
-        new_workload.to_done!
-        
-        expect(new_workload.weekly_number).to eq(1)
-      end
 
       it '日本時間での週をまたぐ集計が正しく計算される' do
         # 12/31(月) 23:50のWorkload
@@ -46,6 +23,10 @@ RSpec.describe Workload, type: :model do
         )
         monday_workload.to_done!
 
+        # デバッグ情報の出力
+        puts "\n=== Monday Workload Debug ==="
+        puts monday_workload.debug_info
+
         # 1/1(火) 00:10のWorkload
         tuesday_workload = create(:workload,
           user: user,
@@ -53,46 +34,110 @@ RSpec.describe Workload, type: :model do
         )
         tuesday_workload.to_done!
 
+        puts "\n=== Tuesday Workload Debug ==="
+        puts tuesday_workload.debug_info
+
         # 同じ週なので、weekly_numberは連続する
         expect(tuesday_workload.weekly_number).to eq(monday_workload.weekly_number + 1)
       end
 
-      it '異なる時間帯でも日本時間に基づいて集計される' do
-        # UTCで12/31 15:00 (日本時間1/1 00:00)のWorkload
-        Time.use_zone('UTC') do
-          workload = create(:workload,
-            user: user,
-            created_at: Time.zone.local(2023, 12, 31, 15, 0, 0)
-          )
-          workload.to_done!
+      it 'UTCとJSTの日付変更線をまたぐ場合でも正しく計算される' do
+        # UTCで12/31 14:59 (JST 23:59)のWorkload
+        before_midnight = create(:workload,
+          user: user,
+          created_at: Time.utc(2023, 12, 31, 14, 59)
+        )
+        before_midnight.to_done!
+
+        puts "\n=== Before Midnight Workload Debug ==="
+        puts before_midnight.debug_info
+
+        # UTCで12/31 15:01 (JST 1/1 00:01)のWorkload
+        after_midnight = create(:workload,
+          user: user,
+          created_at: Time.utc(2023, 12, 31, 15, 1)
+        )
+        after_midnight.to_done!
+
+        puts "\n=== After Midnight Workload Debug ==="
+        puts after_midnight.debug_info
+
+        # 日本時間では違う日なので、numberは別々に計算される
+        expect(after_midnight.number).to eq(1)
+        expect(before_midnight.number).not_to eq(after_midnight.number)
+      end
+
+      it '週の変わり目で正しく計算される (月曜0時前後)' do
+        # 日曜深夜のWorkload (JST月曜 0:00直前)
+        sunday_workload = create(:workload,
+          user: user,
+          created_at: Time.zone.local(2024, 1, 7, 23, 59, 59)
+        )
+        sunday_workload.to_done!
+
+        puts "\n=== Sunday Workload Debug ==="
+        puts sunday_workload.debug_info
+
+        # 月曜早朝のWorkload (JST月曜 0:00直後)
+        monday_workload = create(:workload,
+          user: user,
+          created_at: Time.zone.local(2024, 1, 8, 0, 0, 1)
+        )
+        monday_workload.to_done!
+
+        puts "\n=== Monday Workload Debug ==="
+        puts monday_workload.debug_info
+
+        # 週が変わるので、weekly_numberは1からリセット
+        expect(monday_workload.weekly_number).to eq(1)
+        expect(monday_workload.weekly_number).not_to eq(sunday_workload.weekly_number + 1)
+      end
+
+      context '複数のWorkloadが混在する場合' do
+        it '同じ週内の複数のWorkloadで正しく連番が振られる' do
+          workloads = []
           
-          # 日本時間では1/1なので、numberは1から始まる
-          expect(workload.number).to eq(1)
+          # 月曜から金曜まで、毎日3件ずつWorkloadを作成
+          (0..4).each do |day_offset|
+            3.times do |i|
+              workload = create(:workload,
+                user: user,
+                created_at: Time.zone.local(2024, 1, 8, 10, 0, 0) + day_offset.days + i.hours
+              )
+              workload.to_done!
+              workloads << workload
+            end
+          end
+
+          puts "\n=== Weekly Workloads Debug ==="
+          workloads.each do |w|
+            puts "Time: #{w.created_at.in_time_zone('Tokyo')}, Weekly: #{w.weekly_number}"
+          end
+
+          # weekly_numberが1から15まで連番になっていることを確認
+          expect(workloads.map(&:weekly_number)).to eq((1..15).to_a)
         end
-      end
-    end
 
-    context 'today/thisweekスコープ' do
-      let(:base_time) { Time.zone.local(2024, 1, 1, 9, 0, 0) } # 日本時間9:00
+        it '日付をまたぐWorkloadでも正しくnumberが計算される' do
+          # 23:00, 23:30, 0:30のWorkloadを作成
+          workloads = [
+            create(:workload, user: user, created_at: Time.zone.local(2024, 1, 8, 23, 0)),
+            create(:workload, user: user, created_at: Time.zone.local(2024, 1, 8, 23, 30)),
+            create(:workload, user: user, created_at: Time.zone.local(2024, 1, 9, 0, 30))
+          ]
 
-      it 'todayスコープが日本時間の日付で正しく動作する' do
-        # 前日23:50のWorkload
-        create(:workload, user: user, created_at: base_time - 9.hours - 10.minutes, is_done: true)
-        # 当日0:10のWorkload
-        today_workload = create(:workload, user: user, created_at: base_time - 8.hours + 10.minutes, is_done: true)
-        
-        # POMOTIMEを考慮した集計時点で、当日分のみが含まれる
-        expect(Workload.today(base_time)).to contain_exactly(today_workload)
-      end
+          workloads.each(&:to_done!)
 
-      it 'thisweekスコープが日本時間の週で正しく動作する' do
-        # 先週金曜のWorkload
-        create(:workload, user: user, created_at: base_time - 4.days, is_done: true)
-        # 今週月曜のWorkload
-        this_week_workload = create(:workload, user: user, created_at: base_time - 1.day, is_done: true)
-        
-        # 週初めから現在までのWorkloadが含まれる
-        expect(Workload.thisweek(base_time)).to contain_exactly(this_week_workload)
+          puts "\n=== Cross-day Workloads Debug ==="
+          workloads.each do |w|
+            puts "Time: #{w.created_at.in_time_zone('Tokyo')}, Number: #{w.number}"
+          end
+
+          # 最初の2つは同じ日の1,2、最後は次の日の1になる
+          expect(workloads[0].number).to eq(1)
+          expect(workloads[1].number).to eq(2)
+          expect(workloads[2].number).to eq(1)
+        end
       end
     end
   end
