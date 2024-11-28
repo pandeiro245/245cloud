@@ -69,7 +69,8 @@ class Prompt
       'spec/spec_helper.rb',
       'spec/rails_helper.rb',
       'spec/models/workload_spec.rb',
-
+      'spec/factories/users.rb',
+      'spec/factories/workloads.rb',
     ]
   end
 end
