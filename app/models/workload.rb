@@ -50,14 +50,32 @@ class Workload < ActiveRecord::Base
     type ? public_send(type) : dones
   }
 
-  def self.active_type?(type)
-    %w[dones chattings playings all].include?(type)
-  end
+  class << self
+    def active_type?(type)
+      %w[dones chattings playings all].include?(type)
+    end
 
-  def self.find_or_start_by_user(user, params = {})
-    return playings.his(user.id).first if playings.his(user.id).exists?
+    def find_or_start_by_user(user, params = {})
+      return playings.his(user.id).first if playings.his(user.id).exists?
 
-    create!(build_create_params(user, params))
+      create!(build_create_params(user, params))
+    end
+
+    private
+
+    def build_create_params(user, params)
+      create_params = { 'user_id' => user.id }
+
+      %w[title artwork_url].each do |key|
+        create_params[key] = params[key] if params[key].present?
+      end
+
+      if params[:music_key].present?
+        create_params[:music_key] = "#{params[:music_provider]}:#{params[:music_key]}"
+      end
+
+      create_params
+    end
   end
 
   def will_reload_at
@@ -88,8 +106,8 @@ class Workload < ActiveRecord::Base
 
   def recalculate_numbers
     ::NumberCalculatorService.recalculate_numbers_for_user(user_id,
-                                                           start_date: created_at.in_time_zone('Tokyo').to_date,
-                                                           end_date: created_at.in_time_zone('Tokyo').to_date)
+      start_date: created_at.in_time_zone('Tokyo').to_date,
+      end_date: created_at.in_time_zone('Tokyo').to_date)
   end
 
   def hm
@@ -113,18 +131,9 @@ class Workload < ActiveRecord::Base
 
   private
 
-  def self.build_create_params(user, params)
-    create_params = { 'user_id' => user.id }
-
-    %w[title artwork_url].each do |key|
-      create_params[key] = params[key] if params[key].present?
-    end
-
-    if params[:music_key].present?
-      create_params[:music_key] = "#{params[:music_provider]}:#{params[:music_key]}"
-    end
-
-    create_params
+  def music_key_presence_if_title_or_artwork_url_present
+    return unless title.present? || artwork_url.present?
+    errors.add(:music_key, 'is required if either title or artwork_url is present') if music_key.blank?
   end
 
   def set_music_key

@@ -1,6 +1,6 @@
 # app/models/user.rb
 class User < ActiveRecord::Base
-  has_many :workloads
+  has_many :workloads, dependent: :destroy
 
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
