@@ -1,6 +1,6 @@
 class Prompt
   def goal
-    'Workloadモデルのリファクタリングして保守性を上げたい'
+    'RSpecを書いてバグを減らしたい'
   end
 
   def codes
@@ -14,7 +14,7 @@ class Prompt
   def paths
     [
       # Basic
-      # 'Gemfile',
+      'Gemfile',
 
       # server
       # 'server.sh',
@@ -31,16 +31,16 @@ class Prompt
       # 'package.json',
       # 'app/javascript/controllers/index.js',
       # 'app/javascript/controllers/timer_controller.js',
-      'app/javascript/controllers/workload_countdown_controller.js',
+      # 'app/javascript/controllers/workload_countdown_controller.js',
 
       # view
       # 'app/views/musics/index.html.haml',
       # 'app/views/users/show.html.haml',
-      'app/views/home/index.html.slim',
-      'app/views/home/_workload.html.slim',
-      'app/views/home/_playings.html.slim',
-      'app/views/home/_chattings.html.slim',
-      'app/views/home/_done.html.slim',
+      # 'app/views/home/index.html.slim',
+      # 'app/views/home/_workload.html.slim',
+      # 'app/views/home/_playings.html.slim',
+      # 'app/views/home/_chattings.html.slim',
+      # 'app/views/home/_done.html.slim',
       # 'app/views/home/_playing.html.slim',
       # 'app/views/home/_chatting.html.slim',
       # 'app/views/home/_footer.html.slim',
@@ -54,13 +54,16 @@ class Prompt
 
       # controller
       # 'app/controllers/application_controller.rb',
-      # 'app/controllers/users_controller.rb',
-      # 'app/controllers/home_controller.rb',
+      'app/controllers/users_controller.rb',
+      'app/controllers/home_controller.rb',
 
       # model
       # 'app/models/instance.rb',
       # 'app/models/access_log.rb',
       'app/models/workload.rb',
+      'app/models/comment.rb',
+      'app/models/user.rb',
+      'app/models/music.rb',
     ]
   end
 end
