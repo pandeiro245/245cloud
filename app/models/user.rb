@@ -1,4 +1,7 @@
+# app/models/user.rb
 class User < ActiveRecord::Base
+  has_many :workloads
+
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
@@ -11,11 +14,11 @@ class User < ActiveRecord::Base
   end
 
   def playing
-    Workload.playings.where(user_id: id).first 
+    workloads.playings.first
   end
 
   def chatting
-    Workload.chattings.where(user_id: id).first
+    workloads.chattings.first
   end
 
   def url
@@ -28,20 +31,26 @@ class User < ActiveRecord::Base
     self.save!
   end
 
-  def workloads
-    Workload.his(id).bests.limit(48)
+  def recent_workloads
+    workloads.bests.limit(48)
   end
 
   def start!(params)
-    Workload.find_or_start_by_user(self, params)
+    workloads.find_or_start_by_user(self, params)
   end
 
   def to_done!
-    w = Workload.his(
-      id
-    ).chattings.first
-    w.to_done! if w.present?
-    w
+    workload = workloads.chattings.first
+    workload.to_done! if workload.present?
+    workload
+  end
+
+  def recalculate_workload_numbers!(start_date: nil, end_date: nil)
+    WorkloadNumberCalculator.recalculate_numbers_for_user(id, start_date: start_date, end_date: end_date)
+  end
+
+  def verify_workload_numbers(start_date: nil, end_date: nil)
+    WorkloadNumberCalculator.verify_numbers_for_user(id, start_date: start_date, end_date: end_date)
   end
 
   def save_image_from_twitter(auth_hash)
@@ -76,4 +85,3 @@ class User < ActiveRecord::Base
     false
   end
 end
-

@@ -64,6 +64,10 @@ class Prompt
       # 'app/models/comment.rb',
       # 'app/models/user.rb',
       # 'app/models/music.rb',
+      'app/models/concerns/workload_music_concern.rb',
+
+      # service
+      'app/services/number_calculator_service.rb',
 
       # spec
       'spec/spec_helper.rb',
