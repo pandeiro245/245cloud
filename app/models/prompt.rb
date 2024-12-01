@@ -1,5 +1,5 @@
 class Prompt
-  RSPEC_RESULT_PATH = Rails.root.join('tmp', 'rspec_result.txt')
+  RSPEC_RESULT_PATH = Rails.root.join('tmp/rspec_result.txt')
 
   def goal
     '/prompt_rspec にアクセスしたらRspecを修正するたねのプロンプトを生成させるために Prompt.new.rspec_resultで bundle exec rspecの実行結果を返すようにしたい'
@@ -7,19 +7,15 @@ class Prompt
 
   def rspec_result
     # 結果ファイルが存在しない場合は実行中または未実行のメッセージを返す
-    unless File.exist?(RSPEC_RESULT_PATH)
-      return "RSpec実行結果はまだ生成されていません。script/run_rspec.shを実行してください。"
-    end
+    return 'RSpec実行結果はまだ生成されていません。script/run_rspec.shを実行してください。' unless File.exist?(RSPEC_RESULT_PATH)
 
     # ファイルの更新時刻を確認
     file_age = Time.now - File.mtime(RSPEC_RESULT_PATH)
-    if file_age > 1.hour
-      return "RSpec実行結果が1時間以上前のものです。新しい結果を取得するにはscript/run_rspec.shを実行してください。\n\n#{File.read(RSPEC_RESULT_PATH)}"
-    end
+    return "RSpec実行結果が1時間以上前のものです。新しい結果を取得するにはscript/run_rspec.shを実行してください。\n\n#{File.read(RSPEC_RESULT_PATH)}" if file_age > 1.hour
 
     # 結果ファイルを読み取って返す
     File.read(RSPEC_RESULT_PATH).force_encoding('UTF-8')
-  rescue => e
+  rescue StandardError => e
     "RSpec結果の読み取り中にエラーが発生しました: #{e.message}"
   end
 
@@ -27,14 +23,14 @@ class Prompt
     hash = {}
     spec_paths = [
       # テストファイル
-      Dir.glob(Rails.root.join('spec', '**', '*_spec.rb')),
+      Dir.glob(Rails.root.join('spec/**/*_spec.rb')),
       # ヘルパーファイル
-      Dir.glob(Rails.root.join('spec', 'rails_helper.rb')),
-      Dir.glob(Rails.root.join('spec', 'spec_helper.rb')),
+      Dir.glob(Rails.root.join('spec/rails_helper.rb')),
+      Dir.glob(Rails.root.join('spec/spec_helper.rb')),
       # ファクトリーファイル
-      Dir.glob(Rails.root.join('spec', 'factories', '*.rb')),
+      Dir.glob(Rails.root.join('spec/factories/*.rb')),
       # サポートファイル
-      Dir.glob(Rails.root.join('spec', 'support', '*.rb')),
+      Dir.glob(Rails.root.join('spec/support/*.rb')),
     ].flatten
 
     spec_paths.each do |path|
@@ -43,7 +39,6 @@ class Prompt
     end
     hash
   end
-
 
   def codes
     hash = {}
