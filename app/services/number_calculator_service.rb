@@ -1,84 +1,70 @@
+# app/services/number_calculator_service.rb
+
 class NumberCalculatorService
   class << self
-    def recalculate_numbers_for_user(user_id, start_date: nil, end_date: nil)
-      target_workloads = fetch_workloads_for_recalculation(user_id, start_date, end_date)
-      update_workload_numbers(target_workloads)
+    def recalculate_numbers_for_user(user_id, start_date:, end_date:)
+      update_workload_numbers(user_id, start_date, end_date)
     end
 
-    def verify_numbers_for_user(user_id, start_date: nil, end_date: nil)
+    def verify_numbers_for_user(user_id, start_date:, end_date:)
+      start_time = Time.zone.parse(start_date).beginning_of_day
+      end_time = Time.zone.parse(end_date).end_of_day
+
       workloads = Workload.where(user_id: user_id)
+                          .where(created_at: start_time..end_time)
                           .where(is_done: true)
-                          .where(created_at: start_date..end_date)
-                          .order(created_at: :asc)
+                          .order(:created_at)
 
-      results = {}
-
-      workloads.each do |workload|
-        jst_time = workload.created_at.in_time_zone('Tokyo')
-        date_key = jst_time.strftime('%Y-%m-%d')
-        week_start = calculate_week_start(workload.created_at)
-                     .in_time_zone('Tokyo')
-                     .strftime('%Y-%m-%d')
-
-        results[date_key] ||= []
-        results[date_key] << {
-          created_at: jst_time,
-          number: workload.number,
-          weekly_number: workload.weekly_number,
-          week_start: week_start
-        }
+      workloads.group_by { |w| w.created_at.in_time_zone('Tokyo').to_date.to_s }.transform_values do |daily_workloads|
+        daily_workloads.map do |workload|
+          {
+            created_at: workload.created_at.in_time_zone('Tokyo'),
+            number: workload.number,
+            weekly_number: workload.weekly_number,
+            week_start: calculate_week_start(workload.created_at).strftime('%Y-%m-%d')
+          }
+        end
       end
-
-      results
     end
 
     def calculate_week_start(date)
-      jst_time = date.in_time_zone('Tokyo')
-      monday = jst_time.beginning_of_week(:monday)
-      monday.beginning_of_day.in_time_zone('UTC')
+      date.in_time_zone('Tokyo').beginning_of_week
     end
 
     private
 
-    def fetch_workloads_for_recalculation(user_id, start_date, end_date)
-      return [] if start_date.blank?
+    def update_workload_numbers(user_id, start_date, end_date)
+      start_time = Time.zone.parse(start_date).beginning_of_day
+      end_time = Time.zone.parse(end_date).end_of_day
+      weekly_count = 0
 
-      start_time = Time.zone.parse(start_date.to_s).in_time_zone('Tokyo').beginning_of_day
-      end_time = end_date.present? ? Time.zone.parse(end_date.to_s).in_time_zone('Tokyo').end_of_day : start_time
+      workloads = Workload.where(user_id: user_id)
+                          .where(created_at: start_time..end_time)
+                          .where(is_done: true)
+                          .order(:created_at)
 
-      start_time_utc = start_time.in_time_zone('UTC')
-      end_time_utc = end_time.in_time_zone('UTC')
+      current_date = nil
+      current_week_start = nil
+      daily_count = 0
 
-      Workload.where(user_id: user_id, is_done: true)
-              .where(created_at: start_time_utc..end_time_utc)
-              .order(created_at: :asc)
-    end
+      workloads.each do |workload|
+        workload_date = workload.created_at.in_time_zone('Tokyo').to_date
+        workload_week_start = calculate_week_start(workload.created_at)
 
-    def update_workload_numbers(workloads)
-      return if workloads.empty?
-
-      ActiveRecord::Base.transaction do
-        current_date = nil
-        weekly_count = 0
-
-        workloads.each do |workload|
-          jst_time = workload.created_at.in_time_zone('Tokyo')
-          jst_date = jst_time.to_date
-
-          if current_date == jst_date
-            daily_count += 1
-          else
-            current_date = jst_date
-            daily_count = 1
-          end
-
-          weekly_count += 1
-
-          workload.update!(
-            number: daily_count,
-            weekly_number: weekly_count
-          )
+        if workload_date != current_date
+          daily_count = 0
+          current_date = workload_date
         end
+
+        current_week_start = workload_week_start if workload_week_start != current_week_start
+
+        daily_count += 1
+        weekly_count += 1
+
+        workload.update!(
+          number: daily_count,
+          weekly_number: weekly_count
+        )
       end
     end
   end
