@@ -14,11 +14,10 @@ RSpec.describe Workload do
       end
 
       it 'numberが連番で設定される' do
-        workloads = Workload.fetch_workloads(
-          user.id,
-          base_time.beginning_of_day,
-          base_time.end_of_day
-        )
+        workloads = Workload.where(user_id: user.id)
+                           .where(created_at: base_time.beginning_of_day..base_time.end_of_day)
+                           .where(is_done: true)
+                           .order(:created_at)
         Workload.process_workload_numbers(workloads)
 
         numbers = workloads.reload.map(&:number)
@@ -26,11 +25,10 @@ RSpec.describe Workload do
       end
 
       it 'weekly_numberが連番で設定される' do
-        workloads = Workload.fetch_workloads(
-          user.id,
-          base_time.beginning_of_day,
-          base_time.end_of_day
-        )
+        workloads = Workload.where(user_id: user.id)
+                           .where(created_at: base_time.beginning_of_day..base_time.end_of_day)
+                           .where(is_done: true)
+                           .order(:created_at)
         Workload.process_workload_numbers(workloads)
 
         weekly_numbers = workloads.reload.map(&:weekly_number)
@@ -48,11 +46,10 @@ RSpec.describe Workload do
       end
 
       it '日ごとにnumberがリセットされる' do
-        workloads = Workload.fetch_workloads(
-          user.id,
-          base_time.beginning_of_day,
-          (base_time + 1.day).end_of_day
-        )
+        workloads = Workload.where(user_id: user.id)
+                           .where(created_at: base_time.beginning_of_day..(base_time + 1.day).end_of_day)
+                           .where(is_done: true)
+                           .order(:created_at)
         Workload.process_workload_numbers(workloads)
 
         numbers = workloads.reload.map(&:number)
@@ -60,11 +57,10 @@ RSpec.describe Workload do
       end
 
       it 'weekly_numberは継続して増加する' do
-        workloads = Workload.fetch_workloads(
-          user.id,
-          base_time.beginning_of_day,
-          (base_time + 1.day).end_of_day
-        )
+        workloads = Workload.where(user_id: user.id)
+                           .where(created_at: base_time.beginning_of_day..(base_time + 1.day).end_of_day)
+                           .where(is_done: true)
+                           .order(:created_at)
         Workload.process_workload_numbers(workloads)
 
         weekly_numbers = workloads.reload.map(&:weekly_number)
@@ -82,11 +78,10 @@ RSpec.describe Workload do
       end
 
       it '週が変わってもnumberは日ごとにリセットされる' do
-        workloads = Workload.fetch_workloads(
-          user.id,
-          base_time.beginning_of_day,
-          (base_time + 1.week).end_of_day
-        )
+        workloads = Workload.where(user_id: user.id)
+                           .where(created_at: base_time.beginning_of_day..(base_time + 1.week).end_of_day)
+                           .where(is_done: true)
+                           .order(:created_at)
         Workload.process_workload_numbers(workloads)
 
         numbers = workloads.reload.map(&:number)
@@ -94,11 +89,10 @@ RSpec.describe Workload do
       end
 
       it 'weekly_numberは週ごとにリセットされる' do
-        workloads = Workload.fetch_workloads(
-          user.id,
-          base_time.beginning_of_day,
-          (base_time + 1.week).end_of_day
-        )
+        workloads = Workload.where(user_id: user.id)
+                           .where(created_at: base_time.beginning_of_day..(base_time + 1.week).end_of_day)
+                           .where(is_done: true)
+                           .order(:created_at)
         Workload.process_workload_numbers(workloads)
 
         weekly_numbers = workloads.reload.map(&:weekly_number)
