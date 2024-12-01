@@ -1,5 +1,6 @@
 class Prompt
   RSPEC_RESULT_PATH = Rails.root.join('tmp/rspec_result.txt')
+  RUBOCOP_RESULT_PATH = Rails.root.join('tmp/rubocop_result.txt')
 
   def goal
     '/prompt_rspec にアクセスしたらRspecを修正するたねのプロンプトを生成させるために Prompt.new.rspec_resultで bundle exec rspecの実行結果を返すようにしたい'
@@ -17,6 +18,10 @@ class Prompt
     File.read(RSPEC_RESULT_PATH).force_encoding('UTF-8')
   rescue StandardError => e
     "RSpec結果の読み取り中にエラーが発生しました: #{e.message}"
+  end
+
+  def rubocop_result
+    @rubocop_result ||= File.read(RUBOCOP_RESULT_PATH).force_encoding('UTF-8')
   end
 
   def spec_codes
@@ -38,6 +43,25 @@ class Prompt
       hash[relative_path] = File.read(path)
     end
     hash
+  end
+
+  def rubocop_codes
+    hash = {}
+    rubocop_paths.each do |path|
+      hash[path] = File.read(path)
+    end
+    hash
+  end
+
+  def rubocop_paths
+    text = rubocop_result
+
+    filenames = text.lines.map do |line|
+      if match = line.match(/^([^:]+):\d+/)
+        match[1]
+      end
+    end
+    filenames.compact.uniq
   end
 
   def codes
