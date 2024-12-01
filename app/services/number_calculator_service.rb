@@ -20,9 +20,9 @@ class NumberCalculatorService
 
     def fetch_workloads(user_id, start_time, end_time)
       Workload.where(user_id: user_id)
-             .where(created_at: start_time..end_time)
-             .where(is_done: true)
-             .order(:created_at)
+              .where(created_at: start_time..end_time)
+              .where(is_done: true)
+              .order(:created_at)
     end
 
     def group_workloads_by_date(workloads)
@@ -44,7 +44,7 @@ class NumberCalculatorService
     def update_workload_numbers(user_id, start_date, end_date)
       start_time = Time.zone.parse(start_date).beginning_of_day
       end_time = Time.zone.parse(end_date).end_of_day
-      
+
       workloads = fetch_workloads(user_id, start_time, end_time)
       process_workload_numbers(workloads)
     end
