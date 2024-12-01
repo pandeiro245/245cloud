@@ -3,7 +3,7 @@ class Prompt
   RUBOCOP_RESULT_PATH = Rails.root.join('tmp/rubocop_result.txt')
 
   def goal
-    '/prompt_rspec にアクセスしたらRspecを修正するたねのプロンプトを生成させるために Prompt.new.rspec_resultで bundle exec rspecの実行結果を返すようにしたい'
+    'NumberCalculatorServiceを廃止してWorkloadモデルのシンプルなメソッドに集約させたい'
   end
 
   def rspec_result
@@ -85,7 +85,7 @@ class Prompt
       # 'config/application.rb',
       # 'config/environments/production.rb',
       # 'config/environments/development.rb',
-      'config/routes.rb',
+      # 'config/routes.rb',
 
       # js
       # 'config/importmap.rb',
@@ -117,19 +117,17 @@ class Prompt
       # 'app/controllers/application_controller.rb',
       # 'app/controllers/users_controller.rb',
       'app/controllers/home_controller.rb',
+      'app/controllers/api/workloads_controller.rb',
 
       # model
-      'app/models/prompt.rb',
+      # 'app/models/prompt.rb',
       # 'app/models/instance.rb',
       # 'app/models/access_log.rb',
-      # 'app/models/workload.rb',
+      'app/models/workload.rb',
       # 'app/models/comment.rb',
-      # 'app/models/user.rb',
+      'app/models/user.rb',
       # 'app/models/music.rb',
       # 'app/models/concerns/workload_music_concern.rb',
-
-      # service
-      # 'app/services/number_calculator_service.rb',
 
       # spec
       # 'spec/spec_helper.rb',

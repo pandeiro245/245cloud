@@ -4,10 +4,12 @@
 
 
 【依頼事項】
+得たいこととしては「Workloadモデルのprocess_workload_numbersメソッドのRSpecを追加する」です。
+
+<% if false %>
 得たいこととしては「下記のRSpec実行結果を改善する」です。
-
-
 <%= @prompt.rspec_result %>
+<% end %>
 
 
 下記に現状のコードを共有しますが変更する場合は一部ではなくファイル全体のコードを指定してください。
@@ -16,7 +18,13 @@
 <%- @prompt.spec_codes.each do |path, code| %>
 ======================
 <%= path %> のコードは下記の通り
-
 <%= code %>
 <% end %>
+
+<%- @prompt.codes.each do |path, code| %>
+======================
+<%= path %> のコードは下記の通り
+<%= code %>
+<% end %>
+
 </pre>

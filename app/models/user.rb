@@ -1,4 +1,3 @@
-# app/models/user.rb
 class User < ActiveRecord::Base
   has_many :workloads, dependent: :destroy
 
@@ -46,11 +45,11 @@ class User < ActiveRecord::Base
   end
 
   def recalculate_workload_numbers!(start_date: nil, end_date: nil)
-    WorkloadNumberCalculator.recalculate_numbers_for_user(id, start_date: start_date, end_date: end_date)
+    workloads.recalculate_numbers_for_user(id, start_date: start_date, end_date: end_date)
   end
 
   def verify_workload_numbers(start_date: nil, end_date: nil)
-    WorkloadNumberCalculator.verify_numbers_for_user(id, start_date: start_date, end_date: end_date)
+    workloads.verify_numbers_for_user(id, start_date: start_date, end_date: end_date)
   end
 
   def save_image_from_twitter(auth_hash)
