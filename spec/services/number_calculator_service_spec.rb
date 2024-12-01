@@ -6,14 +6,14 @@ RSpec.describe NumberCalculatorService do
 
     context '指定した日付範囲内のworkloadが存在する場合' do
       let!(:morning_workload) { create(:workload, user: user, is_done: true, created_at: '2024-01-01 10:00:00') }
-      let!(:noon_workload) { create(:workload, user: user, is_done: true, created_at: '2024-01-01 11:00:00') }
+      let!(:afternoon_workload) { create(:workload, user: user, is_done: true, created_at: '2024-01-01 11:00:00') }
       let!(:next_day_workload) { create(:workload, user: user, is_done: true, created_at: '2024-01-02 10:00:00') }
 
       it '日次番号が正しく計算される' do
         described_class.recalculate_numbers_for_user(user.id, start_date: '2024-01-01', end_date: '2024-01-02')
 
         expect(morning_workload.reload.number).to eq(1)
-        expect(noon_workload.reload.number).to eq(2)
+        expect(afternoon_workload.reload.number).to eq(2)
         expect(next_day_workload.reload.number).to eq(1)
       end
 
@@ -21,7 +21,7 @@ RSpec.describe NumberCalculatorService do
         described_class.recalculate_numbers_for_user(user.id, start_date: '2024-01-01', end_date: '2024-01-02')
 
         expect(morning_workload.reload.weekly_number).to eq(1)
-        expect(noon_workload.reload.weekly_number).to eq(2)
+        expect(afternoon_workload.reload.weekly_number).to eq(2)
         expect(next_day_workload.reload.weekly_number).to eq(3)
       end
     end
