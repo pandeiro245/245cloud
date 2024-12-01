@@ -1,85 +1,64 @@
-class NumberCalculatorService
-  class << self
-    def recalculate_numbers_for_user(user_id, start_date: nil, end_date: nil)
-      target_workloads = fetch_workloads_for_recalculation(user_id, start_date, end_date)
-      update_workload_numbers(target_workloads)
-    end
+# spec/models/workload_spec.rb
+require 'rails_helper'
 
-    def verify_numbers_for_user(user_id, start_date: nil, end_date: nil)
-      workloads = Workload.where(user_id: user_id)
-                          .where(is_done: true)
-                          .where(created_at: start_date..end_date)
-                          .order(created_at: :asc)
+RSpec.describe NumberCalculatorService do
+  describe '.recalculate_numbers_for_user' do
+    let(:user) { create(:user) }
+    
+    context '指定した日付範囲内のworkloadが存在する場合' do
+      let!(:workload1) { create(:workload, user: user, is_done: true, created_at: '2024-01-01 10:00:00') }
+      let!(:workload2) { create(:workload, user: user, is_done: true, created_at: '2024-01-01 11:00:00') }
+      let!(:workload3) { create(:workload, user: user, is_done: true, created_at: '2024-01-02 10:00:00') }
 
-      results = {}
-
-      workloads.each do |workload|
-        jst_time = workload.created_at.in_time_zone('Tokyo')
-        date_key = jst_time.strftime('%Y-%m-%d')
-        week_start = calculate_week_start(workload.created_at)
-                     .in_time_zone('Tokyo')
-                     .strftime('%Y-%m-%d')
-
-        results[date_key] ||= []
-        results[date_key] << {
-          created_at: jst_time,
-          number: workload.number,
-          weekly_number: workload.weekly_number,
-          week_start: week_start
-        }
+      it '日次番号が正しく計算される' do
+        described_class.recalculate_numbers_for_user(user.id, start_date: '2024-01-01', end_date: '2024-01-02')
+        
+        expect(workload1.reload.number).to eq(1)
+        expect(workload2.reload.number).to eq(2)
+        expect(workload3.reload.number).to eq(1)
       end
 
-      results
-    end
-
-    def calculate_week_start(date)
-      jst_time = date.in_time_zone('Tokyo')
-      monday = jst_time.beginning_of_week(:monday)
-      monday.beginning_of_day.in_time_zone('UTC')
-    end
-
-    private
-
-    def fetch_workloads_for_recalculation(user_id, start_date, end_date)
-      return [] if start_date.blank?
-
-      start_time = Time.zone.parse(start_date.to_s).in_time_zone('Tokyo').beginning_of_day
-      end_time = end_date.present? ? Time.zone.parse(end_date.to_s).in_time_zone('Tokyo').end_of_day : start_time
-
-      start_time_utc = start_time.in_time_zone('UTC')
-      end_time_utc = end_time.in_time_zone('UTC')
-
-      Workload.where(user_id: user_id, is_done: true)
-              .where(created_at: start_time_utc..end_time_utc)
-              .order(created_at: :asc)
-    end
-
-    def update_workload_numbers(workloads)
-      return if workloads.empty?
-
-      ActiveRecord::Base.transaction do
-        current_date = nil
-        weekly_count = 0
-
-        workloads.each do |workload|
-          jst_time = workload.created_at.in_time_zone('Tokyo')
-          jst_date = jst_time.to_date
-
-          if current_date == jst_date
-            daily_count += 1
-          else
-            current_date = jst_date
-            daily_count = 1
-          end
-
-          weekly_count += 1
-
-          workload.update!(
-            number: daily_count,
-            weekly_number: weekly_count
-          )
-        end
+      it '週次番号が正しく計算される' do
+        described_class.recalculate_numbers_for_user(user.id, start_date: '2024-01-01', end_date: '2024-01-02')
+        
+        expect(workload1.reload.weekly_number).to eq(1)
+        expect(workload2.reload.weekly_number).to eq(2)
+        expect(workload3.reload.weekly_number).to eq(3)
       end
+    end
+
+    context '指定した日付範囲内のworkloadが存在しない場合' do
+      it '何も更新されない' do
+        expect {
+          described_class.recalculate_numbers_for_user(user.id, start_date: '2024-01-01', end_date: '2024-01-02')
+        }.not_to change { Workload.count }
+      end
+    end
+  end
+
+  describe '.verify_numbers_for_user' do
+    let(:user) { create(:user) }
+    let!(:workload) { create(:workload, user: user, is_done: true, number: 1, weekly_number: 1, created_at: '2024-01-01 10:00:00') }
+
+    it '正しい形式でデータを返す' do
+      result = described_class.verify_numbers_for_user(user.id, start_date: '2024-01-01', end_date: '2024-01-01')
+      
+      expect(result['2024-01-01']).to be_present
+      expect(result['2024-01-01'].first).to include(
+        created_at: workload.created_at.in_time_zone('Tokyo'),
+        number: 1,
+        weekly_number: 1,
+        week_start: '2024-01-01'
+      )
+    end
+  end
+
+  describe '.calculate_week_start' do
+    it '日本時間での週初め（月曜日）を返す' do
+      date = Time.zone.parse('2024-01-03 10:00:00') # 水曜日
+      result = described_class.calculate_week_start(date)
+      
+      expect(result.in_time_zone('Tokyo').strftime('%Y-%m-%d')).to eq('2024-01-01')
     end
   end
 end

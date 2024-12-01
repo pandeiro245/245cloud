@@ -34,6 +34,10 @@ class HomeController < ApplicationController
     @prompt = Prompt.new
   end
 
+  def prompt_rspec
+    @prompt = Prompt.new
+  end
+
   def error
     raise 'this is error sample'
   end

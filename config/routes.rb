@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   root 'home#index'
   resources :nicoinfo, only: [:show], constraints: {id: /sm[0-9]+/}
   get '/prompt', to: 'home#prompt'
+  get '/prompt_rspec', to: 'home#prompt_rspec'
 
   get '/auth/:provider/callback', to: 'users#login'
 

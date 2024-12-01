@@ -1,7 +1,49 @@
 class Prompt
+  RSPEC_RESULT_PATH = Rails.root.join('tmp', 'rspec_result.txt')
+
   def goal
-    'is_doneになったworkloadのnumberとweekly_numberが日本時間で集計して欲しいのにそうならないことがあるのでまずはそれが再現するRspecを用意したい'
+    '/prompt_rspec にアクセスしたらRspecを修正するたねのプロンプトを生成させるために Prompt.new.rspec_resultで bundle exec rspecの実行結果を返すようにしたい'
   end
+
+  def rspec_result
+    # 結果ファイルが存在しない場合は実行中または未実行のメッセージを返す
+    unless File.exist?(RSPEC_RESULT_PATH)
+      return "RSpec実行結果はまだ生成されていません。script/run_rspec.shを実行してください。"
+    end
+
+    # ファイルの更新時刻を確認
+    file_age = Time.now - File.mtime(RSPEC_RESULT_PATH)
+    if file_age > 1.hour
+      return "RSpec実行結果が1時間以上前のものです。新しい結果を取得するにはscript/run_rspec.shを実行してください。\n\n#{File.read(RSPEC_RESULT_PATH)}"
+    end
+
+    # 結果ファイルを読み取って返す
+    File.read(RSPEC_RESULT_PATH).force_encoding('UTF-8')
+  rescue => e
+    "RSpec結果の読み取り中にエラーが発生しました: #{e.message}"
+  end
+
+  def spec_codes
+    hash = {}
+    spec_paths = [
+      # テストファイル
+      Dir.glob(Rails.root.join('spec', '**', '*_spec.rb')),
+      # ヘルパーファイル
+      Dir.glob(Rails.root.join('spec', 'rails_helper.rb')),
+      Dir.glob(Rails.root.join('spec', 'spec_helper.rb')),
+      # ファクトリーファイル
+      Dir.glob(Rails.root.join('spec', 'factories', '*.rb')),
+      # サポートファイル
+      Dir.glob(Rails.root.join('spec', 'support', '*.rb')),
+    ].flatten
+
+    spec_paths.each do |path|
+      relative_path = Pathname.new(path).relative_path_from(Rails.root).to_s
+      hash[relative_path] = File.read(path)
+    end
+    hash
+  end
+
 
   def codes
     hash = {}
@@ -14,7 +56,7 @@ class Prompt
   def paths
     [
       # Basic
-      'Gemfile',
+      # 'Gemfile',
 
       # server
       # 'server.sh',
@@ -24,7 +66,7 @@ class Prompt
       # 'config/application.rb',
       # 'config/environments/production.rb',
       # 'config/environments/development.rb',
-      # 'config/routes.rb',
+      'config/routes.rb',
 
       # js
       # 'config/importmap.rb',
@@ -58,23 +100,24 @@ class Prompt
       'app/controllers/home_controller.rb',
 
       # model
+      'app/models/prompt.rb',
       # 'app/models/instance.rb',
       # 'app/models/access_log.rb',
-      'app/models/workload.rb',
+      # 'app/models/workload.rb',
       # 'app/models/comment.rb',
       # 'app/models/user.rb',
       # 'app/models/music.rb',
-      'app/models/concerns/workload_music_concern.rb',
+      # 'app/models/concerns/workload_music_concern.rb',
 
       # service
-      'app/services/number_calculator_service.rb',
+      # 'app/services/number_calculator_service.rb',
 
       # spec
-      'spec/spec_helper.rb',
-      'spec/rails_helper.rb',
-      'spec/models/workload_spec.rb',
-      'spec/factories/users.rb',
-      'spec/factories/workloads.rb',
+      # 'spec/spec_helper.rb',
+      # 'spec/rails_helper.rb',
+      # 'spec/models/workload_spec.rb',
+      # 'spec/factories/users.rb',
+      # 'spec/factories/workloads.rb',
     ]
   end
 end
