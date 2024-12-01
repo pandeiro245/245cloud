@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :workload do
     association :user
-    music_key { '' }
+    music_key { "" }
     title { nil }
     artwork_url { nil }
     is_done { false }
