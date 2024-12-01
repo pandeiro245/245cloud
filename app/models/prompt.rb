@@ -57,7 +57,7 @@ class Prompt
     text = rubocop_result
 
     filenames = text.lines.map do |line|
-      if match = line.match(/^([^:]+):\d+/)
+      if (match = line.match(/^([^:]+):\d+/))
         match[1]
       end
     end
