@@ -40,6 +40,20 @@ gem 'thruster', require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 
+# Original
+gem 'haml'
+gem 'slim-rails'
+gem 'dotenv-rails'
+gem 'devise'
+gem 'draper'
+gem 'omniauth-twitter'
+gem 'omniauth-rails_csrf_protection'
+gem 'google-cloud-firestore'
+gem 'i18n', '>= 1.6', '< 2'
+gem 'nio4r'
+gem 'whenever'
+gem 'exception_notification'
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem 'debug', platforms: [:mri, :mswin, :mswin64, :mingw], require: 'debug/prelude'
@@ -49,6 +63,15 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem 'rubocop-rails-omakase', require: false
+
+  # RSpec関連
+  gem 'rspec-rails'
+  gem 'factory_bot_rails'
+  gem 'faker'
+  gem 'database_cleaner'
+  gem 'shoulda-matchers'
+  gem 'webmock'
+  gem 'vcr'
 end
 
 group :development do
@@ -68,18 +91,5 @@ group :test do
   # Original
   gem 'rubocop-rspec'
   gem 'rubocop-capybara'
+  gem 'simplecov', require: false
 end
-
-# Original
-gem 'haml'
-gem 'slim-rails'
-gem 'dotenv-rails'
-gem 'devise'
-gem 'draper'
-gem 'omniauth-twitter'
-gem 'omniauth-rails_csrf_protection'
-gem 'google-cloud-firestore'
-gem 'i18n', '>= 1.6', '< 2'
-gem 'nio4r'
-gem 'whenever'
-gem 'exception_notification'

@@ -5,6 +5,7 @@ Bundler.require(*Rails.groups)
 module NishikoCloud
   class Application < Rails::Application
     config.load_defaults 8.0
+    config.autoload_paths += %W[#{config.root}/app/services]
     config.autoload_lib(ignore: %w[assets tasks])
 
     # ホスト認証設定

@@ -16,3 +16,34 @@ Style/FrozenStringLiteralComment:
 
 Style/TrailingCommaInArrayLiteral:
   EnforcedStyleForMultiline: consistent_comma
+
+# RSpec関連の設定
+RSpec/DescribedClass:
+  Enabled: true
+
+RSpec/ContextWording:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Max: 20
+  CountAsOne: ['array', 'hash', 'heredoc']
+
+RSpec/MultipleExpectations:
+  Max: 5
+
+RSpec/NestedGroups:
+  Max: 4
+
+# 日本語の文字列を許可
+Style/AsciiComments:
+  Enabled: false
+
+# ブロックの行数制限を緩和
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+
+# RSpecのブロック内での長いブロックを許可
+Metrics/MethodLength:
+  Exclude:
+    - 'spec/**/*'
