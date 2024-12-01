@@ -31,7 +31,7 @@ RSpec.describe NumberCalculatorService do
       it '何も更新されない' do
         expect do
           described_class.recalculate_numbers_for_user(user.id, start_date: '2024-01-01', end_date: '2024-01-02')
-        end.not_to(change { Workload.count })
+        end.not_to(change(Workload, :count))
       end
     end
   end

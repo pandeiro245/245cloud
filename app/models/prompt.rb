@@ -10,7 +10,7 @@ class Prompt
     return 'RSpec実行結果はまだ生成されていません。script/run_rspec.shを実行してください。' unless File.exist?(RSPEC_RESULT_PATH)
 
     # ファイルの更新時刻を確認
-    file_age = Time.now - File.mtime(RSPEC_RESULT_PATH)
+    file_age = Time.zone.now - File.mtime(RSPEC_RESULT_PATH)
     return "RSpec実行結果が1時間以上前のものです。新しい結果を取得するにはscript/run_rspec.shを実行してください。\n\n#{File.read(RSPEC_RESULT_PATH)}" if file_age > 1.hour
 
     # 結果ファイルを読み取って返す
@@ -23,14 +23,14 @@ class Prompt
     hash = {}
     spec_paths = [
       # テストファイル
-      Dir.glob(Rails.root.join('spec/**/*_spec.rb')),
+      Rails.root.glob('spec/**/*_spec.rb'),
       # ヘルパーファイル
-      Dir.glob(Rails.root.join('spec/rails_helper.rb')),
-      Dir.glob(Rails.root.join('spec/spec_helper.rb')),
+      Rails.root.glob('spec/rails_helper.rb'),
+      Rails.root.glob('spec/spec_helper.rb'),
       # ファクトリーファイル
-      Dir.glob(Rails.root.join('spec/factories/*.rb')),
+      Rails.root.glob('spec/factories/*.rb'),
       # サポートファイル
-      Dir.glob(Rails.root.join('spec/support/*.rb')),
+      Rails.root.glob('spec/support/*.rb'),
     ].flatten
 
     spec_paths.each do |path|
