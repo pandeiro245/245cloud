@@ -41,7 +41,7 @@ class NumberCalculatorService
     private
 
     def fetch_workloads_for_recalculation(user_id, start_date, end_date)
-      return [] unless start_date.present?
+      return [] if start_date.blank?
 
       start_time = Time.zone.parse(start_date.to_s).in_time_zone('Tokyo').beginning_of_day
       end_time = end_date.present? ? Time.zone.parse(end_date.to_s).in_time_zone('Tokyo').end_of_day : start_time
@@ -50,7 +50,7 @@ class NumberCalculatorService
       end_time_utc = end_time.in_time_zone('UTC')
 
       Workload.where(user_id: user_id, is_done: true)
-              .where('created_at >= ? AND created_at <= ?', start_time_utc, end_time_utc)
+              .where(created_at: start_time_utc..end_time_utc)
               .order(created_at: :asc)
     end
 
