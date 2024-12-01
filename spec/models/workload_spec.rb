@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Workload do
-  describe '.process_workload_numbers' do
+  describe '.recalculate_numbers_for_user' do
     let(:user) { create(:user) }
     let(:base_time) { Time.zone.local(2024, 1, 1, 12, 0, 0) }
 
@@ -14,25 +14,27 @@ RSpec.describe Workload do
       end
 
       it 'numberが連番で設定される' do
-        workloads = Workload.where(user_id: user.id)
-                           .where(created_at: base_time.beginning_of_day..base_time.end_of_day)
-                           .where(is_done: true)
-                           .order(:created_at)
-        Workload.process_workload_numbers(workloads)
+        Workload.recalculate_numbers_for_user(
+          user.id,
+          start_date: base_time.to_date.to_s,
+          end_date: base_time.to_date.to_s
+        )
 
-        numbers = workloads.reload.map(&:number)
-        expect(numbers).to eq [1, 2, 3]
+        workloads = user.workloads.where(created_at: base_time.beginning_of_day..base_time.end_of_day)
+                       .order(:created_at)
+        expect(workloads.map(&:number)).to eq [1, 2, 3]
       end
 
       it 'weekly_numberが連番で設定される' do
-        workloads = Workload.where(user_id: user.id)
-                           .where(created_at: base_time.beginning_of_day..base_time.end_of_day)
-                           .where(is_done: true)
-                           .order(:created_at)
-        Workload.process_workload_numbers(workloads)
+        Workload.recalculate_numbers_for_user(
+          user.id,
+          start_date: base_time.to_date.to_s,
+          end_date: base_time.to_date.to_s
+        )
 
-        weekly_numbers = workloads.reload.map(&:weekly_number)
-        expect(weekly_numbers).to eq [1, 2, 3]
+        workloads = user.workloads.where(created_at: base_time.beginning_of_day..base_time.end_of_day)
+                       .order(:created_at)
+        expect(workloads.map(&:weekly_number)).to eq [1, 2, 3]
       end
     end
 
@@ -46,25 +48,29 @@ RSpec.describe Workload do
       end
 
       it '日ごとにnumberがリセットされる' do
-        workloads = Workload.where(user_id: user.id)
-                           .where(created_at: base_time.beginning_of_day..(base_time + 1.day).end_of_day)
-                           .where(is_done: true)
-                           .order(:created_at)
-        Workload.process_workload_numbers(workloads)
+        Workload.recalculate_numbers_for_user(
+          user.id,
+          start_date: base_time.to_date.to_s,
+          end_date: (base_time + 1.day).to_date.to_s
+        )
 
-        numbers = workloads.reload.map(&:number)
-        expect(numbers).to eq [1, 2, 1, 2]
+        workloads = user.workloads.where(
+          created_at: base_time.beginning_of_day..(base_time + 1.day).end_of_day
+        ).order(:created_at)
+        expect(workloads.map(&:number)).to eq [1, 2, 1, 2]
       end
 
       it 'weekly_numberは継続して増加する' do
-        workloads = Workload.where(user_id: user.id)
-                           .where(created_at: base_time.beginning_of_day..(base_time + 1.day).end_of_day)
-                           .where(is_done: true)
-                           .order(:created_at)
-        Workload.process_workload_numbers(workloads)
+        Workload.recalculate_numbers_for_user(
+          user.id,
+          start_date: base_time.to_date.to_s,
+          end_date: (base_time + 1.day).to_date.to_s
+        )
 
-        weekly_numbers = workloads.reload.map(&:weekly_number)
-        expect(weekly_numbers).to eq [1, 2, 3, 4]
+        workloads = user.workloads.where(
+          created_at: base_time.beginning_of_day..(base_time + 1.day).end_of_day
+        ).order(:created_at)
+        expect(workloads.map(&:weekly_number)).to eq [1, 2, 3, 4]
       end
     end
 
@@ -78,25 +84,29 @@ RSpec.describe Workload do
       end
 
       it '週が変わってもnumberは日ごとにリセットされる' do
-        workloads = Workload.where(user_id: user.id)
-                           .where(created_at: base_time.beginning_of_day..(base_time + 1.week).end_of_day)
-                           .where(is_done: true)
-                           .order(:created_at)
-        Workload.process_workload_numbers(workloads)
+        Workload.recalculate_numbers_for_user(
+          user.id,
+          start_date: base_time.to_date.to_s,
+          end_date: (base_time + 1.week).to_date.to_s
+        )
 
-        numbers = workloads.reload.map(&:number)
-        expect(numbers).to eq [1, 2, 1, 2]
+        workloads = user.workloads.where(
+          created_at: base_time.beginning_of_day..(base_time + 1.week).end_of_day
+        ).order(:created_at)
+        expect(workloads.map(&:number)).to eq [1, 2, 1, 2]
       end
 
       it 'weekly_numberは週ごとにリセットされる' do
-        workloads = Workload.where(user_id: user.id)
-                           .where(created_at: base_time.beginning_of_day..(base_time + 1.week).end_of_day)
-                           .where(is_done: true)
-                           .order(:created_at)
-        Workload.process_workload_numbers(workloads)
+        Workload.recalculate_numbers_for_user(
+          user.id,
+          start_date: base_time.to_date.to_s,
+          end_date: (base_time + 1.week).to_date.to_s
+        )
 
-        weekly_numbers = workloads.reload.map(&:weekly_number)
-        expect(weekly_numbers).to eq [1, 2, 1, 2]
+        workloads = user.workloads.where(
+          created_at: base_time.beginning_of_day..(base_time + 1.week).end_of_day
+        ).order(:created_at)
+        expect(workloads.map(&:weekly_number)).to eq [1, 2, 1, 2]
       end
     end
   end

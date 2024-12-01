@@ -1,4 +1,3 @@
-# app/models/workload.rb
 class Workload < ActiveRecord::Base
   include WorkloadMusicConcern
 
@@ -69,16 +68,28 @@ class Workload < ActiveRecord::Base
       start_time = Time.zone.parse(start_date).beginning_of_day
       end_time = Time.zone.parse(end_date).end_of_day
 
-      workloads = fetch_workloads(user_id, start_time, end_time)
-      process_workload_numbers(workloads)
-    end
+      workloads = where(user_id: user_id)
+        .where(created_at: start_time..end_time)
+        .where(is_done: true)
+        .order(:created_at)
 
-    def verify_numbers_for_user(user_id, start_date:, end_date:)
-      start_time = Time.zone.parse(start_date).beginning_of_day
-      end_time = Time.zone.parse(end_date).end_of_day
+      workloads.each do |workload|
+        tokyo_time = workload.created_at.in_time_zone('Tokyo')
+        day_start = tokyo_time.beginning_of_day
+        week_start = tokyo_time.beginning_of_week
 
-      workloads = fetch_workloads(user_id, start_time, end_time)
-      group_workloads_by_date(workloads)
+        daily_count = where(user_id: user_id)
+          .where(is_done: true)
+          .where('created_at >= ? AND created_at <= ?', day_start, workload.created_at)
+          .count
+
+        weekly_count = where(user_id: user_id)
+          .where(is_done: true)
+          .where('created_at >= ? AND created_at <= ?', week_start, workload.created_at)
+          .count
+
+        workload.update!(number: daily_count, weekly_number: weekly_count)
+      end
     end
 
     private
@@ -95,56 +106,6 @@ class Workload < ActiveRecord::Base
       end
 
       create_params
-    end
-
-    def fetch_workloads(user_id, start_time, end_time)
-      where(user_id: user_id)
-        .where(created_at: start_time..end_time)
-        .where(is_done: true)
-        .order(:created_at)
-    end
-
-    def group_workloads_by_date(workloads)
-      workloads.group_by { |w| w.created_at.in_time_zone('Tokyo').to_date.to_s }
-               .transform_values do |daily_workloads|
-        daily_workloads.map { |workload| workload_data(workload) }
-      end
-    end
-
-    def workload_data(workload)
-      {
-        created_at: workload.created_at.in_time_zone('Tokyo'),
-        number: workload.number,
-        weekly_number: workload.weekly_number,
-        week_start: calculate_week_start(workload.created_at).strftime('%Y-%m-%d')
-      }
-    end
-
-    def process_workload_numbers(workloads)
-      weekly_count = 0
-      current_date = nil
-      current_week_start = nil
-      daily_count = 0
-
-      workloads.each do |workload|
-        workload_date = workload.created_at.in_time_zone('Tokyo').to_date
-        workload_week_start = calculate_week_start(workload.created_at)
-
-        if workload_date != current_date
-          daily_count = 0
-          current_date = workload_date
-        end
-
-        current_week_start = workload_week_start if workload_week_start != current_week_start
-
-        daily_count += 1
-        weekly_count += 1
-
-        workload.update!(
-          number: daily_count,
-          weekly_number: weekly_count
-        )
-      end
     end
   end
 
