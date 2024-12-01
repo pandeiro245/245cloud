@@ -1,3 +1,4 @@
+# app/models/workload.rb
 class Workload < ActiveRecord::Base
   include WorkloadMusicConcern
 
@@ -6,44 +7,23 @@ class Workload < ActiveRecord::Base
 
   belongs_to :user
 
-  # バリデーション
   validate :music_key_presence_if_title_or_artwork_url_present
-
-  # コールバック
   before_save :set_music_key
 
-  # 基本スコープ
   scope :created, -> { order('workloads.created_at DESC') }
   scope :dones, -> { where(is_done: true) }
   scope :his, ->(user_id) { where(user_id: user_id, is_done: true) }
 
-  # 時間関連スコープ
-  scope :by_range, ->(range) { where(created_at: range) }
-
-  scope :today, ->(created_at = nil) {
-    to = (created_at || Time.zone.now) - POMOTIME
-    base_time = to.in_time_zone('Tokyo')
-    from = base_time.beginning_of_day.in_time_zone('UTC')
-    by_range(from..to)
-  }
-
-  scope :thisweek, ->(created_at = nil) {
-    to = (created_at || Time.zone.now) - POMOTIME
-    from = Workload.calculate_week_start(to)
-    by_range(from..to)
-  }
-
   scope :chattings, -> {
     now = Time.zone.now
-    by_range((now - POMOTIME - CHATTIME)..(now - POMOTIME))
+    where(created_at: (now - POMOTIME - CHATTIME)..(now - POMOTIME))
   }
 
   scope :playings, -> {
     now = Time.zone.now
-    by_range((now - POMOTIME)..now)
+    where(created_at: (now - POMOTIME)..now)
   }
 
-  # タイプ関連
   scope :of_type, ->(type) {
     raise ArgumentError, "Invalid type: #{type}" if type && !active_type?(type)
     type ? public_send(type) : dones
@@ -60,36 +40,31 @@ class Workload < ActiveRecord::Base
       create!(build_create_params(user, params))
     end
 
-    def calculate_week_start(date)
-      date.in_time_zone('Tokyo').beginning_of_week
-    end
-
     def recalculate_numbers_for_user(user_id, start_date:, end_date:)
       start_time = Time.zone.parse(start_date).beginning_of_day
       end_time = Time.zone.parse(end_date).end_of_day
 
-      workloads = where(user_id: user_id)
+      where(user_id: user_id)
         .where(created_at: start_time..end_time)
         .where(is_done: true)
         .order(:created_at)
+        .each do |workload|
+          tokyo_time = workload.created_at.in_time_zone('Tokyo')
+          day_start = tokyo_time.beginning_of_day
+          week_start = tokyo_time.beginning_of_week
 
-      workloads.each do |workload|
-        tokyo_time = workload.created_at.in_time_zone('Tokyo')
-        day_start = tokyo_time.beginning_of_day
-        week_start = tokyo_time.beginning_of_week
+          daily_count = where(user_id: user_id)
+            .where(is_done: true)
+            .where('created_at >= ? AND created_at <= ?', day_start, workload.created_at)
+            .count
 
-        daily_count = where(user_id: user_id)
-          .where(is_done: true)
-          .where('created_at >= ? AND created_at <= ?', day_start, workload.created_at)
-          .count
+          weekly_count = where(user_id: user_id)
+            .where(is_done: true)
+            .where('created_at >= ? AND created_at <= ?', week_start, workload.created_at)
+            .count
 
-        weekly_count = where(user_id: user_id)
-          .where(is_done: true)
-          .where('created_at >= ? AND created_at <= ?', week_start, workload.created_at)
-          .count
-
-        workload.update!(number: daily_count, weekly_number: weekly_count)
-      end
+          workload.update!(number: daily_count, weekly_number: weekly_count)
+        end
     end
 
     private
