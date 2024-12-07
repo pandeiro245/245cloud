@@ -17,7 +17,7 @@ RSpec.describe Workload do
         described_class.recalculate_numbers_for_user(
           user.id,
           start_date: base_time.to_date,
-          end_date: base_time.to_date,
+          end_date: base_time.to_date
         )
 
         workloads = user.workloads.where(created_at: base_time.all_day)
@@ -29,7 +29,7 @@ RSpec.describe Workload do
         described_class.recalculate_numbers_for_user(
           user.id,
           start_date: base_time.to_date,
-          end_date: base_time.to_date,
+          end_date: base_time.to_date
         )
 
         workloads = user.workloads.where(created_at: base_time.all_day)
@@ -51,7 +51,7 @@ RSpec.describe Workload do
         described_class.recalculate_numbers_for_user(
           user.id,
           start_date: base_time.to_date,
-          end_date: (base_time + 1.day).to_date,
+          end_date: (base_time + 1.day).to_date
         )
 
         workloads = user.workloads.where(
@@ -64,7 +64,7 @@ RSpec.describe Workload do
         described_class.recalculate_numbers_for_user(
           user.id,
           start_date: base_time.to_date,
-          end_date: (base_time + 1.day).to_date,
+          end_date: (base_time + 1.day).to_date
         )
 
         workloads = user.workloads.where(
@@ -87,7 +87,7 @@ RSpec.describe Workload do
         described_class.recalculate_numbers_for_user(
           user.id,
           start_date: base_time.to_date,
-          end_date: (base_time + 1.week).to_date,
+          end_date: (base_time + 1.week).to_date
         )
 
         workloads = user.workloads.where(
@@ -100,7 +100,7 @@ RSpec.describe Workload do
         described_class.recalculate_numbers_for_user(
           user.id,
           start_date: base_time.to_date,
-          end_date: (base_time + 1.week).to_date,
+          end_date: (base_time + 1.week).to_date
         )
 
         workloads = user.workloads.where(
