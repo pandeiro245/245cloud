@@ -20,8 +20,8 @@ RSpec.describe Workload do
           end_date: base_time.to_date.to_s
         )
 
-        workloads = user.workloads.where(created_at: base_time.beginning_of_day..base_time.end_of_day)
-                       .order(:created_at)
+        workloads = user.workloads.where(created_at: base_time.all_day)
+                        .order(:created_at)
         expect(workloads.map(&:number)).to eq [1, 2, 3]
       end
 
@@ -32,8 +32,8 @@ RSpec.describe Workload do
           end_date: base_time.to_date.to_s
         )
 
-        workloads = user.workloads.where(created_at: base_time.beginning_of_day..base_time.end_of_day)
-                       .order(:created_at)
+        workloads = user.workloads.where(created_at: base_time.all_day)
+                        .order(:created_at)
         expect(workloads.map(&:weekly_number)).to eq [1, 2, 3]
       end
     end

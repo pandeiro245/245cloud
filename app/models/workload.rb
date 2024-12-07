@@ -54,14 +54,14 @@ class Workload < ActiveRecord::Base
           week_start = tokyo_time.beginning_of_week
 
           daily_count = where(user_id: user_id)
-            .where(is_done: true)
-            .where('created_at >= ? AND created_at <= ?', day_start, workload.created_at)
-            .count
+                        .where(is_done: true)
+                        .where('created_at >= ? AND created_at <= ?', day_start, workload.created_at)
+                        .count
 
           weekly_count = where(user_id: user_id)
-            .where(is_done: true)
-            .where('created_at >= ? AND created_at <= ?', week_start, workload.created_at)
-            .count
+                         .where(is_done: true)
+                         .where('created_at >= ? AND created_at <= ?', week_start, workload.created_at)
+                         .count
 
           workload.update!(number: daily_count, weekly_number: weekly_count)
         end
