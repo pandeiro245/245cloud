@@ -107,6 +107,10 @@ class Music < ApplicationRecord
     return true # FIXME
   end
 
+  def path
+    "/musics/#{provider}/#{key}"
+  end
+
   def self.repairs!
     Workload.all.each do |w|
       w.repair!

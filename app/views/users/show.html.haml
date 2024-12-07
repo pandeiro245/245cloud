@@ -2,9 +2,11 @@
 %hr
 = profile_image_tag @user.id, 200
 %hr
-- @user.workloads.each do |workload|
-  - if workload.artwork_url_from_music.present?
-    = link_to image_tag(workload.artwork_url_from_music), workload.music_path
+- @user.music_keys.each do |music_key|
+  - provider, key = music_key.split(':')
+  - music = Music.new_from_key(provider, key)
+  - if music.artwork_url.present?
+    = link_to image_tag(music.artwork_url), music.path
   - else
-    = link_to 'no image', workload.music_path
+    = link_to 'no image', music.path
 

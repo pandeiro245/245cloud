@@ -1,4 +1,3 @@
-# app/models/workload.rb
 class Workload < ActiveRecord::Base
   include WorkloadMusicConcern
 

@@ -1,4 +1,3 @@
-# app/models/concerns/workload_music_concern.rb
 module WorkloadMusicConcern
   extend ActiveSupport::Concern
 

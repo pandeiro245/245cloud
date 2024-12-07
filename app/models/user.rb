@@ -30,6 +30,10 @@ class User < ActiveRecord::Base
     self.save!
   end
 
+  def music_keys
+    workloads.where.not(music_key: nil).map{|w| w.music_key}.uniq
+  end
+
   def recent_workloads
     workloads.bests.limit(48)
   end
