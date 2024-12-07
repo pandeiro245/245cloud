@@ -16,8 +16,8 @@ RSpec.describe Workload do
       it 'numberが連番で設定される' do
         described_class.recalculate_numbers_for_user(
           user.id,
-          start_date: base_time.to_date.to_s,
-          end_date: base_time.to_date.to_s
+          start_date: base_time.to_date,
+          end_date: base_time.to_date,
         )
 
         workloads = user.workloads.where(created_at: base_time.all_day)
@@ -28,8 +28,8 @@ RSpec.describe Workload do
       it 'weekly_numberが連番で設定される' do
         described_class.recalculate_numbers_for_user(
           user.id,
-          start_date: base_time.to_date.to_s,
-          end_date: base_time.to_date.to_s
+          start_date: base_time.to_date,
+          end_date: base_time.to_date,
         )
 
         workloads = user.workloads.where(created_at: base_time.all_day)
@@ -50,8 +50,8 @@ RSpec.describe Workload do
       it '日ごとにnumberがリセットされる' do
         described_class.recalculate_numbers_for_user(
           user.id,
-          start_date: base_time.to_date.to_s,
-          end_date: (base_time + 1.day).to_date.to_s
+          start_date: base_time.to_date,
+          end_date: (base_time + 1.day).to_date,
         )
 
         workloads = user.workloads.where(
@@ -63,8 +63,8 @@ RSpec.describe Workload do
       it 'weekly_numberは継続して増加する' do
         described_class.recalculate_numbers_for_user(
           user.id,
-          start_date: base_time.to_date.to_s,
-          end_date: (base_time + 1.day).to_date.to_s
+          start_date: base_time.to_date,
+          end_date: (base_time + 1.day).to_date,
         )
 
         workloads = user.workloads.where(
@@ -86,8 +86,8 @@ RSpec.describe Workload do
       it '週が変わってもnumberは日ごとにリセットされる' do
         described_class.recalculate_numbers_for_user(
           user.id,
-          start_date: base_time.to_date.to_s,
-          end_date: (base_time + 1.week).to_date.to_s
+          start_date: base_time.to_date,
+          end_date: (base_time + 1.week).to_date,
         )
 
         workloads = user.workloads.where(
@@ -99,8 +99,8 @@ RSpec.describe Workload do
       it 'weekly_numberは週ごとにリセットされる' do
         described_class.recalculate_numbers_for_user(
           user.id,
-          start_date: base_time.to_date.to_s,
-          end_date: (base_time + 1.week).to_date.to_s
+          start_date: base_time.to_date,
+          end_date: (base_time + 1.week).to_date,
         )
 
         workloads = user.workloads.where(
