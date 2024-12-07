@@ -1,73 +1,34 @@
+# app/models/workload.rb
 class Workload < ActiveRecord::Base
+  include WorkloadMusicConcern
+
   POMOTIME = Rails.env.production? ? 24.minutes : 0.2.minutes
   CHATTIME = Rails.env.production? ? 5.minutes : 0.2.minutes
 
   belongs_to :user
 
-  # バリデーション
   validate :music_key_presence_if_title_or_artwork_url_present
-
-  # コールバック
   before_save :set_music_key
 
-  # 基本スコープ
   scope :created, -> { order('workloads.created_at DESC') }
   scope :dones, -> { where(is_done: true) }
   scope :his, ->(user_id) { where(user_id: user_id, is_done: true) }
 
-  # 音楽関連スコープ
-  scope :bests, -> {
-    select('music_key, COUNT(music_key) AS music_key_count')
-      .where.not(music_key: '')
-      .group(:music_key)
-      .order('music_key_count DESC')
-  }
-
-  scope :best_listeners, ->(music_key) {
-    select('user_id, COUNT(user_id) AS user_id_count')
-      .where(music_key: music_key)
-      .group(:user_id)
-      .order('user_id_count DESC')
-  }
-
-  # 時間関連スコープ
-  scope :by_range, ->(range) { where(created_at: range) }
-
-  scope :today, ->(created_at = nil) {
-    to = (created_at || Time.zone.now) - POMOTIME
-    from = to.beginning_of_day
-    by_range(from..to)
-  }
-
-  scope :thisweek, ->(created_at = nil) {
-    to = (created_at || Time.zone.now) - POMOTIME
-    from = calculate_week_start(to)
-    by_range(from..to)
-  }
-
   scope :chattings, -> {
     now = Time.zone.now
-    by_range((now - POMOTIME - CHATTIME)..(now - POMOTIME))
+    where(created_at: (now - POMOTIME - CHATTIME)..(now - POMOTIME))
   }
 
   scope :playings, -> {
     now = Time.zone.now
-    by_range((now - POMOTIME)..now)
+    where(created_at: (now - POMOTIME)..now)
   }
 
-  # タイプ関連
   scope :of_type, ->(type) {
     raise ArgumentError, "Invalid type: #{type}" if type && !active_type?(type)
     type ? public_send(type) : dones
   }
 
-  def self.calculate_week_start(date)
-    from = date.to_date.beginning_of_day
-    days_to_subtract = date.wday.zero? ? 6 : (date.wday - 1)
-    from - days_to_subtract.days
-  end
-
-  # クラスメソッド
   class << self
     def active_type?(type)
       %w[dones chattings playings all].include?(type)
@@ -76,12 +37,34 @@ class Workload < ActiveRecord::Base
     def find_or_start_by_user(user, params = {})
       return playings.his(user.id).first if playings.his(user.id).exists?
 
-      create_params = build_create_params(user, params)
-      create!(create_params)
+      create!(build_create_params(user, params))
     end
 
-    def update_numbers
-      created.dones.each(&:update_number!)
+    def recalculate_numbers_for_user(user_id, start_date:, end_date:)
+      start_time = Time.zone.parse(start_date).beginning_of_day
+      end_time = Time.zone.parse(end_date).end_of_day
+
+      where(user_id: user_id)
+        .where(created_at: start_time..end_time)
+        .where(is_done: true)
+        .order(:created_at)
+        .each do |workload|
+          tokyo_time = workload.created_at.in_time_zone('Tokyo')
+          day_start = tokyo_time.beginning_of_day
+          week_start = tokyo_time.beginning_of_week
+
+          daily_count = where(user_id: user_id)
+                        .where(is_done: true)
+                        .where(created_at: day_start..workload.created_at)
+                        .count
+
+          weekly_count = where(user_id: user_id)
+                         .where(is_done: true)
+                         .where(created_at: week_start..workload.created_at)
+                         .count
+
+          workload.update!(number: daily_count, weekly_number: weekly_count)
+        end
     end
 
     private
@@ -99,13 +82,6 @@ class Workload < ActiveRecord::Base
 
       create_params
     end
-  end
-
-  # インスタンスメソッド
-  def hm
-    time = created_at.in_time_zone('Tokyo')
-    format = time.to_date == Time.zone.now.to_date ? '%H:%M' : '%m/%d %H:%M'
-    time.strftime(format)
   end
 
   def will_reload_at
@@ -129,47 +105,25 @@ class Workload < ActiveRecord::Base
   end
 
   def to_done!
-    update!(
-      number: next_number,
-      weekly_number: next_number(:weekly),
-      is_done: true
-    )
+    update!(is_done: true)
+    recalculate_numbers
     self
   end
 
-  def update_number!
-    update!(
-      number: next_number,
-      weekly_number: next_number(:weekly)
+  def recalculate_numbers
+    self.class.recalculate_numbers_for_user(
+      user_id,
+      start_date: created_at.in_time_zone('Tokyo').to_date.to_s,
+      end_date: created_at.in_time_zone('Tokyo').to_date.to_s
     )
   end
 
-  def next_number(type = nil)
-    scope = Workload.his(user_id).dones
-    scope = type == :weekly ? scope.thisweek(created_at) : scope.today(created_at)
-    scope.count + 1
+  def hm
+    time = created_at.in_time_zone('Tokyo')
+    format = time.to_date == Time.zone.now.to_date ? '%H:%M' : '%m/%d %H:%M'
+    time.strftime(format)
   end
 
-  # 音楽関連メソッド
-  def music
-    @music ||= Music.new_from_key(*music_key.split(':'))
-  end
-
-  def music_path
-    "/musics/#{formatted_music_key}"
-  end
-
-  def artwork_url_from_music
-    music&.artwork_url
-  end
-
-  def youtube_start
-    return unless music.provider == 'youtube'
-    music.fetch if music.duration.blank?
-    music.duration - remain
-  end
-
-  # 表示関連メソッド
   def disp
     return hm.to_s if created_at + POMOTIME + CHATTIME > Time.zone.now
     "#{hm} #{number}回目(週#{weekly_number}回)"
@@ -192,9 +146,5 @@ class Workload < ActiveRecord::Base
 
   def set_music_key
     self.music_key = URI.decode_www_form_component(music_key) if music_key.present?
-  end
-
-  def formatted_music_key
-    music_key.gsub('mixcloud:/', 'mixcloud:').gsub(':', '/')
   end
 end
