@@ -55,12 +55,12 @@ class Workload < ActiveRecord::Base
 
           daily_count = where(user_id: user_id)
                         .where(is_done: true)
-                        .where('created_at >= ? AND created_at <= ?', day_start, workload.created_at)
+                        .where(created_at: day_start..workload.created_at)
                         .count
 
           weekly_count = where(user_id: user_id)
                          .where(is_done: true)
-                         .where('created_at >= ? AND created_at <= ?', week_start, workload.created_at)
+                         .where(created_at: week_start..workload.created_at)
                          .count
 
           workload.update!(number: daily_count, weekly_number: weekly_count)

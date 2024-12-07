@@ -14,7 +14,7 @@ RSpec.describe Workload do
       end
 
       it 'numberが連番で設定される' do
-        Workload.recalculate_numbers_for_user(
+        described_class.recalculate_numbers_for_user(
           user.id,
           start_date: base_time.to_date.to_s,
           end_date: base_time.to_date.to_s
@@ -26,7 +26,7 @@ RSpec.describe Workload do
       end
 
       it 'weekly_numberが連番で設定される' do
-        Workload.recalculate_numbers_for_user(
+        described_class.recalculate_numbers_for_user(
           user.id,
           start_date: base_time.to_date.to_s,
           end_date: base_time.to_date.to_s
@@ -48,7 +48,7 @@ RSpec.describe Workload do
       end
 
       it '日ごとにnumberがリセットされる' do
-        Workload.recalculate_numbers_for_user(
+        described_class.recalculate_numbers_for_user(
           user.id,
           start_date: base_time.to_date.to_s,
           end_date: (base_time + 1.day).to_date.to_s
@@ -61,7 +61,7 @@ RSpec.describe Workload do
       end
 
       it 'weekly_numberは継続して増加する' do
-        Workload.recalculate_numbers_for_user(
+        described_class.recalculate_numbers_for_user(
           user.id,
           start_date: base_time.to_date.to_s,
           end_date: (base_time + 1.day).to_date.to_s
@@ -84,7 +84,7 @@ RSpec.describe Workload do
       end
 
       it '週が変わってもnumberは日ごとにリセットされる' do
-        Workload.recalculate_numbers_for_user(
+        described_class.recalculate_numbers_for_user(
           user.id,
           start_date: base_time.to_date.to_s,
           end_date: (base_time + 1.week).to_date.to_s
@@ -97,7 +97,7 @@ RSpec.describe Workload do
       end
 
       it 'weekly_numberは週ごとにリセットされる' do
-        Workload.recalculate_numbers_for_user(
+        described_class.recalculate_numbers_for_user(
           user.id,
           start_date: base_time.to_date.to_s,
           end_date: (base_time + 1.week).to_date.to_s
