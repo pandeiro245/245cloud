@@ -45,11 +45,9 @@ class User < ActiveRecord::Base
   end
 
   def recalculate_workload_numbers!(start_date: nil, end_date: nil)
+    end_date ||= Time.zone.now.to_date
+    start_date ||= Time.zone.now.to_date - 30.days
     workloads.recalculate_numbers_for_user(id, start_date: start_date, end_date: end_date)
-  end
-
-  def verify_workload_numbers(start_date: nil, end_date: nil)
-    workloads.verify_numbers_for_user(id, start_date: start_date, end_date: end_date)
   end
 
   def save_image_from_twitter(auth_hash)

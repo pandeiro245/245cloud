@@ -41,8 +41,8 @@ class Workload < ActiveRecord::Base
     end
 
     def recalculate_numbers_for_user(user_id, start_date:, end_date:)
-      start_time = Time.zone.parse(start_date).beginning_of_day
-      end_time = Time.zone.parse(end_date).end_of_day
+      start_time = start_date.beginning_of_day
+      end_time = end_date.end_of_day
 
       where(user_id: user_id)
         .where(created_at: start_time..end_time)
@@ -113,8 +113,8 @@ class Workload < ActiveRecord::Base
   def recalculate_numbers
     self.class.recalculate_numbers_for_user(
       user_id,
-      start_date: created_at.in_time_zone('Tokyo').to_date.to_s,
-      end_date: created_at.in_time_zone('Tokyo').to_date.to_s
+      start_date: created_at.in_time_zone('Tokyo').to_date,
+      end_date: created_at.in_time_zone('Tokyo').to_date
     )
   end
 
